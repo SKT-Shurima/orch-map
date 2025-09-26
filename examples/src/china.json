@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "中国"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [73.5577, 53.5609],
+          [73.5577, 18.1597],
+          [135.0883, 18.1597],
+          [135.0883, 53.5609],
+          [73.5577, 53.5609]
+        ]]
+      }
+    }
+  ]
+}
