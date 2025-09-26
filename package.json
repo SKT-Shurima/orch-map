@@ -3,6 +3,23 @@
   "version": "1.0.0",
   "description": "A monorepo project with packages and examples",
   "private": true,
+  "exports": {
+    "./core": {
+      "types": "./packages/core/dist/index.d.ts",
+      "import": "./packages/core/dist/index.mjs",
+      "require": "./packages/core/dist/index.js"
+    },
+    "./types": {
+      "types": "./packages/types/dist/index.d.ts",
+      "import": "./packages/types/dist/index.mjs",
+      "require": "./packages/types/dist/index.js"
+    },
+    "./utils": {
+      "types": "./packages/utils/dist/index.d.ts",
+      "import": "./packages/utils/dist/index.mjs",
+      "require": "./packages/utils/dist/index.js"
+    }
+  },
   "workspaces": [
     "packages/*",
     "examples/*"
