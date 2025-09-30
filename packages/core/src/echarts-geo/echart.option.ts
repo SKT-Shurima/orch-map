@@ -41,7 +41,7 @@ export const BOUNDARY_OPTIONS = {
   zlevel: 0,
   itemStyle: {
     areaColor: "#094777",
-    borderWidth: 0,
+    borderWidth: 1,
     borderColor: "#1480C5",
     shadowBlur: 1,
     shadowColor: "rgba(0, 0, 0, 0.5)",

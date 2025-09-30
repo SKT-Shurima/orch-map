@@ -31,7 +31,7 @@ var GeoDataService = class {
     let data;
     try {
       const basePath = this.getPublicBasePath();
-      const response = await fetch(`${basePath}/${path}.json`);
+      const response = await fetch(`${basePath}/${path}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -50,58 +50,26 @@ var GeoDataService = class {
     };
   }
   /**
-   * 获取边界地图数据路径
-   */
-  static getBoundaryDataPath(params) {
-    const { currentLevel, region, country } = params;
-    switch (currentLevel) {
-      case "world" /* WORLD */:
-        return "world/world_edge.geo" /* WORLD_BOUNDARY */;
-      case "country" /* COUNTRY */:
-        if (region === "100000") {
-          return "china/000000_edge" /* CHINA_BOUNDARY */;
-        } else if (region === "us") {
-          return "us/united-states" /* US_BOUNDARY */;
-        }
-        return "";
-      case "province" /* PROVINCE */:
-      case "city" /* CITY */:
-      case "county" /* COUNTY */:
-        if (country === "100000") {
-          return `china/${region}`;
-        } else if (country === "us") {
-          return `us/${region}-all.geo`;
-        }
-        return "";
-      default:
-        return "";
-    }
-  }
-  /**
    * 获取详细地图数据路径
    */
   static getDetailDataPath(params) {
+    const mapVersion = MapStateManager.mapVersion;
     const { currentLevel, region, country, mapType } = params;
     switch (currentLevel) {
       case "world" /* WORLD */:
-        return "world/wgs84_world_for_US.geo" /* WORLD_WGS84_FOR_US */;
-      // return MapDataPath.WORLD_WGS84;  
-      // if (mapType === "deckgl") {
-      // } else {
-      //   return MapDataPath.WORLD;
-      // }
+        return mapVersion === "standard" ? "world/wgs84_world_for_US.geo.json" /* WORLD_WGS84_FOR_US */ : "world/wgs84_world.geo.json" /* WORLD_WGS84 */;
       case "country" /* COUNTRY */:
         if (region === "100000") {
-          return "china/100000_full" /* CHINA */;
+          return "china/100000-2.json";
         } else {
-          return `world/countries/${region}-all.geo`;
+          return `world/countries/${region}-all.geo.json`;
         }
       case "province" /* PROVINCE */:
-        return country === "100000" ? `china/${region}_full` : "";
+        return country === "100000" ? `china/${region}_full.json` : "";
       case "city" /* CITY */:
-        return country === "100000" ? `china/${region}` : "";
+        return country === "100000" ? `china/${region}.json` : "";
       case "county" /* COUNTY */:
-        return country === "100000" ? `china/${region}` : "";
+        return country === "100000" ? `china/${region}.json` : "";
       default:
         return "";
     }
@@ -124,19 +92,9 @@ var GeoDataService = class {
     return data;
   }
   /**
-   * 获取边界地图数据
-   */
-  //  private static async fetchBoundaryGeoJson(params: GeoDataParams): Promise<GeoJsonData> {
-  //   const path = this.getBoundaryDataPath(params);
-  //   if (!path) {
-  //     throw new Error("Boundary data path not found");
-  //   }
-  //   return this.getMapData(path);
-  // }
-  /**
    * 获取详细地图数据
    */
-  static async fetchDetailGeoJson(params) {
+  static async fetchGeoJson(params) {
     const path = this.getDetailDataPath(params);
     if (!path) {
       throw new Error("Detail data path not found");
@@ -152,24 +110,6 @@ var GeoDataService = class {
    */
   static clearCache() {
     this.cache = {};
-  }
-  /**
-   * 预加载常用地图数据
-   */
-  static async preloadCommonMaps() {
-    const commonMaps = [
-      { currentLevel: "world" /* WORLD */, region: "world", country: "", mapType: "echart" },
-      { currentLevel: "country" /* COUNTRY */, region: "100000", country: "100000", mapType: "echart" }
-    ];
-    await Promise.all(
-      commonMaps.map((params) => this.fetchGeoJson(params))
-    );
-  }
-  /**
-  * 同时获取边界和详细地图数据
-  */
-  static async fetchGeoJson(params) {
-    return await this.fetchDetailGeoJson(params);
   }
 };
 GeoDataService.cache = {};
@@ -214,6 +154,13 @@ var _MapStateManager = class _MapStateManager {
     _MapStateManager._adcode = adcode;
     _MapStateManager.notifyPropertyChange("adcode", adcode, oldValue);
   }
+  // 静态 getter/setter - mapVersion
+  static get mapVersion() {
+    return _MapStateManager._mapVersion;
+  }
+  static set mapVersion(version) {
+    _MapStateManager._mapVersion = version;
+  }
   // 静态 getter/setter - geoData
   static get geoData() {
     return _MapStateManager._geoData;
@@ -242,7 +189,6 @@ var _MapStateManager = class _MapStateManager {
     _MapStateManager._country = "100000";
     _MapStateManager._adcode = "100000";
     _MapStateManager._geoData = void 0;
-    _MapStateManager._detailGeoData = void 0;
   }
   /**
    * 监听特定属性变化
@@ -295,6 +241,7 @@ _MapStateManager._curLevel = "world" /* WORLD */;
 _MapStateManager._country = "100000";
 // 默认中国
 _MapStateManager._adcode = "100000";
+_MapStateManager._mapVersion = "standard";
 // 属性监听器
 _MapStateManager.propertyListeners = /* @__PURE__ */ new Map();
 var MapStateManager = _MapStateManager;
@@ -312,7 +259,7 @@ var BOUNDARY_OPTIONS = {
   zlevel: 0,
   itemStyle: {
     areaColor: "#094777",
-    borderWidth: 0,
+    borderWidth: 1,
     borderColor: "#1480C5",
     shadowBlur: 1,
     shadowColor: "rgba(0, 0, 0, 0.5)"
@@ -474,16 +421,8 @@ var EchartsMap = class {
     } else {
       this.container = container;
     }
-    if ("container" in options) {
-      this.config = options;
-      this.events = this.convertEventsToEchartsFormat(this.config.events);
-    } else {
-      this.events = options.events || {};
-      this.config = {
-        container: this.container,
-        events: this.events
-      };
-    }
+    this.config = options;
+    this.events = this.convertEventsToEchartsFormat(this.config.events);
     this.initChart();
     this.registerEvents();
   }
@@ -708,30 +647,46 @@ var EchartsMap = class {
     if (!this.container) {
       return;
     }
-    await MapStateManager.getGeoJsonData({
-      mapLevel: "world" /* WORLD */,
-      country: this.config.country ?? "100000",
-      region: this.config.adcode ?? "100000"
-    });
     const instance = echarts.init(this.container);
     this.chartInstance = instance;
+    const mapName = this.generateMapName();
     const baseOption = {
       tooltip: {
         show: false
       },
       geo: {
-        ...BOUNDARY_OPTIONS
+        ...BOUNDARY_OPTIONS,
+        map: mapName
       },
       series: this.series
     };
     const geojson = MapStateManager.geoData;
-    echarts.registerMap(`${this.detailMap}-geo`, geojson);
+    echarts.registerMap(mapName, geojson);
     this.setChartOption(baseOption);
     instance.on("click", this.clickHandler);
     instance.on("dblclick", this.dbClickHandler);
     instance.on("mouseover", this.mouseoverHandler);
     instance.on("mouseout", this.mouseoutHandler);
     instance.on("georoam", this.redrawMap);
+  }
+  generateMapName() {
+    const level = MapStateManager.curLevel;
+    const country = MapStateManager.country;
+    const adcode = MapStateManager.adcode;
+    switch (level) {
+      case "world" /* WORLD */:
+        return "world";
+      case "country" /* COUNTRY */:
+        return country === "100000" ? "china" : "usa";
+      case "province" /* PROVINCE */:
+        return `province-${adcode}`;
+      case "city" /* CITY */:
+        return `city-${adcode}`;
+      case "county" /* COUNTY */:
+        return `county-${adcode}`;
+      default:
+        return "default";
+    }
   }
   /**
    * 处理状态变化
@@ -957,9 +912,6 @@ var EchartsMap = class {
     return { center, zoom: Math.max(0.5, Math.min(zoom, 6)) };
   }
 };
-
-// src/adapters/DeckglMapAdapter.ts
-import { MapLevel as MapLevel2 } from "@orch-map/types";
 
 // src/deckgl/deckInstance.ts
 import { Deck, MapView } from "@deck.gl/core";
@@ -1503,14 +1455,14 @@ var MapLayerManager = _MapLayerManager;
 
 // src/deckgl/index.ts
 import { GeoJsonLayer, IconLayer } from "@deck.gl/layers";
-var _GlMap = class _GlMap {
+var DeckglMap = class {
   /**
    * 构造函数
    * @param instanceId Deck 实例标识
    * @param container Canvas 容器
    * @param callback 初始化完成回调（图标图集构建完毕后触发）
    */
-  constructor(instanceId, container, mode, callback) {
+  constructor(container, mode, callback) {
     /** 图标图集构建结果（iconAtlas、iconMapping）。注意：DataURL 字符串占用内存较大，后续可考虑缓存与复用。 */
     this.iconAtlasResult = null;
     // 动画相关状态（对齐 test01.html 的思路，但不依赖数据上的时间戳字段）
@@ -1525,6 +1477,14 @@ var _GlMap = class _GlMap {
     // 当前选中的点 id
     /** 选中点 ID（用于放大/高亮显示） */
     this.selectedPointId = null;
+    /** 每 tick 前进的“秒数”（逻辑时间） */
+    this.ANIMATION_SPEED = 60;
+    // 每tick前进的“秒数”
+    /** 可见尾迹长度（逻辑时间） */
+    this.TRAIL_LENGTH = 60 * 60;
+    // 可见尾迹长度
+    /** 时间循环区间（逻辑时间），默认 6 小时 */
+    this.TIME_LOOP = 6 * 60 * 60;
     // 循环区间，默认6小时
     this.mode = "2d";
     /** 曲率计算器，用于为 2D 曲线路径生成控制点偏移量 */
@@ -1535,9 +1495,10 @@ var _GlMap = class _GlMap {
     this.lineRenderer3D = new LineRenderer3D();
     /** 额外注册的 SVG 图标集合（由业务侧注入），键为 icon key，值为 SVG 字符串 */
     this.extraSvgIcons = {};
-    this.instanceId = instanceId;
+    this.instanceId = `deckgl-${Date.now()}-${Math.random()}`;
     this.mode = mode;
-    this.initDeck(container, callback);
+    const canvas = this.createCanvas(container);
+    this.initDeck(canvas, callback);
   }
   get currentDeckInstance() {
     return DeckInstance.getInstance(this.instanceId);
@@ -1548,15 +1509,15 @@ var _GlMap = class _GlMap {
    * - 这里通过容器宽度估算 minZoom，存在不同屏幕 DPR 下的视觉差异，可在后续优化中考虑；
    * - 图标图集构建是异步的，构建完成前不应创建依赖图集的图层（本实现已在回调后触发动画）。
    */
-  async initDeck(container, callback) {
+  async initDeck(canvas, callback) {
     const calculateMinZoom = (containerWidth) => {
       const zoom = Math.log2(containerWidth / 256);
       return zoom - 1;
     };
-    const minZoom = calculateMinZoom(container.parentNode.clientWidth);
+    const minZoom = calculateMinZoom(canvas.parentNode.clientWidth);
     await DeckInstance.setInstance(
       this.instanceId,
-      container,
+      canvas,
       {
         zoom: Math.max(0, Math.min(20, minZoom)),
         latitude: 30,
@@ -1564,12 +1525,14 @@ var _GlMap = class _GlMap {
         // maxZoom 不在 MapViewState，交由 Deck 的控制器约束
       },
       {
+        mode: this.mode,
         // @ts-ignore
         onClick: async (info, event) => {
           await this.handleClickMapView(info, event);
         }
       }
     );
+    MapStateManager.geoData && this.setGEOData(MapStateManager.geoData);
     const iconAtlasResult = await IconAtlas.buildIconAtlas({ ...DEFAULT_SVG_ICONS });
     this.iconAtlasResult = iconAtlasResult;
     if (Object.keys(this.extraSvgIcons).length > 0) {
@@ -1577,6 +1540,17 @@ var _GlMap = class _GlMap {
     }
     callback();
     this.startArcAnimation();
+  }
+  /**
+  * 创建 Canvas 元素
+  */
+  createCanvas(container) {
+    container.innerHTML = "";
+    const canvas = document.createElement("canvas");
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    container.appendChild(canvas);
+    return canvas;
   }
   /**
    * 地图空白处点击处理（取消点选中）
@@ -1707,15 +1681,15 @@ var _GlMap = class _GlMap {
    * 性能注意：每次都会重建 AnimatedArcLayer 实例，数量大时有创建开销，可考虑用 updateTriggers 或 attribute 更新替代。
    */
   updateArcAnimation() {
-    this.currentTime = (this.currentTime + _GlMap.ANIMATION_SPEED) % _GlMap.TIME_LOOP;
-    const startTime = Math.max(0, this.currentTime - _GlMap.TRAIL_LENGTH);
+    this.currentTime = (this.currentTime + this.ANIMATION_SPEED) % this.TIME_LOOP;
+    const startTime = Math.max(0, this.currentTime - this.TRAIL_LENGTH);
     const timeRange = [startTime, this.currentTime];
     if (this.mode === "3d") {
       const animatedLayer = this.lineRenderer3D.buildAnimatedLayer(this.lines, timeRange, 300, 1e3);
       MapLayerManager.updateLayer("line-layer", animatedLayer);
     } else {
       const baseLayer = this.lineRenderer2D.buildFullCurveLayer(this.lines);
-      const progress = this.currentTime / _GlMap.TIME_LOOP;
+      const progress = this.currentTime / this.TIME_LOOP;
       const dotsLayer = this.lineRenderer2D.buildMovingDotsLayer(this.lines, progress);
       MapLayerManager.updateLayer("line-layer", baseLayer);
       MapLayerManager.updateLayer("line-trail-layer", dotsLayer);
@@ -1777,249 +1751,32 @@ var _GlMap = class _GlMap {
     }
   }
 };
-/** 每 tick 前进的“秒数”（逻辑时间） */
-_GlMap.ANIMATION_SPEED = 60;
-// 每tick前进的“秒数”
-/** 可见尾迹长度（逻辑时间） */
-_GlMap.TRAIL_LENGTH = 60 * 60;
-// 可见尾迹长度
-/** 时间循环区间（逻辑时间），默认 6 小时 */
-_GlMap.TIME_LOOP = 6 * 60 * 60;
-var GlMap = _GlMap;
 
-// src/adapters/DeckglMapAdapter.ts
-var DeckglMapAdapter = class {
+// src/index.ts
+var OrchMap = class {
   constructor(config) {
-    this.glMap = null;
-    this.isInitialized = false;
-    this.initPromise = null;
-    this.unsubscribeState = null;
     this.config = config;
-    this.instanceId = `deckgl-${Date.now()}-${Math.random()}`;
-    this.initPromise = this.initDeckGL();
+    MapStateManager.mapVersion = this.config.mapVersion || "standard";
+    this.initMap();
   }
-  /**
-   * 初始化 DeckGL
-   */
-  async initDeckGL() {
-    const canvas = this.createCanvas();
-    return new Promise((resolve) => {
-      this.glMap = new GlMap(
-        this.instanceId,
-        canvas,
-        this.config.mode || "2d",
-        async () => {
-          this.isInitialized = true;
-          const geoJsonData = await MapStateManager.getGeoJsonData({
-            mapLevel: MapLevel2.WORLD,
-            country: this.config.country ?? "100000",
-            region: this.config.adcode ?? "100000"
-          });
-          this.glMap?.setGEOData(geoJsonData);
-          this.setupEventHandlers();
-          resolve();
-        }
-      );
+  async initMap() {
+    const geoData = await getGeoJsonData({
+      mapLevel: this.config.curLevel ?? "world" /* WORLD */,
+      country: this.config.country ?? "100000",
+      region: this.config.adcode ?? "100000"
     });
-  }
-  /**
-   * 创建 Canvas 元素
-   */
-  createCanvas() {
-    const container = this.config.container;
-    container.innerHTML = "";
-    const canvas = document.createElement("canvas");
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    container.appendChild(canvas);
-    return canvas;
-  }
-  /**
-   * 设置事件处理器
-   */
-  setupEventHandlers() {
-    if (this.config.events) {
+    MapStateManager.setGeoData(geoData);
+    switch (this.config.renderType) {
+      case "echarts" /* ECHARTS */:
+        this.instance = new EchartsMap(this.config.container, this.config);
+        break;
+      case "deckgl" /* DECKGL */:
+        this.instance = new DeckglMap(this.config.container, this.config.mode || "2d", () => {
+          console.log("DeckGL initialized");
+        });
+        break;
     }
   }
-  /**
-   * 处理状态变化
-   */
-  handleStateChange(newState, oldState) {
-    if (!this.glMap || !this.isInitialized) return;
-    if (newState.geoData !== oldState.geoData) {
-      this.updateGeoDataInDeckGL(newState.geoData);
-    }
-    if (newState.points !== oldState.points) {
-      this.updatePointsInDeckGL(newState.points);
-    }
-    if (newState.lines !== oldState.lines) {
-      this.updateLinesInDeckGL(newState.lines);
-    }
-  }
-  /**
-   * 在 DeckGL 中更新地理数据
-   */
-  async updateGeoDataInDeckGL(geoData) {
-    if (!this.glMap) return;
-    const normalizedData = this.normalizeToFeatureCollection(geoData);
-    this.glMap.setGEOData(normalizedData);
-  }
-  /**
-   * 在 DeckGL 中更新点数据
-   */
-  async updatePointsInDeckGL(points) {
-    if (!this.glMap) return;
-    const deckglPoints = this.convertPointsForDeckGL(points);
-    await this.glMap.setPoints(deckglPoints);
-  }
-  /**
-   * 在 DeckGL 中更新线数据
-   */
-  async updateLinesInDeckGL(lines) {
-    if (!this.glMap) return;
-    const deckglLines = this.convertLinesForDeckGL(lines);
-    this.glMap.setLines(deckglLines);
-  }
-  /**
-   * 等待初始化完成
-   */
-  async waitForInit() {
-    if (this.initPromise) {
-      await this.initPromise;
-    }
-  }
-  /**
-   * 设置地理数据
-   */
-  async setGeoData(boundary) {
-    await this.waitForInit();
-    if (!this.glMap) return;
-    MapStateManager.setGeoData(boundary);
-  }
-  /**
-   * 规范化为 FeatureCollection 格式
-   */
-  normalizeToFeatureCollection(data) {
-    if ("type" in data && data.type === "FeatureCollection") {
-      return data;
-    }
-    const geoJsonData = data;
-    return {
-      type: "FeatureCollection",
-      features: geoJsonData.features || []
-    };
-  }
-  /**
-   * 设置点数据
-   */
-  async setPoints(points) {
-    await this.waitForInit();
-    if (!this.glMap) return;
-  }
-  /**
-   * 转换点数据为 DeckGL 格式
-   */
-  convertPointsForDeckGL(points) {
-    return points.map((point) => ({
-      ...point,
-      // 确保坐标格式正确
-      coordinate: Array.isArray(point.coordinate) ? point.coordinate : [point.coordinate[0], point.coordinate[1]],
-      // 添加 DeckGL 特定的属性
-      icon: point.icon || "star",
-      color: this.parseColor(point.style?.color)
-    }));
-  }
-  /**
-   * 解析颜色值
-   */
-  parseColor(color) {
-    if (!color) return [255, 255, 255, 255];
-    if (color.startsWith("#")) {
-      const hex = color.slice(1);
-      const r = parseInt(hex.slice(0, 2), 16);
-      const g = parseInt(hex.slice(2, 4), 16);
-      const b = parseInt(hex.slice(4, 6), 16);
-      const a = hex.length === 8 ? parseInt(hex.slice(6, 8), 16) : 255;
-      return [r, g, b, a];
-    }
-    if (color.startsWith("rgb")) {
-      const matches = color.match(/\d+/g);
-      if (matches) {
-        const [r, g, b, a = 255] = matches.map(Number);
-        return [r, g, b, a];
-      }
-    }
-    return [255, 255, 255, 255];
-  }
-  /**
-   * 设置线数据
-   */
-  async setLines(lines) {
-    await this.waitForInit();
-    if (!this.glMap) return;
-  }
-  /**
-   * 转换线数据为 DeckGL 格式
-   */
-  convertLinesForDeckGL(lines) {
-    return lines.map((line) => ({
-      ...line,
-      // 确保坐标格式正确
-      from: Array.isArray(line.from) ? line.from : [line.from[0], line.from[1]],
-      to: Array.isArray(line.to) ? line.to : [line.to[0], line.to[1]],
-      // 添加 DeckGL 特定的属性
-      color: this.parseColor(line.color?.toString()),
-      width: line.width || 2
-    }));
-  }
-  /**
-   * 更新地图层级
-   */
-  updateMapLevel(level) {
-    console.log("Update map level to:", level);
-  }
-  /**
-   * 设置点样式
-   */
-  setPointStyle(seriesName, styleProcessor) {
-  }
-  /**
-   * 注册额外的图标
-   */
-  async registerExtraIcons(icons) {
-    await this.waitForInit();
-    if (!this.glMap) return;
-    await this.glMap.registerExtraSvgIcons(icons);
-  }
-  /**
-   * 调整地图大小
-   */
-  resize() {
-  }
-  /**
-   * 销毁渲染器
-   */
-  destroy() {
-    if (!this.glMap) return;
-    this.glMap.destroy();
-    this.glMap = null;
-    if (this.unsubscribeState) {
-      this.unsubscribeState();
-      this.unsubscribeState = null;
-    }
-    const container = this.config.container;
-    container.innerHTML = "";
-  }
-  /**
-   * 获取渲染器类型
-   */
-  getType() {
-    return "deckgl";
-  }
-};
-
-// src/factory/MapRendererFactory.ts
-var MapRendererFactory = class {
   /**
    * 创建地图渲染器
    * @param type 渲染器类型
@@ -2027,14 +1784,6 @@ var MapRendererFactory = class {
    * @returns 地图渲染器实例
    */
   static createRenderer(type, config) {
-    switch (type) {
-      case "echarts" /* ECHARTS */:
-        return new EchartsMap(config.container, config);
-      case "deckgl" /* DECKGL */:
-        return new DeckglMapAdapter(config);
-      default:
-        throw new Error(`Unsupported renderer type: ${type}`);
-    }
   }
   /**
    * 检查是否支持指定的渲染器类型
@@ -2068,639 +1817,8 @@ var MapRendererFactory = class {
     return "echarts" /* ECHARTS */;
   }
 };
-
-// src/adapters/UnifiedMapComponent.ts
-var UnifiedMapComponent = class {
-  constructor(config) {
-    this.renderer = null;
-    this.isInitialized = false;
-    this.config = config;
-    this.renderType = config.renderType || MapRendererFactory.getRecommendedType(config);
-    this.initRenderer();
-  }
-  /**
-   * 初始化渲染器
-   */
-  async initRenderer() {
-    try {
-      this.renderer = MapRendererFactory.createRenderer(this.renderType, this.config);
-      if (this.config.customIcons && this.renderer instanceof DeckglMapAdapter) {
-        await this.renderer.registerExtraIcons?.(this.config.customIcons);
-      }
-      this.isInitialized = true;
-    } catch (error) {
-      console.error(`Failed to initialize ${this.renderType} renderer:`, error);
-      if (this.config.autoFallback) {
-        this.fallbackToAlternativeRenderer();
-      } else {
-        throw error;
-      }
-    }
-  }
-  /**
-   * 回退到备用渲染器
-   */
-  fallbackToAlternativeRenderer() {
-    const alternativeType = this.renderType === "deckgl" /* DECKGL */ ? "echarts" /* ECHARTS */ : "deckgl" /* DECKGL */;
-    console.warn(`Falling back to ${alternativeType} renderer`);
-    try {
-      this.renderType = alternativeType;
-      this.renderer = MapRendererFactory.createRenderer(alternativeType, this.config);
-      this.isInitialized = true;
-    } catch (error) {
-      console.error("Failed to initialize fallback renderer:", error);
-      throw new Error("Failed to initialize any available renderer");
-    }
-  }
-  /**
-   * 获取当前使用的渲染器类型
-   */
-  getCurrentRendererType() {
-    return this.renderType;
-  }
-  /**
-   * 切换渲染器类型
-   * @param type 新的渲染器类型
-   */
-  async switchRenderer(type) {
-    if (type === this.renderType) {
-      return;
-    }
-    const currentState = this.saveCurrentState();
-    if (this.renderer) {
-      this.renderer.destroy();
-    }
-    this.renderType = type;
-    this.renderer = MapRendererFactory.createRenderer(type, this.config);
-    await this.restoreState(currentState);
-    this.isInitialized = true;
-  }
-  /**
-   * 保存当前状态
-   */
-  saveCurrentState() {
-    return {
-      // points, lines, geoData, etc.
-    };
-  }
-  /**
-   * 恢复状态
-   */
-  async restoreState(state) {
-  }
-  /**
-   * 设置地理数据
-   */
-  async setGeoData(boundary) {
-    if (!this.renderer) {
-      throw new Error("Renderer not initialized");
-    }
-    MapStateManager.setGeoData(boundary);
-  }
-  /**
-   * 设置点数据
-   */
-  async setPoints(points) {
-    if (!this.renderer) {
-      throw new Error("Renderer not initialized");
-    }
-  }
-  /**
-   * 设置线数据
-   */
-  async setLines(lines) {
-    if (!this.renderer) {
-      throw new Error("Renderer not initialized");
-    }
-  }
-  /**
-   * 更新地图层级
-   */
-  updateMapLevel(level) {
-    if (!this.renderer) {
-      throw new Error("Renderer not initialized");
-    }
-  }
-  /**
-   * 设置点样式
-   */
-  setPointStyle(seriesName, styleProcessor) {
-    if (!this.renderer) {
-      throw new Error("Renderer not initialized");
-    }
-    this.renderer.setPointStyle?.(seriesName, styleProcessor);
-  }
-  /**
-   * 注册额外的图标（仅 DeckGL 支持）
-   */
-  async registerExtraIcons(icons) {
-    if (!this.renderer) {
-      throw new Error("Renderer not initialized");
-    }
-    if (this.renderer instanceof DeckglMapAdapter) {
-      return this.renderer.registerExtraIcons?.(icons);
-    } else {
-      console.warn("Current renderer does not support custom icons");
-    }
-  }
-  /**
-   * 调整地图大小
-   */
-  resize() {
-    if (!this.renderer) {
-      throw new Error("Renderer not initialized");
-    }
-    this.renderer.resize();
-  }
-  /**
-   * 销毁组件
-   */
-  destroy() {
-    if (this.renderer) {
-      this.renderer.destroy();
-      this.renderer = null;
-    }
-    this.isInitialized = false;
-  }
-  /**
-   * 检查是否已初始化
-   */
-  isReady() {
-    return this.isInitialized;
-  }
-  /**
-   * 等待初始化完成
-   */
-  async waitForReady() {
-    return new Promise((resolve) => {
-      if (this.isInitialized) {
-        resolve();
-      } else {
-        const checkInterval = setInterval(() => {
-          if (this.isInitialized) {
-            clearInterval(checkInterval);
-            resolve();
-          }
-        }, 100);
-      }
-    });
-  }
-};
-
-// src/adapters/EChartsRenderer.ts
-function isPointEventParams(params) {
-  if (!params || typeof params !== "object") return false;
-  const p = params;
-  const coordOk = !p.coordinate || Array.isArray(p.coordinate) && typeof p.coordinate[0] === "number" && typeof p.coordinate[1] === "number";
-  const dataOk = !p.data || typeof p.data === "object";
-  return coordOk && dataOk;
-}
-function isAreaEventParams(params) {
-  if (!params || typeof params !== "object") return false;
-  const p = params;
-  return !p.region || typeof p.region === "object";
-}
-var EChartsMapRenderer = class {
-  constructor(container, config) {
-    this.eventHandlers = /* @__PURE__ */ new Map();
-    this.container = container;
-    this.config = config;
-    this.initECharts();
-  }
-  /**
-   * 初始化 ECharts
-   */
-  initECharts() {
-    try {
-      this.echartsMap = new EchartsMap(this.container, {
-        events: {
-          onClickPoint: (params) => {
-            const coord = isPointEventParams(params) && params.coordinate ? params.coordinate : [0, 0];
-            const data = isPointEventParams(params) ? params.data : void 0;
-            this.emit("click", {
-              coordinate: coord,
-              feature: data,
-              properties: data?.properties
-            });
-          },
-          onHoverPoint: (params) => {
-            const coord = isPointEventParams(params) && params.coordinate ? params.coordinate : [0, 0];
-            const data = isPointEventParams(params) ? params.data : void 0;
-            this.emit("hover", {
-              coordinate: coord,
-              feature: data,
-              properties: data?.properties
-            });
-          },
-          onClickArea: (params) => {
-            const region = isAreaEventParams(params) ? params.region : void 0;
-            this.emit("click", {
-              coordinate: [0, 0],
-              feature: params,
-              properties: region
-            });
-          },
-          onDoubleClickArea: (nextLevel, params) => {
-            const region = isAreaEventParams(params) ? params.region : void 0;
-            MapStateManager.curLevel = nextLevel;
-            this.emit("doubleClick", {
-              coordinate: [0, 0],
-              feature: params,
-              properties: region
-            });
-          },
-          onHoverArea: (params) => {
-            const region = isAreaEventParams(params) ? params.region : void 0;
-            this.emit("hover", {
-              coordinate: [0, 0],
-              feature: params,
-              properties: region
-            });
-          }
-        }
-      });
-    } catch (error) {
-      console.error("Failed to initialize ECharts:", error);
-      throw error;
-    }
-  }
-  /**
-   * 渲染图层数据
-   */
-  render(data) {
-    const series = [];
-    data.forEach((layer) => {
-      switch (layer.type) {
-        case "point" /* POINT */:
-          this.addPointSeries(series, layer);
-          break;
-        case "line" /* LINE */:
-          this.addLineSeries(series, layer);
-          break;
-        case "geo" /* GEO */:
-          this.addGeoSeries(layer);
-          break;
-      }
-    });
-    if (series.length > 0) {
-      this.echartsMap.updateSeries(series);
-    }
-  }
-  /**
-   * 添加点图层
-   */
-  addPointSeries(series, layer) {
-    const points = layer.data;
-    const pointSeries = {
-      type: "scatter",
-      data: points.map((point) => ({
-        name: point.id,
-        value: [point.coordinate[0], point.coordinate[1]],
-        businessInfo: { raw: point },
-        symbol: point.icon || "circle",
-        itemStyle: {
-          color: point.color ? `rgba(${point.color.join(",")})` : "#1890ff"
-        }
-      }))
-    };
-    series.push(pointSeries);
-  }
-  /**
-   * 添加线图层
-   */
-  addLineSeries(series, layer) {
-    const lines = layer.data;
-    const lineSeries = {
-      type: "lines",
-      coordinateSystem: "geo",
-      data: lines.map((line) => ({
-        name: line.id,
-        raw: line,
-        coords: [line.startCoordinate, line.endCoordinate],
-        lineStyle: {
-          color: line.color ? `rgba(${line.color.join(",")})` : "#1890ff",
-          width: 2,
-          opacity: 1,
-          curveness: 0
-        }
-      }))
-    };
-    series.push(lineSeries);
-  }
-  /**
-   * 添加地理图层
-   */
-  addGeoSeries(layer) {
-    const geoData = layer.data;
-    this.echartsMap.setGEOData(geoData, geoData);
-  }
-  /**
-   * 设置地图级别
-   */
-  async setMapLevel(level, region) {
-    try {
-      const geoData = await getGeoJsonData({
-        mapLevel: level,
-        country: region ?? "",
-        region: region ?? "",
-        mapType: "echart"
-      });
-      this.echartsMap.updateMapLevel(level);
-      this.setGeoData(geoData);
-    } catch (error) {
-      console.error("Failed to set map level:", error);
-    }
-  }
-  /**
-   * 设置点数据
-   */
-  setPoints(points) {
-    this.render([{
-      type: "point" /* POINT */,
-      data: points
-    }]);
-    return Promise.resolve();
-  }
-  /**
-   * 设置线数据
-   */
-  setLines(lines) {
-    this.render([{
-      type: "line" /* LINE */,
-      data: lines
-    }]);
-    return Promise.resolve();
-  }
-  /**
-   * 设置地图数据
-   */
-  setGeoData(geoData) {
-    this.echartsMap.setGEOData(geoData, geoData);
-    return Promise.resolve();
-  }
-  /**
-   * 监听事件
-   */
-  on(event, callback) {
-    if (!this.eventHandlers.has(event)) {
-      this.eventHandlers.set(event, []);
-    }
-    this.eventHandlers.get(event).push(callback);
-  }
-  /**
-   * 取消监听事件
-   */
-  off(event, callback) {
-    const handlers = this.eventHandlers.get(event);
-    if (handlers) {
-      const index = handlers.indexOf(callback);
-      if (index > -1) {
-        handlers.splice(index, 1);
-      }
-    }
-  }
-  /**
-   * 触发事件
-   */
-  emit(event, data) {
-    const handlers = this.eventHandlers.get(event);
-    if (handlers) {
-      handlers.forEach((handler) => handler(data));
-    }
-  }
-  /**
-   * 调整地图大小
-   */
-  resize() {
-    if (this.echartsMap) {
-      this.echartsMap.resizeMap();
-    }
-  }
-  /**
-   * 销毁渲染器
-   */
-  destroy() {
-    if (this.echartsMap) {
-      this.echartsMap.destroy();
-    }
-    this.eventHandlers.clear();
-  }
-};
-
-// src/adapters/DeckGLRenderer.ts
-var DeckGLMapRenderer = class {
-  constructor(container, config) {
-    this.eventHandlers = /* @__PURE__ */ new Map();
-    this.container = container;
-    this.config = config;
-    this.initDeckGL();
-  }
-  /**
-   * 初始化 DeckGL
-   */
-  initDeckGL() {
-    try {
-      const canvas = document.createElement("canvas");
-      canvas.style.width = "100%";
-      canvas.style.height = "100%";
-      this.container.appendChild(canvas);
-      const instanceId = `deckgl-renderer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-      this.glMap = new GlMap(
-        instanceId,
-        canvas,
-        "3d",
-        // DeckGL 渲染器默认使用 3D 模式
-        () => {
-          console.log("DeckGL renderer initialized");
-        }
-      );
-    } catch (error) {
-      console.error("Failed to initialize DeckGL:", error);
-      throw error;
-    }
-  }
-  resize() {
-  }
-  /**
-   * 渲染图层数据
-   */
-  render(data) {
-    data.forEach((layer) => {
-      switch (layer.type) {
-        case "point" /* POINT */:
-          this.addPointLayer(layer);
-          break;
-        case "line" /* LINE */:
-          this.addLineLayer(layer);
-          break;
-        case "geo" /* GEO */:
-          this.addGeoLayer(layer);
-          break;
-      }
-    });
-  }
-  /**
-   * 添加点图层
-   */
-  addPointLayer(layer) {
-    const points = layer.data;
-    this.glMap.setPoints(points);
-  }
-  /**
-   * 添加线图层
-   */
-  addLineLayer(layer) {
-    const lines = layer.data;
-    this.glMap.setLines(lines);
-  }
-  /**
-   * 添加地理图层
-   */
-  addGeoLayer(layer) {
-    const geoData = layer.data;
-    if (this.isFeatureCollection(geoData)) {
-      this.glMap.setGEOData(geoData);
-    }
-  }
-  /**
-   * 设置地图级别
-   */
-  async setMapLevel(level, region) {
-    try {
-      const geoData = await getGeoJsonData({
-        mapLevel: level,
-        country: region ?? "",
-        region: region ?? "",
-        mapType: "deckgl"
-      });
-      this.setGeoData(geoData);
-    } catch (error) {
-      console.error("Failed to set map level:", error);
-    }
-  }
-  /**
-   * 添加点数据
-   */
-  setPoints(points) {
-    this.glMap.setPoints(points);
-    return Promise.resolve();
-  }
-  /**
-   * 添加线数据
-   */
-  setLines(lines) {
-    this.glMap.setLines(lines);
-    return Promise.resolve();
-  }
-  /**
-   * 设置地图数据
-   */
-  setGeoData(geoData) {
-    if (this.isFeatureCollection(geoData)) {
-      this.glMap.setGEOData(geoData);
-    }
-    return Promise.resolve();
-  }
-  /**
-   * 监听事件
-   */
-  on(event, callback) {
-    if (!this.eventHandlers.has(event)) {
-      this.eventHandlers.set(event, []);
-    }
-    this.eventHandlers.get(event).push(callback);
-  }
-  /**
-   * 取消监听事件
-   */
-  off(event, callback) {
-    const handlers = this.eventHandlers.get(event);
-    if (handlers) {
-      const index = handlers.indexOf(callback);
-      if (index > -1) {
-        handlers.splice(index, 1);
-      }
-    }
-  }
-  /**
-   * 触发事件
-   */
-  emit(event, data) {
-    const handlers = this.eventHandlers.get(event);
-    if (handlers) {
-      handlers.forEach((handler) => handler(data));
-    }
-  }
-  isFeatureCollection(data) {
-    if (!data || typeof data !== "object") return false;
-    const d = data;
-    return d.type === "FeatureCollection" && Array.isArray(d.features);
-  }
-  /**
-   * 销毁渲染器
-   */
-  destroy() {
-    if (this.glMap) {
-      this.glMap.destroy();
-    }
-    this.eventHandlers.clear();
-  }
-};
-
-// src/utils/helpers.ts
-function createMapRenderer(type, config) {
-  return MapRendererFactory.createRenderer(type, config);
-}
-function createUnifiedMap(config) {
-  return new UnifiedMapComponent(config);
-}
-function createEchartsMap(config) {
-  return createMapRenderer("echarts" /* ECHARTS */, config);
-}
-function createDeckglMap(config) {
-  return createMapRenderer("deckgl" /* DECKGL */, config);
-}
-
-// src/constants/index.ts
-var MAP_RENDERER_TYPES = {
-  ECHARTS: "echarts",
-  DECKGL: "deckgl"
-};
-var RENDER_MODES = {
-  MODE_2D: "2d",
-  MODE_3D: "3d"
-};
-var DEFAULT_CONFIG = {
-  ZOOM: 10,
-  CENTER: { lat: 39.9, lng: 116.3 },
-  MODE: RENDER_MODES.MODE_2D,
-  INTERACTIVE: true,
-  SHOW_CONTROLS: false
-};
-var EVENT_TYPES = {
-  POINT_CLICK: "pointClick",
-  POINT_HOVER: "pointHover",
-  LINE_CLICK: "lineClick",
-  LINE_HOVER: "lineHover",
-  MAP_CLICK: "mapClick",
-  ZOOM: "zoom",
-  PAN: "pan"
-};
 export {
-  DEFAULT_CONFIG,
-  DeckGLMapRenderer,
-  DeckglMapAdapter,
-  EChartsMapRenderer,
-  EVENT_TYPES,
-  EchartsMap,
-  MAP_RENDERER_TYPES,
-  MapRendererFactory,
   MapRendererType,
-  RENDER_MODES,
-  UnifiedMapComponent,
-  createDeckglMap,
-  createEchartsMap,
-  createMapRenderer,
-  createUnifiedMap
+  OrchMap as default
 };
 //# sourceMappingURL=index.mjs.map

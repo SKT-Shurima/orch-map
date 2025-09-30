@@ -64,18 +64,8 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
       this.container = container
     }
 
-    // Check if options is MapRendererConfig (new interface)
-    if ('container' in options) {
       this.config = options as MapRendererConfig
       this.events = this.convertEventsToEchartsFormat(this.config.events)
-    } else {
-      // Legacy constructor
-      this.events = (options as EchartsMapOptions<T>).events || {}
-      this.config = {
-        container: this.container,
-        events: this.events as MapRendererEvents
-      }
-    }
 
     this.initChart()
     this.registerEvents()
@@ -469,32 +459,51 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
     if (!this.container) {
       return
     }
-     await MapStateManager.getGeoJsonData({
-      mapLevel: MapLevel.WORLD,
-      country: this.config.country ?? "100000",
-      region: this.config.adcode ?? "100000"
-    })
     const instance = echarts.init(this.container)
     this.chartInstance = instance
-
+    const mapName = this.generateMapName()
     const baseOption: EChartsCoreOption = {
       tooltip: {
         show: false,
       },
       geo: {
         ...BOUNDARY_OPTIONS,
+        map: mapName,
       },
       series: this.series,
     }
 
     const geojson = MapStateManager.geoData as GeoJSONSourceInput
-    echarts.registerMap(`${this.detailMap}-geo`, geojson)
+    echarts.registerMap(mapName, geojson)
     this.setChartOption(baseOption)
     instance.on("click", this.clickHandler as unknown as ((params: unknown) => void))
     instance.on("dblclick", this.dbClickHandler as unknown as ((params: unknown) => void))
     instance.on("mouseover", this.mouseoverHandler as unknown as ((params: unknown) => void))
     instance.on("mouseout", this.mouseoutHandler as unknown as ((params: unknown) => void))
     instance.on("georoam", this.redrawMap)
+  }
+
+
+
+  private generateMapName(): string {
+    const level = MapStateManager.curLevel
+    const country = MapStateManager.country
+    const adcode = MapStateManager.adcode
+    
+    switch (level) {
+      case MapLevel.WORLD:
+        return 'world'
+      case MapLevel.COUNTRY:
+        return country === '100000' ? 'china' : 'usa'
+      case MapLevel.PROVINCE:
+        return `province-${adcode}`
+      case MapLevel.CITY:
+        return `city-${adcode}`
+      case MapLevel.COUNTY:
+        return `county-${adcode}`
+      default:
+        return 'default'
+    }
   }
 
   // 将原有装饰器方法替换为基于函数的防抖版本

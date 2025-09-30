@@ -1,20 +1,21 @@
 import { FeatureCollection } from "geojson";
 import { MapLevel } from "../interfaces";
+import MapStateManager from "../MapStateManager";
 
 // 地图数据路径枚举
 enum MapDataPath {
   // 世界地图
-  WORLD = "world/world-highres3.geo",
-  WORLD_BOUNDARY = "world/world_edge.geo",
-  WORLD_WGS84 = "world/wgs84_world.geo",
-  WORLD_WGS84_FOR_US = "world/wgs84_world_for_US.geo",
+  WORLD = "world/world-highres3.geo.json",
+  WORLD_BOUNDARY = "world/world_edge.geo.json",
+  WORLD_WGS84 = "world/wgs84_world.geo.json",
+  WORLD_WGS84_FOR_US = "world/wgs84_world_for_US.geo.json",
 
   // 中国地图
-  CHINA = "china/100000_full",
-  CHINA_BOUNDARY = "china/000000_edge",
+  CHINA = "china/100000_full.json",
+  CHINA_BOUNDARY = "china/000000_edge.json",
 
   // 美国地图
-  US_BOUNDARY = "us/united-states",
+  US_BOUNDARY = "us/united-states.json",
 }
 
 // 地图数据获取参数
@@ -62,7 +63,7 @@ export class GeoDataService {
     try {
       // 使用 fetch 从 public 目录获取 JSON 数据
       const basePath = this.getPublicBasePath();
-      const response = await fetch(`${basePath}/${path}.json`);
+      const response = await fetch(`${basePath}/${path}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -81,70 +82,32 @@ export class GeoDataService {
       features: []
     };
   }
-
-  /**
-   * 获取边界地图数据路径
-   */
-  private static getBoundaryDataPath(params: GeoDataParams): string {
-    const { currentLevel, region, country } = params;
-
-    switch (currentLevel) {
-      case MapLevel.WORLD:
-        return MapDataPath.WORLD_BOUNDARY;
-
-      case MapLevel.COUNTRY:
-        if (region === "100000") { // 中国
-          return MapDataPath.CHINA_BOUNDARY;
-        } else if (region === "us") { // 美国
-          return MapDataPath.US_BOUNDARY;
-        }
-        return "";
-
-      case MapLevel.PROVINCE:
-      case MapLevel.CITY:
-      case MapLevel.COUNTY:
-        if (country === "100000") { // 中国
-          return `china/${region}`;
-        } else if (country === "us") { // 美国
-          return `us/${region}-all.geo`;
-        }
-        return "";
-
-      default:
-        return "";
-    }
-  }
-
   /**
    * 获取详细地图数据路径
    */
   private static getDetailDataPath(params: GeoDataParams): string {
+    const mapVersion = MapStateManager.mapVersion;
     const { currentLevel, region, country, mapType } = params;
 
     switch (currentLevel) {
       case MapLevel.WORLD:
-        return MapDataPath.WORLD_WGS84_FOR_US;
-        // return MapDataPath.WORLD_WGS84;  
-        // if (mapType === "deckgl") {
-        // } else {
-        //   return MapDataPath.WORLD;
-        // }
-
+        return mapVersion === 'standard' ? MapDataPath.WORLD_WGS84_FOR_US : MapDataPath.WORLD_WGS84;
       case MapLevel.COUNTRY:
         if (region === "100000") { // 中国
-          return MapDataPath.CHINA;
+          // return MapDataPath.CHINA;
+          return 'china/100000-2.json';
         } else {
-          return `world/countries/${region}-all.geo`;
+          return `world/countries/${region}-all.geo.json`;
         }
 
       case MapLevel.PROVINCE:
-        return country === "100000" ? `china/${region}_full` : "";
+        return country === "100000" ? `china/${region}_full.json` : "";
 
       case MapLevel.CITY:
-        return country === "100000" ? `china/${region}` : "";
-
+        return country === "100000" ? `china/${region}.json` : "";
+        
       case MapLevel.COUNTY:
-        return country === "100000" ? `china/${region}` : "";
+        return country === "100000" ? `china/${region}.json` : "";
 
       default:
         return "";
@@ -176,21 +139,9 @@ export class GeoDataService {
   }
 
   /**
-   * 获取边界地图数据
-   */
-  //  private static async fetchBoundaryGeoJson(params: GeoDataParams): Promise<GeoJsonData> {
-  //   const path = this.getBoundaryDataPath(params);
-  //   if (!path) {
-  //     throw new Error("Boundary data path not found");
-  //   }
-
-  //   return this.getMapData(path);
-  // }
-
-  /**
    * 获取详细地图数据
    */
-   private static async fetchDetailGeoJson(params: GeoDataParams): Promise<FeatureCollection> {
+   public static async fetchGeoJson(params: GeoDataParams): Promise<FeatureCollection> {
     const path = this.getDetailDataPath(params);
     if (!path) {
       throw new Error("Detail data path not found");
@@ -214,28 +165,6 @@ export class GeoDataService {
    private static clearCache(): void {
     this.cache = {};
   }
-
-  /**
-   * 预加载常用地图数据
-   */
-   private static async preloadCommonMaps(): Promise<void> {
-    const commonMaps = [
-      { currentLevel: MapLevel.WORLD, region: "world", country: "", mapType: "echart" as const },
-      { currentLevel: MapLevel.COUNTRY, region: "100000", country: "100000", mapType: "echart" as const }
-    ];
-
-    await Promise.all(
-      commonMaps.map(params => this.fetchGeoJson(params))
-    );
-  }
-
-
-    /**
-   * 同时获取边界和详细地图数据
-   */
-  public static async fetchGeoJson(params: GeoDataParams): Promise<FeatureCollection> {
-     return await this.fetchDetailGeoJson(params);
-    }
 }
 
 

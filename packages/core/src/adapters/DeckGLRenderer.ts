@@ -34,14 +34,7 @@ export class DeckGLMapRenderer implements IMapRenderer {
       this.container.appendChild(canvas)
 
       const instanceId = `deckgl-renderer-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`
-      this.glMap = new GlMap(
-        instanceId,
-        canvas,
-        "3d", // DeckGL 渲染器默认使用 3D 模式
-        () => {
-          console.log("DeckGL renderer initialized")
-        }
-      )
+
     } catch (error) {
       console.error("Failed to initialize DeckGL:", error);
       throw error;

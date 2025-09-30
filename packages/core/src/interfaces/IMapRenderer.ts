@@ -1,5 +1,5 @@
-import { BaseMapPoint, BaseMapLine, MapLevel } from "../../../types/src/map.interface"
-import { FeatureCollection } from "@orch-map/types"
+import { BaseMapPoint, BaseMapLine, MapLevel } from "@orch-map/types"
+import { FeatureCollection, MapRendererType } from "@orch-map/types"
 
 /**
  * 地图渲染器事件接口
@@ -33,14 +33,16 @@ export interface MapRendererEvents {
 export interface MapRendererConfig {
   /** 容器元素 */
   container: HTMLElement | string
+  /** 地图版本，所应用的场景：标准版/国际版，不同的版本的geojson数据不同 */
+  mapVersion:'standard' | 'international'
+  /** 渲染器类型 */
+  renderType: MapRendererType
   /** 当前地图层级 */
-  curLevel?: MapLevel
+  curLevel: MapLevel
   /** 行政区划代码 */
   adcode?: string
   /** 国家代码 */
   country?: string
-  /** 详细地图数据 */
-  detailMap?: string
   /** 中心国家 */
   centralCountry?: string
   /** 渲染模式 */

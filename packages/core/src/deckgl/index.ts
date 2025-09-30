@@ -20,6 +20,7 @@ import { DEFAULT_SVG_ICONS } from "./icon.layer"
 import IconAtlas, { type IconAtlasResult } from "./iconAtlas"
 import MapLayerManager from "./layerManager"
 import { GeoJsonLayer, IconLayer } from "@deck.gl/layers"
+import MapStateManager from "../MapStateManager"
 
 type IconPoint = BaseMapPoint & {
   position: [number, number, number?]
@@ -32,7 +33,7 @@ type IconPoint = BaseMapPoint & {
  * - 负责初始化 DeckGL 场景与各业务图层
  * - 暴露数据写入（setPoints/setLines/setGEOData）与销毁接口
  */
-export default class GlMap {
+export default class  DeckglMap {
   /** 实例唯一标识（用于从 DeckInstance Map 中获取实例） */
   private instanceId!: string
   /** 图标图集构建结果（iconAtlas、iconMapping）。注意：DataURL 字符串占用内存较大，后续可考虑缓存与复用。 */
@@ -50,11 +51,11 @@ export default class GlMap {
   /** 选中点 ID（用于放大/高亮显示） */
   private selectedPointId: string | null = null
   /** 每 tick 前进的“秒数”（逻辑时间） */
-  private static readonly ANIMATION_SPEED = 60 // 每tick前进的“秒数”
+  private  readonly ANIMATION_SPEED = 60 // 每tick前进的“秒数”
   /** 可见尾迹长度（逻辑时间） */
-  private static readonly TRAIL_LENGTH = 60 * 60 // 可见尾迹长度
+  private readonly TRAIL_LENGTH = 60 * 60 // 可见尾迹长度
   /** 时间循环区间（逻辑时间），默认 6 小时 */
-  private static readonly TIME_LOOP = 6 * 60 * 60 // 循环区间，默认6小时
+  private readonly TIME_LOOP = 6 * 60 * 60 // 循环区间，默认6小时
 
   private mode: "2d" | "3d" = "2d"
   /** 曲率计算器，用于为 2D 曲线路径生成控制点偏移量 */
@@ -72,10 +73,11 @@ export default class GlMap {
    * @param container Canvas 容器
    * @param callback 初始化完成回调（图标图集构建完毕后触发）
    */
-  public constructor(instanceId: string, container: HTMLCanvasElement, mode: "2d" | "3d", callback: () => void) {
-    this.instanceId = instanceId
+  public constructor(container: HTMLCanvasElement, mode: "2d" | "3d", callback: () => void) {
+    this.instanceId = `deckgl-${Date.now()}-${Math.random()}`
     this.mode = mode
-    this.initDeck(container, callback)
+    const canvas = this.createCanvas(container)
+    this.initDeck(canvas, callback)
   }
 
   private get currentDeckInstance() {
@@ -88,15 +90,15 @@ export default class GlMap {
    * - 这里通过容器宽度估算 minZoom，存在不同屏幕 DPR 下的视觉差异，可在后续优化中考虑；
    * - 图标图集构建是异步的，构建完成前不应创建依赖图集的图层（本实现已在回调后触发动画）。
    */
-  private async initDeck(container: HTMLCanvasElement, callback: () => void) {
+  private async initDeck(canvas: HTMLCanvasElement, callback: () => void) {
     const calculateMinZoom = (containerWidth: number): number => {
       const zoom = Math.log2(containerWidth / 256)
       return zoom - 1
     }
-    const minZoom = calculateMinZoom((container.parentNode as HTMLElement).clientWidth)
+    const minZoom = calculateMinZoom((canvas.parentNode as HTMLElement).clientWidth)
     await DeckInstance.setInstance(
       this.instanceId,
-      container,
+      canvas,
       {
         zoom: Math.max(0, Math.min(20, minZoom)),
         latitude: 30,
@@ -104,12 +106,14 @@ export default class GlMap {
         // maxZoom 不在 MapViewState，交由 Deck 的控制器约束
       },
       {
+        mode: this.mode,
         // @ts-ignore
         onClick: async (info: unknown, event: MjolnirGestureEvent) => {
           await this.handleClickMapView(info, event);
         },
       },
     )
+    MapStateManager.geoData && this.setGEOData(MapStateManager.geoData)
     // 注意：buildIconAtlas 会对 SVG 进行多次 rasterize，内存与耗时与图标数量成正比，
     // 可在外层做缓存或离线预构建，以降低首次进入成本。
     const iconAtlasResult = await IconAtlas.buildIconAtlas({ ...DEFAULT_SVG_ICONS })
@@ -123,6 +127,23 @@ export default class GlMap {
     callback()
     this.startArcAnimation()
   }
+
+
+    /**
+   * 创建 Canvas 元素
+   */
+    private createCanvas(container: HTMLElement): HTMLCanvasElement {
+      // 清空容器
+      container.innerHTML = ''
+      
+      // 创建 canvas
+      const canvas = document.createElement('canvas')
+      canvas.style.width = '100%'
+      canvas.style.height = '100%'
+      container.appendChild(canvas)
+      
+      return canvas
+    }
 
   /**
    * 地图空白处点击处理（取消点选中）
@@ -282,8 +303,8 @@ export default class GlMap {
    * 性能注意：每次都会重建 AnimatedArcLayer 实例，数量大时有创建开销，可考虑用 updateTriggers 或 attribute 更新替代。
    */
   private updateArcAnimation() {
-    this.currentTime = (this.currentTime + GlMap.ANIMATION_SPEED) % GlMap.TIME_LOOP
-    const startTime = Math.max(0, this.currentTime - GlMap.TRAIL_LENGTH)
+    this.currentTime = (this.currentTime + this.ANIMATION_SPEED) % this.TIME_LOOP
+    const startTime = Math.max(0, this.currentTime - this.TRAIL_LENGTH)
     const timeRange: [number, number] = [startTime, this.currentTime]
 
     if (this.mode === "3d") {
@@ -291,7 +312,7 @@ export default class GlMap {
       MapLayerManager.updateLayer("line-layer", animatedLayer)
     } else {
       const baseLayer = this.lineRenderer2D.buildFullCurveLayer(this.lines)
-      const progress = this.currentTime / GlMap.TIME_LOOP
+      const progress = this.currentTime / this.TIME_LOOP
       const dotsLayer = this.lineRenderer2D.buildMovingDotsLayer(this.lines, progress)
       MapLayerManager.updateLayer("line-layer", baseLayer)
       MapLayerManager.updateLayer("line-trail-layer", dotsLayer)

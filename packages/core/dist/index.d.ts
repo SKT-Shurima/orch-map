@@ -1,6 +1,6 @@
-import { FeatureCollection, AnyObj, MapLevel as MapLevel$1 } from '@orch-map/types';
 import { SeriesOption } from 'echarts';
 import { FeatureCollection as FeatureCollection$1 } from 'geojson';
+import { FeatureCollection, BaseMapPoint as BaseMapPoint$1, BaseMapLine as BaseMapLine$1, MapLevel as MapLevel$1, MapRendererType as MapRendererType$1, AnyObj } from '@orch-map/types';
 
 /**
  * @orch-map/types - 地图组件类型定义
@@ -40,13 +40,13 @@ interface BaseMapLine {
  */
 interface MapRendererEvents {
     /** 点击点事件 */
-    onPointClick?: (point: BaseMapPoint) => void;
+    onPointClick?: (point: BaseMapPoint$1) => void;
     /** 悬停点事件 */
-    onPointHover?: (point: BaseMapPoint | null) => void;
+    onPointHover?: (point: BaseMapPoint$1 | null) => void;
     /** 点击线事件 */
-    onLineClick?: (line: BaseMapLine) => void;
+    onLineClick?: (line: BaseMapLine$1) => void;
     /** 悬停线事件 */
-    onLineHover?: (line: BaseMapLine | null) => void;
+    onLineHover?: (line: BaseMapLine$1 | null) => void;
     /** 点击区域事件 */
     onAreaClick?: (area: any) => void;
     /** 悬停区域事件 */
@@ -72,14 +72,16 @@ interface MapRendererEvents {
 interface MapRendererConfig {
     /** 容器元素 */
     container: HTMLElement | string;
+    /** 地图版本，所应用的场景：标准版/国际版，不同的版本的geojson数据不同 */
+    mapVersion: 'standard' | 'international';
+    /** 渲染器类型 */
+    renderType: MapRendererType$1;
     /** 当前地图层级 */
-    curLevel?: MapLevel;
+    curLevel: MapLevel$1;
     /** 行政区划代码 */
     adcode?: string;
     /** 国家代码 */
     country?: string;
-    /** 详细地图数据 */
-    detailMap?: string;
     /** 中心国家 */
     centralCountry?: string;
     /** 渲染模式 */
@@ -115,23 +117,23 @@ interface IMapRenderer {
      * 设置点数据
      * @param points 点数据数组
      */
-    setPoints(points: BaseMapPoint[]): Promise<void>;
+    setPoints(points: BaseMapPoint$1[]): Promise<void>;
     /**
      * 设置线数据
      * @param lines 线数据数组
      */
-    setLines(lines: BaseMapLine[]): Promise<void>;
+    setLines(lines: BaseMapLine$1[]): Promise<void>;
     /**
      * 更新地图层级
      * @param level 新的地图层级
      */
-    updateMapLevel?(level: MapLevel): void;
+    updateMapLevel?(level: MapLevel$1): void;
     /**
      * 设置点样式
      * @param seriesName 系列名称
      * @param styleProcessor 样式处理函数
      */
-    setPointStyle?(seriesName: string, styleProcessor: (point: BaseMapPoint) => void): void;
+    setPointStyle?(seriesName: string, styleProcessor: (point: BaseMapPoint$1) => void): void;
     /**
      * 注册额外的图标（仅部分渲染器支持）
      * @param icons 图标映射
@@ -242,6 +244,7 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
     updateMapLevel(curLevel: MapLevel): void;
     destroy(): void;
     private initChart;
+    private generateMapName;
     updateSeries: (series: SeriesOption[]) => void;
     private handleChangeArea;
     /**
@@ -290,134 +293,158 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
     private getCenterAndZoomByGeometryCoordinates;
 }
 
-declare enum LayerType {
-    POINT = "point",
-    LINE = "line",
-    POLYGON = "polygon",
-    ARC = "arc",
-    PATH = "path",
-    GEO = "geo"
-}
-interface LayerData {
-    type: LayerType;
-    data: any;
-}
-
 declare enum MapRendererType {
     ECHARTS = "echarts",
     DECKGL = "deckgl"
 }
 
 /**
- * DeckGL 地图渲染器适配器
- * 将 GlMap 类适配为统一的 IMapRenderer 接口
+ * 模块：GL 地图入口
+ * 说明：负责 DeckGL 实例的使用与业务图层（Geo、点、弧线）装配与更新。
+ * 设计要点：
+ * - 尽量将渲染状态（选中、时间轴）与数据状态（points/lines/geo）分离；
+ * - 通过 `MapLayerManager` 进行图层注册与替换，降低对 Deck 实例的直接依赖；
+ * - 动画与交互尽量采用轻量更新（避免重建不必要对象）。
  */
-declare class DeckglMapAdapter implements IMapRenderer {
-    private glMap;
-    private config;
+
+/**
+ * GlMap
+ * - 负责初始化 DeckGL 场景与各业务图层
+ * - 暴露数据写入（setPoints/setLines/setGEOData）与销毁接口
+ */
+declare class DeckglMap {
+    /** 实例唯一标识（用于从 DeckInstance Map 中获取实例） */
     private instanceId;
-    private isInitialized;
-    private initPromise;
-    private unsubscribeState;
-    constructor(config: MapRendererConfig);
+    /** 图标图集构建结果（iconAtlas、iconMapping）。注意：DataURL 字符串占用内存较大，后续可考虑缓存与复用。 */
+    private iconAtlasResult;
+    /** 当前动画时间（单位：秒的逻辑刻度） */
+    private currentTime;
+    /** 动画计时器任务句柄 */
+    private animationTimer;
+    /** 折线数据源 */
+    private lines;
+    /** 点数据源 */
+    private points;
+    /** 选中点 ID（用于放大/高亮显示） */
+    private selectedPointId;
+    /** 每 tick 前进的“秒数”（逻辑时间） */
+    private readonly ANIMATION_SPEED;
+    /** 可见尾迹长度（逻辑时间） */
+    private readonly TRAIL_LENGTH;
+    /** 时间循环区间（逻辑时间），默认 6 小时 */
+    private readonly TIME_LOOP;
+    private mode;
+    /** 曲率计算器，用于为 2D 曲线路径生成控制点偏移量 */
+    private readonly curvatureCalculator;
+    /** 2D 线路渲染器 */
+    private readonly lineRenderer2D;
+    /** 3D 线路渲染器 */
+    private readonly lineRenderer3D;
+    /** 额外注册的 SVG 图标集合（由业务侧注入），键为 icon key，值为 SVG 字符串 */
+    private extraSvgIcons;
     /**
-     * 初始化 DeckGL
+     * 构造函数
+     * @param instanceId Deck 实例标识
+     * @param container Canvas 容器
+     * @param callback 初始化完成回调（图标图集构建完毕后触发）
      */
-    private initDeckGL;
+    constructor(container: HTMLCanvasElement, mode: "2d" | "3d", callback: () => void);
+    private get currentDeckInstance();
     /**
-     * 创建 Canvas 元素
+     * 初始化 Deck 实例与图标图集
+     * 注意：
+     * - 这里通过容器宽度估算 minZoom，存在不同屏幕 DPR 下的视觉差异，可在后续优化中考虑；
+     * - 图标图集构建是异步的，构建完成前不应创建依赖图集的图层（本实现已在回调后触发动画）。
      */
+    private initDeck;
+    /**
+   * 创建 Canvas 元素
+   */
     private createCanvas;
     /**
-     * 设置事件处理器
+     * 地图空白处点击处理（取消点选中）
+     * 注意：`info` 为 deck 提供的拾取信息，这里仅判断 id 与图层，业务可按需扩展。
      */
-    private setupEventHandlers;
+    private handleClickMapView;
     /**
-     * 处理状态变化
+     * 设置国家/省份 GeoJSON 数据并注册基础底图图层
+     * @param geojsonData GeoJSON FeatureCollection
      */
-    private handleStateChange;
+    setGEOData(geojsonData: FeatureCollection): Promise<void>;
     /**
-     * 在 DeckGL 中更新地理数据
+     * 点对象点击处理（设置选中）
      */
-    private updateGeoDataInDeckGL;
+    private handleClickPoint;
     /**
-     * 在 DeckGL 中更新点数据
+     * 将业务点数据转换为 IconLayer 需要的数据结构
+     * 注意：此处统一在 z 轴抬升避免深度冲突；可通过 `size` 与 `color` 做运行时调优。
      */
-    private updatePointsInDeckGL;
+    private generateIconLayerData;
     /**
-     * 在 DeckGL 中更新线数据
+     * 根据输入数据构建 IconLayer 图层实例
+     * 注意：依赖 iconAtlasResult，如为空会导致图层纹理缺失，生产中建议增加兜底或等待图集就绪。
      */
-    private updateLinesInDeckGL;
+    private generateIconLayer;
     /**
-     * 等待初始化完成
+     * 设置点数据（内部仅记录与触发覆盖层更新）
      */
-    private waitForInit;
+    setPoints(points: BaseMapPoint$1[]): Promise<void>;
     /**
-     * 设置地理数据
+     * 设置折线数据
      */
-    setGeoData(boundary: FeatureCollection): Promise<void>;
+    setLines(lines: BaseMapLine$1[]): void;
     /**
-     * 规范化为 FeatureCollection 格式
+     * 将当前 LayerManager 中的图层刷新到 Deck 实例
+     * 注意：`getLayers` 返回包含固定顺序 id 的数组，若某些图层未注册，则返回可能包含 undefined，
+     * 生产中建议在 `MapLayerManager` 内部过滤空值以降低渲染层判断成本（此处仅注释，不改变逻辑）。
      */
-    private normalizeToFeatureCollection;
+    private updateLayer;
     /**
-     * 设置点数据
+     * 根据当前时间推进动画并更新图层
+     * 性能注意：每次都会重建 AnimatedArcLayer 实例，数量大时有创建开销，可考虑用 updateTriggers 或 attribute 更新替代。
      */
-    setPoints(points: BaseMapPoint[]): Promise<void>;
+    private updateArcAnimation;
     /**
-     * 转换点数据为 DeckGL 格式
+     * 根据选中状态重建点图层（用于同步 size/颜色等样式）
      */
-    private convertPointsForDeckGL;
+    private updateSelectionOverlay;
     /**
-     * 解析颜色值
+     * 业务无关 API：注册额外 SVG 图标，键为 icon key，值为内联 SVG 字符串。
+     * 若图集已构建，则重建图集并刷新当前点图层。
      */
-    private parseColor;
+    registerExtraSvgIcons(icons: Record<string, string>): Promise<void>;
     /**
-     * 设置线数据
+     * 重建 IconAtlas：合并默认与额外图标，更新图层
      */
-    setLines(lines: BaseMapLine[]): Promise<void>;
+    private rebuildIconAtlas;
     /**
-     * 转换线数据为 DeckGL 格式
+     * 启动动画定时器
+     * 注意：外部需在组件卸载时调用 `destroy` 释放计时器；也可进一步与 `DeckInstance` 生命周期对齐管理。
      */
-    private convertLinesForDeckGL;
+    private startArcAnimation;
     /**
-     * 更新地图层级
-     */
-    updateMapLevel(level: MapLevel$1): void;
-    /**
-     * 设置点样式
-     */
-    setPointStyle(seriesName: string, styleProcessor: (point: BaseMapPoint) => void): void;
-    /**
-     * 注册额外的图标
-     */
-    registerExtraIcons(icons: Record<string, string>): Promise<void>;
-    /**
-     * 调整地图大小
-     */
-    resize(): void;
-    /**
-     * 销毁渲染器
+     * 销毁内部资源
+     * 注意：目前仅销毁计时器，Deck 实例的销毁需由外部调用 `DeckInstance.removeInstance` 完成资源回收。
      */
     destroy(): void;
-    /**
-     * 获取渲染器类型
-     */
-    getType(): "deckgl";
 }
 
 /**
  * 地图渲染器工厂
  * 负责根据配置创建对应的渲染器实例
  */
-declare class MapRendererFactory {
+declare class OrchMap {
+    private config;
+    protected instance: EchartsMap | DeckglMap;
+    constructor(config: MapRendererConfig);
+    initMap(): Promise<void>;
     /**
      * 创建地图渲染器
      * @param type 渲染器类型
      * @param config 渲染器配置
      * @returns 地图渲染器实例
      */
-    static createRenderer(type: MapRendererType, config: MapRendererConfig): DeckglMapAdapter | EchartsMap<unknown>;
+    static createRenderer(type: MapRendererType, config: MapRendererConfig): void;
     /**
      * 检查是否支持指定的渲染器类型
      * @param type 渲染器类型
@@ -437,307 +464,4 @@ declare class MapRendererFactory {
     static getRecommendedType(config?: Partial<MapRendererConfig>): MapRendererType;
 }
 
-/**
- * 统一地图组件配置
- */
-interface UnifiedMapConfig extends MapRendererConfig {
-    /**
-     * 渲染器类型
-     * 如果不指定，将自动选择最佳渲染器
-     */
-    renderType?: MapRendererType;
-    /**
-     * 是否启用自动切换
-     * 当渲染器初始化失败时自动切换到备用渲染器
-     */
-    autoFallback?: boolean;
-    /**
-     * 自定义图标（仅 DeckGL 支持）
-     */
-    customIcons?: Record<string, string>;
-}
-/**
- * 统一地图组件
- * 提供统一的 API 来使用不同的地图渲染器
- */
-declare class UnifiedMapComponent {
-    private renderer;
-    private config;
-    private renderType;
-    private isInitialized;
-    constructor(config: UnifiedMapConfig);
-    /**
-     * 初始化渲染器
-     */
-    private initRenderer;
-    /**
-     * 回退到备用渲染器
-     */
-    private fallbackToAlternativeRenderer;
-    /**
-     * 获取当前使用的渲染器类型
-     */
-    getCurrentRendererType(): MapRendererType;
-    /**
-     * 切换渲染器类型
-     * @param type 新的渲染器类型
-     */
-    switchRenderer(type: MapRendererType): Promise<void>;
-    /**
-     * 保存当前状态
-     */
-    private saveCurrentState;
-    /**
-     * 恢复状态
-     */
-    private restoreState;
-    /**
-     * 设置地理数据
-     */
-    setGeoData(boundary: FeatureCollection): Promise<void>;
-    /**
-     * 设置点数据
-     */
-    setPoints(points: BaseMapPoint[]): Promise<void>;
-    /**
-     * 设置线数据
-     */
-    setLines(lines: BaseMapLine[]): Promise<void>;
-    /**
-     * 更新地图层级
-     */
-    updateMapLevel(level: MapLevel): void;
-    /**
-     * 设置点样式
-     */
-    setPointStyle(seriesName: string, styleProcessor: (point: BaseMapPoint) => void): void;
-    /**
-     * 注册额外的图标（仅 DeckGL 支持）
-     */
-    registerExtraIcons(icons: Record<string, string>): Promise<void>;
-    /**
-     * 调整地图大小
-     */
-    resize(): void;
-    /**
-     * 销毁组件
-     */
-    destroy(): void;
-    /**
-     * 检查是否已初始化
-     */
-    isReady(): boolean;
-    /**
-     * 等待初始化完成
-     */
-    waitForReady(): Promise<void>;
-}
-
-/**
- * ECharts 渲染器
- * 基于 ECharts 的 2D 地图渲染实现
- */
-
-type MapEventHandler$1 = (data: unknown) => void;
-declare class EChartsMapRenderer implements IMapRenderer {
-    private container;
-    private config;
-    private echartsMap;
-    private eventHandlers;
-    constructor(container: HTMLElement, config: MapRendererConfig);
-    /**
-     * 初始化 ECharts
-     */
-    private initECharts;
-    /**
-     * 渲染图层数据
-     */
-    render(data: LayerData[]): void;
-    /**
-     * 添加点图层
-     */
-    private addPointSeries;
-    /**
-     * 添加线图层
-     */
-    private addLineSeries;
-    /**
-     * 添加地理图层
-     */
-    private addGeoSeries;
-    /**
-     * 设置地图级别
-     */
-    setMapLevel(level: MapLevel, region?: string): Promise<void>;
-    /**
-     * 设置点数据
-     */
-    setPoints(points: BaseMapPoint[]): Promise<void>;
-    /**
-     * 设置线数据
-     */
-    setLines(lines: BaseMapLine[]): Promise<void>;
-    /**
-     * 设置地图数据
-     */
-    setGeoData(geoData: FeatureCollection$1): Promise<void>;
-    /**
-     * 监听事件
-     */
-    on(event: string, callback: MapEventHandler$1): void;
-    /**
-     * 取消监听事件
-     */
-    off(event: string, callback: MapEventHandler$1): void;
-    /**
-     * 触发事件
-     */
-    private emit;
-    /**
-     * 调整地图大小
-     */
-    resize(): void;
-    /**
-     * 销毁渲染器
-     */
-    destroy(): void;
-}
-
-/**
- * DeckGL 渲染器
- * 基于 DeckGL 的 3D 地图渲染实现
- */
-
-type MapEventHandler = (data: unknown) => void;
-declare class DeckGLMapRenderer implements IMapRenderer {
-    private container;
-    private config;
-    private glMap;
-    private eventHandlers;
-    constructor(container: HTMLElement, config: MapRendererConfig);
-    /**
-     * 初始化 DeckGL
-     */
-    private initDeckGL;
-    resize(): void;
-    /**
-     * 渲染图层数据
-     */
-    render(data: LayerData[]): void;
-    /**
-     * 添加点图层
-     */
-    private addPointLayer;
-    /**
-     * 添加线图层
-     */
-    private addLineLayer;
-    /**
-     * 添加地理图层
-     */
-    private addGeoLayer;
-    /**
-     * 设置地图级别
-     */
-    setMapLevel(level: MapLevel, region?: string): Promise<void>;
-    /**
-     * 添加点数据
-     */
-    setPoints(points: BaseMapPoint[]): Promise<void>;
-    /**
-     * 添加线数据
-     */
-    setLines(lines: BaseMapLine[]): Promise<void>;
-    /**
-     * 设置地图数据
-     */
-    setGeoData(geoData: FeatureCollection): Promise<void>;
-    /**
-     * 监听事件
-     */
-    on(event: string, callback: MapEventHandler): void;
-    /**
-     * 取消监听事件
-     */
-    off(event: string, callback: MapEventHandler): void;
-    /**
-     * 触发事件
-     */
-    private emit;
-    private isFeatureCollection;
-    /**
-     * 销毁渲染器
-     */
-    destroy(): void;
-}
-
-/**
- * 创建地图渲染器的便捷函数
- * @param type 渲染器类型
- * @param config 渲染器配置
- * @returns 地图渲染器实例
- */
-declare function createMapRenderer(type: MapRendererType, config: MapRendererConfig): IMapRenderer;
-/**
- * 创建统一地图组件的便捷函数
- * @param config 统一地图配置
- * @returns 统一地图组件实例
- */
-declare function createUnifiedMap(config: UnifiedMapConfig): UnifiedMapComponent;
-/**
- * 快速创建 ECharts 地图
- * @param config 地图配置
- * @returns 地图渲染器实例
- */
-declare function createEchartsMap(config: MapRendererConfig): IMapRenderer;
-/**
- * 快速创建 DeckGL 地图
- * @param config 地图配置
- * @returns 地图渲染器实例
- */
-declare function createDeckglMap(config: MapRendererConfig): IMapRenderer;
-
-/**
- * 地图渲染器常量定义
- */
-/**
- * 地图渲染器类型
- */
-declare const MAP_RENDERER_TYPES: {
-    readonly ECHARTS: "echarts";
-    readonly DECKGL: "deckgl";
-};
-/**
- * 渲染模式
- */
-declare const RENDER_MODES: {
-    readonly MODE_2D: "2d";
-    readonly MODE_3D: "3d";
-};
-/**
- * 默认配置
- */
-declare const DEFAULT_CONFIG: {
-    readonly ZOOM: 10;
-    readonly CENTER: {
-        readonly lat: 39.9;
-        readonly lng: 116.3;
-    };
-    readonly MODE: "2d";
-    readonly INTERACTIVE: true;
-    readonly SHOW_CONTROLS: false;
-};
-/**
- * 事件类型
- */
-declare const EVENT_TYPES: {
-    readonly POINT_CLICK: "pointClick";
-    readonly POINT_HOVER: "pointHover";
-    readonly LINE_CLICK: "lineClick";
-    readonly LINE_HOVER: "lineHover";
-    readonly MAP_CLICK: "mapClick";
-    readonly ZOOM: "zoom";
-    readonly PAN: "pan";
-};
-
-export { DEFAULT_CONFIG, DeckGLMapRenderer, DeckglMapAdapter, EChartsMapRenderer, EVENT_TYPES, EchartsMap, type IMapRenderer, MAP_RENDERER_TYPES, type MapRendererConfig, type MapRendererEvents, MapRendererFactory, MapRendererType, RENDER_MODES, UnifiedMapComponent, type UnifiedMapConfig, createDeckglMap, createEchartsMap, createMapRenderer, createUnifiedMap };
+export { MapRendererType, OrchMap as default };

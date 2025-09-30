@@ -12,6 +12,7 @@
   "dependencies": {
     "@orch-map/core": "workspace:*",
     "@orch-map/utils": "workspace:*",
+    "@orch-map/types": "workspace:*",
     "vue": "^3.4.0"
   },
   "devDependencies": {

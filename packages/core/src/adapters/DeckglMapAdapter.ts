@@ -27,45 +27,10 @@ export class DeckglMapAdapter implements IMapRenderer {
    * 初始化 DeckGL
    */
   private async initDeckGL(): Promise<void> {
-    const canvas = this.createCanvas()
-    
-    return new Promise<void>((resolve ) => {
-      this.glMap = new GlMap(
-        this.instanceId,
-        canvas,
-        this.config.mode || "2d",
-        async () => {
-          this.isInitialized = true
-          const geoJsonData = await MapStateManager.getGeoJsonData({
-            mapLevel: MapLevel.WORLD,
-            country: this.config.country ?? "100000",
-            region: this.config.adcode ?? "100000"
-          })
-          this.glMap?.setGEOData(geoJsonData)
-          this.setupEventHandlers()
-          resolve()
-        }
-      )
-    })
+
   }
 
-  /**
-   * 创建 Canvas 元素
-   */
-  private createCanvas(): HTMLCanvasElement {
-    const container = this.config.container as HTMLElement
-    
-    // 清空容器
-    container.innerHTML = ''
-    
-    // 创建 canvas
-    const canvas = document.createElement('canvas')
-    canvas.style.width = '100%'
-    canvas.style.height = '100%'
-    container.appendChild(canvas)
-    
-    return canvas
-  }
+
 
   /**
    * 设置事件处理器

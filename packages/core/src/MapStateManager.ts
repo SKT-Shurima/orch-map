@@ -17,7 +17,7 @@ export default class MapStateManager {
   private static _country: string = "100000" // 默认中国
   private static _adcode: string = "100000"
   private static _geoData?: FeatureCollection
-  private static _detailGeoData?: FeatureCollection
+  private static _mapVersion: 'standard' | 'international' = 'standard'
 
   // 属性监听器
   private static propertyListeners: Map<string, PropertyChangeListener[]> = new Map()
@@ -58,6 +58,15 @@ export default class MapStateManager {
     MapStateManager.notifyPropertyChange('adcode', adcode, oldValue)
   }
 
+  // 静态 getter/setter - mapVersion
+  public static get mapVersion(): 'standard' | 'international' {
+    return MapStateManager._mapVersion
+  }
+
+  public static set mapVersion(version: 'standard' | 'international') {
+    MapStateManager._mapVersion = version
+  }
+
   // 静态 getter/setter - geoData
   public static get geoData(): FeatureCollection | undefined {
     return MapStateManager._geoData
@@ -95,7 +104,6 @@ export default class MapStateManager {
     MapStateManager._country = "100000"
     MapStateManager._adcode = "100000"
     MapStateManager._geoData = undefined
-    MapStateManager._detailGeoData = undefined
   }
 
   /**

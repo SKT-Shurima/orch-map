@@ -1,5 +1,6 @@
 import { defineComponent, ref, onMounted } from 'vue'
-import { createUnifiedMap, MapRendererType, UnifiedMapComponent } from '@orch-map/core'
+import  OrchMap, { MapRendererType } from '@orch-map/core'
+import { MapLevel } from '@orch-map/types'
 
 
 export default defineComponent({
@@ -12,14 +13,22 @@ export default defineComponent({
   },
   setup(props) {
     const geoContainer = ref<HTMLElement | null>(null);
-    const mapInstance = ref<UnifiedMapComponent | null>(null);
-    
+    const mapInstance = ref<OrchMap | null>(null);
+
     onMounted(() => {
       if (geoContainer.value) {
-        mapInstance.value = createUnifiedMap({
-          container: geoContainer.value,
+        mapInstance.value = new OrchMap({
           renderType: MapRendererType.DECKGL,
-          autoFallback: true,
+          mode: "2d",
+          container: geoContainer.value,
+          curLevel: MapLevel.WORLD,
+          country: "000000",
+          adcode: "000000",
+          events: {
+            onMapClick: (event) => {
+              console.log(event)
+            }
+          }
         });
       }
     });
