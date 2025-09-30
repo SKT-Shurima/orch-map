@@ -1,0 +1,25 @@
+.geoMapWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-image: url("/images/site/world-map.png"),
+    linear-gradient(to top, #1f1447, #133179);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+.tenLines {
+  position: absolute;
+  right: 1.2rem;
+  bottom: 1.2rem;
+  width: 8.4rem;
+  height: 11.2rem;
+  font-size: 8rem;
+  background-image: url("@/assets/imgs/map/tenlines.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100% 100%;
+}
+
+

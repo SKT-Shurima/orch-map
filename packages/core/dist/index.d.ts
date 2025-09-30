@@ -1,590 +1,743 @@
-import { GeoConfig, GeoEventHandlers, ThemeConfig, AnimationConfig, TooltipConfig, GeoData } from '@orch-map/types';
-export { AnimationConfig, DataPoint, GeoConfig, GeoData, GeoEventHandlers, GeoSeriesConfig, LegendConfig, MapConfig, ThemeConfig, TooltipConfig } from '@orch-map/types';
+import { FeatureCollection, AnyObj, MapLevel as MapLevel$1 } from '@orch-map/types';
+import { SeriesOption } from 'echarts';
+import { FeatureCollection as FeatureCollection$1 } from 'geojson';
 
 /**
- * 基于 ECharts 的 Geo 组件二次封装
- * 提供更简洁的 API 来操作地理坐标系
+ * @orch-map/types - 地图组件类型定义
+ * 地理空间数据类型定义
  */
-declare class Geo {
-    private echartsInstance;
-    private container;
-    private config;
-    private registeredMaps;
-    private eventHandlers;
-    private themeManager;
-    private animationManager;
-    private tooltipManager;
-    constructor(container: HTMLElement, config: GeoConfig);
-    private initialize;
-    private setupContainer;
-    private registerMapData;
-    private setupGeoOption;
-    private bindEvents;
+type Coordinate = [number, number];
+
+declare enum MapLevel {
+    WORLD = "world",
+    COUNTRY = "country",
+    PROVINCE = "province",
+    CITY = "city",
+    COUNTY = "county"
+}
+interface BaseMapPoint {
+    id: string;
+    coordinate: Coordinate;
+    icon?: string;
+    color?: [number, number, number, number];
+    size?: number;
+    label?: string;
+    tooltip?: string;
+    [key: string]: any;
+}
+interface BaseMapLine {
+    id: string;
+    startCoordinate: Coordinate;
+    endCoordinate: Coordinate;
+    color?: [number, number, number, number];
+    width?: number;
+    style?: 'solid' | 'dashed' | 'dotted';
+    [key: string]: any;
+}
+
+/**
+ * 地图渲染器事件接口
+ */
+interface MapRendererEvents {
+    /** 点击点事件 */
+    onPointClick?: (point: BaseMapPoint) => void;
+    /** 悬停点事件 */
+    onPointHover?: (point: BaseMapPoint | null) => void;
+    /** 点击线事件 */
+    onLineClick?: (line: BaseMapLine) => void;
+    /** 悬停线事件 */
+    onLineHover?: (line: BaseMapLine | null) => void;
+    /** 点击区域事件 */
+    onAreaClick?: (area: any) => void;
+    /** 悬停区域事件 */
+    onAreaHover?: (area: any | null) => void;
+    /** 双击区域事件 */
+    onAreaDoubleClick?: (area: any) => void;
+    /** 地图点击事件 */
+    onMapClick?: (event: {
+        lat: number;
+        lng: number;
+    }) => void;
+    /** 地图缩放事件 */
+    onZoom?: (level: number) => void;
+    /** 地图平移事件 */
+    onPan?: (center: {
+        lat: number;
+        lng: number;
+    }) => void;
+}
+/**
+ * 地图渲染器配置接口
+ */
+interface MapRendererConfig {
+    /** 容器元素 */
+    container: HTMLElement | string;
+    /** 当前地图层级 */
+    curLevel?: MapLevel;
+    /** 行政区划代码 */
+    adcode?: string;
+    /** 国家代码 */
+    country?: string;
+    /** 详细地图数据 */
+    detailMap?: string;
+    /** 中心国家 */
+    centralCountry?: string;
+    /** 渲染模式 */
+    mode?: "2d" | "3d";
+    /** 事件处理器 */
+    events?: MapRendererEvents;
+    /** 地图中心点 */
+    center?: {
+        lat: number;
+        lng: number;
+    };
+    /** 缩放级别 */
+    zoom?: number;
+    /** 地图样式 */
+    style?: string;
+    /** 是否显示控制面板 */
+    showControls?: boolean;
+    /** 是否启用交互 */
+    interactive?: boolean;
+}
+/**
+ * 地图渲染器统一接口
+ * 所有地图渲染器都必须实现此接口
+ */
+interface IMapRenderer {
     /**
-     * 更新地图配置
+     * 设置地理数据
+     * @param boundary 边界数据
+     * @param detail 详细数据（可选）
      */
-    updateConfig(newConfig: Partial<GeoConfig>): void;
+    setGeoData(boundary: FeatureCollection, detail?: FeatureCollection): Promise<void>;
     /**
-     * 设置事件处理器
+     * 设置点数据
+     * @param points 点数据数组
      */
-    setEventHandlers(handlers: Partial<GeoEventHandlers>): void;
+    setPoints(points: BaseMapPoint[]): Promise<void>;
     /**
-     * 高亮指定区域
+     * 设置线数据
+     * @param lines 线数据数组
      */
-    highlightRegion(regionName: string): void;
+    setLines(lines: BaseMapLine[]): Promise<void>;
     /**
-     * 取消高亮指定区域
+     * 更新地图层级
+     * @param level 新的地图层级
      */
-    downplayRegion(regionName: string): void;
+    updateMapLevel?(level: MapLevel): void;
     /**
-     * 重置地图视图
+     * 设置点样式
+     * @param seriesName 系列名称
+     * @param styleProcessor 样式处理函数
      */
-    resetView(): void;
+    setPointStyle?(seriesName: string, styleProcessor: (point: BaseMapPoint) => void): void;
     /**
-     * 获取地图实例
+     * 注册额外的图标（仅部分渲染器支持）
+     * @param icons 图标映射
      */
-    getEChartsInstance(): any;
+    registerExtraIcons?(icons: Record<string, string>): Promise<void>;
     /**
-     * 获取当前配置
-     */
-    getConfig(): GeoConfig;
-    /**
-     * 调整容器大小
+     * 调整地图大小
      */
     resize(): void;
     /**
-     * 应用图例配置
-     */
-    private applyLegend;
-    /**
-     * 设置主题
-     */
-    setTheme(themeName: string): boolean;
-    /**
-     * 设置动画
-     */
-    setAnimation(animationName: string): boolean;
-    /**
-     * 设置提示框
-     */
-    setTooltip(tooltipName: string): boolean;
-    /**
-     * 创建自定义主题
-     */
-    createCustomTheme(name: string, baseTheme?: string, overrides?: Partial<ThemeConfig>): ThemeConfig;
-    /**
-     * 创建自定义动画
-     */
-    createCustomAnimation(name: string, baseAnimation?: string, overrides?: Partial<AnimationConfig>): AnimationConfig & {
-        name: string;
-    };
-    /**
-     * 创建自定义提示框
-     */
-    createCustomTooltip(name: string, baseTooltip?: string, overrides?: Partial<TooltipConfig>): TooltipConfig;
-    /**
-     * 获取可用主题列表
-     */
-    getAvailableThemes(): string[];
-    /**
-     * 获取可用动画列表
-     */
-    getAvailableAnimations(): string[];
-    /**
-     * 获取可用提示框列表
-     */
-    getAvailableTooltips(): string[];
-    /**
-     * 添加数据系列（增强版，支持动画）
-     */
-    addSeries(seriesConfig: any): void;
-    /**
-     * 更新数据（带动画效果）
-     */
-    updateData(newData: any[]): void;
-    /**
-     * 切换区域（带动画效果）
-     */
-    switchRegion(fromRegion: string, toRegion: string): void;
-    /**
-     * 销毁 Geo 实例
+     * 销毁渲染器
      */
     destroy(): void;
 }
 
 /**
- * 地图数据注册管理器
- * 用于管理和注册各种地图数据
+ * @description: Series 中的点的基本信息
+ * 用于渲染数据列的时候，每个点所必备的信息
  */
-declare class MapRegistry {
-    private static instance;
-    private registeredMaps;
-    private echartsInstance;
-    private constructor();
-    static getInstance(): MapRegistry;
-    /**
-     * 设置 ECharts 实例
-     */
-    setEChartsInstance(echarts: any): void;
-    /**
-     * 注册地图数据
-     */
-    registerMap(mapName: string, mapData: any): Promise<void>;
-    /**
-     * 检查地图是否已注册
-     */
-    isMapRegistered(mapName: string): boolean;
-    /**
-     * 获取已注册的地图数据
-     */
-    getMapData(mapName: string): any;
-    /**
-     * 获取所有已注册的地图名称
-     */
-    getRegisteredMapNames(): string[];
-    /**
-     * 移除地图注册
-     */
-    unregisterMap(mapName: string): void;
-    /**
-     * 清空所有注册的地图
-     */
-    clear(): void;
-    /**
-     * 批量注册地图数据
-     */
-    registerMaps(mapDataMap: Record<string, any>): Promise<void>;
+interface PointSeriesDataItem<T> {
+    name: string;
+    value: [number, number];
+    businessInfo?: T;
+    graphInfo?: AnyObj;
+    symbol?: string;
+    symbolSize?: number | [number, number];
+    itemStyle?: AnyObj;
+    label?: AnyObj;
+    tooltip?: AnyObj;
 }
-
+declare enum PointTypeEnum {
+    SCATTER = "scatter",
+    EFFECT_SCATTER = "effectScatter"
+}
 /**
- * Geo 组件工具类
- * 提供常用的地图操作和数据处理功能
+ * @description: 点击或者hover的散点图的信息
  */
-declare class GeoUtils {
-    /**
-     * 计算地理边界框
-     */
-    static calculateBounds(data: GeoData[]): {
-        minLng: number;
-        maxLng: number;
-        minLat: number;
-        maxLat: number;
+interface PointParam<T> {
+    name: string;
+    componentType: "series";
+    componentSubType: "scatter";
+    seriesName: string;
+    seriesType: PointTypeEnum;
+    componentIndex: number;
+    event: {
+        event: AnyObj;
     };
-    /**
-     * 计算地理中心点
-     */
-    static calculateCenter(data: GeoData[]): [number, number];
-    /**
-     * 计算合适的缩放级别
-     */
-    static calculateZoom(data: GeoData[], containerSize: {
-        width: number;
-        height: number;
-    }): number;
-    /**
-     * 根据数据自动配置 Geo
-     */
-    static autoConfigGeo(data: GeoData[], containerSize: {
-        width: number;
-        height: number;
-    }): Partial<GeoConfig>;
-    /**
-     * 数据过滤 - 按数值范围
-     */
-    static filterByValue(data: GeoData[], minValue: number, maxValue: number): GeoData[];
-    /**
-     * 数据过滤 - 按地理范围
-     */
-    static filterByBounds(data: GeoData[], bounds: {
-        minLng: number;
-        maxLng: number;
-        minLat: number;
-        maxLat: number;
-    }): GeoData[];
-    /**
-     * 数据排序 - 按数值
-     */
-    static sortByValue(data: GeoData[], ascending?: boolean): GeoData[];
-    /**
-     * 数据排序 - 按距离中心点的距离
-     */
-    static sortByDistance(data: GeoData[], center: [number, number], ascending?: boolean): GeoData[];
-    /**
-     * 计算两点间距离（简单欧几里得距离）
-     */
-    static calculateDistance(point1: [number, number, number], point2: [number, number]): number;
-    /**
-     * 数据聚合 - 按区域
-     */
-    static aggregateByRegion(data: GeoData[], regionKey: string): Record<string, GeoData[]>;
-    /**
-     * 生成颜色映射
-     */
-    static generateColorMap(data: GeoData[], colorScheme?: string[]): Map<number, string>;
+    geoIndex: number;
+    data: PointSeriesDataItem<T>;
 }
 
-/**
- * 主题管理器
- * 提供预设主题和自定义主题功能
- */
-declare class ThemeManager {
-    private static instance;
-    private themes;
-    private currentTheme;
-    private constructor();
-    static getInstance(): ThemeManager;
-    /**
-     * 初始化默认主题
-     */
-    private initializeDefaultThemes;
-    /**
-     * 注册主题
-     */
-    registerTheme(theme: ThemeConfig): void;
-    /**
-     * 获取主题
-     */
-    getTheme(name: string): ThemeConfig | undefined;
-    /**
-     * 获取所有主题名称
-     */
-    getThemeNames(): string[];
-    /**
-     * 设置当前主题
-     */
-    setCurrentTheme(name: string): boolean;
-    /**
-     * 获取当前主题
-     */
-    getCurrentTheme(): ThemeConfig | undefined;
-    /**
-     * 获取当前主题名称
-     */
-    getCurrentThemeName(): string;
-    /**
-     * 删除主题
-     */
-    removeTheme(name: string): boolean;
-    /**
-     * 应用主题到 ECharts 配置
-     */
-    applyTheme(theme: ThemeConfig, baseConfig?: any): any;
-    /**
-     * 创建自定义主题
-     */
-    createCustomTheme(name: string, baseTheme?: string, overrides?: Partial<ThemeConfig>): ThemeConfig;
-}
-
-/**
- * 动画管理器
- * 提供各种动画效果和配置
- */
-declare class AnimationManager {
-    private static instance;
-    private animations;
-    private constructor();
-    static getInstance(): AnimationManager;
-    /**
-     * 初始化默认动画配置
-     */
-    private initializeDefaultAnimations;
-    /**
-     * 注册动画配置
-     */
-    registerAnimation(animation: AnimationConfig & {
-        name: string;
-    }): void;
-    /**
-     * 获取动画配置
-     */
-    getAnimation(name: string): (AnimationConfig & {
-        name: string;
-    }) | undefined;
-    /**
-     * 获取所有动画名称
-     */
-    getAnimationNames(): string[];
-    /**
-     * 应用动画到 ECharts 配置
-     */
-    applyAnimation(animation: AnimationConfig, baseConfig?: any): any;
-    /**
-     * 获取动画类型对应的 ECharts 动画类型
-     */
-    private getAnimationType;
-    /**
-     * 创建数据加载动画
-     */
-    createDataLoadingAnimation(data: any[], animation: AnimationConfig): any[];
-    /**
-     * 创建区域切换动画
-     */
-    createRegionSwitchAnimation(fromRegion: string, toRegion: string, animation: AnimationConfig): any;
-    /**
-     * 创建数据更新动画
-     */
-    createDataUpdateAnimation(oldData: any[], newData: any[], animation: AnimationConfig): any;
-    /**
-     * 创建自定义动画
-     */
-    createCustomAnimation(name: string, baseAnimation?: string, overrides?: Partial<AnimationConfig>): AnimationConfig & {
-        name: string;
+interface GEOParam {
+    name: string;
+    componentType: "geo";
+    event: {
+        event: AnyObj;
     };
-    /**
-     * 获取动画缓动函数
-     */
-    getEasingFunctions(): string[];
-}
-
-/**
- * 提示框管理器
- * 提供丰富的提示框功能和自定义模板
- */
-declare class TooltipManager {
-    private static instance;
-    private tooltips;
-    private constructor();
-    static getInstance(): TooltipManager;
-    /**
-     * 初始化默认提示框配置
-     */
-    private initializeDefaultTooltips;
-    /**
-     * 注册提示框配置
-     */
-    registerTooltip(tooltip: TooltipConfig & {
+    geoIndex: number;
+    region: {
         name: string;
-    }): void;
-    /**
-     * 获取提示框配置
-     */
-    getTooltip(name: string): TooltipConfig | undefined;
-    /**
-     * 获取所有提示框名称
-     */
-    getTooltipNames(): string[];
-    /**
-     * 应用提示框到 ECharts 配置
-     */
-    applyTooltip(tooltip: TooltipConfig, baseConfig?: any): any;
-    /**
-     * 获取默认格式化器
-     */
-    private getDefaultFormatter;
-    /**
-     * 创建自定义格式化器
-     */
-    createCustomFormatter(template: string, dataFields?: string[]): (params: any) => string;
-    /**
-     * 创建数据统计提示框
-     */
-    createDataStatsTooltip(data: any[]): TooltipConfig;
-    /**
-     * 计算数据统计信息
-     */
-    private calculateDataStats;
-    /**
-     * 创建区域信息提示框
-     */
-    createRegionInfoTooltip(regionData: any): TooltipConfig;
-    /**
-     * 创建自定义提示框
-     */
-    createCustomTooltip(name: string, baseTooltip?: string, overrides?: Partial<TooltipConfig>): TooltipConfig;
-}
-
-/**
- * 数据可视化增强器
- * 提供热力图、流向图、等值线图等高级可视化功能
- */
-declare class DataVisualization {
-    private static instance;
-    private constructor();
-    static getInstance(): DataVisualization;
-    /**
-     * 创建热力图配置
-     */
-    createHeatmapConfig(data: GeoData[], options?: {
-        radius?: number;
-        intensity?: number;
-        colorScheme?: string[];
-        blur?: number;
-    }): any;
-    /**
-     * 创建流向图配置
-     */
-    createFlowConfig(fromData: GeoData[], toData: GeoData[], options?: {
-        lineStyle?: any;
-        effectStyle?: any;
-        symbolSize?: number;
-        color?: string;
-    }): any;
-    /**
-     * 创建等值线图配置
-     */
-    createContourConfig(data: GeoData[], options?: {
-        levels?: number[];
-        colorScheme?: string[];
-        lineWidth?: number;
-    }): any;
-    /**
-     * 创建散点图配置（增强版）
-     */
-    createScatterConfig(data: GeoData[], options?: {
-        symbolSize?: number | ((value: any) => number);
-        color?: string | ((value: any) => string);
-        symbol?: string;
-        label?: any;
-        emphasis?: any;
-    }): any;
-    /**
-     * 创建效果散点图配置
-     */
-    createEffectScatterConfig(data: GeoData[], options?: {
-        symbolSize?: number;
-        color?: string;
-        effectType?: 'ripple';
-        rippleEffect?: any;
-    }): any;
-    /**
-     * 创建地图配置
-     */
-    createMapConfig(data: GeoData[], mapName: string, options?: {
-        itemStyle?: any;
-        emphasis?: any;
-        select?: any;
-        label?: any;
-    }): any;
-    /**
-     * 创建组合图表配置
-     */
-    createCombinedConfig(configs: Array<{
-        type: 'scatter' | 'effectScatter' | 'heatmap' | 'lines' | 'map' | 'contour';
-        data: GeoData[];
-        options?: any;
-    }>): any[];
-    /**
-     * 数据聚类
-     */
-    clusterData(data: GeoData[], options?: {
-        clusterRadius?: number;
-        maxZoom?: number;
-        minPoints?: number;
-    }): Array<{
-        center: [number, number];
-        points: GeoData[];
-        count: number;
-    }>;
-    /**
-     * 计算两点间距离
-     */
-    private calculateDistance;
-    /**
-     * 计算中心点
-     */
-    private calculateCenter;
-    /**
-     * 生成颜色渐变
-     */
-    generateColorGradient(startColor: string, endColor: string, steps: number): string[];
-    /**
-     * 颜色插值
-     */
-    private interpolateColor;
-}
-
-/**
- * 交互功能增强器
- * 提供区域搜索、数据筛选、交互控制等功能
- */
-declare class InteractiveFeatures {
-    private static instance;
-    private searchIndex;
-    private filterCache;
-    private constructor();
-    static getInstance(): InteractiveFeatures;
-    /**
-     * 构建搜索索引
-     */
-    buildSearchIndex(data: GeoData[]): void;
-    /**
-     * 添加到搜索索引
-     */
-    private addToIndex;
-    /**
-     * 搜索数据
-     */
-    search(query: string, data: GeoData[]): GeoData[];
-    /**
-     * 按数值范围筛选
-     */
-    filterByValue(data: GeoData[], minValue: number, maxValue: number): GeoData[];
-    /**
-     * 按地理范围筛选
-     */
-    filterByBounds(data: GeoData[], bounds: {
-        minLng: number;
-        maxLng: number;
-        minLat: number;
-        maxLat: number;
-    }): GeoData[];
-    /**
-     * 按区域筛选
-     */
-    filterByRegion(data: GeoData[], regionNames: string[]): GeoData[];
-    /**
-     * 多条件筛选
-     */
-    multiFilter(data: GeoData[], filters: {
-        search?: string;
-        valueRange?: [number, number];
-        bounds?: {
-            minLng: number;
-            maxLng: number;
-            minLat: number;
-            maxLat: number;
-        };
-        regions?: string[];
-    }): GeoData[];
-    /**
-     * 数据排序
-     */
-    sortData(data: GeoData[], sortBy: 'name' | 'value' | 'distance', order?: 'asc' | 'desc', center?: [number, number]): GeoData[];
-    /**
-     * 计算两点间距离
-     */
-    private calculateDistance;
-    /**
-     * 获取拼音首字母
-     */
-    private getPinyinInitials;
-    /**
-     * 创建数据统计
-     */
-    createDataStats(data: GeoData[]): {
-        total: number;
-        average: number;
-        max: number;
-        min: number;
-        median: number;
-        stdDev: number;
+        adcode?: string;
     };
-    /**
-     * 创建数据分组
-     */
-    groupData(data: GeoData[], groupBy: 'value' | 'region' | 'custom', groupFunction?: (item: GeoData) => string): Map<string, GeoData[]>;
-    /**
-     * 创建数据导出
-     */
-    exportData(data: GeoData[], format?: 'json' | 'csv' | 'geojson'): string;
-    /**
-     * 创建数据导入
-     */
-    importData(data: string, format?: 'json' | 'csv' | 'geojson'): GeoData[];
-    /**
-     * 清除缓存
-     */
-    clearCache(): void;
 }
 
-export { AnimationManager, DataVisualization, Geo, GeoUtils, InteractiveFeatures, MapRegistry, ThemeManager, TooltipManager };
+interface EchartsMapEvents<T> {
+    onHoverPoint?: (params: PointParam<T>) => void;
+    onClickPoint?: (params: PointParam<T>) => void;
+    onClickArea?: (params?: GEOParam) => void;
+    onDoubleClickArea?: (nextLevel: MapLevel, params: GEOParam) => void;
+    onHoverArea?: (params?: GEOParam, pointsInRegion?: string[]) => void;
+    onUpdateGeo?: (params: FeatureCollection$1) => void;
+    onZoom?: (zoom: number) => void;
+}
+interface EchartsMapOptions<T> {
+    events?: EchartsMapEvents<T>;
+}
+declare class EchartsMap<T = unknown> implements IMapRenderer {
+    private detailMap;
+    private centralCountry?;
+    private events;
+    private container;
+    private chartInstance;
+    private series;
+    private boundaryLoading;
+    private config;
+    private unsubscribeState;
+    constructor(container: HTMLElement | string, options: EchartsMapOptions<T> | MapRendererConfig);
+    private get currentMapIsChina();
+    private get detailGeojson();
+    private setChartOption;
+    setGEOData(boundary: FeatureCollection$1, detail: FeatureCollection$1): void;
+    private handleChangeAreaImpl;
+    private checkPointInFeature;
+    private checkPointInPolygon;
+    private mouseoverHandler;
+    private mouseoutHandler;
+    private checkMapEntryEligibility;
+    private clickHandler;
+    private getPostCodeByGeoFeatures;
+    private dbClickHandler;
+    private waitForBoundaryLoadingToBeFalse;
+    private transSeriesCoordinate2GeoJsonXY;
+    private updateSeriesImpl;
+    setPointStyleInternal(targetSeriesName: string, processFn: (dataItem: PointSeriesDataItem<T>) => void): void;
+    private redrawMap;
+    private registerEvents;
+    resizeMap: () => void;
+    updateMapLevel(curLevel: MapLevel): void;
+    destroy(): void;
+    private initChart;
+    updateSeries: (series: SeriesOption[]) => void;
+    private handleChangeArea;
+    /**
+     * 处理状态变化
+     */
+    private handleStateChange;
+    /**
+     * 在 ECharts 中更新点数据
+     */
+    private updatePointsInEcharts;
+    /**
+     * 在 ECharts 中更新线数据
+     */
+    private updateLinesInEcharts;
+    /**
+     * 将统一的事件格式转换为 ECharts 需要的格式
+     */
+    private convertEventsToEchartsFormat;
+    /**
+     * 根据 ECharts 事件参数查找对应的点数据
+     */
+    private findPointByData;
+    /**
+     * 规范化地理数据格式
+     */
+    private normalizeGeoData;
+    /**
+     * 将点数据转换为 ECharts Series
+     */
+    private convertPointsToSeries;
+    /**
+     * 将线数据转换为 ECharts Series
+     */
+    private convertLinesToSeries;
+    setGeoData(boundary: FeatureCollection$1): Promise<void>;
+    setPoints(points: BaseMapPoint[]): Promise<void>;
+    setLines(lines: BaseMapLine[]): Promise<void>;
+    updateMapView(config: {
+        curLevel: MapLevel;
+        adcode: string;
+        country: string;
+    }): Promise<void>;
+    setPointStyle(seriesName: string, styleProcessor: (point: BaseMapPoint) => void): void;
+    resize(): void;
+    getType(): "echarts";
+    private getCenterAndZoomByGeometryCoordinates;
+}
+
+declare enum LayerType {
+    POINT = "point",
+    LINE = "line",
+    POLYGON = "polygon",
+    ARC = "arc",
+    PATH = "path",
+    GEO = "geo"
+}
+interface LayerData {
+    type: LayerType;
+    data: any;
+}
+
+declare enum MapRendererType {
+    ECHARTS = "echarts",
+    DECKGL = "deckgl"
+}
+
+/**
+ * DeckGL 地图渲染器适配器
+ * 将 GlMap 类适配为统一的 IMapRenderer 接口
+ */
+declare class DeckglMapAdapter implements IMapRenderer {
+    private glMap;
+    private config;
+    private instanceId;
+    private isInitialized;
+    private initPromise;
+    private unsubscribeState;
+    constructor(config: MapRendererConfig);
+    /**
+     * 初始化 DeckGL
+     */
+    private initDeckGL;
+    /**
+     * 创建 Canvas 元素
+     */
+    private createCanvas;
+    /**
+     * 设置事件处理器
+     */
+    private setupEventHandlers;
+    /**
+     * 处理状态变化
+     */
+    private handleStateChange;
+    /**
+     * 在 DeckGL 中更新地理数据
+     */
+    private updateGeoDataInDeckGL;
+    /**
+     * 在 DeckGL 中更新点数据
+     */
+    private updatePointsInDeckGL;
+    /**
+     * 在 DeckGL 中更新线数据
+     */
+    private updateLinesInDeckGL;
+    /**
+     * 等待初始化完成
+     */
+    private waitForInit;
+    /**
+     * 设置地理数据
+     */
+    setGeoData(boundary: FeatureCollection): Promise<void>;
+    /**
+     * 规范化为 FeatureCollection 格式
+     */
+    private normalizeToFeatureCollection;
+    /**
+     * 设置点数据
+     */
+    setPoints(points: BaseMapPoint[]): Promise<void>;
+    /**
+     * 转换点数据为 DeckGL 格式
+     */
+    private convertPointsForDeckGL;
+    /**
+     * 解析颜色值
+     */
+    private parseColor;
+    /**
+     * 设置线数据
+     */
+    setLines(lines: BaseMapLine[]): Promise<void>;
+    /**
+     * 转换线数据为 DeckGL 格式
+     */
+    private convertLinesForDeckGL;
+    /**
+     * 更新地图层级
+     */
+    updateMapLevel(level: MapLevel$1): void;
+    /**
+     * 设置点样式
+     */
+    setPointStyle(seriesName: string, styleProcessor: (point: BaseMapPoint) => void): void;
+    /**
+     * 注册额外的图标
+     */
+    registerExtraIcons(icons: Record<string, string>): Promise<void>;
+    /**
+     * 调整地图大小
+     */
+    resize(): void;
+    /**
+     * 销毁渲染器
+     */
+    destroy(): void;
+    /**
+     * 获取渲染器类型
+     */
+    getType(): "deckgl";
+}
+
+/**
+ * 地图渲染器工厂
+ * 负责根据配置创建对应的渲染器实例
+ */
+declare class MapRendererFactory {
+    /**
+     * 创建地图渲染器
+     * @param type 渲染器类型
+     * @param config 渲染器配置
+     * @returns 地图渲染器实例
+     */
+    static createRenderer(type: MapRendererType, config: MapRendererConfig): DeckglMapAdapter | EchartsMap<unknown>;
+    /**
+     * 检查是否支持指定的渲染器类型
+     * @param type 渲染器类型
+     * @returns 是否支持
+     */
+    static isSupported(type: string): type is MapRendererType;
+    /**
+     * 获取所有支持的渲染器类型
+     * @returns 支持的渲染器类型列表
+     */
+    static getSupportedTypes(): MapRendererType[];
+    /**
+     * 根据环境自动选择最佳渲染器
+     * @param config 渲染器配置
+     * @returns 推荐的渲染器类型
+     */
+    static getRecommendedType(config?: Partial<MapRendererConfig>): MapRendererType;
+}
+
+/**
+ * 统一地图组件配置
+ */
+interface UnifiedMapConfig extends MapRendererConfig {
+    /**
+     * 渲染器类型
+     * 如果不指定，将自动选择最佳渲染器
+     */
+    renderType?: MapRendererType;
+    /**
+     * 是否启用自动切换
+     * 当渲染器初始化失败时自动切换到备用渲染器
+     */
+    autoFallback?: boolean;
+    /**
+     * 自定义图标（仅 DeckGL 支持）
+     */
+    customIcons?: Record<string, string>;
+}
+/**
+ * 统一地图组件
+ * 提供统一的 API 来使用不同的地图渲染器
+ */
+declare class UnifiedMapComponent {
+    private renderer;
+    private config;
+    private renderType;
+    private isInitialized;
+    constructor(config: UnifiedMapConfig);
+    /**
+     * 初始化渲染器
+     */
+    private initRenderer;
+    /**
+     * 回退到备用渲染器
+     */
+    private fallbackToAlternativeRenderer;
+    /**
+     * 获取当前使用的渲染器类型
+     */
+    getCurrentRendererType(): MapRendererType;
+    /**
+     * 切换渲染器类型
+     * @param type 新的渲染器类型
+     */
+    switchRenderer(type: MapRendererType): Promise<void>;
+    /**
+     * 保存当前状态
+     */
+    private saveCurrentState;
+    /**
+     * 恢复状态
+     */
+    private restoreState;
+    /**
+     * 设置地理数据
+     */
+    setGeoData(boundary: FeatureCollection): Promise<void>;
+    /**
+     * 设置点数据
+     */
+    setPoints(points: BaseMapPoint[]): Promise<void>;
+    /**
+     * 设置线数据
+     */
+    setLines(lines: BaseMapLine[]): Promise<void>;
+    /**
+     * 更新地图层级
+     */
+    updateMapLevel(level: MapLevel): void;
+    /**
+     * 设置点样式
+     */
+    setPointStyle(seriesName: string, styleProcessor: (point: BaseMapPoint) => void): void;
+    /**
+     * 注册额外的图标（仅 DeckGL 支持）
+     */
+    registerExtraIcons(icons: Record<string, string>): Promise<void>;
+    /**
+     * 调整地图大小
+     */
+    resize(): void;
+    /**
+     * 销毁组件
+     */
+    destroy(): void;
+    /**
+     * 检查是否已初始化
+     */
+    isReady(): boolean;
+    /**
+     * 等待初始化完成
+     */
+    waitForReady(): Promise<void>;
+}
+
+/**
+ * ECharts 渲染器
+ * 基于 ECharts 的 2D 地图渲染实现
+ */
+
+type MapEventHandler$1 = (data: unknown) => void;
+declare class EChartsMapRenderer implements IMapRenderer {
+    private container;
+    private config;
+    private echartsMap;
+    private eventHandlers;
+    constructor(container: HTMLElement, config: MapRendererConfig);
+    /**
+     * 初始化 ECharts
+     */
+    private initECharts;
+    /**
+     * 渲染图层数据
+     */
+    render(data: LayerData[]): void;
+    /**
+     * 添加点图层
+     */
+    private addPointSeries;
+    /**
+     * 添加线图层
+     */
+    private addLineSeries;
+    /**
+     * 添加地理图层
+     */
+    private addGeoSeries;
+    /**
+     * 设置地图级别
+     */
+    setMapLevel(level: MapLevel, region?: string): Promise<void>;
+    /**
+     * 设置点数据
+     */
+    setPoints(points: BaseMapPoint[]): Promise<void>;
+    /**
+     * 设置线数据
+     */
+    setLines(lines: BaseMapLine[]): Promise<void>;
+    /**
+     * 设置地图数据
+     */
+    setGeoData(geoData: FeatureCollection$1): Promise<void>;
+    /**
+     * 监听事件
+     */
+    on(event: string, callback: MapEventHandler$1): void;
+    /**
+     * 取消监听事件
+     */
+    off(event: string, callback: MapEventHandler$1): void;
+    /**
+     * 触发事件
+     */
+    private emit;
+    /**
+     * 调整地图大小
+     */
+    resize(): void;
+    /**
+     * 销毁渲染器
+     */
+    destroy(): void;
+}
+
+/**
+ * DeckGL 渲染器
+ * 基于 DeckGL 的 3D 地图渲染实现
+ */
+
+type MapEventHandler = (data: unknown) => void;
+declare class DeckGLMapRenderer implements IMapRenderer {
+    private container;
+    private config;
+    private glMap;
+    private eventHandlers;
+    constructor(container: HTMLElement, config: MapRendererConfig);
+    /**
+     * 初始化 DeckGL
+     */
+    private initDeckGL;
+    resize(): void;
+    /**
+     * 渲染图层数据
+     */
+    render(data: LayerData[]): void;
+    /**
+     * 添加点图层
+     */
+    private addPointLayer;
+    /**
+     * 添加线图层
+     */
+    private addLineLayer;
+    /**
+     * 添加地理图层
+     */
+    private addGeoLayer;
+    /**
+     * 设置地图级别
+     */
+    setMapLevel(level: MapLevel, region?: string): Promise<void>;
+    /**
+     * 添加点数据
+     */
+    setPoints(points: BaseMapPoint[]): Promise<void>;
+    /**
+     * 添加线数据
+     */
+    setLines(lines: BaseMapLine[]): Promise<void>;
+    /**
+     * 设置地图数据
+     */
+    setGeoData(geoData: FeatureCollection): Promise<void>;
+    /**
+     * 监听事件
+     */
+    on(event: string, callback: MapEventHandler): void;
+    /**
+     * 取消监听事件
+     */
+    off(event: string, callback: MapEventHandler): void;
+    /**
+     * 触发事件
+     */
+    private emit;
+    private isFeatureCollection;
+    /**
+     * 销毁渲染器
+     */
+    destroy(): void;
+}
+
+/**
+ * 创建地图渲染器的便捷函数
+ * @param type 渲染器类型
+ * @param config 渲染器配置
+ * @returns 地图渲染器实例
+ */
+declare function createMapRenderer(type: MapRendererType, config: MapRendererConfig): IMapRenderer;
+/**
+ * 创建统一地图组件的便捷函数
+ * @param config 统一地图配置
+ * @returns 统一地图组件实例
+ */
+declare function createUnifiedMap(config: UnifiedMapConfig): UnifiedMapComponent;
+/**
+ * 快速创建 ECharts 地图
+ * @param config 地图配置
+ * @returns 地图渲染器实例
+ */
+declare function createEchartsMap(config: MapRendererConfig): IMapRenderer;
+/**
+ * 快速创建 DeckGL 地图
+ * @param config 地图配置
+ * @returns 地图渲染器实例
+ */
+declare function createDeckglMap(config: MapRendererConfig): IMapRenderer;
+
+/**
+ * 地图渲染器常量定义
+ */
+/**
+ * 地图渲染器类型
+ */
+declare const MAP_RENDERER_TYPES: {
+    readonly ECHARTS: "echarts";
+    readonly DECKGL: "deckgl";
+};
+/**
+ * 渲染模式
+ */
+declare const RENDER_MODES: {
+    readonly MODE_2D: "2d";
+    readonly MODE_3D: "3d";
+};
+/**
+ * 默认配置
+ */
+declare const DEFAULT_CONFIG: {
+    readonly ZOOM: 10;
+    readonly CENTER: {
+        readonly lat: 39.9;
+        readonly lng: 116.3;
+    };
+    readonly MODE: "2d";
+    readonly INTERACTIVE: true;
+    readonly SHOW_CONTROLS: false;
+};
+/**
+ * 事件类型
+ */
+declare const EVENT_TYPES: {
+    readonly POINT_CLICK: "pointClick";
+    readonly POINT_HOVER: "pointHover";
+    readonly LINE_CLICK: "lineClick";
+    readonly LINE_HOVER: "lineHover";
+    readonly MAP_CLICK: "mapClick";
+    readonly ZOOM: "zoom";
+    readonly PAN: "pan";
+};
+
+export { DEFAULT_CONFIG, DeckGLMapRenderer, DeckglMapAdapter, EChartsMapRenderer, EVENT_TYPES, EchartsMap, type IMapRenderer, MAP_RENDERER_TYPES, type MapRendererConfig, type MapRendererEvents, MapRendererFactory, MapRendererType, RENDER_MODES, UnifiedMapComponent, type UnifiedMapConfig, createDeckglMap, createEchartsMap, createMapRenderer, createUnifiedMap };

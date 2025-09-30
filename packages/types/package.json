@@ -1,7 +1,7 @@
 {
   "name": "@orch-map/types",
   "version": "1.0.0",
-  "description": "Type definitions for orch-map",
+  "description": "Pure TypeScript type definitions for orch-map",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -13,14 +13,14 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
-    "type-check": "tsc --noEmit",
-    "lint": "eslint src --ext .ts"
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "tsup": "^8.0.0",
@@ -28,5 +28,12 @@
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "typescript",
+    "types",
+    "orch-map",
+    "map",
+    "geojson"
+  ]
 }

@@ -13,23 +13,37 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "mapData"
   ],
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "postinstall": "patch-package"
   },
   "dependencies": {
     "@orch-map/types": "workspace:*",
     "@orch-map/utils": "workspace:*",
-    "echarts": "^5.6.0"
+    "echarts": "^5.6.0",
+    "@deck.gl/core": "^9.1.14",
+    "@deck.gl/layers": "^9.1.14"
   },
   "devDependencies": {
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "echarts": "^5.6.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@deck.gl/layers@9.1.14": "patches/@deck.gl__layers@9.1.14.patch"
+    }
   },
   "publishConfig": {
     "access": "public"

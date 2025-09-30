@@ -18,6 +18,11 @@
       "types": "./packages/utils/dist/index.d.ts",
       "import": "./packages/utils/dist/index.mjs",
       "require": "./packages/utils/dist/index.js"
+    },
+    "./geojson": {
+      "types": "./packages/geoJson/dist/index.d.ts",
+      "import": "./packages/geoJson/dist/index.mjs",
+      "require": "./packages/geoJson/dist/index.js"
     }
   },
   "workspaces": [
@@ -33,6 +38,7 @@
     "type-check": "turbo type-check"
   },
   "devDependencies": {
+    "@types/geojson": "^7946.0.16",
     "@types/node": "^20.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
@@ -49,5 +55,10 @@
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@8.15.0"
+  "packageManager": "pnpm@8.15.0",
+  "pnpm": {
+    "patchedDependencies": {
+      "@deck.gl/layers@9.1.14": "patches/@deck.gl__layers@9.1.14.patch"
+    }
+  }
 }

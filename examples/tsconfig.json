@@ -17,7 +17,6 @@
     "jsxImportSource": "vue",
     "baseUrl": ".",
     "paths": {
-      "@orch-map/types": ["../packages/types/src"],
       "@orch-map/utils": ["../packages/utils/src"],
       "@orch-map/core": ["../packages/core/src"]
     }

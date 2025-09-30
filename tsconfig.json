@@ -16,21 +16,12 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "incremental": true,
     "baseUrl": ".",
     "paths": {
-      "@orch-map/types": ["./packages/types/src"],
       "@orch-map/utils": ["./packages/utils/src"],
       "@orch-map/core": ["./packages/core/src"]
     }
   },
-  "include": [
-    "packages/*/src/**/*",
-    "examples/src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "**/dist",
-    "**/build"
-  ]
+  "include": ["packages/*/src/**/*", "examples/src/**/*", "packages/core/lib"],
+  "exclude": ["node_modules", "**/dist", "**/build"]
 }
