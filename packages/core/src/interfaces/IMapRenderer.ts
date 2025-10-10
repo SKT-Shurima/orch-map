@@ -1,16 +1,31 @@
-import { BaseMapPoint, BaseMapLine, MapLevel } from "@orch-map/types"
-import { FeatureCollection, MapRendererType } from "@orch-map/types"
+import { BaseMapPoint, BaseMapLine, MapLevel, GeoJSONSourceInput, MapRendererType } from "@orch-map/types";
+
+
+export type AdapterPointInfo = {
+  id: string
+  name: string
+}
+
+/**
+ * @description: 将大屏的配置信息进行统一口径处理
+ */
+export interface AdapterParams {
+  filterPoint?: AdapterPointInfo
+  activePoints: AdapterPointInfo[]
+  staredPoints: AdapterPointInfo[]
+  showNamePoints: AdapterPointInfo[]
+}
 
 /**
  * 地图渲染器事件接口
  */
 export interface MapRendererEvents {
   /** 点击点事件 */
-  onPointClick?: (point: BaseMapPoint) => void
+  onPointClick?: (point: BaseMapPoint ) => void
   /** 悬停点事件 */
   onPointHover?: (point: BaseMapPoint | null) => void
   /** 点击线事件 */
-  onLineClick?: (line: BaseMapLine) => void
+  onLineClick?: (line: BaseMapLine ) => void
   /** 悬停线事件 */
   onLineHover?: (line: BaseMapLine | null) => void
   /** 点击区域事件 */
@@ -25,6 +40,8 @@ export interface MapRendererEvents {
   onZoom?: (level: number) => void
   /** 地图平移事件 */
   onPan?: (center: { lat: number; lng: number }) => void
+  /** 地理数据更新事件 */
+  onUpdateGeo?: (params: GeoJSONSourceInput) => void
 }
 
 /**
@@ -34,7 +51,7 @@ export interface MapRendererConfig {
   /** 容器元素 */
   container: HTMLElement | string
   /** 地图版本，所应用的场景：标准版/国际版，不同的版本的geojson数据不同 */
-  mapVersion:'standard' | 'international'
+  mapVersion:"standard" | "international"
   /** 渲染器类型 */
   renderType: MapRendererType
   /** 当前地图层级 */
@@ -72,19 +89,23 @@ export interface IMapRenderer {
    * @param boundary 边界数据
    * @param detail 详细数据（可选）
    */
-  setGeoData(boundary: FeatureCollection, detail?: FeatureCollection): Promise<void>
+  setGeoData(boundary: GeoJSONSourceInput): Promise<void>
 
   /**
    * 设置点数据
    * @param points 点数据数组
    */
-  setPoints(points: BaseMapPoint[]): Promise<void>
+  setPoints(
+    points: BaseMapPoint[],
+    adapterParams: AdapterParams,
+    iconMapIds: Record<string, string[]>,
+  ): Promise<void> | void
 
   /**
    * 设置线数据
    * @param lines 线数据数组
    */
-  setLines(lines: BaseMapLine[]): Promise<void>
+  setLines(lines: BaseMapLine[]): Promise<void> | void
 
   /**
    * 更新地图层级

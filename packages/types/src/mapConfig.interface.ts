@@ -12,14 +12,14 @@ export interface MapConfig {
   renderer?: MapRendererType;
   interaction?: MapInteraction;
   style?: MapStyle;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // 数据点类型
 export interface DataPoint {
   name: string;
   value: [number, number, number]; // [经度, 纬度, 数值]
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 }
 
 // 地图初始化配置
@@ -35,7 +35,7 @@ export interface MapInitConfig {
   style?: MapStyle;
   width?: number | string;
   height?: number | string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // 地图更新配置
@@ -45,7 +45,7 @@ export interface MapUpdateConfig {
   projection?: MapProjection;
   style?: MapStyle;
   interaction?: MapInteraction;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 // 地图层级配置
@@ -56,6 +56,6 @@ export interface MapLevelConfig {
   minZoom?: number;
   maxZoom?: number;
   bounds?: [Coordinate, Coordinate];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 

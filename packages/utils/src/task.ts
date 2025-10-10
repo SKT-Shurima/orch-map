@@ -17,31 +17,42 @@ export interface TaskOptions {
  * 任务管理器类
  */
 export class TaskManager {
-  static Timer = class Timer implements TimerTask {
-    #timerId: NodeJS.Timeout | number | null = null;
-    #options: TaskOptions;
+  public static Timer = class Timer implements TimerTask {
+    public timerId: NodeJS.Timeout | number | null = null;
+    public options: TaskOptions;
 
-    constructor(options: TaskOptions) {
-      this.#options = options;
-      this.#start();
+    public constructor(options: TaskOptions) {
+      this.options = options;
+      this.start();
     }
 
-    #start() {
-      if (this.#options.once) {
-        this.#timerId = setTimeout(this.#options.fn, this.#options.time);
+    public start = () => {
+      if (this.options.once) {
+        this.timerId = setTimeout(this.options.fn, this.options.time);
       } else {
-        this.#timerId = setInterval(this.#options.fn, this.#options.time);
+        this.timerId = setInterval(this.options.fn, this.options.time);
       }
-    }
+    };
 
-    destroy() {
-      if (this.#timerId) {
-        if (this.#options.once) {
-          clearTimeout(this.#timerId as NodeJS.Timeout);
+    public stop = () => {
+      if (this.timerId !== null) {
+        if (this.options.once) {
+          clearTimeout(this.timerId);
         } else {
-          clearInterval(this.#timerId as NodeJS.Timeout);
+          clearInterval(this.timerId);
         }
-        this.#timerId = null;
+        this.timerId = null;
+      }
+    };
+
+    public destroy() {
+      if (this.timerId !== null) {
+        if (this.options.once) {
+          clearTimeout(this.timerId);
+        } else {
+          clearInterval(this.timerId);
+        }
+        this.timerId = null;
       }
     }
   };

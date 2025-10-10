@@ -6,10 +6,9 @@
  * - 通过 `MapLayerManager` 进行图层注册与替换，降低对 Deck 实例的直接依赖；
  * - 动画与交互尽量采用轻量更新（避免重建不必要对象）。
  */
-  import type { FeatureCollection , Feature } from "@orch-map/types"
 import { DeckInstance } from "./deckInstance"
 
-import type { MjolnirGestureEvent, MjolnirPointerEvent } from "mjolnir.js"
+import type { MjolnirGestureEvent } from "mjolnir.js"
 import { CurvatureCalculator } from "../utils/curvatureCalculator"
 import { LineRenderer2D } from "./line2d"
 import { LineRenderer3D } from "./line3d"
@@ -21,6 +20,7 @@ import IconAtlas, { type IconAtlasResult } from "./iconAtlas"
 import MapLayerManager from "./layerManager"
 import { GeoJsonLayer, IconLayer } from "@deck.gl/layers"
 import MapStateManager from "../MapStateManager"
+import { Feature, GeoJSON } from "geojson"
 
 type IconPoint = BaseMapPoint & {
   position: [number, number, number?]
@@ -113,7 +113,7 @@ export default class  DeckglMap {
         },
       },
     )
-    MapStateManager.geoData && this.setGEOData(MapStateManager.geoData)
+    MapStateManager.geoData && this.setGEOData(MapStateManager.geoData as GeoJSON)
     // 注意：buildIconAtlas 会对 SVG 进行多次 rasterize，内存与耗时与图标数量成正比，
     // 可在外层做缓存或离线预构建，以降低首次进入成本。
     const iconAtlasResult = await IconAtlas.buildIconAtlas({ ...DEFAULT_SVG_ICONS })
@@ -164,7 +164,7 @@ export default class  DeckglMap {
    * 设置国家/省份 GeoJSON 数据并注册基础底图图层
    * @param geojsonData GeoJSON FeatureCollection
    */
-  public async setGEOData(geojsonData: FeatureCollection) {
+  public async setGEOData(geojsonData: GeoJSON) {
     
     let hoveredFeatureName: string | null = null
     const geojsonLayer = new GeoJsonLayer({

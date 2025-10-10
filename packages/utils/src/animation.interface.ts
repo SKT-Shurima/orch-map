@@ -8,7 +8,7 @@ export interface BaseAnimationConfig {
   duration: number;
   easing: string;
   delay?: number;
-  type?: 'fadeIn' | 'slideIn' | 'zoomIn' | 'bounce';
+  type?: "fadeIn" | "slideIn" | "zoomIn" | "bounce";
 }
 
 // 扩展的动画配置接口（用于 utils 包）

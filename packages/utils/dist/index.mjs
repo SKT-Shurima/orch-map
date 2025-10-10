@@ -1,12 +1,3 @@
-var __typeError = (msg) => {
-  throw TypeError(msg);
-};
-var __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
-var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
-var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
-var __privateMethod = (obj, member, method) => (__accessCheck(obj, member, "access private method"), method);
-
 // src/coordinate.ts
 var CoordinateUtils = class {
   /**
@@ -85,7 +76,7 @@ var CoordinateUtils = class {
   /**
    * 根据边界框计算合适的缩放级别
    */
-  static getZoomFromBounds(bounds, containerSize) {
+  static getZoomFromBounds(bounds, _containerSize) {
     const [[minLng, minLat], [maxLng, maxLat]] = bounds;
     const lngDiff = Math.abs(maxLng - minLng);
     const latDiff = Math.abs(maxLat - minLat);
@@ -236,11 +227,9 @@ var Animation = class {
    * 更新动画
    */
   update(currentTime) {
-    if (!this.startTime) {
-      this.startTime = currentTime;
-    }
+    this.startTime ?? (this.startTime = currentTime);
     const elapsed = currentTime - this.startTime;
-    const duration = this.config.duration || 1e3;
+    const duration = this.config.duration ?? 1e3;
     let progress = Math.min(elapsed / duration, 1);
     const easingFn = easing[this.config.easing] || easing.linear;
     progress = easingFn(progress);
@@ -278,7 +267,7 @@ function deepClone(obj) {
   if (typeof obj === "object") {
     const clonedObj = {};
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         clonedObj[key] = deepClone(obj[key]);
       }
     }
@@ -304,7 +293,7 @@ function throttle(fn, delay) {
   };
 }
 function generateId(prefix = "id") {
-  return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 var colorUtils = {
   /**
@@ -337,41 +326,60 @@ var colorUtils = {
     ];
   }
 };
-
-// src/task.ts
-var _timerId, _options, _Timer_instances, start_fn, _a;
-var TaskManager = class {
-};
-TaskManager.Timer = (_a = class {
-  constructor(options) {
-    __privateAdd(this, _Timer_instances);
-    __privateAdd(this, _timerId, null);
-    __privateAdd(this, _options);
-    __privateSet(this, _options, options);
-    __privateMethod(this, _Timer_instances, start_fn).call(this);
-  }
-  destroy() {
-    if (__privateGet(this, _timerId)) {
-      if (__privateGet(this, _options).once) {
-        clearTimeout(__privateGet(this, _timerId));
-      } else {
-        clearInterval(__privateGet(this, _timerId));
-      }
-      __privateSet(this, _timerId, null);
+function findFirstKeyByValue(obj, searchValue) {
+  for (const key of Object.keys(obj)) {
+    if (obj[key].includes(searchValue)) {
+      return key;
     }
   }
-}, _timerId = new WeakMap(), _options = new WeakMap(), _Timer_instances = new WeakSet(), start_fn = function() {
-  if (__privateGet(this, _options).once) {
-    __privateSet(this, _timerId, setTimeout(__privateGet(this, _options).fn, __privateGet(this, _options).time));
-  } else {
-    __privateSet(this, _timerId, setInterval(__privateGet(this, _options).fn, __privateGet(this, _options).time));
+  return void 0;
+}
+
+// src/task.ts
+var TaskManager = class {
+};
+TaskManager.Timer = class Timer {
+  constructor(options) {
+    this.timerId = null;
+    this.start = () => {
+      if (this.options.once) {
+        this.timerId = setTimeout(this.options.fn, this.options.time);
+      } else {
+        this.timerId = setInterval(this.options.fn, this.options.time);
+      }
+    };
+    this.stop = () => {
+      if (this.timerId !== null) {
+        if (this.options.once) {
+          clearTimeout(this.timerId);
+        } else {
+          clearInterval(this.timerId);
+        }
+        this.timerId = null;
+      }
+    };
+    this.options = options;
+    this.start();
   }
-}, _a);
+  destroy() {
+    if (this.timerId !== null) {
+      if (this.options.once) {
+        clearTimeout(this.timerId);
+      } else {
+        clearInterval(this.timerId);
+      }
+      this.timerId = null;
+    }
+  }
+};
 
 // src/geoJson.ts
 var GeoJsonUtils = class {
   /**
    * 检查点是否在多边形内（使用射线算法）
+   * @param point 坐标点 [x, y]
+   * @param polygon 多边形坐标数组
+   * @returns 如果点在多边形内返回 true，否则返回 false
    */
   static isPointInPolygon(point, polygon) {
     const [x, y] = point;
@@ -386,8 +394,11 @@ var GeoJsonUtils = class {
     return inside;
   }
   /**
-   * 检查点是否在 GeoJSON 特征内
-   */
+  * 检查点是否在 GeoJSON 特征内
+  * @param point 坐标点 [x, y]
+  * @param feature GeoJSON 特征
+  * @returns 如果点在特征内返回 true，否则返回 false
+  */
   static isPointInFeature(point, feature) {
     const { geometry } = feature;
     if (geometry.type === "Polygon") {
@@ -402,6 +413,9 @@ var GeoJsonUtils = class {
   }
   /**
    * 将经纬度转换为投影坐标
+   * @param transform 坐标转换对象
+   * @param lngLat 经纬度坐标 [经度, 纬度]
+   * @returns 投影后的坐标 [x, y]
    */
   static lngLatToProjected(transform, lngLat) {
     if (!transform?.default) {
@@ -415,7 +429,26 @@ var GeoJsonUtils = class {
     ];
   }
   /**
+   * 将投影坐标转换回经纬度
+   * @param transform 坐标转换对象
+   * @param projected 投影坐标 [x, y]
+   * @returns 经纬度坐标 [经度, 纬度]
+   */
+  static projectedToLngLat(transform, projected) {
+    if (!transform?.default) {
+      return projected;
+    }
+    const { scale, translate } = transform.default;
+    const [x, y] = projected;
+    return [
+      (x - translate[0]) / scale[0],
+      (y - translate[1]) / scale[1]
+    ];
+  }
+  /**
    * 计算多边形的中心点
+   * @param coordinates 多边形坐标数组
+   * @returns 中心点坐标 [x, y]
    */
   static getPolygonCenter(coordinates) {
     if (!coordinates || coordinates.length === 0) {
@@ -442,7 +475,49 @@ var GeoJsonUtils = class {
     return area === 0 ? [0, 0] : [x / (6 * area), y / (6 * area)];
   }
   /**
+   * 计算 GeoJSON 特征的中心点
+   * @param feature GeoJSON 特征
+   * @returns 中心点坐标 [x, y]
+   */
+  static getFeatureCenter(feature) {
+    const { geometry } = feature;
+    switch (geometry.type) {
+      case "Point":
+        return geometry.coordinates;
+      case "MultiPoint":
+      case "LineString":
+        return this.getLineCentroid(geometry.coordinates);
+      case "MultiLineString":
+        return this.getLineCentroid(geometry.coordinates.flat());
+      case "Polygon":
+        return this.getPolygonCenter(geometry.coordinates);
+      case "MultiPolygon": {
+        const centers = geometry.coordinates.map(
+          (polygon) => this.getPolygonCenter(polygon)
+        );
+        return this.getLineCentroid(centers);
+      }
+      default:
+        return [0, 0];
+    }
+  }
+  /**
+   * 计算线或点集的质心
+   * @param coordinates 坐标数组
+   * @returns 质心坐标 [x, y]
+   */
+  static getLineCentroid(coordinates) {
+    if (!coordinates || coordinates.length === 0) {
+      return [0, 0];
+    }
+    const sumX = coordinates.reduce((sum, coord) => sum + coord[0], 0);
+    const sumY = coordinates.reduce((sum, coord) => sum + coord[1], 0);
+    return [sumX / coordinates.length, sumY / coordinates.length];
+  }
+  /**
    * 计算 GeoJSON 特征的边界框
+   * @param feature GeoJSON 特征
+   * @returns 边界框坐标 [[minX, minY], [maxX, maxY]]
    */
   static getBounds(feature) {
     const { geometry } = feature;
@@ -458,17 +533,38 @@ var GeoJsonUtils = class {
       maxY = Math.max(maxY, y);
     };
     const processCoordinates = (coords) => {
-      if (typeof coords[0] === "number") {
+      if (Array.isArray(coords) && typeof coords[0] === "number") {
         processCoordinate(coords);
-      } else {
-        coords.forEach(processCoordinates);
+      } else if (Array.isArray(coords)) {
+        coords.forEach((coord) => processCoordinates(coord));
       }
     };
     processCoordinates(geometry.coordinates);
     return [[minX, minY], [maxX, maxY]];
   }
   /**
+   * 计算 GeoJSON FeatureCollection 的边界框
+   * @param featureCollection GeoJSON FeatureCollection
+   * @returns 边界框坐标 [[minX, minY], [maxX, maxY]]
+   */
+  static getFeatureCollectionBounds(featureCollection) {
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+    featureCollection.features.forEach((feature) => {
+      const [[fMinX, fMinY], [fMaxX, fMaxY]] = this.getBounds(feature);
+      minX = Math.min(minX, fMinX);
+      minY = Math.min(minY, fMinY);
+      maxX = Math.max(maxX, fMaxX);
+      maxY = Math.max(maxY, fMaxY);
+    });
+    return [[minX, minY], [maxX, maxY]];
+  }
+  /**
    * 创建空的 GeoJSON FeatureCollection
+   * @param features GeoJSON 特征数组
+   * @returns GeoJSON FeatureCollection
    */
   static createFeatureCollection(features = []) {
     return {
@@ -478,6 +574,9 @@ var GeoJsonUtils = class {
   }
   /**
    * 创建 GeoJSON Point 特征
+   * @param coordinate 点坐标 [x, y]
+   * @param properties 特征属性
+   * @returns GeoJSON Point 特征
    */
   static createPointFeature(coordinate, properties = {}) {
     return {
@@ -491,6 +590,9 @@ var GeoJsonUtils = class {
   }
   /**
    * 创建 GeoJSON LineString 特征
+   * @param coordinates 线坐标数组
+   * @param properties 特征属性
+   * @returns GeoJSON LineString 特征
    */
   static createLineFeature(coordinates, properties = {}) {
     return {
@@ -502,7 +604,245 @@ var GeoJsonUtils = class {
       properties
     };
   }
+  /**
+   * 创建 GeoJSON Polygon 特征
+   * @param coordinates 多边形坐标数组
+   * @param properties 特征属性
+   * @returns GeoJSON Polygon 特征
+   */
+  static createPolygonFeature(coordinates, properties = {}) {
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Polygon",
+        coordinates
+      },
+      properties
+    };
+  }
+  /**
+   * 计算两点之间的距离
+   * @param point1 点1坐标 [x, y]
+   * @param point2 点2坐标 [x, y]
+   * @returns 欧几里得距离
+   */
+  static distance(point1, point2) {
+    const dx = point2[0] - point1[0];
+    const dy = point2[1] - point1[1];
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+  /**
+   * 计算线段的长度
+   * @param line 线段坐标数组
+   * @returns 线段长度
+   */
+  static lineLength(line) {
+    let length = 0;
+    for (let i = 0; i < line.length - 1; i++) {
+      length += this.distance(line[i], line[i + 1]);
+    }
+    return length;
+  }
+  /**
+   * 计算多边形的面积
+   * @param polygon 多边形坐标数组
+   * @returns 多边形面积
+   */
+  static polygonArea(polygon) {
+    let area = 0;
+    for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+      area += polygon[i][0] * polygon[j][1];
+      area -= polygon[j][0] * polygon[i][1];
+    }
+    return Math.abs(area) / 2;
+  }
+  /**
+   * 简化 GeoJSON 几何体 (按采样间隔简化)
+   * @param geometry GeoJSON 几何体
+   * @param tolerance 简化容差
+   * @returns 简化后的几何体
+   */
+  static simplifyGeometry(geometry, tolerance) {
+    const simplifyCoords = (coords) => {
+      if (coords.length <= 2) return coords;
+      const result = [coords[0]];
+      let prevPoint = coords[0];
+      for (let i = 1; i < coords.length - 1; i++) {
+        if (this.distance(prevPoint, coords[i]) >= tolerance) {
+          result.push(coords[i]);
+          prevPoint = coords[i];
+        }
+      }
+      if (coords.length > 1) {
+        result.push(coords[coords.length - 1]);
+      }
+      return result;
+    };
+    const processGeometry = (geom) => {
+      switch (geom.type) {
+        case "Point":
+          return geom;
+        case "LineString":
+          return {
+            ...geom,
+            coordinates: simplifyCoords(geom.coordinates)
+          };
+        case "Polygon":
+          return {
+            ...geom,
+            coordinates: geom.coordinates.map(
+              (ring) => simplifyCoords(ring)
+            )
+          };
+        case "MultiPoint":
+          return geom;
+        case "MultiLineString":
+          return {
+            ...geom,
+            coordinates: geom.coordinates.map(
+              (line) => simplifyCoords(line)
+            )
+          };
+        case "MultiPolygon":
+          return {
+            ...geom,
+            coordinates: geom.coordinates.map(
+              (polygon) => polygon.map((ring) => simplifyCoords(ring))
+            )
+          };
+        default:
+          return geom;
+      }
+    };
+    return processGeometry(geometry);
+  }
+  /**
+   * 简化 GeoJSON 特征
+   * @param feature GeoJSON 特征
+   * @param tolerance 简化容差
+   * @returns 简化后的特征
+   */
+  static simplifyFeature(feature, tolerance) {
+    return {
+      ...feature,
+      geometry: this.simplifyGeometry(feature.geometry, tolerance)
+    };
+  }
+  /**
+   * 合并多个 GeoJSON FeatureCollection
+   * @param collections GeoJSON FeatureCollection 数组
+   * @returns 合并后的 FeatureCollection
+   */
+  static mergeFeatureCollections(...collections) {
+    const features = collections.reduce((acc, collection) => acc.concat(collection.features), []);
+    return this.createFeatureCollection(features);
+  }
+  /**
+   * 将 GeoJSON 特征转换为 WKT (Well-Known Text) 格式
+   * @param feature GeoJSON 特征
+   * @returns WKT 字符串
+   */
+  static featureToWKT(feature) {
+    const { geometry } = feature;
+    const coordsToWKT = (coords) => `${coords[0]} ${coords[1]}`;
+    const ringsToWKT = (rings) => {
+      const ringsWKT = rings.map((ring) => {
+        const pointsWKT = ring.map(coordsToWKT).join(", ");
+        return `(${pointsWKT})`;
+      }).join(", ");
+      return ringsWKT;
+    };
+    switch (geometry.type) {
+      case "Point":
+        return `POINT(${coordsToWKT(geometry.coordinates)})`;
+      case "LineString":
+        return `LINESTRING(${geometry.coordinates.map(coordsToWKT).join(", ")})`;
+      case "Polygon":
+        return `POLYGON(${ringsToWKT(geometry.coordinates)})`;
+      case "MultiPoint":
+        return `MULTIPOINT(${geometry.coordinates.map((coord) => `(${coordsToWKT(coord)})`).join(", ")})`;
+      case "MultiLineString":
+        return `MULTILINESTRING(${geometry.coordinates.map((line) => `(${line.map(coordsToWKT).join(", ")})`).join(", ")})`;
+      case "MultiPolygon":
+        return `MULTIPOLYGON(${geometry.coordinates.map((polygon) => `(${ringsToWKT(polygon)})`).join(", ")})`;
+      default:
+        throw new Error(`Unsupported geometry type: ${geometry.type}`);
+    }
+  }
 };
+
+// src/icon.ts
+function svgToEChartsSymbol(svg, options = {}) {
+  const { preferPath = true, normalize = false } = options;
+  const svgString = typeof svg === "string" ? svg : svg instanceof Element ? svg.outerHTML : "";
+  if (!svgString) {
+    return "circle";
+  }
+  if (preferPath) {
+    try {
+      const parser = new DOMParser();
+      const svgDoc = parser.parseFromString(svgString, "image/svg+xml");
+      const parserError = svgDoc.querySelector("parsererror");
+      if (parserError) {
+        throw new Error("SVG \u89E3\u6790\u9519\u8BEF");
+      }
+      const pathElements = svgDoc.querySelectorAll("path");
+      if (pathElements.length === 1) {
+        let pathData = pathElements[0].getAttribute("d");
+        if (normalize && pathData) {
+          pathData = pathData.trim().replace(/\s+/g, " ");
+        }
+        return pathData ? `path://${pathData}` : "circle";
+      } else if (pathElements.length > 1) {
+        return svgToBase64Symbol(svgString);
+      }
+      const basicShapes = svgDoc.querySelectorAll("circle,rect,ellipse,line,polyline,polygon");
+      if (basicShapes.length === 0) {
+        return svgToBase64Symbol(svgString);
+      } else if (basicShapes.length === 1) {
+        const shape = basicShapes[0];
+        const tagName = shape.tagName.toLowerCase();
+        let pathData = "";
+        if (tagName === "circle") {
+          const cx = parseFloat(shape.getAttribute("cx") ?? "0");
+          const cy = parseFloat(shape.getAttribute("cy") ?? "0");
+          const r = parseFloat(shape.getAttribute("r") ?? "0");
+          pathData = `M${cx - r},${cy}A${r},${r},0,1,1,${cx + r},${cy}A${r},${r},0,1,1,${cx - r},${cy}Z`;
+        } else if (tagName === "rect") {
+          const x = parseFloat(shape.getAttribute("x") ?? "0");
+          const y = parseFloat(shape.getAttribute("y") ?? "0");
+          const width = parseFloat(shape.getAttribute("width") ?? "0");
+          const height = parseFloat(shape.getAttribute("height") ?? "0");
+          const rx = parseFloat(shape.getAttribute("rx") ?? "0");
+          const ry = parseFloat(shape.getAttribute("ry") ?? "0");
+          if (rx > 0 || ry > 0) {
+            const _rx = rx ?? ry;
+            const _ry = ry ?? rx;
+            pathData = `M${x + _rx},${y} L${x + width - _rx},${y} Q${x + width},${y} ${x + width},${y + _ry} L${x + width},${y + height - _ry} Q${x + width},${y + height} ${x + width - _rx},${y + height} L${x + _rx},${y + height} Q${x},${y + height} ${x},${y + height - _ry} L${x},${y + _ry} Q${x},${y} ${x + _rx},${y} Z`;
+          } else {
+            pathData = `M${x},${y} L${x + width},${y} L${x + width},${y + height} L${x},${y + height} Z`;
+          }
+        } else {
+          return svgToBase64Symbol(svgString);
+        }
+        return `path://${pathData}`;
+      } else {
+        return svgToBase64Symbol(svgString);
+      }
+    } catch (error) {
+      console.error("SVG \u8DEF\u5F84\u63D0\u53D6\u9519\u8BEF:", error);
+      return svgToBase64Symbol(svgString);
+    }
+  }
+  return svgToBase64Symbol(svgString);
+}
+function svgToBase64Symbol(svgString) {
+  if (!svgString.includes('xmlns="http://www.w3.org/2000/svg"')) {
+    svgString = svgString.replace("<svg", '<svg xmlns="http://www.w3.org/2000/svg"');
+  }
+  const base64 = btoa(unescape(encodeURIComponent(svgString)));
+  return `image://data:image/svg+xml;base64,${base64}`;
+}
 export {
   Animation,
   AnimationManager,
@@ -515,12 +855,15 @@ export {
   debounce,
   deepClone,
   easing,
+  findFirstKeyByValue,
   generateId,
   isDef,
   isEmptyArray,
   isUndef,
   omit,
   pick,
+  svgToBase64Symbol,
+  svgToEChartsSymbol,
   throttle
 };
 //# sourceMappingURL=index.mjs.map

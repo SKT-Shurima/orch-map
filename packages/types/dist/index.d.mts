@@ -1,9 +1,6 @@
-export { Feature, FeatureCollection } from 'geojson';
+export { GeoJSONSourceInput } from 'echarts/types/src/coord/geo/geoTypes.js';
+export { Feature, FeatureCollection, GeoJSON } from 'geojson';
 
-/**
- * @orch-map/types - 地图组件类型定义
- * 地理空间数据类型定义
- */
 type Coordinate = [number, number];
 type CoordinateNumber = [number, number];
 type Coordinate3D = [number, number, number];
@@ -14,16 +11,16 @@ interface BoundingBox {
     maxY: number;
 }
 interface GeoJsonFeature {
-    type: 'Feature';
-    properties: Record<string, any>;
+    type: "Feature";
+    properties: Record<string, unknown>;
     geometry: GeoJsonGeometry;
     id?: string | number;
     bbox?: [number, number, number, number];
-    [key: string]: any;
+    [key: string]: unknown;
 }
 interface GeoJsonGeometry {
-    type: 'Point' | 'LineString' | 'Polygon' | 'MultiPoint' | 'MultiLineString' | 'MultiPolygon' | 'GeometryCollection';
-    coordinates: any;
+    type: "Point" | "LineString" | "Polygon" | "MultiPoint" | "MultiLineString" | "MultiPolygon" | "GeometryCollection";
+    coordinates: unknown[];
     bbox?: [number, number, number, number];
 }
 interface HcTransform {
@@ -81,7 +78,7 @@ interface BaseMapLine {
     endCoordinate: Coordinate;
     color?: [number, number, number, number];
     width?: number;
-    style?: 'solid' | 'dashed' | 'dotted';
+    style?: "solid" | "dashed" | "dotted";
     [key: string]: any;
 }
 interface BaseMapLine3D {
@@ -90,7 +87,7 @@ interface BaseMapLine3D {
     endCoordinate: Coordinate3D;
     color?: [number, number, number, number];
     width?: number;
-    style?: 'solid' | 'dashed' | 'dotted';
+    style?: "solid" | "dashed" | "dotted";
     height?: number;
     [key: string]: any;
 }
@@ -133,7 +130,7 @@ interface MapStyle {
 type AnyObj = Record<string, any>;
 interface MapDataSource {
     id: string;
-    type: 'geojson' | 'vector' | 'raster' | 'image';
+    type: "geojson" | "vector" | "raster" | "image";
     url?: string;
     data?: any;
     options?: Record<string, any>;
@@ -149,12 +146,12 @@ interface MapConfig {
     renderer?: MapRendererType;
     interaction?: MapInteraction;
     style?: MapStyle;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 interface DataPoint {
     name: string;
     value: [number, number, number];
-    properties?: Record<string, any>;
+    properties?: Record<string, unknown>;
 }
 interface MapInitConfig {
     container: string | HTMLElement;
@@ -168,7 +165,7 @@ interface MapInitConfig {
     style?: MapStyle;
     width?: number | string;
     height?: number | string;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 interface MapUpdateConfig {
     center?: Coordinate;
@@ -176,7 +173,7 @@ interface MapUpdateConfig {
     projection?: MapProjection;
     style?: MapStyle;
     interaction?: MapInteraction;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 interface MapLevelConfig {
     level: MapLevel;
@@ -185,7 +182,7 @@ interface MapLevelConfig {
     minZoom?: number;
     maxZoom?: number;
     bounds?: [Coordinate, Coordinate];
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export { type AnyObj, type BaseMapArea, type BaseMapLine, type BaseMapLine3D, type BaseMapPoint, type BaseMapPoint3D, type BoundingBox, type Coordinate, type Coordinate3D, type CoordinateNumber, type DataPoint, type GeoJsonFeature, type GeoJsonGeometry, type HcTransform, type MapConfig, type MapDataSource, type MapEvent, type MapInitConfig, type MapInteraction, MapLevel, type MapLevelConfig, type MapProjection, MapRendererType, type MapStyle, type MapUpdateConfig };

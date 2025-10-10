@@ -1,4 +1,4 @@
-export { omit, pick } from "lodash"
+export { omit, pick } from "lodash";
 
 
 /**
@@ -18,7 +18,7 @@ export function isEmptyArray<T>(arr: T[] | undefined | null): arr is [] | undefi
 /**
  * 判断值是否未定义
  */
-export function isUndef(value: any): value is undefined | null {
+export function isUndef(value: unknown): value is undefined | null {
   return value === undefined || value === null;
 }
 
@@ -27,12 +27,12 @@ export function isUndef(value: any): value is undefined | null {
  */
 export function deepClone<T>(obj: T): T {
   if (obj === null || typeof obj !== "object") return obj;
-  if (obj instanceof Date) return new Date(obj.getTime()) as any;
-  if (obj instanceof Array) return obj.map(item => deepClone(item)) as any;
+  if (obj instanceof Date) return new Date(obj.getTime()) as unknown as T;
+  if (obj instanceof Array) return obj.map(item => deepClone(item)) as unknown as T;
   if (typeof obj === "object") {
-    const clonedObj = {} as any;
+    const clonedObj = {} as unknown as T;
     for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
         clonedObj[key] = deepClone(obj[key]);
       }
     }
@@ -44,9 +44,9 @@ export function deepClone<T>(obj: T): T {
 /**
  * 防抖函数
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends (...args: unknown[]) => void>(
   fn: T,
-  delay: number
+  delay: number,
 ): (...args: Parameters<T>) => void {
   let timeoutId: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
@@ -58,9 +58,9 @@ export function debounce<T extends (...args: any[]) => any>(
 /**
  * 节流函数
  */
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends (...args: unknown[]) => void>(
   fn: T,
-  delay: number
+  delay: number,
 ): (...args: Parameters<T>) => void {
   let lastTime = 0;
   return (...args: Parameters<T>) => {
@@ -76,8 +76,8 @@ export function throttle<T extends (...args: any[]) => any>(
 /**
  * 生成唯一ID
  */
-export function generateId(prefix = 'id'): string {
-  return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+export function generateId(prefix = "id"): string {
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 }
 
 /**
@@ -108,7 +108,7 @@ export const colorUtils = {
   interpolateColor(
     color1: [number, number, number, number],
     color2: [number, number, number, number],
-    t: number
+    t: number,
   ): [number, number, number, number] {
     const [r1, g1, b1, a1] = color1;
     const [r2, g2, b2, a2] = color2;
@@ -118,5 +118,28 @@ export const colorUtils = {
       Math.round(b1 + (b2 - b1) * t),
       Math.round(a1 + (a2 - a1) * t),
     ];
-  }
+  },
 };
+
+
+/**
+ * 根据 value 中的某个字符串查找第一个匹配的 key
+ * @param obj 包含字符串数组作为值的对象
+ * @param searchValue 要查找的字符串值
+ * @returns 找到的第一个包含该值的键，如果没找到则返回 undefined
+ */
+export function findFirstKeyByValue<T extends Record<string, string[]>>(
+  obj: T,
+  searchValue: string,
+): string | undefined {
+  // 遍历对象的所有键
+  for (const key of Object.keys(obj)) {
+    // 如果当前键对应的字符串数组中包含要查找的值，则立即返回该键
+    if (obj[key].includes(searchValue)) {
+      return key;
+    }
+  }
+  
+  // 如果没有找到匹配的键，则返回 undefined
+  return undefined;
+}

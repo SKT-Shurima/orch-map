@@ -26,9 +26,9 @@ export class AnimationManager {
   /**
    * 创建动画
    */
-  create(
+  public create(
     id: string,
-    config: AnimationConfig
+    config: AnimationConfig,
   ): void {
     const animation = new Animation(config);
     this.animations.set(id, animation);
@@ -41,7 +41,7 @@ export class AnimationManager {
   /**
    * 停止动画
    */
-  stop(id: string): void {
+  public stop(id: string): void {
     this.animations.delete(id);
 
     if (this.animations.size === 0 && this.rafId) {
@@ -53,7 +53,7 @@ export class AnimationManager {
   /**
    * 停止所有动画
    */
-  stopAll(): void {
+  public stopAll(): void {
     this.animations.clear();
 
     if (this.rafId) {
@@ -99,7 +99,7 @@ export class Animation {
   private startTime: number | null = null;
   private config: AnimationConfig;
 
-  constructor(config: AnimationConfig) {
+  public constructor(config: AnimationConfig) {
     this.config = {
       ...config,
       enabled: config.enabled ?? true,
@@ -113,13 +113,11 @@ export class Animation {
   /**
    * 更新动画
    */
-  update(currentTime: number): boolean {
-    if (!this.startTime) {
-      this.startTime = currentTime;
-    }
+  public update(currentTime: number): boolean {
+    this.startTime ??= currentTime;
 
     const elapsed = currentTime - this.startTime;
-    const duration = this.config.duration || 1000;
+    const duration = this.config.duration ?? 1000;
 
     let progress = Math.min(elapsed / duration, 1);
 

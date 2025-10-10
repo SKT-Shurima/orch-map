@@ -1,8 +1,3 @@
-/**
- * @orch-map/types - 地图组件类型定义
- * 地理空间数据类型定义
- */
-
 // 基础坐标类型
 export type Coordinate = [number, number];
 export type CoordinateNumber = [number, number];
@@ -30,17 +25,17 @@ export interface BoundingBox {
 // }
 
 export interface GeoJsonFeature {
-  type: 'Feature';
-  properties: Record<string, any>;
+  type: "Feature";
+  properties: Record<string, unknown>;
   geometry: GeoJsonGeometry;
   id?: string | number;
   bbox?: [number, number, number, number];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 export interface GeoJsonGeometry {
-  type: 'Point' | 'LineString' | 'Polygon' | 'MultiPoint' | 'MultiLineString' | 'MultiPolygon' | 'GeometryCollection';
-  coordinates: any;
+  type: "Point" | "LineString" | "Polygon" | "MultiPoint" | "MultiLineString" | "MultiPolygon" | "GeometryCollection";
+  coordinates: unknown[];
   bbox?: [number, number, number, number];
 }
 
@@ -62,4 +57,7 @@ export interface MapProjection {
 }
 
 
-export type { FeatureCollection, Feature } from "geojson"
+// export type { FeatureCollection, Feature } from "geojson"
+
+export type { GeoJSONSourceInput } from "echarts/types/src/coord/geo/geoTypes.js";
+export type { GeoJSON, Feature, FeatureCollection } from "geojson";

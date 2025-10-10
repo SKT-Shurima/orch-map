@@ -2,19 +2,19 @@ import { Coordinate, Coordinate3D } from "./geo.interface";
 
 // 地图等级枚举
 export enum MapLevel {
-  WORLD = 'world',
-  COUNTRY = 'country',
-  PROVINCE = 'province',
-  CITY = 'city',
-  COUNTY = 'county'
+  WORLD = "world",
+  COUNTRY = "country",
+  PROVINCE = "province",
+  CITY = "city",
+  COUNTY = "county"
 }
 
 // 地图渲染器类型
 export enum MapRendererType {
-  ECHARTS = 'echarts',
-  DECKGL = 'deckgl',
-  LEAFLET = 'leaflet',
-  MAPBOX = 'mapbox'
+  ECHARTS = "echarts",
+  DECKGL = "deckgl",
+  LEAFLET = "leaflet",
+  MAPBOX = "mapbox"
 }
 
 // 基础地图点接口
@@ -49,7 +49,7 @@ export interface BaseMapLine {
   endCoordinate: Coordinate;
   color?: [number, number, number, number];
   width?: number;
-  style?: 'solid' | 'dashed' | 'dotted';
+  style?: "solid" | "dashed" | "dotted";
   [key: string]: any; // 允许扩展属性
 }
 
@@ -60,7 +60,7 @@ export interface BaseMapLine3D {
   endCoordinate: Coordinate3D;
   color?: [number, number, number, number];
   width?: number;
-  style?: 'solid' | 'dashed' | 'dotted';
+  style?: "solid" | "dashed" | "dotted";
   height?: number;
   [key: string]: any; // 允许扩展属性
 }
@@ -115,7 +115,7 @@ export type AnyObj = Record<string, any>;
 // 地图数据源类型
 export interface MapDataSource {
   id: string;
-  type: 'geojson' | 'vector' | 'raster' | 'image';
+  type: "geojson" | "vector" | "raster" | "image";
   url?: string;
   data?: any;
   options?: Record<string, any>;

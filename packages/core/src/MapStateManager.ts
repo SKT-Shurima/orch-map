@@ -1,6 +1,5 @@
-import { BaseMapPoint, BaseMapLine, MapLevel } from "./interfaces"
-import type { FeatureCollection } from "@orch-map/types"
-import { getGeoJsonData } from "./utils/geoDataService"
+import { MapLevel, GeoJSON } from "@orch-map/types";
+import { getGeoJsonData } from "./utils/geoDataService";
 
 /**
  * 特定属性变化监听器
@@ -13,97 +12,107 @@ export type PropertyChangeListener<T = any> = (newValue: T, oldValue: T) => void
  */
 export default class MapStateManager {
   // 静态属性，可直接访问
-  private static _curLevel: MapLevel = MapLevel.WORLD
-  private static _country: string = "100000" // 默认中国
-  private static _adcode: string = "100000"
-  private static _geoData?: FeatureCollection
-  private static _mapVersion: 'standard' | 'international' = 'standard'
+  private static _curLevel: MapLevel = MapLevel.WORLD;
+  private static _country: string = "100000"; // 默认中国
+  private static _adcode: string = "100000";
+  private static _geoData?: GeoJSON;
+  private static _mapVersion: "standard" | "international" = "standard";
+  /** 自定义图标库 */
+  private static _extraSvgIcons: Record<string, string> = {};
 
   // 属性监听器
-  private static propertyListeners: Map<string, PropertyChangeListener[]> = new Map()
+  private static propertyListeners: Map<string, PropertyChangeListener[]> = new Map();
 
   // 私有构造函数，防止外部实例化
   private constructor() {}
 
   // 静态 getter/setter - curLevel
   public static get curLevel(): MapLevel {
-    return MapStateManager._curLevel
+    return MapStateManager._curLevel;
   }
 
   public static set curLevel(level: MapLevel) {
-    const oldValue = MapStateManager._curLevel
-    MapStateManager._curLevel = level
-    MapStateManager.notifyPropertyChange('curLevel', level, oldValue)
+    const oldValue = MapStateManager._curLevel;
+    MapStateManager._curLevel = level;
+    MapStateManager.notifyPropertyChange("curLevel", level, oldValue);
   }
 
   // 静态 getter/setter - country
   public static get country(): string {
-    return MapStateManager._country
+    return MapStateManager._country;
   }
 
   public static set country(country: string) {
-    const oldValue = MapStateManager._country
-    MapStateManager._country = country
-    MapStateManager.notifyPropertyChange('country', country, oldValue)
+    const oldValue = MapStateManager._country;
+    MapStateManager._country = country;
+    MapStateManager.notifyPropertyChange("country", country, oldValue);
   }
 
   // 静态 getter/setter - adcode
   public static get adcode(): string {
-    return MapStateManager._adcode
+    return MapStateManager._adcode;
   }
 
   public static set adcode(adcode: string) {
-    const oldValue = MapStateManager._adcode
-    MapStateManager._adcode = adcode
-    MapStateManager.notifyPropertyChange('adcode', adcode, oldValue)
+    const oldValue = MapStateManager._adcode;
+    MapStateManager._adcode = adcode;
+    MapStateManager.notifyPropertyChange("adcode", adcode, oldValue);
   }
 
   // 静态 getter/setter - mapVersion
-  public static get mapVersion(): 'standard' | 'international' {
-    return MapStateManager._mapVersion
+  public static get mapVersion(): "standard" | "international" {
+    return MapStateManager._mapVersion;
   }
 
-  public static set mapVersion(version: 'standard' | 'international') {
-    MapStateManager._mapVersion = version
+  public static set mapVersion(version: "standard" | "international") {
+    MapStateManager._mapVersion = version;
   }
 
   // 静态 getter/setter - geoData
-  public static get geoData(): FeatureCollection | undefined {
-    return MapStateManager._geoData
+  public static get geoData(): GeoJSON | undefined {
+    return MapStateManager._geoData;
   }
 
-  public static set geoData(data: FeatureCollection | undefined) {
-    const oldValue = MapStateManager._geoData
-    MapStateManager._geoData = data
-    MapStateManager.notifyPropertyChange('geoData', data, oldValue)
+  public static set geoData(data: GeoJSON | undefined) {
+    const oldValue = MapStateManager._geoData;
+    MapStateManager._geoData = data;
+    MapStateManager.notifyPropertyChange("geoData", data, oldValue);
   }
 
 
   /**
    * 设置地理数据（包括详情数据）
    */
-  public static setGeoData(geoData: FeatureCollection): void {
-    MapStateManager.geoData = geoData
+  public static setGeoData(geoData: GeoJSON): void {
+    MapStateManager.geoData = geoData;
   }
 
   public static async getGeoJsonData(config: {
     mapLevel: MapLevel
     country: string
     region: string
-  }): Promise<FeatureCollection> {
-    const result = await getGeoJsonData(config)
-    MapStateManager.setGeoData(result)
-    return result
+  }): Promise<GeoJSON> {
+    const result = await getGeoJsonData(config);
+    MapStateManager.setGeoData(result);
+    return result;
+  }
+
+  public static get extraSvgIcons(): Record<string, string> {
+    return MapStateManager._extraSvgIcons;
+  }
+
+  public static set extraSvgIcons(icons: Record<string, string>) {
+    MapStateManager._extraSvgIcons = icons;
   }
 
   /**
    * 重置到默认状态
    */
   public static reset(): void {
-    MapStateManager._curLevel = MapLevel.WORLD
-    MapStateManager._country = "100000"
-    MapStateManager._adcode = "100000"
-    MapStateManager._geoData = undefined
+    MapStateManager._curLevel = MapLevel.WORLD;
+    MapStateManager._country = "100000";
+    MapStateManager._adcode = "100000";
+    MapStateManager._geoData = undefined;
   }
 
   /**
@@ -111,27 +120,27 @@ export default class MapStateManager {
    */
   public static onPropertyChange<T>(
     property: string,
-    listener: PropertyChangeListener<T>
+    listener: PropertyChangeListener<T>,
   ): () => void {
-    const key = `property-${property}`
+    const key = `property-${property}`;
     if (!MapStateManager.propertyListeners.has(key)) {
-      MapStateManager.propertyListeners.set(key, [])
+      MapStateManager.propertyListeners.set(key, []);
     }
-    MapStateManager.propertyListeners.get(key)!.push(listener as PropertyChangeListener)
+    MapStateManager.propertyListeners.get(key)!.push(listener as PropertyChangeListener);
 
     // 返回取消监听的函数
     return () => {
-      const listeners = MapStateManager.propertyListeners.get(key)
+      const listeners = MapStateManager.propertyListeners.get(key);
       if (listeners) {
-        const index = listeners.indexOf(listener as PropertyChangeListener)
+        const index = listeners.indexOf(listener as PropertyChangeListener);
         if (index > -1) {
-          listeners.splice(index, 1)
+          listeners.splice(index, 1);
         }
         if (listeners.length === 0) {
-          MapStateManager.propertyListeners.delete(key)
+          MapStateManager.propertyListeners.delete(key);
         }
       }
-    }
+    };
   }
 
   /**
@@ -140,18 +149,18 @@ export default class MapStateManager {
   private static notifyPropertyChange<T>(
     property: string, 
     newValue: T, 
-    oldValue: T
+    oldValue: T,
   ): void {
-    const key = `property-${property}`
-    const listeners = MapStateManager.propertyListeners.get(key)
+    const key = `property-${property}`;
+    const listeners = MapStateManager.propertyListeners.get(key);
     if (listeners) {
       listeners.forEach(listener => {
         try {
-          listener(newValue, oldValue)
+          listener(newValue, oldValue);
         } catch (error) {
-          console.error(`Error in property change listener for ${property}:`, error)
+          console.error(`Error in property change listener for ${property}:`, error);
         }
-      })
+      });
     }
   }
 
@@ -159,7 +168,7 @@ export default class MapStateManager {
    * 销毁状态管理器
    */
   public static destroy(): void {
-    MapStateManager.propertyListeners.clear()
-    MapStateManager.reset()
+    MapStateManager.propertyListeners.clear();
+    MapStateManager.reset();
   }
 }

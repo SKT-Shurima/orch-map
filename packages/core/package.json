@@ -13,8 +13,7 @@
     }
   },
   "files": [
-    "dist",
-    "mapData"
+    "dist"
   ],
   "scripts": {
     "build": "tsup",
@@ -27,6 +26,7 @@
   "dependencies": {
     "@orch-map/types": "workspace:*",
     "@orch-map/utils": "workspace:*",
+    "@orch-map/mapdata": "workspace:*",
     "echarts": "^5.6.0",
     "@deck.gl/core": "^9.1.14",
     "@deck.gl/layers": "^9.1.14"

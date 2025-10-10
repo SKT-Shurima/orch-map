@@ -1,4 +1,4 @@
-import { Coordinate, GeoJsonFeature, HcTransform } from '@orch-map/types';
+import { Coordinate, GeoJsonFeature, HcTransform, FeatureCollection, Feature, GeoJsonGeometry } from '@orch-map/types';
 export { omit, pick } from 'lodash';
 
 /**
@@ -32,7 +32,7 @@ declare class CoordinateUtils {
     /**
      * 根据边界框计算合适的缩放级别
      */
-    static getZoomFromBounds(bounds: [Coordinate, Coordinate], containerSize: {
+    static getZoomFromBounds(bounds: [Coordinate, Coordinate], _containerSize: {
         width: number;
         height: number;
     }): number;
@@ -68,7 +68,7 @@ interface BaseAnimationConfig {
     duration: number;
     easing: string;
     delay?: number;
-    type?: 'fadeIn' | 'slideIn' | 'zoomIn' | 'bounce';
+    type?: "fadeIn" | "slideIn" | "zoomIn" | "bounce";
 }
 interface AnimationConfig extends BaseAnimationConfig {
     from: number;
@@ -145,7 +145,7 @@ declare function isEmptyArray<T>(arr: T[] | undefined | null): arr is [] | undef
 /**
  * 判断值是否未定义
  */
-declare function isUndef(value: any): value is undefined | null;
+declare function isUndef(value: unknown): value is undefined | null;
 /**
  * 深拷贝对象
  */
@@ -153,11 +153,11 @@ declare function deepClone<T>(obj: T): T;
 /**
  * 防抖函数
  */
-declare function debounce<T extends (...args: any[]) => any>(fn: T, delay: number): (...args: Parameters<T>) => void;
+declare function debounce<T extends (...args: unknown[]) => void>(fn: T, delay: number): (...args: Parameters<T>) => void;
 /**
  * 节流函数
  */
-declare function throttle<T extends (...args: any[]) => any>(fn: T, delay: number): (...args: Parameters<T>) => void;
+declare function throttle<T extends (...args: unknown[]) => void>(fn: T, delay: number): (...args: Parameters<T>) => void;
 /**
  * 生成唯一ID
  */
@@ -179,6 +179,13 @@ declare const colorUtils: {
      */
     interpolateColor(color1: [number, number, number, number], color2: [number, number, number, number], t: number): [number, number, number, number];
 };
+/**
+ * 根据 value 中的某个字符串查找第一个匹配的 key
+ * @param obj 包含字符串数组作为值的对象
+ * @param searchValue 要查找的字符串值
+ * @returns 找到的第一个包含该值的键，如果没找到则返回 undefined
+ */
+declare function findFirstKeyByValue<T extends Record<string, string[]>>(obj: T, searchValue: string): string | undefined;
 
 /**
  * 任务管理工具
@@ -198,9 +205,10 @@ interface TaskOptions {
 declare class TaskManager {
     static Timer: {
         new (options: TaskOptions): {
-            #timerId: NodeJS.Timeout | number | null;
-            #options: TaskOptions;
-            #start(): void;
+            timerId: NodeJS.Timeout | number | null;
+            options: TaskOptions;
+            start: () => void;
+            stop: () => void;
             destroy(): void;
         };
     };
@@ -216,39 +224,153 @@ declare class TaskManager {
 declare class GeoJsonUtils {
     /**
      * 检查点是否在多边形内（使用射线算法）
+     * @param point 坐标点 [x, y]
+     * @param polygon 多边形坐标数组
+     * @returns 如果点在多边形内返回 true，否则返回 false
      */
     static isPointInPolygon(point: Coordinate, polygon: number[][]): boolean;
     /**
-     * 检查点是否在 GeoJSON 特征内
-     */
+   * 检查点是否在 GeoJSON 特征内
+   * @param point 坐标点 [x, y]
+   * @param feature GeoJSON 特征
+   * @returns 如果点在特征内返回 true，否则返回 false
+   */
     static isPointInFeature(point: Coordinate, feature: GeoJsonFeature): boolean;
     /**
      * 将经纬度转换为投影坐标
+     * @param transform 坐标转换对象
+     * @param lngLat 经纬度坐标 [经度, 纬度]
+     * @returns 投影后的坐标 [x, y]
      */
     static lngLatToProjected(transform: HcTransform, lngLat: Coordinate): Coordinate;
     /**
+     * 将投影坐标转换回经纬度
+     * @param transform 坐标转换对象
+     * @param projected 投影坐标 [x, y]
+     * @returns 经纬度坐标 [经度, 纬度]
+     */
+    static projectedToLngLat(transform: HcTransform, projected: Coordinate): Coordinate;
+    /**
      * 计算多边形的中心点
+     * @param coordinates 多边形坐标数组
+     * @returns 中心点坐标 [x, y]
      */
     static getPolygonCenter(coordinates: number[][][]): Coordinate;
     /**
+     * 计算 GeoJSON 特征的中心点
+     * @param feature GeoJSON 特征
+     * @returns 中心点坐标 [x, y]
+     */
+    static getFeatureCenter(feature: GeoJsonFeature): Coordinate;
+    /**
+     * 计算线或点集的质心
+     * @param coordinates 坐标数组
+     * @returns 质心坐标 [x, y]
+     */
+    static getLineCentroid(coordinates: Coordinate[]): Coordinate;
+    /**
      * 计算 GeoJSON 特征的边界框
+     * @param feature GeoJSON 特征
+     * @returns 边界框坐标 [[minX, minY], [maxX, maxY]]
      */
     static getBounds(feature: GeoJsonFeature): [Coordinate, Coordinate];
     /**
-     * 创建空的 GeoJSON FeatureCollection
+     * 计算 GeoJSON FeatureCollection 的边界框
+     * @param featureCollection GeoJSON FeatureCollection
+     * @returns 边界框坐标 [[minX, minY], [maxX, maxY]]
      */
-    static createFeatureCollection(features?: GeoJsonFeature[]): {
-        type: "FeatureCollection";
-        features: GeoJsonFeature[];
-    };
+    static getFeatureCollectionBounds(featureCollection: FeatureCollection): [Coordinate, Coordinate];
+    /**
+     * 创建空的 GeoJSON FeatureCollection
+     * @param features GeoJSON 特征数组
+     * @returns GeoJSON FeatureCollection
+     */
+    static createFeatureCollection(features?: Feature[]): FeatureCollection;
     /**
      * 创建 GeoJSON Point 特征
+     * @param coordinate 点坐标 [x, y]
+     * @param properties 特征属性
+     * @returns GeoJSON Point 特征
      */
-    static createPointFeature(coordinate: Coordinate, properties?: Record<string, any>): GeoJsonFeature;
+    static createPointFeature(coordinate: Coordinate, properties?: Record<string, unknown>): GeoJsonFeature;
     /**
      * 创建 GeoJSON LineString 特征
+     * @param coordinates 线坐标数组
+     * @param properties 特征属性
+     * @returns GeoJSON LineString 特征
      */
-    static createLineFeature(coordinates: Coordinate[], properties?: Record<string, any>): GeoJsonFeature;
+    static createLineFeature(coordinates: Coordinate[], properties?: Record<string, unknown>): GeoJsonFeature;
+    /**
+     * 创建 GeoJSON Polygon 特征
+     * @param coordinates 多边形坐标数组
+     * @param properties 特征属性
+     * @returns GeoJSON Polygon 特征
+     */
+    static createPolygonFeature(coordinates: Coordinate[][], properties?: Record<string, unknown>): GeoJsonFeature;
+    /**
+     * 计算两点之间的距离
+     * @param point1 点1坐标 [x, y]
+     * @param point2 点2坐标 [x, y]
+     * @returns 欧几里得距离
+     */
+    static distance(point1: Coordinate, point2: Coordinate): number;
+    /**
+     * 计算线段的长度
+     * @param line 线段坐标数组
+     * @returns 线段长度
+     */
+    static lineLength(line: Coordinate[]): number;
+    /**
+     * 计算多边形的面积
+     * @param polygon 多边形坐标数组
+     * @returns 多边形面积
+     */
+    static polygonArea(polygon: Coordinate[]): number;
+    /**
+     * 简化 GeoJSON 几何体 (按采样间隔简化)
+     * @param geometry GeoJSON 几何体
+     * @param tolerance 简化容差
+     * @returns 简化后的几何体
+     */
+    static simplifyGeometry(geometry: GeoJsonGeometry, tolerance: number): GeoJsonGeometry;
+    /**
+     * 简化 GeoJSON 特征
+     * @param feature GeoJSON 特征
+     * @param tolerance 简化容差
+     * @returns 简化后的特征
+     */
+    static simplifyFeature(feature: GeoJsonFeature, tolerance: number): GeoJsonFeature;
+    /**
+     * 合并多个 GeoJSON FeatureCollection
+     * @param collections GeoJSON FeatureCollection 数组
+     * @returns 合并后的 FeatureCollection
+     */
+    static mergeFeatureCollections(...collections: FeatureCollection[]): FeatureCollection;
+    /**
+     * 将 GeoJSON 特征转换为 WKT (Well-Known Text) 格式
+     * @param feature GeoJSON 特征
+     * @returns WKT 字符串
+     */
+    static featureToWKT(feature: GeoJsonFeature): string;
 }
 
-export { Animation, AnimationManager, CoordinateUtils, CurvatureCalculator, GeoJsonUtils, TaskManager, type TaskOptions, type TimerTask, animationManager, colorUtils, debounce, deepClone, easing, generateId, isDef, isEmptyArray, isUndef, throttle };
+/**
+ * 将 SVG 转换为 ECharts symbol 格式
+ * @param {string|Element} svg - SVG 字符串或 DOM 元素
+ * @param {Object} options - 配置选项
+ * @param {boolean} options.preferPath - 是否优先使用路径方式 (默认: true)
+ * @param {boolean} options.normalize - 是否规范化路径数据 (默认: false)
+ * @return {string} ECharts 可用的 symbol 格式
+ */
+declare function svgToEChartsSymbol(svg: string | Element, options?: {
+    preferPath?: boolean;
+    normalize?: boolean;
+}): string;
+/**
+ * 将 SVG 字符串转换为 Base64 格式
+ * @param {string} svgString - SVG 字符串
+ * @return {string} Base64 格式的 SVG
+ */
+declare function svgToBase64Symbol(svgString: string): string;
+
+export { Animation, AnimationManager, CoordinateUtils, CurvatureCalculator, GeoJsonUtils, TaskManager, type TaskOptions, type TimerTask, animationManager, colorUtils, debounce, deepClone, easing, findFirstKeyByValue, generateId, isDef, isEmptyArray, isUndef, svgToBase64Symbol, svgToEChartsSymbol, throttle };

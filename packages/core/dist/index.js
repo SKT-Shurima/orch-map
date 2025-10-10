@@ -30,16 +30,11 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
+  EChartsGeoUtils: () => EChartsGeoUtils,
   MapRendererType: () => MapRendererType,
-  default: () => OrchMap
+  default: () => index_default
 });
 module.exports = __toCommonJS(index_exports);
-
-// src/echarts-geo/index.ts
-var import_utils = require("@orch-map/utils");
-var echarts = __toESM(require("echarts/core"));
-var import_renderers = require("echarts/renderers");
-var import_components = require("echarts/components");
 
 // src/interfaces/index.ts
 var MapRendererType = /* @__PURE__ */ ((MapRendererType2) => {
@@ -48,907 +43,8 @@ var MapRendererType = /* @__PURE__ */ ((MapRendererType2) => {
   return MapRendererType2;
 })(MapRendererType || {});
 
-// src/utils/geoDataService.ts
-var GeoDataService = class {
-  // 配置 public 目录的基础路径
-  static getPublicBasePath() {
-    if (typeof window !== "undefined") {
-      return "/mapData";
-    } else {
-      return "../../mapData";
-    }
-  }
-  /**
-   * 根据键值获取地图数据
-   */
-  static async getMapData(path) {
-    if (this.cache[path]) {
-      return this.cache[path];
-    }
-    let data;
-    try {
-      const basePath = this.getPublicBasePath();
-      const response = await fetch(`${basePath}/${path}`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      data = await response.json();
-    } catch (error) {
-      console.error(`Failed to fetch map data from ${path}:`, error);
-      return {
-        type: "FeatureCollection",
-        features: []
-      };
-    }
-    this.cache[path] = data;
-    return data ? data : {
-      type: "FeatureCollection",
-      features: []
-    };
-  }
-  /**
-   * 获取详细地图数据路径
-   */
-  static getDetailDataPath(params) {
-    const mapVersion = MapStateManager.mapVersion;
-    const { currentLevel, region, country, mapType } = params;
-    switch (currentLevel) {
-      case "world" /* WORLD */:
-        return mapVersion === "standard" ? "world/wgs84_world_for_US.geo.json" /* WORLD_WGS84_FOR_US */ : "world/wgs84_world.geo.json" /* WORLD_WGS84 */;
-      case "country" /* COUNTRY */:
-        if (region === "100000") {
-          return "china/100000-2.json";
-        } else {
-          return `world/countries/${region}-all.geo.json`;
-        }
-      case "province" /* PROVINCE */:
-        return country === "100000" ? `china/${region}_full.json` : "";
-      case "city" /* CITY */:
-        return country === "100000" ? `china/${region}.json` : "";
-      case "county" /* COUNTY */:
-        return country === "100000" ? `china/${region}.json` : "";
-      default:
-        return "";
-    }
-  }
-  /**
-   * 处理中国地图特殊数据（移除9段线等）
-   */
-  static processChinaMapData(data) {
-    data.features = data.features.filter((feature) => {
-      if (!feature.properties?.name) {
-        return false;
-      }
-      if (feature.properties.name === "\u6D77\u5357\u7701") {
-        if (feature.geometry && feature.geometry.type === "MultiPolygon" && feature.geometry.coordinates && Array.isArray(feature.geometry.coordinates)) {
-          feature.geometry.coordinates = feature.geometry.coordinates.slice(0, 1);
-        }
-      }
-      return true;
-    });
-    return data;
-  }
-  /**
-   * 获取详细地图数据
-   */
-  static async fetchGeoJson(params) {
-    const path = this.getDetailDataPath(params);
-    if (!path) {
-      throw new Error("Detail data path not found");
-    }
-    let data = await this.getMapData(path);
-    if (params.currentLevel === "country" /* COUNTRY */ && params.region === "100000") {
-      data = this.processChinaMapData(data);
-    }
-    return data;
-  }
-  /**
-   * 清除缓存
-   */
-  static clearCache() {
-    this.cache = {};
-  }
-};
-GeoDataService.cache = {};
-async function getGeoJsonData(params) {
-  return await GeoDataService.fetchGeoJson({
-    currentLevel: params.mapLevel,
-    country: params.country,
-    region: params.region,
-    mapType: params.mapType ?? "echart"
-  });
-}
-
-// src/MapStateManager.ts
-var _MapStateManager = class _MapStateManager {
-  // 私有构造函数，防止外部实例化
-  constructor() {
-  }
-  // 静态 getter/setter - curLevel
-  static get curLevel() {
-    return _MapStateManager._curLevel;
-  }
-  static set curLevel(level) {
-    const oldValue = _MapStateManager._curLevel;
-    _MapStateManager._curLevel = level;
-    _MapStateManager.notifyPropertyChange("curLevel", level, oldValue);
-  }
-  // 静态 getter/setter - country
-  static get country() {
-    return _MapStateManager._country;
-  }
-  static set country(country) {
-    const oldValue = _MapStateManager._country;
-    _MapStateManager._country = country;
-    _MapStateManager.notifyPropertyChange("country", country, oldValue);
-  }
-  // 静态 getter/setter - adcode
-  static get adcode() {
-    return _MapStateManager._adcode;
-  }
-  static set adcode(adcode) {
-    const oldValue = _MapStateManager._adcode;
-    _MapStateManager._adcode = adcode;
-    _MapStateManager.notifyPropertyChange("adcode", adcode, oldValue);
-  }
-  // 静态 getter/setter - mapVersion
-  static get mapVersion() {
-    return _MapStateManager._mapVersion;
-  }
-  static set mapVersion(version) {
-    _MapStateManager._mapVersion = version;
-  }
-  // 静态 getter/setter - geoData
-  static get geoData() {
-    return _MapStateManager._geoData;
-  }
-  static set geoData(data) {
-    const oldValue = _MapStateManager._geoData;
-    _MapStateManager._geoData = data;
-    _MapStateManager.notifyPropertyChange("geoData", data, oldValue);
-  }
-  /**
-   * 设置地理数据（包括详情数据）
-   */
-  static setGeoData(geoData) {
-    _MapStateManager.geoData = geoData;
-  }
-  static async getGeoJsonData(config) {
-    const result = await getGeoJsonData(config);
-    _MapStateManager.setGeoData(result);
-    return result;
-  }
-  /**
-   * 重置到默认状态
-   */
-  static reset() {
-    _MapStateManager._curLevel = "world" /* WORLD */;
-    _MapStateManager._country = "100000";
-    _MapStateManager._adcode = "100000";
-    _MapStateManager._geoData = void 0;
-  }
-  /**
-   * 监听特定属性变化
-   */
-  static onPropertyChange(property, listener) {
-    const key = `property-${property}`;
-    if (!_MapStateManager.propertyListeners.has(key)) {
-      _MapStateManager.propertyListeners.set(key, []);
-    }
-    _MapStateManager.propertyListeners.get(key).push(listener);
-    return () => {
-      const listeners = _MapStateManager.propertyListeners.get(key);
-      if (listeners) {
-        const index = listeners.indexOf(listener);
-        if (index > -1) {
-          listeners.splice(index, 1);
-        }
-        if (listeners.length === 0) {
-          _MapStateManager.propertyListeners.delete(key);
-        }
-      }
-    };
-  }
-  /**
-   * 通知属性变化
-   */
-  static notifyPropertyChange(property, newValue, oldValue) {
-    const key = `property-${property}`;
-    const listeners = _MapStateManager.propertyListeners.get(key);
-    if (listeners) {
-      listeners.forEach((listener) => {
-        try {
-          listener(newValue, oldValue);
-        } catch (error) {
-          console.error(`Error in property change listener for ${property}:`, error);
-        }
-      });
-    }
-  }
-  /**
-   * 销毁状态管理器
-   */
-  static destroy() {
-    _MapStateManager.propertyListeners.clear();
-    _MapStateManager.reset();
-  }
-};
-// 静态属性，可直接访问
-_MapStateManager._curLevel = "world" /* WORLD */;
-_MapStateManager._country = "100000";
-// 默认中国
-_MapStateManager._adcode = "100000";
-_MapStateManager._mapVersion = "standard";
-// 属性监听器
-_MapStateManager.propertyListeners = /* @__PURE__ */ new Map();
-var MapStateManager = _MapStateManager;
-
-// src/echarts-geo/echart.option.ts
-var POST_CODE_KEY = "hc-key";
-var BOUNDARY_OPTIONS = {
-  zoom: 1.3,
-  hoverLayerThreshold: 1,
-  // 修复：允许hover事件触发
-  silent: false,
-  roam: true,
-  center: null,
-  scaleLimit: { min: 1 },
-  zlevel: 0,
-  itemStyle: {
-    areaColor: "#094777",
-    borderWidth: 1,
-    borderColor: "#1480C5",
-    shadowBlur: 1,
-    shadowColor: "rgba(0, 0, 0, 0.5)"
-  },
-  emphasis: {
-    label: {
-      show: false
-    },
-    itemStyle: {
-      areaColor: "#3079c8",
-      borderWidth: 0
-    }
-  }
-  // regions: [
-  //   {
-  //     name: "南海诸岛",
-  //     itemStyle: {
-  //       opacity: 0,
-  //     },
-  //   },
-  // ],
-};
-
-// src/echarts-geo/index.ts
-echarts.use([import_renderers.CanvasRenderer, import_components.GeoComponent, import_components.TooltipComponent, import_components.TitleComponent]);
-var G2 = { CHINA: "\u4E2D\u56FD", USA: "\u7F8E\u56FD" };
-var CHINA_AD_CODE_JUST_FOR_FE = "100000";
-var US_AD_CODE_JUST_FOR_FE = "us";
-var MUNICIPALITY_CODES = /* @__PURE__ */ new Set(["110000", "120000", "310000", "500000"]);
-var isMunicipality = (adcode) => MUNICIPALITY_CODES.has(adcode);
-var JUST_SUPPORTED_NEXT_LEVEL_COUNTRIES_AD_CODE = [CHINA_AD_CODE_JUST_FOR_FE, US_AD_CODE_JUST_FOR_FE];
-var EchartsMap = class {
-  constructor(container, options) {
-    this.detailMap = "";
-    this.chartInstance = null;
-    this.series = [];
-    this.boundaryLoading = false;
-    this.unsubscribeState = null;
-    this.mouseoverHandler = (params) => {
-      switch (params.componentType) {
-        case "geo":
-          this.handleChangeArea(params);
-          break;
-        case "series":
-          this.events.onHoverPoint?.(params);
-          break;
-        default:
-          this.events.onHoverArea?.();
-          break;
-      }
-    };
-    this.mouseoutHandler = (params) => {
-      switch (params.componentType) {
-        case "geo":
-          this.handleChangeArea();
-          break;
-        case "series":
-          break;
-        default:
-          this.handleChangeArea();
-          break;
-      }
-    };
-    this.clickHandler = (params) => {
-      params.event.event.stopPropagation();
-      if (params.componentType === "geo") {
-        this.events.onClickArea?.(params);
-        return;
-      }
-      if (params.componentType === "series" && (params.componentSubType === "scatter" /* SCATTER */ || params.componentSubType === "effectScatter" /* EFFECT_SCATTER */)) {
-        this.events.onClickPoint?.(params);
-      }
-    };
-    this.dbClickHandler = (params) => {
-      params.event.event.stopPropagation();
-      if (params.componentType === "geo") {
-        const nextLevel = this.checkMapEntryEligibility(params);
-        if ((0, import_utils.isUndef)(nextLevel)) {
-          return;
-        }
-        if (MapStateManager.curLevel === "country" /* COUNTRY */ && nextLevel === "province" /* PROVINCE */ && !JUST_SUPPORTED_NEXT_LEVEL_COUNTRIES_AD_CODE.includes(MapStateManager.adcode)) {
-          return;
-        }
-        let nextAdCode;
-        if (MapStateManager.curLevel === "world" /* WORLD */) {
-          if (params.name === G2.CHINA) {
-            nextAdCode = CHINA_AD_CODE_JUST_FOR_FE;
-          } else if (params.name === G2.USA) {
-            nextAdCode = US_AD_CODE_JUST_FOR_FE;
-          } else {
-            nextAdCode = this.getPostCodeByGeoFeatures(params.name);
-          }
-        } else {
-          nextAdCode = this.getPostCodeByGeoFeatures(params.name);
-        }
-        params.region.adcode = nextAdCode;
-        this.events.onDoubleClickArea?.(nextLevel, params);
-        MapStateManager.curLevel = nextLevel;
-        MapStateManager.adcode = nextAdCode;
-        MapStateManager.country = params.region.name ?? "";
-        MapStateManager.getGeoJsonData({
-          mapLevel: nextLevel,
-          country: params.region.name ?? "",
-          region: nextAdCode
-        }).then((result) => {
-          MapStateManager.setGeoData(result);
-        });
-      }
-    };
-    this.updateSeriesImpl = async (series) => {
-      await this.waitForBoundaryLoadingToBeFalse();
-      if (this.currentMapIsChina) {
-        const option = { series };
-        this.setChartOption(option);
-      } else {
-        if (MapStateManager.curLevel === "country" /* COUNTRY */ && MapStateManager.adcode === US_AD_CODE_JUST_FOR_FE) {
-          const option = { series };
-          this.setChartOption(option);
-        } else {
-          const newSeries = this.transSeriesCoordinate2GeoJsonXY(series);
-          const option = { series: newSeries };
-          this.setChartOption(option);
-        }
-      }
-    };
-    this.redrawMap = () => {
-      const chartInstance = this.chartInstance;
-      if (!chartInstance) {
-        return;
-      }
-      const newOption = chartInstance.getOption();
-      const geo = newOption.geo;
-      if (!geo || (0, import_utils.isEmptyArray)(geo) || (0, import_utils.isUndef)(geo[0])) {
-        return;
-      }
-      const geoComponent = geo[0];
-      const mapType = geoComponent.map;
-      chartInstance.dispatchAction({
-        type: "changeGeoRoam",
-        componentType: "geo",
-        map: mapType,
-        center: geoComponent.center,
-        zoom: geoComponent.zoom
-      });
-      this.events.onZoom?.(geoComponent.zoom);
-    };
-    this.resizeMap = () => {
-      this.chartInstance?.resize();
-    };
-    // 将原有装饰器方法替换为基于函数的防抖版本
-    this.updateSeries = (0, import_utils.debounce)(this.updateSeriesImpl.bind(this), 300);
-    this.handleChangeArea = (0, import_utils.debounce)(this.handleChangeAreaImpl.bind(this), 600);
-    if (typeof container === "string") {
-      const element = document.getElementById(container);
-      if (!element) {
-        throw new Error(`Container element with id "${container}" not found`);
-      }
-      this.container = element;
-    } else {
-      this.container = container;
-    }
-    this.config = options;
-    this.events = this.convertEventsToEchartsFormat(this.config.events);
-    this.initChart();
-    this.registerEvents();
-  }
-  get currentMapIsChina() {
-    return MapStateManager.country === CHINA_AD_CODE_JUST_FOR_FE;
-  }
-  get detailGeojson() {
-    return echarts.getMap(this.detailMap)?.geoJson ?? {};
-  }
-  setChartOption(option) {
-    if (!this.chartInstance) return;
-    this.chartInstance.setOption(option);
-  }
-  setGEOData(boundary, detail) {
-    if (!detail || !detail.features) {
-      this.boundaryLoading = false;
-      return;
-    }
-    let center = null;
-    let scale = 1;
-    if (MapStateManager.curLevel === "world" /* WORLD */) {
-      if (this.centralCountry) {
-        const feature = detail.features.find((item) => item.id === this.centralCountry);
-        const targetCoordinates = feature?.geometry && "coordinates" in feature.geometry ? feature.geometry.coordinates : [];
-        const { center: c, zoom: z } = this.getCenterAndZoomByGeometryCoordinates(targetCoordinates);
-        scale = z;
-        center = c;
-      }
-    } else if (MapStateManager.curLevel !== "country" /* COUNTRY */) {
-      const targetCoordinates = detail.features.map(
-        (item) => "coordinates" in item.geometry ? item.geometry.coordinates : []
-      );
-      const { center: c } = this.getCenterAndZoomByGeometryCoordinates(targetCoordinates);
-      center = c;
-    }
-    const isWorld = MapStateManager.curLevel === "world" /* WORLD */;
-    const option = {
-      geo: {
-        ...BOUNDARY_OPTIONS,
-        map: this.detailMap,
-        center,
-        zoom: scale || (isWorld ? 1.3 : 1),
-        itemStyle: {
-          ...BOUNDARY_OPTIONS.itemStyle,
-          borderWidth: isWorld ? 0 : 1,
-          shadowBlur: isWorld ? 1 : 0
-        }
-      }
-    };
-    this.setChartOption(option);
-    this.boundaryLoading = false;
-  }
-  handleChangeAreaImpl(params) {
-    if (!params) {
-      this.events.onHoverArea?.();
-      return;
-    }
-    const series = this.chartInstance?.getOption()?.series;
-    const points = series?.find((item) => item.type === "scatter" /* SCATTER */)?.data;
-    const hoverFeature = this.detailGeojson.features?.find((item) => item.properties?.name === params.name);
-    if (!points || !hoverFeature) {
-      return;
-    }
-    const pointsInRegion = [];
-    points.forEach((point) => {
-      const coordinates = point.value;
-      const isInRegion = this.checkPointInFeature(coordinates, hoverFeature);
-      if (isInRegion && point.businessInfo && typeof point.businessInfo === "object" && "siblingPointId" in point.businessInfo) {
-        pointsInRegion.push(...point.businessInfo.siblingPointId);
-      }
-    });
-    this.events.onHoverArea?.(params, pointsInRegion);
-  }
-  checkPointInFeature(coordinates, feature) {
-    if (feature.geometry.type === "Polygon") {
-      return this.checkPointInPolygon(coordinates, feature.geometry.coordinates);
-    }
-    if (feature.geometry.type === "MultiPolygon") {
-      return feature.geometry.coordinates.some((polygon) => this.checkPointInPolygon(coordinates, polygon));
-    }
-    return false;
-  }
-  checkPointInPolygon(coordinates, polygonRings) {
-    return polygonRings.some((ring, index) => {
-      const isInRing = import_utils.GeoJsonUtils.isPointInPolygon(coordinates, ring);
-      return index === 0 ? isInRing : !isInRing;
-    });
-  }
-  checkMapEntryEligibility(params) {
-    switch (MapStateManager.curLevel) {
-      case "world" /* WORLD */: {
-        return "country" /* COUNTRY */;
-      }
-      case "country" /* COUNTRY */: {
-        if (params.name === "\u5357\u6D77\u8BF8\u5C9B") {
-          return;
-        }
-        return "province" /* PROVINCE */;
-      }
-      case "province" /* PROVINCE */:
-        return "city" /* CITY */;
-      case "city" /* CITY */:
-        if (!isMunicipality(MapStateManager.adcode)) {
-          return "county" /* COUNTY */;
-        }
-        return void 0;
-      case "county" /* COUNTY */:
-      default:
-        break;
-    }
-  }
-  getPostCodeByGeoFeatures(name) {
-    const target = this.detailGeojson.features.find((item) => item.properties?.name === name);
-    if (!target) {
-      return "";
-    }
-    if (this.currentMapIsChina) {
-      const props2 = target.properties;
-      return props2?.adcode ? String(props2.adcode) : "";
-    }
-    const props = target.properties;
-    const code = props[POST_CODE_KEY];
-    return typeof code === "string" ? code : "";
-  }
-  waitForBoundaryLoadingToBeFalse(timeout = 5e3) {
-    const startTime = Date.now();
-    return new Promise((resolve, reject) => {
-      const checkState = () => {
-        if (!this.boundaryLoading) {
-          resolve(true);
-        } else if (Date.now() - startTime > timeout) {
-          reject(new Error("\u83B7\u53D6\u5730\u56FE\u8F6E\u5ED3\u52A0\u8F7D\u72B6\u6001\u8D85\u65F6"));
-        } else {
-          setTimeout(checkState, 1e3);
-        }
-      };
-      checkState();
-    });
-  }
-  transSeriesCoordinate2GeoJsonXY(series) {
-    const transform = this.detailGeojson["hc-transform"];
-    return series.map((item) => {
-      let data;
-      if (item.type === "scatter" /* SCATTER */ || item.type === "effectScatter" /* EFFECT_SCATTER */) {
-        data = item.data.map((point) => {
-          return {
-            ...point,
-            value: import_utils.GeoJsonUtils.lngLatToProjected(transform, point.value)
-          };
-        });
-      } else if (item.type === "lines") {
-        data = item.data.map((line) => {
-          const [startCoords, endCoords] = line.coords;
-          return {
-            ...line,
-            coords: [import_utils.GeoJsonUtils.lngLatToProjected(transform, startCoords), import_utils.GeoJsonUtils.lngLatToProjected(transform, endCoords)]
-          };
-        });
-      }
-      return {
-        ...item,
-        data: data || item.data
-      };
-    });
-  }
-  setPointStyleInternal(targetSeriesName, processFn) {
-    const currentOption = this.chartInstance?.getOption();
-    if (!currentOption || !Array.isArray(currentOption.series)) {
-      return;
-    }
-    const series = currentOption.series;
-    const pointSeries = series.find((item) => item.name === targetSeriesName);
-    if (!pointSeries) {
-      return;
-    }
-    const data = pointSeries.data;
-    data.forEach((item) => {
-      processFn(item);
-    });
-    const newOption = { series };
-    this.setChartOption(newOption);
-  }
-  registerEvents() {
-    window.addEventListener("resize", this.resizeMap);
-  }
-  updateMapLevel(curLevel) {
-    MapStateManager.curLevel = curLevel;
-    const chart = this.chartInstance;
-    const currentOption = chart?.getOption?.();
-    const geo = currentOption?.geo || [];
-    const hasInitializedGeo = Array.isArray(geo) && geo[0] && geo[0].map;
-    if (!hasInitializedGeo) {
-      return;
-    }
-    const isWorld = curLevel === "world" /* WORLD */;
-    const option = {
-      geo: {
-        itemStyle: {
-          ...BOUNDARY_OPTIONS.itemStyle,
-          borderWidth: isWorld ? 0 : 1,
-          shadowBlur: isWorld ? 1 : 0
-        }
-      }
-    };
-    this.setChartOption(option);
-  }
-  destroy() {
-    try {
-      if (this.detailMap) {
-        this.chartInstance?.clear();
-      }
-    } catch (error) {
-    }
-    window.removeEventListener("resize", this.resizeMap);
-    this.chartInstance?.dispose();
-    if (this.unsubscribeState) {
-      this.unsubscribeState();
-      this.unsubscribeState = null;
-    }
-  }
-  async initChart() {
-    if (!this.container) {
-      return;
-    }
-    const instance = echarts.init(this.container);
-    this.chartInstance = instance;
-    const mapName = this.generateMapName();
-    const baseOption = {
-      tooltip: {
-        show: false
-      },
-      geo: {
-        ...BOUNDARY_OPTIONS,
-        map: mapName
-      },
-      series: this.series
-    };
-    const geojson = MapStateManager.geoData;
-    echarts.registerMap(mapName, geojson);
-    this.setChartOption(baseOption);
-    instance.on("click", this.clickHandler);
-    instance.on("dblclick", this.dbClickHandler);
-    instance.on("mouseover", this.mouseoverHandler);
-    instance.on("mouseout", this.mouseoutHandler);
-    instance.on("georoam", this.redrawMap);
-  }
-  generateMapName() {
-    const level = MapStateManager.curLevel;
-    const country = MapStateManager.country;
-    const adcode = MapStateManager.adcode;
-    switch (level) {
-      case "world" /* WORLD */:
-        return "world";
-      case "country" /* COUNTRY */:
-        return country === "100000" ? "china" : "usa";
-      case "province" /* PROVINCE */:
-        return `province-${adcode}`;
-      case "city" /* CITY */:
-        return `city-${adcode}`;
-      case "county" /* COUNTY */:
-        return `county-${adcode}`;
-      default:
-        return "default";
-    }
-  }
-  /**
-   * 处理状态变化
-   */
-  handleStateChange(newState, oldState) {
-    if (!this.chartInstance) return;
-    if (newState.curLevel !== oldState.curLevel) {
-      this.updateMapLevel(newState.curLevel);
-    }
-    if (newState.geoData !== oldState.geoData) {
-      this.setGEOData(newState.geoData, newState.detailGeoData);
-    }
-    if (newState.points !== oldState.points) {
-      this.updatePointsInEcharts(newState.points);
-    }
-    if (newState.lines !== oldState.lines) {
-      this.updateLinesInEcharts(newState.lines);
-    }
-  }
-  /**
-   * 在 ECharts 中更新点数据
-   */
-  async updatePointsInEcharts(points) {
-    if (!this.chartInstance) return;
-    const pointSeries = this.convertPointsToSeries(points);
-    await this.updateSeries(pointSeries);
-  }
-  /**
-   * 在 ECharts 中更新线数据
-   */
-  async updateLinesInEcharts(lines) {
-    if (!this.chartInstance) return;
-    const lineSeries = this.convertLinesToSeries(lines);
-    await this.updateSeries([...lineSeries]);
-  }
-  /**
-   * 将统一的事件格式转换为 ECharts 需要的格式
-   */
-  convertEventsToEchartsFormat(events) {
-    if (!events) return {};
-    return {
-      onClickPoint: events.onPointClick ? (params) => {
-        const point = this.findPointByData(params);
-        if (point) events.onPointClick(point);
-      } : void 0,
-      onHoverPoint: events.onPointHover ? (params) => {
-        const point = this.findPointByData(params);
-        events.onPointHover(point || null);
-      } : void 0,
-      onClickArea: events.onAreaClick ? (params) => {
-        if (params) {
-          events.onAreaClick({
-            name: params.name,
-            adcode: params.region?.adcode
-          });
-        }
-      } : void 0,
-      onHoverArea: events.onAreaHover ? (params, pointsInRegion) => {
-        if (params) {
-          events.onAreaHover({
-            name: params.name,
-            adcode: params.region?.adcode
-          });
-        } else {
-          events.onAreaHover(null);
-        }
-      } : void 0,
-      onDoubleClickArea: events.onAreaDoubleClick ? (nextLevel, params) => {
-        events.onAreaDoubleClick({
-          name: params.name,
-          adcode: params.region?.adcode,
-          nextLevel
-        });
-      } : void 0,
-      onZoom: events.onZoom
-    };
-  }
-  /**
-   * 根据 ECharts 事件参数查找对应的点数据
-   */
-  findPointByData(params) {
-    if (!params.data || !params.data.businessInfo) return void 0;
-    const businessInfo = params.data.businessInfo;
-    if (!businessInfo || typeof businessInfo !== "object" || !("id" in businessInfo)) return void 0;
-  }
-  /**
-   * 规范化地理数据格式
-   */
-  normalizeGeoData(data) {
-    if ("type" in data && data.type === "FeatureCollection") {
-      return data;
-    }
-    return data;
-  }
-  /**
-   * 将点数据转换为 ECharts Series
-   */
-  convertPointsToSeries(points) {
-    const scatterData = points.map((point) => ({
-      name: point.name || "",
-      value: [...point.coordinate, point.value || 0],
-      businessInfo: point,
-      itemStyle: point.style ? {
-        color: point.style.color,
-        opacity: point.style.opacity
-      } : void 0
-    }));
-    return [{
-      name: "points",
-      type: "scatter" /* SCATTER */,
-      coordinateSystem: "geo",
-      data: scatterData,
-      symbolSize: (val) => {
-        const point = val[2] || 10;
-        return Math.sqrt(point) * 2;
-      },
-      label: {
-        show: false
-      },
-      emphasis: {
-        label: {
-          show: true,
-          position: "right"
-        }
-      }
-    }];
-  }
-  /**
-   * 将线数据转换为 ECharts Series
-   */
-  convertLinesToSeries(lines) {
-    const lineData = lines.map((line) => ({
-      coords: [line.from, line.to],
-      businessInfo: line,
-      lineStyle: line.color ? {
-        color: line.color?.toString(),
-        width: line.width || 2,
-        opacity: line.opacity || 1
-      } : void 0
-    }));
-    return [{
-      name: "lines",
-      type: "lines",
-      coordinateSystem: "geo",
-      data: lineData,
-      large: true,
-      effect: {
-        show: true,
-        period: 6,
-        trailLength: 0.7,
-        symbolSize: 3
-      },
-      lineStyle: {
-        width: 2,
-        opacity: 0.6
-      }
-    }];
-  }
-  // IMapRenderer interface implementation
-  async setGeoData(boundary) {
-    if (!this.chartInstance) return;
-    const geoData = this.normalizeGeoData(boundary);
-    MapStateManager.setGeoData(geoData);
-  }
-  async setPoints(points) {
-    if (!this.chartInstance) return;
-  }
-  async setLines(lines) {
-    if (!this.chartInstance) return;
-  }
-  async updateMapView(config) {
-    MapStateManager.curLevel = config.curLevel;
-    MapStateManager.adcode = config.adcode;
-    MapStateManager.country = config.country;
-    const geoData = await getGeoJsonData({
-      mapLevel: config.curLevel,
-      country: config.country,
-      region: config.adcode
-    });
-    MapStateManager.setGeoData(geoData);
-  }
-  // IMapRenderer interface method - adapts to existing setPointStyle
-  setPointStyle(seriesName, styleProcessor) {
-    if (!this.chartInstance) return;
-    this.setPointStyleInternal(seriesName, (dataItem) => {
-      const point = this.findPointByData({ data: dataItem });
-      if (point) {
-        styleProcessor(point);
-      }
-    });
-  }
-  resize() {
-    this.resizeMap();
-  }
-  getType() {
-    return "echarts";
-  }
-  // 计算中心和缩放（简单估算）
-  getCenterAndZoomByGeometryCoordinates(coords) {
-    const flat = [];
-    const collect = (c) => {
-      if (Array.isArray(c)) {
-        if (typeof c[0] === "number" && typeof c[1] === "number") {
-          flat.push([c[0], c[1]]);
-        } else {
-          for (const sub of c) collect(sub);
-        }
-      }
-    };
-    collect(coords);
-    if (flat.length === 0) return { center: null, zoom: 1 };
-    let minLng = flat[0][0], maxLng = flat[0][0], minLat = flat[0][1], maxLat = flat[0][1];
-    for (const [lng, lat] of flat) {
-      minLng = Math.min(minLng, lng);
-      maxLng = Math.max(maxLng, lng);
-      minLat = Math.min(minLat, lat);
-      maxLat = Math.max(maxLat, lat);
-    }
-    const center = [(minLng + maxLng) / 2, (minLat + maxLat) / 2];
-    const lngDiff = Math.max(1e-4, Math.abs(maxLng - minLng));
-    const latDiff = Math.max(1e-4, Math.abs(maxLat - minLat));
-    const zoom = Math.min(Math.log2(360 / lngDiff), Math.log2(180 / latDiff));
-    return { center, zoom: Math.max(0.5, Math.min(zoom, 6)) };
-  }
-};
+// src/main.ts
+var import_types4 = require("@orch-map/types");
 
 // src/deckgl/deckInstance.ts
 var import_core = require("@deck.gl/core");
@@ -962,7 +58,7 @@ var _DeckInstance = class _DeckInstance {
     if (_DeckInstance._instanceMap.has(instanceId)) {
       throw new Error(`Instance with id ${instanceId} already exists`);
     }
-    const mode = props?.mode || "2d";
+    const mode = props?.mode ?? "2d";
     const mapView = new import_core.MapView({
       repeat: true,
       controller: {
@@ -1055,9 +151,8 @@ var CurvatureCalculator = class {
    * @returns 计算出的曲率值
    */
   curvature(key, min = 0, max = 1) {
-    if (this.curvatureMap[key] === void 0) {
-      this.curvatureMap[key] = this.hashString(key) * (max - min) + min;
-    }
+    var _a;
+    (_a = this.curvatureMap)[key] ?? (_a[key] = this.hashString(key) * (max - min) + min);
     return this.curvatureMap[key];
   }
   /**
@@ -1082,7 +177,7 @@ var CurvatureCalculator = class {
   calculateCurvatureByCoordinates(key, startCoordinate, endCoordinate, customRange) {
     const [startLng, startLat] = startCoordinate;
     const [endLng, endLat] = endCoordinate;
-    const range = customRange || this.calculateCurvatureRange(startLng, startLat, endLng, endLat);
+    const range = customRange ?? this.calculateCurvatureRange(startLng, startLat, endLng, endLat);
     if (range.min < 0 || range.max > 1 || range.min > range.max) {
       throw new Error("\u65E0\u6548\u7684\u66F2\u7387\u8303\u56F4\u3002\u5FC5\u987B\u6EE1\u8DB3: 0 <= min <= max <= 1");
     }
@@ -1346,7 +441,7 @@ var DEFAULT_GEO_LAYER_PROPS = {
 };
 
 // src/deckgl/index.ts
-var import_utils2 = require("@orch-map/utils");
+var import_utils = require("@orch-map/utils");
 
 // src/deckgl/icon.layer.ts
 var DEFAULT_SVG_ICONS = {
@@ -1492,6 +587,149 @@ var MapLayerManager = _MapLayerManager;
 
 // src/deckgl/index.ts
 var import_layers3 = require("@deck.gl/layers");
+
+// src/MapStateManager.ts
+var import_types = require("@orch-map/types");
+
+// src/utils/geoDataService.ts
+var import_mapdata = require("@orch-map/mapdata");
+async function getGeoJsonData(params) {
+  return await import_mapdata.MapDataService.getGeoJsonData(params);
+}
+
+// src/MapStateManager.ts
+var _MapStateManager = class _MapStateManager {
+  // 私有构造函数，防止外部实例化
+  constructor() {
+  }
+  // 静态 getter/setter - curLevel
+  static get curLevel() {
+    return _MapStateManager._curLevel;
+  }
+  static set curLevel(level) {
+    const oldValue = _MapStateManager._curLevel;
+    _MapStateManager._curLevel = level;
+    _MapStateManager.notifyPropertyChange("curLevel", level, oldValue);
+  }
+  // 静态 getter/setter - country
+  static get country() {
+    return _MapStateManager._country;
+  }
+  static set country(country) {
+    const oldValue = _MapStateManager._country;
+    _MapStateManager._country = country;
+    _MapStateManager.notifyPropertyChange("country", country, oldValue);
+  }
+  // 静态 getter/setter - adcode
+  static get adcode() {
+    return _MapStateManager._adcode;
+  }
+  static set adcode(adcode) {
+    const oldValue = _MapStateManager._adcode;
+    _MapStateManager._adcode = adcode;
+    _MapStateManager.notifyPropertyChange("adcode", adcode, oldValue);
+  }
+  // 静态 getter/setter - mapVersion
+  static get mapVersion() {
+    return _MapStateManager._mapVersion;
+  }
+  static set mapVersion(version) {
+    _MapStateManager._mapVersion = version;
+  }
+  // 静态 getter/setter - geoData
+  static get geoData() {
+    return _MapStateManager._geoData;
+  }
+  static set geoData(data) {
+    const oldValue = _MapStateManager._geoData;
+    _MapStateManager._geoData = data;
+    _MapStateManager.notifyPropertyChange("geoData", data, oldValue);
+  }
+  /**
+   * 设置地理数据（包括详情数据）
+   */
+  static setGeoData(geoData) {
+    _MapStateManager.geoData = geoData;
+  }
+  static async getGeoJsonData(config) {
+    const result = await getGeoJsonData(config);
+    _MapStateManager.setGeoData(result);
+    return result;
+  }
+  static get extraSvgIcons() {
+    return _MapStateManager._extraSvgIcons;
+  }
+  static set extraSvgIcons(icons) {
+    _MapStateManager._extraSvgIcons = icons;
+  }
+  /**
+   * 重置到默认状态
+   */
+  static reset() {
+    _MapStateManager._curLevel = import_types.MapLevel.WORLD;
+    _MapStateManager._country = "100000";
+    _MapStateManager._adcode = "100000";
+    _MapStateManager._geoData = void 0;
+  }
+  /**
+   * 监听特定属性变化
+   */
+  static onPropertyChange(property, listener) {
+    const key = `property-${property}`;
+    if (!_MapStateManager.propertyListeners.has(key)) {
+      _MapStateManager.propertyListeners.set(key, []);
+    }
+    _MapStateManager.propertyListeners.get(key).push(listener);
+    return () => {
+      const listeners = _MapStateManager.propertyListeners.get(key);
+      if (listeners) {
+        const index = listeners.indexOf(listener);
+        if (index > -1) {
+          listeners.splice(index, 1);
+        }
+        if (listeners.length === 0) {
+          _MapStateManager.propertyListeners.delete(key);
+        }
+      }
+    };
+  }
+  /**
+   * 通知属性变化
+   */
+  static notifyPropertyChange(property, newValue, oldValue) {
+    const key = `property-${property}`;
+    const listeners = _MapStateManager.propertyListeners.get(key);
+    if (listeners) {
+      listeners.forEach((listener) => {
+        try {
+          listener(newValue, oldValue);
+        } catch (error) {
+          console.error(`Error in property change listener for ${property}:`, error);
+        }
+      });
+    }
+  }
+  /**
+   * 销毁状态管理器
+   */
+  static destroy() {
+    _MapStateManager.propertyListeners.clear();
+    _MapStateManager.reset();
+  }
+};
+// 静态属性，可直接访问
+_MapStateManager._curLevel = import_types.MapLevel.WORLD;
+_MapStateManager._country = "100000";
+// 默认中国
+_MapStateManager._adcode = "100000";
+_MapStateManager._mapVersion = "standard";
+/** 自定义图标库 */
+_MapStateManager._extraSvgIcons = {};
+// 属性监听器
+_MapStateManager.propertyListeners = /* @__PURE__ */ new Map();
+var MapStateManager = _MapStateManager;
+
+// src/deckgl/index.ts
 var DeckglMap = class {
   /**
    * 构造函数
@@ -1614,7 +852,7 @@ var DeckglMap = class {
       data: geojsonData,
       // 防止在倾斜视角下遮挡后绘制的图层（例如 IconLayer）
       getFillColor: (feature) => {
-        if ((0, import_utils2.isDef)(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
+        if ((0, import_utils.isDef)(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
           return [255, 255, 255, 255];
         }
         return DEFAULT_GEO_FILL_COLOR;
@@ -1770,7 +1008,7 @@ var DeckglMap = class {
       this.animationTimer.destroy();
       this.animationTimer = null;
     }
-    this.animationTimer = new import_utils2.TaskManager.Timer({
+    this.animationTimer = new import_utils.TaskManager.Timer({
       description: "glmap-arc-animation",
       time: 10,
       once: false,
@@ -1789,23 +1027,1322 @@ var DeckglMap = class {
   }
 };
 
-// src/index.ts
+// src/echarts-geo/index.ts
+var import_types3 = require("@orch-map/types");
+var import_utils4 = require("@orch-map/utils");
+var echarts = __toESM(require("echarts/core"));
+var import_renderers = require("echarts/renderers");
+var import_components = require("echarts/components");
+var import_charts = require("echarts/charts");
+
+// src/echarts-geo/echart.option.ts
+var POST_CODE_KEY = "hc-key";
+var BOUNDARY_OPTIONS = {
+  zoom: 1.3,
+  hoverLayerThreshold: 1,
+  // 修复：允许hover事件触发
+  silent: false,
+  roam: true,
+  center: null,
+  scaleLimit: { min: 1 },
+  zlevel: 0,
+  itemStyle: {
+    areaColor: "#094777",
+    borderWidth: 1,
+    borderColor: "#1480C5",
+    shadowBlur: 1,
+    shadowColor: "rgba(0, 0, 0, 0.5)"
+  },
+  emphasis: {
+    label: {
+      show: false
+    },
+    itemStyle: {
+      areaColor: "#3079c8",
+      borderWidth: 1
+    }
+  }
+  // regions: [
+  //   {
+  //     name: "南海诸岛",
+  //     itemStyle: {
+  //       opacity: 0,
+  //     },
+  //   },
+  // ],
+};
+
+// src/utils/geo.helper.ts
+var import_types2 = require("@orch-map/types");
+var import_utils2 = require("@orch-map/utils");
+var getCenterAndZoomByGeometryCoordinates = (coords) => {
+  const flat = [];
+  const collect = (c) => {
+    if (Array.isArray(c)) {
+      if (c.length === 2 && typeof c[0] === "number" && typeof c[1] === "number") {
+        flat.push([c[0], c[1]]);
+      } else {
+        for (const sub of c) {
+          collect(sub);
+        }
+      }
+    }
+  };
+  collect(coords);
+  if (flat.length === 0) {
+    return { center: null, zoom: 1 };
+  }
+  let minLng = flat[0][0];
+  let maxLng = flat[0][0];
+  let minLat = flat[0][1];
+  let maxLat = flat[0][1];
+  for (const [lng, lat] of flat) {
+    minLng = Math.min(minLng, lng);
+    maxLng = Math.max(maxLng, lng);
+    minLat = Math.min(minLat, lat);
+    maxLat = Math.max(maxLat, lat);
+  }
+  const center = [
+    (minLng + maxLng) / 2,
+    (minLat + maxLat) / 2
+  ];
+  const lngDiff = Math.max(1e-4, Math.abs(maxLng - minLng));
+  const latDiff = Math.max(1e-4, Math.abs(maxLat - minLat));
+  const zoom = Math.min(Math.log2(360 / lngDiff), Math.log2(180 / latDiff));
+  return { center, zoom: Math.max(0.5, Math.min(zoom, 6)) };
+};
+
+// src/utils/echartsGeoUtils.ts
+var import_utils3 = require("@orch-map/utils");
+var _EChartsGeoUtils = class _EChartsGeoUtils {
+  /**
+   * @description: 获取点默认配置项
+   * @param point 点数据
+   * @warning 这里的 showLabelNotEmphasis 为 true 时，会展示 label，
+   * showLabelNotEmphasis 为 false 时，hover 时展示 label，正常不展示 label
+   */
+  static getPointDefaultOption(point) {
+    return {
+      symbol: "circle",
+      symbolSize: 12,
+      symbolRotate: 0,
+      z: 1,
+      encode: {
+        x: "value.0",
+        y: "value.1"
+      },
+      label: {
+        show: true,
+        z: 10,
+        color: "#fff",
+        position: "bottom",
+        formatter: (formatterParams) => {
+          return formatterParams.data.name ?? "";
+        }
+      },
+      itemStyle: {
+        color: "#47C384",
+        borderColor: "#fff",
+        shadowColor: "#fff",
+        borderWidth: 0,
+        shadowBlur: 0
+      },
+      emphasis: {
+        label: {
+          show: false
+        }
+      },
+      value: [point.coordinate[0], point.coordinate[1]],
+      businessInfo: {
+        ...point
+      },
+      graphInfo: {}
+    };
+  }
+  /**
+   * @description: 字符串哈希函数，生成0到1之间的数值
+   * 用确定性的方法替代 Math.random()
+   * @param str 输入字符串
+   * @returns 0到1之间的数值
+   */
+  static hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash) / 2147483647;
+  }
+  /**
+   * @description: 计算线条曲率
+   * 主要是根据连线的 id 计算两点之后连线的曲率
+   * @param key 线条的唯一标识
+   * @param min 最小曲率值
+   * @param max 最大曲率值
+   * @returns 计算出的曲率值
+   */
+  static curvature(key, min = 0, max = 1) {
+    if ((0, import_utils3.isUndef)(_EChartsGeoUtils.curvatureMap[key])) {
+      _EChartsGeoUtils.curvatureMap[key] = _EChartsGeoUtils.hashString(key) * (max - min) + min;
+    }
+    return _EChartsGeoUtils.curvatureMap[key];
+  }
+  /**
+   * @description: 获取线条默认配置
+   * 这里会将线整个配置拿过来，直接进行赋值即可
+   * 线条不会像点一样显示的形状、label 等复杂的信息
+   * 对于线条而言，在业务场景中，一般是颜色不同而已
+   *
+   * @param lineItem 线条数据
+   * @param config 曲率配置参数（可选）
+   * @returns 线条配置
+   */
+  static getLineDefaultOption(lineItem, config) {
+    const [startLng, startLat] = lineItem.startCoordinate;
+    const [endLng, endLat] = lineItem.endCoordinate;
+    const { min: defaultMin, max: defaultMax } = _EChartsGeoUtils.calculateCurvatureRange(startLng, startLat, endLng, endLat);
+    const curvatureMin = config?.curvatureMin ?? defaultMin;
+    const curvatureMax = config?.curvatureMax ?? defaultMax;
+    if (curvatureMin < 0 || curvatureMax > 1 || curvatureMin > curvatureMax) {
+      throw new Error("\u65E0\u6548\u7684\u66F2\u7387\u8303\u56F4\u3002\u5FC5\u987B\u6EE1\u8DB3: 0 <= min <= max <= 1");
+    }
+    return {
+      coords: [lineItem.startCoordinate, lineItem.endCoordinate],
+      lineStyle: {
+        color: "#47C384",
+        width: 0.1,
+        opacity: 0.3,
+        // 线条曲率
+        curveness: _EChartsGeoUtils.curvature(lineItem.id, curvatureMin, curvatureMax)
+      }
+    };
+  }
+};
+// 线条随机曲率映射表
+_EChartsGeoUtils.curvatureMap = {};
+/**
+ * @description: 切换标签显示状态
+ * @param point 点配置
+ * @param showLabelNotEmphasis 是否在非强调状态下显示标签
+ */
+_EChartsGeoUtils.toggleLabelShow = (point, showLabelNotEmphasis) => {
+  point.label.show = showLabelNotEmphasis;
+  point.emphasis.label.show = !showLabelNotEmphasis;
+};
+/**
+ * @description: 计算数量后缀
+ * @param count 数量
+ * @returns 格式化后的后缀
+ */
+_EChartsGeoUtils.countSuffix = (count) => {
+  return count > 1 ? `(${count})` : "";
+};
+/**
+ * @description: 处理点数据，转换为 echarts 配置
+ * @param pointItem 点数据
+ * @param config 适配器参数
+ * @returns 处理后的点配置
+ */
+_EChartsGeoUtils.processPoint = (pointItem, config) => {
+  const siblingCount = _EChartsGeoUtils.countSuffix(pointItem.siblingPointId.length);
+  const { filterPoint, staredPoints = [], showNamePoints = [] } = config;
+  const dataOption = _EChartsGeoUtils.getPointDefaultOption(pointItem);
+  let isStarred = false;
+  if (staredPoints.length > 0) {
+    isStarred = staredPoints.some((point) => point.id === pointItem.id);
+    if (isStarred) {
+      _EChartsGeoUtils.toggleLabelShow(dataOption, true);
+    }
+  }
+  dataOption.graphInfo.isStarred = isStarred;
+  let showLabel;
+  const onlyShowPartialNodeNames = Array.isArray(showNamePoints) && showNamePoints.length > 0 || (0, import_utils3.isDef)(filterPoint);
+  if (onlyShowPartialNodeNames) {
+    showLabel = filterPoint && pointItem.siblingPointId.includes(filterPoint.id) ? filterPoint.name : staredPoints.find((point) => point.id === pointItem.id)?.name ?? showNamePoints.find((point) => point.id === pointItem.id)?.name;
+    if (showLabel) {
+      _EChartsGeoUtils.toggleLabelShow(dataOption, true);
+    }
+  } else {
+    showLabel = pointItem.name;
+  }
+  if (showLabel) {
+    dataOption.name = showLabel + siblingCount;
+  }
+  return dataOption;
+};
+/**
+ * @description: 计算连线的曲率范围
+ * 根据连线两端点的经纬度差值计算合适的曲率范围
+ *
+ * 计算逻辑:
+ * 1. 如果起点和终点重合(经纬度相同)，返回固定的小曲率范围避免直线
+ * 2. 计算经度和纬度的变化量的比值(类似于 tan 值)
+ * 3. 使用最小的变化率来判断线条的倾斜程度:
+ *    - 当最小变化率 > 0.5 (即线条倾斜角度 > 26.57°)时，使用较大曲率范围(0.5-1.0)
+ *    - 当最小变化率 < 0.5 (即线条倾斜角度 < 26.57°)时，使用较小曲率范围(0.2-0.5)
+ *    这样可以保证接近水平或垂直的线条使用较小曲率，而倾斜线条使用较大曲率
+ *
+ * @param startLng 起点经度
+ * @param startLat 起点纬度
+ * @param endLng 终点经度
+ * @param endLat 终点纬度
+ * @returns 曲率的最小值和最大值
+ */
+_EChartsGeoUtils.calculateCurvatureRange = (startLng, startLat, endLng, endLat) => {
+  if (startLat === endLat && startLng === endLng) {
+    return { min: 0.1, max: 0.3 };
+  }
+  const deltaLng = Math.abs(endLng - startLng);
+  const deltaLat = Math.abs(endLat - startLat);
+  const ratio = Math.min(deltaLng / deltaLat, deltaLat / deltaLng);
+  const min = ratio > 0.5 ? 0.5 : 0.2;
+  const max = ratio > 0.5 ? 1 : 0.5;
+  return { min, max };
+};
+/**
+ * @description: 获取线条逆向连线的 series 配置
+ * 将连线起终点对调，创建反向连线配置
+ *
+ * @param originLineSeries 原始线条系列配置
+ * @returns 逆向连线的系列配置
+ */
+_EChartsGeoUtils.getBuddyLineSeries = (originLineSeries) => {
+  const sourceData = Array.isArray(originLineSeries.data) ? originLineSeries.data : [];
+  const connectivitySeriesData = sourceData.map((item) => {
+    const [start, end] = item.coords ?? [];
+    return {
+      ...item,
+      coords: [end, start],
+      lineStyle: {
+        ...item.lineStyle,
+        // 但是在显示上为了表示为同一条线，这里需要将曲线的弯曲度取反，这样就可以在地图上展示一条线
+        // 使用确定性方法替代 Math.random()
+        curveness: -(item.lineStyle?.curveness ?? _EChartsGeoUtils.hashString(JSON.stringify(item.coords)))
+      }
+    };
+  });
+  const buddyConnectivitySeries = {
+    ...originLineSeries,
+    data: connectivitySeriesData
+  };
+  return buddyConnectivitySeries;
+};
+/**
+ * @description: 处理线条数据，转换为 echarts 配置
+ * @param lineItem 线条数据
+ * @param config 曲率配置参数（可选）
+ * @returns 处理后的线条配置
+ */
+_EChartsGeoUtils.processLine = (lineItem, config) => {
+  return _EChartsGeoUtils.getLineDefaultOption(lineItem, config);
+};
+var EChartsGeoUtils = _EChartsGeoUtils;
+
+// src/echarts-geo/index.ts
+echarts.use([import_renderers.CanvasRenderer, import_components.GeoComponent, import_components.TooltipComponent, import_components.TitleComponent, import_charts.ScatterChart, import_charts.LinesChart]);
+var G2 = { CHINA: "\u4E2D\u56FD", USA: "\u7F8E\u56FD" };
+var CHINA_AD_CODE_JUST_FOR_FE = "100000";
+var US_AD_CODE_JUST_FOR_FE = "us";
+var MUNICIPALITY_CODES = /* @__PURE__ */ new Set(["110000", "120000", "310000", "500000"]);
+var isMunicipality = (adcode) => MUNICIPALITY_CODES.has(adcode);
+var JUST_SUPPORTED_NEXT_LEVEL_COUNTRIES_AD_CODE = [CHINA_AD_CODE_JUST_FOR_FE, US_AD_CODE_JUST_FOR_FE];
+var EchartsMap = class {
+  /**
+   * 构造函数
+   * @param container - 地图容器，可以是 DOM 元素或元素 ID 字符串
+   * @param options - 地图配置选项，支持 EchartsMapOptions 或 MapRendererConfig 格式
+   * @throws {Error} 当通过 ID 查找容器元素失败时抛出错误
+   */
+  constructor(container, options, geoJson) {
+    /** 当前详细地图名称 */
+    this.detailMap = "";
+    /** ECharts 实例 */
+    this.chartInstance = null;
+    /** 图表系列配置 */
+    this.series = [];
+    /** 边界数据加载状态 */
+    this.boundaryLoading = false;
+    /** 状态管理器取消订阅函数 */
+    this.unsubscribeState = null;
+    /** 曲率计算器实例 */
+    this.curvatureCalculator = new CurvatureCalculator();
+    //=== 事件处理方法 ===//
+    /**
+     * 鼠标悬停事件处理器
+     * @param params - 事件参数，包含组件类型和相关信息
+     * @private
+     */
+    this.mouseoverHandler = (params) => {
+      if (!params?.componentType) {
+        return;
+      }
+      switch (params.componentType) {
+        case "geo":
+          this.handleChangeArea(params);
+          break;
+        case "series":
+          if (this.config.events?.onPointHover) {
+            this.config.events.onPointHover(this.transPointParam2BaseMapPoint(params));
+          }
+          break;
+        default:
+          if (this.config.events?.onAreaHover) {
+            this.config.events.onAreaHover(params);
+          }
+          break;
+      }
+    };
+    /**
+     * 鼠标移出事件处理器
+     * @param params - 事件参数，包含组件类型和相关信息
+     * @private
+     */
+    this.mouseoutHandler = (params) => {
+      if (!params?.componentType) {
+        return;
+      }
+      switch (params.componentType) {
+        case "geo":
+          this.handleChangeArea();
+          break;
+        case "series":
+          break;
+        default:
+          this.handleChangeArea();
+          break;
+      }
+    };
+    /**
+     * 点击事件处理器
+     * @param params - 事件参数，包含组件类型和相关信息
+     * @private
+     */
+    this.clickHandler = (params) => {
+      if (!params?.event?.event || !params.componentType) {
+        return;
+      }
+      params.event.event.stopPropagation();
+      if (params.componentType === "geo") {
+        if (this.config.events?.onAreaClick) {
+          this.config.events.onAreaClick(params);
+        }
+        return;
+      }
+      if (params.componentType === "series" && (params.componentSubType === "scatter" /* SCATTER */ || params.componentSubType === "effectScatter" /* EFFECT_SCATTER */) && this.config.events?.onPointClick) {
+        this.config.events.onPointClick(this.transPointParam2BaseMapPoint(params));
+      }
+    };
+    /**
+     * 双击事件处理器（用于地图层级切换）
+     * @param params - 事件参数，包含组件类型和区域信息
+     * @private
+     */
+    this.dbClickHandler = (params) => {
+      if (!params?.event?.event || !params.componentType) {
+        return;
+      }
+      params.event.event.stopPropagation();
+      if (params.componentType === "geo") {
+        const nextLevel = this.checkMapEntryEligibility(params);
+        if ((0, import_utils4.isUndef)(nextLevel)) {
+          return;
+        }
+        if (MapStateManager.curLevel === import_types3.MapLevel.COUNTRY && nextLevel === import_types3.MapLevel.PROVINCE && !JUST_SUPPORTED_NEXT_LEVEL_COUNTRIES_AD_CODE.includes(MapStateManager.adcode)) {
+          return;
+        }
+        let nextAdCode = "";
+        if (MapStateManager.curLevel === import_types3.MapLevel.WORLD) {
+          if (params.name === G2.CHINA) {
+            nextAdCode = CHINA_AD_CODE_JUST_FOR_FE;
+          } else if (params.name === G2.USA) {
+            nextAdCode = US_AD_CODE_JUST_FOR_FE;
+          } else {
+            nextAdCode = this.getPostCodeByGeoFeatures(params.name);
+          }
+        } else {
+          nextAdCode = this.getPostCodeByGeoFeatures(params.name);
+        }
+        if (!params.region) {
+          params.region = { name: params.name || "" };
+        }
+        params.region.adcode = nextAdCode;
+        if (this.config.events?.onAreaDoubleClick) {
+          this.config.events.onAreaDoubleClick(params);
+        }
+        MapStateManager.curLevel = nextLevel ?? import_types3.MapLevel.WORLD;
+        MapStateManager.adcode = nextAdCode;
+        MapStateManager.country = params.region.name ?? "";
+        MapStateManager.getGeoJsonData({
+          mapLevel: nextLevel ?? import_types3.MapLevel.WORLD,
+          country: params.region.name ?? "",
+          region: nextAdCode
+        }).then((result) => {
+          MapStateManager.setGeoData(result);
+        }).catch((error) => {
+          console.error("\u52A0\u8F7D\u5730\u7406\u6570\u636E\u5931\u8D25:", error);
+        });
+      }
+    };
+    /**
+     * 更新系列数据的具体实现
+     * @param series - ECharts 系列配置数组
+     * @private
+     */
+    this.updateSeriesImpl = async (series) => {
+      await this.waitForBoundaryLoadingToBeFalse();
+      if (this.currentMapIsChina) {
+        const option = { series };
+        this.setChartOption(option);
+      } else {
+        if (MapStateManager.curLevel === import_types3.MapLevel.COUNTRY && MapStateManager.adcode === US_AD_CODE_JUST_FOR_FE) {
+          const option = { series };
+          this.setChartOption(option);
+        } else {
+          const option = { series };
+          this.setChartOption(option);
+        }
+      }
+    };
+    /**
+     * 重绘地图
+     * @private
+     */
+    this.redrawMap = () => {
+      const chartInstance = this.chartInstance;
+      if (!chartInstance) {
+        return;
+      }
+      const newOption = chartInstance.getOption();
+      const geo = newOption.geo;
+      if (!geo || (0, import_utils4.isEmptyArray)(geo) || (0, import_utils4.isUndef)(geo[0])) {
+        return;
+      }
+      const geoComponent = geo[0];
+      const mapType = geoComponent.map;
+      chartInstance.dispatchAction({
+        type: "changeGeoRoam",
+        componentType: "geo",
+        map: mapType,
+        center: geoComponent.center,
+        zoom: geoComponent.zoom
+      });
+      if (this.config.events?.onZoom && typeof geoComponent.zoom === "number") {
+        this.config.events.onZoom(geoComponent.zoom);
+      }
+    };
+    /**
+     * 调整地图大小
+     * @public
+     */
+    this.resizeMap = () => {
+      this.chartInstance?.resize();
+    };
+    /**
+     * 地图系列数据更新方法（防抖，300ms 延迟）
+     * @param series - ECharts 系列配置
+     * @public
+     */
+    this.updateSeries = (0, import_utils4.debounce)((...args) => {
+      const series = args[0];
+      this.updateSeriesImpl(series).catch(console.error);
+    }, 300);
+    /**
+     * 区域变化处理方法（防抖，600ms 延迟）
+     * @param params - GEO参数
+     * @private
+     */
+    this.handleChangeArea = (0, import_utils4.debounce)((...args) => {
+      const params = args[0];
+      this.handleChangeAreaImpl(params);
+    }, 600);
+    if (typeof container === "string") {
+      const element = document.getElementById(container);
+      if (!element) {
+        throw new Error(`\u627E\u4E0D\u5230ID\u4E3A"${container}"\u7684\u5BB9\u5668\u5143\u7D20`);
+      }
+      this.container = element;
+    } else {
+      this.container = container;
+    }
+    this.config = options;
+    this.initChart(geoJson).catch((error) => {
+      console.error(error);
+    });
+    this.registerEvents();
+  }
+  //=== 计算属性与辅助方法 ===//
+  /**
+   * 获取当前地图是否为中国地图
+   * @returns 是否为中国地图
+   */
+  get currentMapIsChina() {
+    return MapStateManager.country === CHINA_AD_CODE_JUST_FOR_FE;
+  }
+  /**
+   * 获取当前详细地图的 GeoJSON 数据
+   * @returns 当前地图的 FeatureCollection 数据
+   */
+  get detailGeojson() {
+    return echarts.getMap(this.detailMap)?.geoJson ?? {};
+  }
+  //=== 初始化方法 ===//
+  /**
+   * 初始化 ECharts 图表实例
+   * @private
+   */
+  async initChart(geoJson) {
+    if (!this.container) {
+      return;
+    }
+    const instance = echarts.init(this.container);
+    echarts.registerMap("iceland", geoJson);
+    this.chartInstance = instance;
+    const baseOption = {
+      tooltip: {
+        show: true
+      },
+      geo: {
+        map: "iceland",
+        zoom: 1.3,
+        hoverLayerThreshold: 1,
+        // 修复：允许hover事件触发
+        silent: false,
+        roam: true,
+        center: void 0,
+        scaleLimit: { min: 1 },
+        zlevel: 0,
+        itemStyle: {
+          areaColor: "#094777",
+          borderWidth: 1,
+          borderColor: "#1480C5",
+          shadowBlur: 1,
+          shadowColor: "rgba(0, 0, 0, 0.5)"
+        },
+        emphasis: {
+          label: {
+            show: false
+          },
+          itemStyle: {
+            areaColor: "#3079c8",
+            borderWidth: 1
+          }
+        }
+      },
+      series: [
+        {
+          name: "points",
+          type: "scatter",
+          coordinateSystem: "geo",
+          data: [],
+          symbolSize: 10,
+          emphasis: {
+            label: {
+              show: true
+            },
+            itemStyle: {
+              shadowBlur: 10,
+              shadowColor: "rgba(255, 255, 255, 0.5)"
+            }
+          },
+          itemStyle: {
+            color: "red"
+          },
+          zlevel: 1
+        },
+        {
+          name: "lines",
+          type: "lines",
+          coordinateSystem: "geo",
+          data: [],
+          lineStyle: {
+            color: "blue"
+          },
+          zlevel: 1
+        }
+      ]
+    };
+    this.chartInstance?.setOption(baseOption, true);
+    instance.on("click", (params) => this.clickHandler(params));
+    instance.on("dblclick", (params) => this.dbClickHandler(params));
+    instance.on("mouseover", (params) => this.mouseoverHandler(params));
+    instance.on("mouseout", (params) => this.mouseoutHandler(params));
+    instance.on("georoam", this.redrawMap);
+  }
+  /**
+   * 注册事件监听器
+   * @private
+   */
+  registerEvents() {
+    window.addEventListener("resize", this.resizeMap);
+    this.unsubscribeState = MapStateManager.onPropertyChange("geoData", () => {
+      if (this.chartInstance) {
+        this.redrawMap();
+      }
+    });
+  }
+  /**
+   * 生成地图名称
+   * @returns 地图名称字符串
+   * @private
+   */
+  generateMapName() {
+    const level = MapStateManager.curLevel;
+    const country = MapStateManager.country;
+    const adcode = MapStateManager.adcode;
+    switch (level) {
+      case import_types3.MapLevel.WORLD:
+        return "world";
+      case import_types3.MapLevel.COUNTRY:
+        return country === "100000" ? "china" : "usa";
+      case import_types3.MapLevel.PROVINCE:
+        return `province-${adcode}`;
+      case import_types3.MapLevel.CITY:
+        return `city-${adcode}`;
+      case import_types3.MapLevel.COUNTY:
+        return `county-${adcode}`;
+      default:
+        return "default";
+    }
+  }
+  /**
+   * 设置 ECharts 图表配置选项
+   * @param option - ECharts 配置选项
+   * @private
+   */
+  setChartOption(option) {
+    if (!this.chartInstance) return;
+    this.chartInstance.setOption(option);
+  }
+  /**
+   * 设置地理数据并更新地图显示
+   * @param boundary - 边界地理数据
+   * @public
+   */
+  setGEOData(boundary) {
+    const mapName = this.generateMapName();
+    const geojson = MapStateManager.geoData;
+    echarts.registerMap(mapName, geojson);
+    if (!boundary || boundary.type !== "FeatureCollection" || !boundary.features || !Array.isArray(boundary.features)) {
+      this.boundaryLoading = false;
+      return;
+    }
+    let center = null;
+    let scale = 1;
+    if (MapStateManager.curLevel === import_types3.MapLevel.WORLD) {
+      if (this.centralCountry && boundary.type === "FeatureCollection") {
+        const feature = boundary.features.find((item) => item.id === this.centralCountry);
+        const targetCoordinates = feature?.geometry && "coordinates" in feature.geometry ? feature.geometry.coordinates : [];
+        const { center: c, zoom: z } = getCenterAndZoomByGeometryCoordinates(targetCoordinates);
+        scale = z;
+        center = c;
+      }
+    } else if (MapStateManager.curLevel !== import_types3.MapLevel.COUNTRY && boundary.type === "FeatureCollection") {
+      const targetCoordinates = boundary.features.map(
+        (item) => "coordinates" in item.geometry ? item.geometry.coordinates : []
+      );
+      const { center: c } = getCenterAndZoomByGeometryCoordinates(targetCoordinates);
+      center = c;
+    }
+    const isWorld = MapStateManager.curLevel === import_types3.MapLevel.WORLD;
+    const options = this.chartInstance?.getOption();
+    if (options) {
+      const geoOption = {
+        ...BOUNDARY_OPTIONS,
+        map: mapName,
+        center,
+        zoom: scale || (isWorld ? 1.3 : 1),
+        itemStyle: {
+          ...BOUNDARY_OPTIONS.itemStyle,
+          borderWidth: 1,
+          shadowBlur: 0
+        }
+      };
+      options.geo = geoOption;
+      this.chartInstance?.setOption(options, true);
+    }
+    this.boundaryLoading = false;
+  }
+  /**
+   * 规范化地理数据格式
+   * @param data - 地理数据
+   * @returns 标准化的 FeatureCollection 数据
+   * @private
+   */
+  normalizeGeoData(data) {
+    if (typeof data === "object" && data !== null && "type" in data && data.type === "FeatureCollection") {
+      return data;
+    }
+    if (typeof data === "string") {
+      throw new Error("String GeoJSON data should be parsed before calling normalizeGeoData");
+    }
+    return data;
+  }
+  /**
+   * 将点数据转换为 ECharts Series
+   * @param points - 点数据数组
+   * @returns ECharts 系列配置数组
+   * @private
+   */
+  convertPointsToSeries(points) {
+    const scatterData = points.map((point) => ({
+      name: point.name ?? "",
+      value: [...point.coordinate, point.value ?? 0],
+      businessInfo: point,
+      itemStyle: point.style ? {
+        color: point.style.color,
+        opacity: point.style.opacity
+      } : void 0
+    }));
+    return [{
+      name: "points",
+      type: "scatter" /* SCATTER */,
+      coordinateSystem: "geo",
+      data: scatterData,
+      symbolSize: (val) => {
+        const point = val[2] ?? 10;
+        return Math.sqrt(point) * 2;
+      },
+      label: {
+        show: false
+      },
+      emphasis: {
+        label: {
+          show: true,
+          position: "right"
+        }
+      }
+    }];
+  }
+  /**
+   * 将线数据转换为 ECharts Series
+   * @param lines - 线数据数组
+   * @returns ECharts 系列配置数组
+   * @private
+   */
+  convertLinesToSeries(lines) {
+    const lineData = lines.map((line) => {
+      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
+        line.id,
+        line.startCoordinate,
+        line.endCoordinate
+      );
+      const curvedCoords = this.generateCurvedPath(
+        line.startCoordinate,
+        line.endCoordinate,
+        curvature
+      );
+      return {
+        coords: curvedCoords,
+        businessInfo: line,
+        lineStyle: line.color ? {
+          color: line.color?.toString(),
+          width: line.width ?? 2,
+          opacity: line.opacity ?? 1
+        } : void 0
+      };
+    });
+    return [{
+      name: "lines",
+      type: "lines",
+      coordinateSystem: "geo",
+      data: lineData,
+      large: true,
+      effect: {
+        show: true,
+        period: 6,
+        trailLength: 0.7,
+        symbolSize: 3
+      },
+      lineStyle: {
+        width: 2,
+        opacity: 0.6
+      }
+    }];
+  }
+  /**
+   * 根据曲率生成曲线路径点
+   * @param startCoord - 起点坐标 [lng, lat]
+   * @param endCoord - 终点坐标 [lng, lat]
+   * @param curvature - 曲率值 (0-1)
+   * @returns 曲线路径点数组
+   * @private
+   */
+  generateCurvedPath(startCoord, endCoord, curvature) {
+    const [startLng, startLat] = startCoord;
+    const [endLng, endLat] = endCoord;
+    if (curvature === 0 || startLng === endLng && startLat === endLat) {
+      return [startCoord, endCoord];
+    }
+    const midLng = (startLng + endLng) / 2;
+    const midLat = (startLat + endLat) / 2;
+    const distance = Math.sqrt(
+      Math.pow(endLng - startLng, 2) + Math.pow(endLat - startLat, 2)
+    );
+    const offsetDistance = distance * curvature * 0.3;
+    const dx = endLng - startLng;
+    const dy = endLat - startLat;
+    const length = Math.sqrt(dx * dx + dy * dy);
+    if (length === 0) {
+      return [startCoord, endCoord];
+    }
+    const unitX = dx / length;
+    const unitY = dy / length;
+    const perpX = -unitY;
+    const perpY = unitX;
+    const controlLng = midLng + perpX * offsetDistance;
+    const controlLat = midLat + perpY * offsetDistance;
+    const points = [];
+    const segments = Math.max(8, Math.floor(distance * 10));
+    for (let i = 0; i <= segments; i++) {
+      const t = i / segments;
+      const point = this.quadraticBezier(
+        startCoord,
+        [controlLng, controlLat],
+        endCoord,
+        t
+      );
+      points.push(point);
+    }
+    return points;
+  }
+  /**
+   * 二次贝塞尔曲线计算
+   * @param p0 - 起点
+   * @param p1 - 控制点
+   * @param p2 - 终点
+   * @param t - 参数 (0-1)
+   * @returns 曲线上的点
+   * @private
+   */
+  quadraticBezier(p0, p1, p2, t) {
+    const x = Math.pow(1 - t, 2) * p0[0] + 2 * (1 - t) * t * p1[0] + Math.pow(t, 2) * p2[0];
+    const y = Math.pow(1 - t, 2) * p0[1] + 2 * (1 - t) * t * p1[1] + Math.pow(t, 2) * p2[1];
+    return [x, y];
+  }
+  /**
+   * 将系列数据坐标转换为 GeoJSON 投影坐标
+   * @param series - ECharts 系列配置数组
+   * @returns 转换后的系列配置数组
+   * @private
+   */
+  // private transSeriesCoordinate2GeoJsonXY(series: SeriesOption[]): SeriesOption[] {
+  //   // @ts-ignore
+  //   const transform = this.detailGeojson["hc-transform"]
+  //   if (!transform) {
+  //     return series
+  //   }
+  //   return series.map(item => {
+  //     let data
+  //     if (item.type === PointTypeEnum.SCATTER || item.type === PointTypeEnum.EFFECT_SCATTER) {
+  //       data = (item.data as PointSeriesDataItem<AnyObj>[]).map(point => {
+  //         if (!Array.isArray(point.value)) {
+  //           return point
+  //         }
+  //         return {
+  //           ...point,
+  //           value: GeoJsonUtils.lngLatToProjected(transform, point.value as CoordinateNumber),
+  //         }
+  //       })
+  //     } else if (item.type === "lines") {
+  //       data = (item.data as LineSeriesDataItem<AnyObj>[]).map(line => {
+  //         if (!line.coords || line.coords.length < 2) {
+  //           return line
+  //         }
+  //         const [startCoords, endCoords] = line.coords
+  //         return {
+  //           ...line,
+  //           coords: [
+  //             GeoJsonUtils.lngLatToProjected(transform, startCoords), 
+  //             GeoJsonUtils.lngLatToProjected(transform, endCoords)
+  //           ],
+  //         }
+  //       })
+  //     }
+  //     return {
+  //       ...item,
+  //       data: data || item.data,
+  //     } as SeriesOption
+  //   })
+  // }
+  /**
+   * 将 PointParam 参数转换为 BaseMapPoint 格式
+   * @param params - 点参数
+   * @returns 转换后的 BaseMapPoint 对象
+   * @private
+   */
+  transPointParam2BaseMapPoint(params) {
+    return {
+      id: params.data.businessInfo?.id ?? "",
+      coordinate: Array.isArray(params.data.value) ? [params.data.value[0], params.data.value[1]] : [0, 0],
+      name: params.data.name
+    };
+  }
+  /**
+   * 检查地图入口资格，确定是否可以进入下一级地图
+   * @param params - 事件参数，包含区域名称等信息
+   * @returns 下一级地图层级，如果无法进入则返回 undefined
+   * @private
+   */
+  checkMapEntryEligibility(params) {
+    switch (MapStateManager.curLevel) {
+      case import_types3.MapLevel.WORLD: {
+        return import_types3.MapLevel.COUNTRY;
+      }
+      case import_types3.MapLevel.COUNTRY: {
+        if (params.name === "\u5357\u6D77\u8BF8\u5C9B") {
+          return void 0;
+        }
+        return import_types3.MapLevel.PROVINCE;
+      }
+      case import_types3.MapLevel.PROVINCE:
+        return import_types3.MapLevel.CITY;
+      case import_types3.MapLevel.CITY:
+        if (!isMunicipality(MapStateManager.adcode)) {
+          return import_types3.MapLevel.COUNTY;
+        }
+        return void 0;
+      case import_types3.MapLevel.COUNTY:
+      default:
+        return void 0;
+    }
+  }
+  /**
+   * 根据地理要素名称获取行政区划代码
+   * @param name - 地理要素名称
+   * @returns 行政区划代码
+   * @private
+   */
+  getPostCodeByGeoFeatures(name) {
+    const geojson = this.detailGeojson;
+    if (typeof geojson === "string" || geojson.type !== "FeatureCollection") {
+      return "";
+    }
+    const features = geojson.features;
+    if (!Array.isArray(features)) {
+      return "";
+    }
+    const target = features.find((item) => item.properties?.name === name);
+    if (!target) {
+      return "";
+    }
+    if (this.currentMapIsChina) {
+      const props2 = target.properties;
+      return props2?.adcode ? String(props2.adcode) : "";
+    }
+    const props = target.properties;
+    if (!props) {
+      return "";
+    }
+    const code = props[POST_CODE_KEY];
+    return typeof code === "string" ? code : "";
+  }
+  /**
+   * 处理区域变化事件的具体实现
+   * @param params - 地理参数，包含区域信息
+   * @private
+   */
+  handleChangeAreaImpl(params) {
+    if (!params) {
+      if (this.config.events?.onAreaHover) {
+        this.config.events.onAreaHover(params);
+      }
+      return;
+    }
+    const option = this.chartInstance?.getOption();
+    if (!option?.series) {
+      return;
+    }
+    const pointSeries = option.series.find((item) => item.type === "scatter" /* SCATTER */);
+    if (!pointSeries) {
+      if (this.config.events?.onAreaHover) {
+        this.config.events.onAreaHover(params);
+      }
+      return;
+    }
+    const points = pointSeries.data;
+    const geojson = this.detailGeojson;
+    if (typeof geojson === "string" || geojson.type !== "FeatureCollection") {
+      if (this.config.events?.onAreaHover) {
+        this.config.events.onAreaHover(params);
+      }
+      return;
+    }
+    const features = geojson.features;
+    if (!Array.isArray(points) || !Array.isArray(features)) {
+      if (this.config.events?.onAreaHover) {
+        this.config.events.onAreaHover(params);
+      }
+      return;
+    }
+    const hoverFeature = features.find((item) => item.properties?.name === params.name);
+    if (!hoverFeature) {
+      if (this.config.events?.onAreaHover) {
+        this.config.events.onAreaHover(params);
+      }
+      return;
+    }
+    const pointsInRegion = [];
+    points.forEach((point) => {
+      const coordinates = point.value;
+      const isInRegion = this.checkPointInFeature(coordinates, hoverFeature);
+      if (isInRegion && point.businessInfo && typeof point.businessInfo === "object" && "siblingPointId" in point.businessInfo) {
+        const ids = point.businessInfo.siblingPointId;
+        if (Array.isArray(ids)) {
+          pointsInRegion.push(...ids);
+        }
+      }
+    });
+    if (this.config.events?.onAreaHover) {
+      this.config.events.onAreaHover(params);
+    }
+  }
+  /**
+   * 检查点是否在指定地理要素内
+   * @param coordinates - 点坐标 [经度, 纬度]
+   * @param feature - 地理要素
+   * @returns 点是否在要素内
+   * @private
+   */
+  checkPointInFeature(coordinates, feature) {
+    if (feature.geometry.type === "Polygon") {
+      return this.checkPointInPolygon(coordinates, feature.geometry.coordinates);
+    }
+    if (feature.geometry.type === "MultiPolygon") {
+      return feature.geometry.coordinates.some(
+        (polygon) => this.checkPointInPolygon(coordinates, polygon)
+      );
+    }
+    return false;
+  }
+  /**
+   * 检查点是否在多边形内（支持带洞的多边形）
+   * @param coordinates - 点坐标 [经度, 纬度]
+   * @param polygonRings - 多边形环数组，第一个是外环，其余是内环（洞）
+   * @returns 点是否在多边形内
+   * @private
+   */
+  checkPointInPolygon(coordinates, polygonRings) {
+    return polygonRings.some((ring, index) => {
+      const isInRing = import_utils4.GeoJsonUtils.isPointInPolygon(coordinates, ring);
+      return index === 0 ? isInRing : !isInRing;
+    });
+  }
+  /**
+   * 等待边界数据加载完成
+   * @param timeout - 超时时间（毫秒），默认 5000ms
+   * @returns Promise - 加载完成时 resolve，超时时 reject
+   * @private
+   */
+  waitForBoundaryLoadingToBeFalse(timeout = 5e3) {
+    const startTime = Date.now();
+    return new Promise((resolve, reject) => {
+      const checkState = () => {
+        if (!this.boundaryLoading) {
+          resolve(true);
+        } else if (Date.now() - startTime > timeout) {
+          reject(new Error("\u83B7\u53D6\u5730\u56FE\u8F6E\u5ED3\u52A0\u8F7D\u72B6\u6001\u8D85\u65F6"));
+        } else {
+          setTimeout(checkState, 1e3);
+        }
+      };
+      checkState();
+    });
+  }
+  /**
+   * 在 ECharts 中为指定系列设置点样式
+   * @param targetSeriesName - 目标系列名称
+   * @param processFn - 处理函数，用于修改点数据项
+   * @public
+   */
+  setPointStyleInternal(targetSeriesName, processFn) {
+    const currentOption = this.chartInstance?.getOption();
+    if (!currentOption || !Array.isArray(currentOption.series)) {
+      return;
+    }
+    const { series } = currentOption;
+    const pointSeries = series.find((item) => item.name === targetSeriesName);
+    if (!pointSeries || !Array.isArray(pointSeries.data)) {
+      return;
+    }
+    pointSeries.data.forEach((item) => {
+      processFn(item);
+    });
+    const newOption = { series };
+    this.setChartOption(newOption);
+  }
+  /**
+   * 更新地图层级
+   * @param curLevel - 当前地图层级
+   * @public
+   */
+  updateMapLevel(curLevel) {
+    MapStateManager.curLevel = curLevel;
+    const chart = this.chartInstance;
+    const currentOption = chart.getOption?.();
+    if (!currentOption) return;
+    const geo = currentOption.geo || [];
+    const hasInitializedGeo = Array.isArray(geo) && geo[0]?.map;
+    if (!hasInitializedGeo) {
+      return;
+    }
+    const isWorld = curLevel === import_types3.MapLevel.WORLD;
+    const option = {
+      geo: {
+        itemStyle: {
+          ...BOUNDARY_OPTIONS.itemStyle,
+          borderWidth: isWorld ? 0 : 1,
+          shadowBlur: isWorld ? 1 : 0
+        }
+      }
+    };
+    this.setChartOption(option);
+  }
+  /**
+   * 销毁地图实例，清理资源
+   * @public
+   */
+  destroy() {
+    if (this.detailMap) {
+      this.chartInstance?.clear();
+    }
+    window.removeEventListener("resize", this.resizeMap);
+    this.chartInstance?.dispose();
+    if (this.unsubscribeState) {
+      this.unsubscribeState();
+      this.unsubscribeState = null;
+    }
+  }
+  /**
+   * # 更新地图上的点位
+   * 该方法会移除旧的点位系列，然后添加新的点位系列
+   * @param points 点位数组
+   */
+  setPoints(points, adapterParams, iconMapIds = {}) {
+    if (!this.chartInstance) return;
+    const mapOption = this.chartInstance.getOption();
+    const series = mapOption.series;
+    const pointData = points.map((point) => {
+      const processedPoint = EChartsGeoUtils.processPoint(point, adapterParams);
+      const iconKey = (0, import_utils4.findFirstKeyByValue)(iconMapIds, point.id) ?? "";
+      processedPoint.symbol = MapStateManager.extraSvgIcons[iconKey] ?? "";
+      return processedPoint;
+    });
+    const updatedSeries = series?.map((item) => {
+      if (item.type === "scatter" /* SCATTER */) {
+        return {
+          ...item,
+          data: pointData
+        };
+      }
+      return item;
+    });
+    mapOption.series = updatedSeries;
+    this.chartInstance.setOption(mapOption, true);
+  }
+  /**
+   * 在 ECharts 中更新线数据
+   * @param lines - 线数据数组
+   * @public
+   */
+  async setLines(lines) {
+    if (!this.chartInstance) return;
+    const mapOption = this.chartInstance.getOption();
+    const series = this.convertLinesToSeries(lines);
+    mapOption.series = series;
+    this.chartInstance.setOption(mapOption);
+  }
+  /**
+   * 设置地理数据（IMapRenderer 接口实现）
+   * @param boundary - 地理边界数据
+   * @public
+   */
+  async setGeoData(boundary) {
+    if (!this.chartInstance) return;
+    const geoData = this.normalizeGeoData(boundary);
+    MapStateManager.setGeoData(geoData);
+  }
+  /**
+   * 设置点样式（IMapRenderer 接口实现）
+   * @param seriesName - 系列名称
+   * @param styleProcessor - 样式处理函数
+   * @public
+   */
+  setPointStyle(seriesName, styleProcessor) {
+    if (!this.chartInstance) return;
+    this.setPointStyleInternal(seriesName, (dataItem) => {
+      const tempParam = {
+        name: dataItem.name,
+        componentType: "series",
+        componentSubType: "scatter",
+        seriesName,
+        seriesType: "scatter" /* SCATTER */,
+        componentIndex: 0,
+        event: { event: {} },
+        geoIndex: 0,
+        data: dataItem
+      };
+      const baseMapPoint = this.transPointParam2BaseMapPoint(tempParam);
+      styleProcessor(baseMapPoint);
+      if (baseMapPoint.style) {
+        dataItem.itemStyle = {
+          color: baseMapPoint.style.color,
+          opacity: baseMapPoint.style.opacity
+        };
+      }
+    });
+  }
+  /**
+   * 调整地图大小（IMapRenderer 接口实现）
+   * @public
+   */
+  resize() {
+    this.resizeMap();
+  }
+  /**
+   * 获取渲染器类型（IMapRenderer 接口实现）
+   * @returns 渲染器类型标识
+   * @public
+   */
+  getType() {
+    return "echarts";
+  }
+};
+
+// src/main.ts
 var OrchMap = class {
-  constructor(config) {
+  /**
+   * 构造函数
+   * @param {MapRendererConfig} config - 地图渲染器配置
+   */
+  constructor(config, extraSvgIcons = {}) {
+    /** 是否已初始化 */
+    this._initialized = false;
+    /** 初始化回调队列 */
+    this._initCallbacks = [];
     this.config = config;
     MapStateManager.mapVersion = this.config.mapVersion || "standard";
-    this.initMap();
+    MapStateManager.extraSvgIcons = extraSvgIcons;
+    this._initPromise = this.initMap().then(() => {
+      this._initialized = true;
+      this._initCallbacks.forEach((callback) => callback());
+      this._initCallbacks = [];
+    });
   }
+  /**
+   * 初始化地图
+   * @private
+   * @returns {Promise<void>} 初始化 Promise
+   */
   async initMap() {
     const geoData = await getGeoJsonData({
-      mapLevel: this.config.curLevel ?? "world" /* WORLD */,
+      mapLevel: this.config.curLevel ?? import_types4.MapLevel.WORLD,
       country: this.config.country ?? "100000",
       region: this.config.adcode ?? "100000"
     });
     MapStateManager.setGeoData(geoData);
     switch (this.config.renderType) {
       case "echarts" /* ECHARTS */:
-        this.instance = new EchartsMap(this.config.container, this.config);
+        this.instance = new EchartsMap(this.config.container, this.config, geoData);
         break;
       case "deckgl" /* DECKGL */:
         this.instance = new DeckglMap(this.config.container, this.config.mode || "2d", () => {
@@ -1815,32 +2352,76 @@ var OrchMap = class {
     }
   }
   /**
+   * 设置地图点位数据
+   * @param {BaseMapPoint[]} points - 点位数据数组
+   */
+  setPoints(points, adapterParams, iconMapIds = {}) {
+    this._executeWhenReady(() => {
+      this.instance.setPoints(points, adapterParams, iconMapIds);
+    });
+  }
+  /**
+   * 设置地图线条数据
+   * @param {BaseMapLine[]} lines - 线条数据数组
+   */
+  setLines(lines) {
+    this._executeWhenReady(() => {
+      this.instance.setLines(lines);
+    });
+  }
+  /**
+   * 在初始化完成后执行回调
+   * @private
+   * @param {() => void} callback - 回调函数
+   */
+  _executeWhenReady(callback) {
+    if (this._initialized) {
+      callback();
+    } else {
+      this._initCallbacks.push(callback);
+    }
+  }
+  /**
+   * 检查是否已初始化
+   * @returns {boolean} 是否已初始化
+   */
+  isInitialized() {
+    return this._initialized;
+  }
+  /**
+   * 等待初始化完成
+   * @returns {Promise<void>} 初始化完成的 Promise
+   */
+  waitForInitialization() {
+    return this._initPromise;
+  }
+  /**
    * 创建地图渲染器
-   * @param type 渲染器类型
-   * @param config 渲染器配置
-   * @returns 地图渲染器实例
+   * @param {MapRendererType} type - 渲染器类型
+   * @param {MapRendererConfig} config - 渲染器配置
+   * @returns {OrchMap} 地图渲染器实例
    */
   static createRenderer(type, config) {
   }
   /**
    * 检查是否支持指定的渲染器类型
-   * @param type 渲染器类型
-   * @returns 是否支持
+   * @param {string} type - 渲染器类型
+   * @returns {type is MapRendererType} 是否支持
    */
   static isSupported(type) {
     return type === "echarts" /* ECHARTS */ || type === "deckgl" /* DECKGL */;
   }
   /**
    * 获取所有支持的渲染器类型
-   * @returns 支持的渲染器类型列表
+   * @returns {MapRendererType[]} 支持的渲染器类型列表
    */
   static getSupportedTypes() {
     return Object.values(MapRendererType);
   }
   /**
    * 根据环境自动选择最佳渲染器
-   * @param config 渲染器配置
-   * @returns 推荐的渲染器类型
+   * @param {Partial<MapRendererConfig>} [config] - 渲染器配置
+   * @returns {MapRendererType} 推荐的渲染器类型
    */
   static getRecommendedType(config) {
     if (config?.mode === "3d") {
@@ -1854,8 +2435,12 @@ var OrchMap = class {
     return "echarts" /* ECHARTS */;
   }
 };
+
+// src/index.ts
+var index_default = OrchMap;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
+  EChartsGeoUtils,
   MapRendererType
 });
 //# sourceMappingURL=index.js.map

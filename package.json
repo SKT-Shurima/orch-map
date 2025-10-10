@@ -19,11 +19,12 @@
       "import": "./packages/utils/dist/index.mjs",
       "require": "./packages/utils/dist/index.js"
     },
-    "./geojson": {
-      "types": "./packages/geoJson/dist/index.d.ts",
-      "import": "./packages/geoJson/dist/index.mjs",
-      "require": "./packages/geoJson/dist/index.js"
-    }
+    "./mapdata": {
+      "types": "./packages/mapData/dist/index.d.ts",
+      "import": "./packages/mapData/dist/index.mjs",
+      "require": "./packages/mapData/dist/index.js"
+    },
+    "./mapdata/data/*": "./packages/mapData/data/*"
   },
   "workspaces": [
     "packages/*",
@@ -34,19 +35,23 @@
     "dev": "turbo dev",
     "clean": "turbo clean",
     "lint": "turbo lint",
+    "lint:fix": "turbo lint -- --fix",
     "test": "turbo test",
     "type-check": "turbo type-check"
   },
   "devDependencies": {
+    "@eslint/js": "^9.37.0",
     "@types/geojson": "^7946.0.16",
     "@types/node": "^20.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0",
-    "eslint": "^8.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
+    "eslint": "^9.37.0",
+    "eslint-plugin-vue": "^10.5.0",
     "prettier": "^3.0.0",
     "tsup": "^8.0.0",
     "turbo": "^2.5.8",
-    "typescript": "^5.0.0"
+    "typescript": "^5.0.0",
+    "vue-eslint-parser": "^10.2.0"
   },
   "peerDependencies": {
     "echarts": "^5.6.0"

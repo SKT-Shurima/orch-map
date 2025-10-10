@@ -2,14 +2,15 @@
  * @description: 在世界地图中，每个国家的唯一标识
  * 该值需要从 geo.json 文件中的 properties 中的 hc-key 字段中获取
  */
-export const POST_CODE_KEY = "hc-key"
+export const POST_CODE_KEY = "hc-key";
 
 // 缺少地图数据GeoJson的国家码
-export const MISS_MAP_POST_CODE_KEYS = ["um", "fm", "sw", "sh", "ki", "bu", "mv", "sp", "to", "tv", "mh", "va", "cnm", "jk"]
+export const MISS_MAP_POST_CODE_KEYS = ["um", "fm", "sw", "sh", "ki", "bu", "mv", "sp", "to", "tv", "mh", "va", "cnm", "jk"];
 
 export const BASE_LINE_SERIES = {
-  name: "line",
+  // name: "lines",
   type: "lines",
+  coordinateSystem: "geo",
   z: 0,
   zlevel: 1,
   // 转场动画，所有带有尾迹特效的图表建议关闭该层的动画。
@@ -24,12 +25,12 @@ export const BASE_LINE_SERIES = {
     symbol: "arrow",
     symbolSize: 2,
   },
-  geoIndex: 0,
+  geoIndex: 20,
   // 数据结构 https://www.echartsjs.com/zh/option.html#series-lines.data.coords
   data: [],
   progressiveThreshold: 500,
   progressive: 200,
-}
+};
 
 export const BOUNDARY_OPTIONS = {
   zoom: 1.3,
@@ -52,7 +53,7 @@ export const BOUNDARY_OPTIONS = {
     },
     itemStyle: {
       areaColor: "#3079c8",
-      borderWidth: 0,
+      borderWidth: 1,
     },
   },
   // regions: [
@@ -63,20 +64,29 @@ export const BOUNDARY_OPTIONS = {
   //     },
   //   },
   // ],
-}
+};
+
+
+const mockData = [
+  [121.4737, 31.2304],
+  [116.4074, 39.9042],
+  [114.0579, 22.5431],
+  [113.2644, 23.1291],
+  [104.0665, 30.5723],
+];
 
 export const BASE_POINT_SERIES = {
-  name: "scatter",
   type: "scatter",
   coordinateSystem: "geo",
-  z: 1,
-  zlevel: 1,
-  geoIndex: 0,
-  data: [],
-  rippleEffect: { brushType: "stroke" },
+  geoIndex: 10,
+  data: mockData,
   emphasis: {
     label: {
       show: true,
     },
   },
-}
+  itemStyle: {
+    color: "red",
+    symbolSize: 10,
+  },
+};
