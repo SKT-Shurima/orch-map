@@ -1,10 +1,12 @@
 import { defineComponent, ref, onMounted } from "vue";
-import OrchMap, { AdapterParams, AdapterPointInfo, MapRendererType } from "@orch-map/core";
-import { BaseMapPoint, MapLevel } from "@orch-map/types";
+import OrchMap, { MapRendererType } from "@orch-map/core";
+import { BaseMapLine, BaseMapPoint, MapLevel } from "@orch-map/types";
 import mock from "./mock.json";
 import { pick, svgToEChartsSymbol } from "@orch-map/utils";
 import diamond from "./assets/diamond.svg?raw";
 import star from "./assets/star.svg?raw";
+import { computePointStyle } from "./helper";
+import { AdapterParams, AdapterPointInfo } from "./interface";
 
 
 const getRandomPoint = () => {
@@ -22,7 +24,7 @@ export default defineComponent({
   setup() {
     const geoContainer = ref<HTMLElement | null>(null);
     let mapInstance!: OrchMap;
-  
+
     onMounted(() => {
       if (geoContainer.value) {
         mapInstance = new OrchMap({
@@ -38,33 +40,41 @@ export default defineComponent({
               console.log(event);
             },
           },
-        },{
-          star: svgToEChartsSymbol(diamond),
-          cpe: svgToEChartsSymbol(star),
+        }, {
+          cpe: svgToEChartsSymbol(diamond),
+          star: svgToEChartsSymbol(star),
         });
 
-
-        const points = mock.points.map(point => ({
-          ...point,
-          siblingPointId: [],
-        }));
-        const adapterParams:AdapterParams = {
-          filterPoint: pick(getRandomPoint(),["id","name"]) as AdapterPointInfo,
+        const adapterParams: AdapterParams = {
+          filterPoint: pick(getRandomPoint(), ["id", "name"]) as AdapterPointInfo,
           activePoints: [],
-          staredPoints: Array.from({ length: 10 }, () => pick(getRandomPoint(),["id","name"]) as AdapterPointInfo),
+          staredPoints: Array.from({ length: 10 }, () => pick(getRandomPoint(), ["id", "name"]) as AdapterPointInfo),
           showNamePoints: [],
         };
-        mapInstance.setPoints(points as unknown as BaseMapPoint[], adapterParams, {
-          star: points.filter(point => Number(point.id.split("-")[1]) %3 === 0).map(point => point.id),
-          cpe: points.filter(point => Number(point.id.split("-")[1]) %3 !== 0).map(point => point.id),
+
+        const points = mock.points.map((point: any) => {
+          const { labelShow, labelHoverShow, labelName, isStarred } = computePointStyle(point, adapterParams);
+          return {
+            ...point,
+            icon: isStarred ? "star" : "cpe",
+            size: isStarred ? 16 : 16,
+            siblingPointId: [],
+            label: {
+              name: labelName,
+              show: labelShow,
+              hoverShow: labelHoverShow,
+            },
+          };
         });
-        // mapInstance.setLines(mock.lines as BaseMapLine[]);
+
+        mapInstance.setPoints(points as unknown as BaseMapPoint[]);
+        mapInstance.setLines(mock.lines as BaseMapLine[]);
       }
     });
-    
+
     return () => (
-      <div class="hello-world" style={{ width: "100vw", height: "100vh",overflow: "hidden" }}>
-        <div ref={geoContainer} style={{ width: "100%", height: "100%",backgroundColor: "rgb(17, 36, 100)" }}>
+      <div class="hello-world" style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+        <div ref={geoContainer} style={{ width: "100%", height: "100%", backgroundColor: "rgb(17, 36, 100)" }}>
         </div>
       </div>
     );

@@ -1,9 +1,9 @@
 import OrchMap from "./main";
-import { AdapterParams, AdapterPointInfo, MapRendererType } from "./interfaces";
-import EChartsGeoUtils from "./utils/echartsGeoUtils";
+import { MapRendererType } from "./interfaces";
+import LinesComponent from "./echarts-geo/components/lines";
 /**
  * 导出 MapRendererType 枚举
  */
-export { MapRendererType, EChartsGeoUtils,type AdapterParams,type AdapterPointInfo };
+export { MapRendererType, LinesComponent as EChartsGeoUtils };
 
 export default OrchMap;

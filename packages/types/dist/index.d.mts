@@ -38,6 +38,7 @@ interface MapProjection {
     rotate?: [number, number, number];
 }
 
+type ColorValue = [number, number, number] | [number, number, number, number] | string;
 declare enum MapLevel {
     WORLD = "world",
     COUNTRY = "country",
@@ -53,30 +54,31 @@ declare enum MapRendererType {
 }
 interface BaseMapPoint {
     id: string;
+    name: string;
     coordinate: Coordinate;
     icon?: string;
-    color?: [number, number, number, number];
+    color?: ColorValue;
+    opacity?: number;
     size?: number;
-    label?: string;
+    label: {
+        show: boolean;
+        hoverShow: boolean;
+        formatter: (formatterParams: AnyObj) => string;
+    };
     tooltip?: string;
-    [key: string]: any;
+    siblingPointId?: string[];
+    [key: string]: unknown;
 }
-interface BaseMapPoint3D {
-    id: string;
+interface BaseMapPoint3D extends Omit<BaseMapPoint, "coordinate"> {
     coordinate: Coordinate3D;
-    icon?: string;
-    color?: [number, number, number, number];
-    size?: number;
-    label?: string;
-    tooltip?: string;
     height?: number;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 interface BaseMapLine {
     id: string;
     startCoordinate: Coordinate;
     endCoordinate: Coordinate;
-    color?: [number, number, number, number];
+    color?: ColorValue;
     width?: number;
     style?: "solid" | "dashed" | "dotted";
     [key: string]: any;
@@ -85,7 +87,7 @@ interface BaseMapLine3D {
     id: string;
     startCoordinate: Coordinate3D;
     endCoordinate: Coordinate3D;
-    color?: [number, number, number, number];
+    color?: ColorValue;
     width?: number;
     style?: "solid" | "dashed" | "dotted";
     height?: number;
@@ -94,9 +96,9 @@ interface BaseMapLine3D {
 interface BaseMapArea {
     id: string;
     coordinates: Coordinate[];
-    color?: [number, number, number, number];
-    fillColor?: [number, number, number, number];
-    strokeColor?: [number, number, number, number];
+    color?: ColorValue;
+    fillColor?: ColorValue;
+    strokeColor?: ColorValue;
     strokeWidth?: number;
     opacity?: number;
     [key: string]: any;
@@ -185,4 +187,4 @@ interface MapLevelConfig {
     [key: string]: unknown;
 }
 
-export { type AnyObj, type BaseMapArea, type BaseMapLine, type BaseMapLine3D, type BaseMapPoint, type BaseMapPoint3D, type BoundingBox, type Coordinate, type Coordinate3D, type CoordinateNumber, type DataPoint, type GeoJsonFeature, type GeoJsonGeometry, type HcTransform, type MapConfig, type MapDataSource, type MapEvent, type MapInitConfig, type MapInteraction, MapLevel, type MapLevelConfig, type MapProjection, MapRendererType, type MapStyle, type MapUpdateConfig };
+export { type AnyObj, type BaseMapArea, type BaseMapLine, type BaseMapLine3D, type BaseMapPoint, type BaseMapPoint3D, type BoundingBox, type ColorValue, type Coordinate, type Coordinate3D, type CoordinateNumber, type DataPoint, type GeoJsonFeature, type GeoJsonGeometry, type HcTransform, type MapConfig, type MapDataSource, type MapEvent, type MapInitConfig, type MapInteraction, MapLevel, type MapLevelConfig, type MapProjection, MapRendererType, type MapStyle, type MapUpdateConfig };

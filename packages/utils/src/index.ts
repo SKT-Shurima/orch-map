@@ -4,4 +4,5 @@ export * from "./animation";
 export * from "./common";
 export * from "./task";
 export * from "./geoJson";
-export * from "./icon"; 
+export * from "./icon";
+export * from "./color";

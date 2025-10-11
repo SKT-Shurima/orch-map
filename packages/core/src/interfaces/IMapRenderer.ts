@@ -1,33 +1,13 @@
 import { BaseMapPoint, BaseMapLine, MapLevel, GeoJSONSourceInput, MapRendererType } from "@orch-map/types";
 
-
-export type AdapterPointInfo = {
-  id: string
-  name: string
-}
-
-/**
- * @description: 将大屏的配置信息进行统一口径处理
- */
-export interface AdapterParams {
-  filterPoint?: AdapterPointInfo
-  activePoints: AdapterPointInfo[]
-  staredPoints: AdapterPointInfo[]
-  showNamePoints: AdapterPointInfo[]
-}
-
 /**
  * 地图渲染器事件接口
  */
 export interface MapRendererEvents {
   /** 点击点事件 */
-  onPointClick?: (point: BaseMapPoint ) => void
+  onPointClick?: (point: string ) => void
   /** 悬停点事件 */
-  onPointHover?: (point: BaseMapPoint | null) => void
-  /** 点击线事件 */
-  onLineClick?: (line: BaseMapLine ) => void
-  /** 悬停线事件 */
-  onLineHover?: (line: BaseMapLine | null) => void
+  onPointHover?: (point: string | null) => void
   /** 点击区域事件 */
   onAreaClick?: (area: any) => void
   /** 悬停区域事件 */
@@ -95,11 +75,7 @@ export interface IMapRenderer {
    * 设置点数据
    * @param points 点数据数组
    */
-  setPoints(
-    points: BaseMapPoint[],
-    adapterParams: AdapterParams,
-    iconMapIds: Record<string, string[]>,
-  ): Promise<void> | void
+  setPoints(points: BaseMapPoint[]): Promise<void> | void
 
   /**
    * 设置线数据

@@ -1,4 +1,4 @@
-import { AdapterParams, MapRendererConfig, MapRendererType } from "./interfaces";
+import { MapRendererConfig, MapRendererType } from "./interfaces";
 import { BaseMapLine, BaseMapPoint, MapLevel } from "@orch-map/types";
 import { GeoJSONSourceInput } from "echarts/types/src/coord/geo/geoTypes.js";
 import DeckglMap from "./deckgl";
@@ -62,16 +62,16 @@ export default class OrchMap {
           console.log("DeckGL initialized");
         });
         break;
-    } 
+    }
   }
 
   /**
    * 设置地图点位数据
    * @param {BaseMapPoint[]} points - 点位数据数组
    */
-  public setPoints(points: BaseMapPoint[], adapterParams: AdapterParams, iconMapIds: Record<string, string[]> = {}) {
+  public setPoints(points: BaseMapPoint[]) {
     this._executeWhenReady(() => {
-      void this.instance.setPoints(points, adapterParams, iconMapIds);
+      void this.instance.setPoints(points);
     });
   }
 
@@ -131,7 +131,7 @@ export default class OrchMap {
     // 检查是否支持 WebGL
     const canvas = document.createElement("canvas");
     const gl = canvas.getContext("webgl") ?? canvas.getContext("experimental-webgl");
-    
+
     if (gl) {
       // 如果支持 WebGL，默认使用 DeckGL 以获得更好的性能
       return MapRendererType.DECKGL;

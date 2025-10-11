@@ -1,4 +1,4 @@
-import { MapLevel, AnyObj, CoordinateNumber } from "@orch-map/types";
+import { MapLevel, AnyObj, CoordinateNumber, GeoJSONSourceInput } from "@orch-map/types";
 import { isEmptyArray } from "@orch-map/utils";
 
 /**
@@ -179,7 +179,7 @@ export const removeRegionSuffix = (region: string): string => {
   return region.replace(/市|省|自治区|特别行政区|地区|盟|州|县|区/g, "");
 };
 
- 
+
 export const getCenterAndZoomByGeometryCoordinates = (
   coords: unknown,
 ): { center: [number, number] | null; zoom: number } => {
@@ -232,3 +232,59 @@ export const getCenterAndZoomByGeometryCoordinates = (
   // 限定缩放范围 [0.5, 6]
   return { center, zoom: Math.max(0.5, Math.min(zoom, 6)) };
 };
+
+
+/**
+ * 获取 geoJSON 的 title
+ * @param geoJson - GeoJSON 对象
+ * @returns title 字段值，如果没有则返回空字符串
+ */
+export function getGeoJsonTitle(geoJson: GeoJSONSourceInput, level: MapLevel): string {
+  if (
+    !geoJson ||
+    typeof geoJson !== "object" ||
+    geoJson.type !== "FeatureCollection"
+  ) {
+    return "";
+  }
+
+  // 标准的 title 字段
+  if ("title" in geoJson && typeof geoJson.title === "string") {
+    return geoJson.title;
+  }
+
+  // 兜底策略
+  let defaultTitle = "";
+
+  switch (level) {
+    case MapLevel.COUNTRY:
+      defaultTitle = "country";
+      break;
+    case MapLevel.PROVINCE:
+      defaultTitle = "province";
+      break;
+    case MapLevel.CITY:
+      defaultTitle = "city";
+      break;
+    case MapLevel.COUNTY:
+      defaultTitle = "county";
+      break;
+    case MapLevel.WORLD:
+      defaultTitle = "world";
+      break;
+  }
+  // 有些数据 title 可能放在 properties 里
+  if (
+    Array.isArray(geoJson.features) &&
+    geoJson.features.length > 0 &&
+    typeof geoJson.features[0] === "object" &&
+    geoJson.features[0] !== null &&
+    "properties" in geoJson.features[0] &&
+    geoJson.features[0].properties &&
+    typeof (geoJson.features[0].properties as { title?: unknown }).title === "string"
+  ) {
+    return (geoJson.features[0].properties as { title?: string }).title ?? defaultTitle;
+  }
+
+  return defaultTitle;
+}

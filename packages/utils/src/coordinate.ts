@@ -14,7 +14,7 @@ export class CoordinateUtils {
     const R = 6371000; // 地球半径（米）
     const [lon1, lat1] = coord1;
     const [lon2, lat2] = coord2;
-    
+
     const φ1 = lat1 * Math.PI / 180;
     const φ2 = lat2 * Math.PI / 180;
     const Δφ = (lat2 - lat1) * Math.PI / 180;
@@ -34,7 +34,7 @@ export class CoordinateUtils {
   public static getBearing(coord1: Coordinate, coord2: Coordinate): number {
     const [lon1, lat1] = coord1;
     const [lon2, lat2] = coord2;
-    
+
     const φ1 = lat1 * Math.PI / 180;
     const φ2 = lat2 * Math.PI / 180;
     const Δλ = (lon2 - lon1) * Math.PI / 180;
@@ -53,15 +53,15 @@ export class CoordinateUtils {
   public static getMidpoint(coord1: Coordinate, coord2: Coordinate): Coordinate {
     const [lon1, lat1] = coord1;
     const [lon2, lat2] = coord2;
-    
+
     const φ1 = lat1 * Math.PI / 180;
     const φ2 = lat2 * Math.PI / 180;
     const Δλ = (lon2 - lon1) * Math.PI / 180;
 
     const Bx = Math.cos(φ2) * Math.cos(Δλ);
     const By = Math.cos(φ2) * Math.sin(Δλ);
-    
-    const φ3 = Math.atan2(Math.sin(φ1) + Math.sin(φ2), 
+
+    const φ3 = Math.atan2(Math.sin(φ1) + Math.sin(φ2),
       Math.sqrt((Math.cos(φ1) + Bx) * (Math.cos(φ1) + Bx) + By * By));
     const λ3 = (lon1 * Math.PI / 180) + Math.atan2(By, Math.cos(φ1) + Bx);
 
@@ -109,10 +109,10 @@ export class CoordinateUtils {
     const [[minLng, minLat], [maxLng, maxLat]] = bounds;
     const lngDiff = Math.abs(maxLng - minLng);
     const latDiff = Math.abs(maxLat - minLat);
-    
+
     const lngZoom = Math.log2(360 / lngDiff);
     const latZoom = Math.log2(180 / latDiff);
-    
+
     return Math.min(lngZoom, latZoom, 18); // 最大缩放级别18
   }
 
@@ -129,14 +129,14 @@ export class CoordinateUtils {
     const [ex, ey] = end;
     const mx = (sx + ex) / 2;
     const my = (sy + ey) / 2;
-    
+
     // 计算垂直方向的控制点偏移
     const dx = ex - sx;
     const dy = ey - sy;
     const length = Math.hypot(dx, dy) || 1;
     const nx = -dy / length;
     const ny = dx / length;
-    
+
     const offset = curvature * length * 0.3;
     const cx = mx + nx * offset;
     const cy = my + ny * offset;
@@ -149,7 +149,7 @@ export class CoordinateUtils {
       const y = oneMinusT * oneMinusT * sy + 2 * oneMinusT * t * cy + t * t * ey;
       path.push([x, y]);
     }
-    
+
     return path;
   }
 

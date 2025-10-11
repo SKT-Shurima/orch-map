@@ -1,5 +1,6 @@
 /**
  * @description: 在世界地图中，每个国家的唯一标识
+ * @deprecated
  * 该值需要从 geo.json 文件中的 properties 中的 hc-key 字段中获取
  */
 export const POST_CODE_KEY = "hc-key";
@@ -32,61 +33,15 @@ export const BASE_LINE_SERIES = {
   progressive: 200,
 };
 
-export const BOUNDARY_OPTIONS = {
-  zoom: 1.3,
-  hoverLayerThreshold: 1, // 修复：允许hover事件触发
-  silent: false,
-  roam: true,
-  center: null,
-  scaleLimit: { min: 1 },
-  zlevel: 0,
+
+/**
+ * @description: 默认点配置
+ */
+export const DEFAULT_POINT_CONFIG = {
+  symbol: "circle",
+  symbolSize: 12,
   itemStyle: {
-    areaColor: "#094777",
-    borderWidth: 1,
-    borderColor: "#1480C5",
-    shadowBlur: 1,
-    shadowColor: "rgba(0, 0, 0, 0.5)",
-  },
-  emphasis: {
-    label: {
-      show: false,
-    },
-    itemStyle: {
-      areaColor: "#3079c8",
-      borderWidth: 1,
-    },
-  },
-  // regions: [
-  //   {
-  //     name: "南海诸岛",
-  //     itemStyle: {
-  //       opacity: 0,
-  //     },
-  //   },
-  // ],
-};
-
-
-const mockData = [
-  [121.4737, 31.2304],
-  [116.4074, 39.9042],
-  [114.0579, 22.5431],
-  [113.2644, 23.1291],
-  [104.0665, 30.5723],
-];
-
-export const BASE_POINT_SERIES = {
-  type: "scatter",
-  coordinateSystem: "geo",
-  geoIndex: 10,
-  data: mockData,
-  emphasis: {
-    label: {
-      show: true,
-    },
-  },
-  itemStyle: {
-    color: "red",
-    symbolSize: 10,
+    color: "#47C384",
+    opacity: 1,
   },
 };

@@ -3,6 +3,7 @@ const typescript = require('@typescript-eslint/eslint-plugin');
 const typescriptParser = require('@typescript-eslint/parser');
 const vue = require('eslint-plugin-vue');
 const vueParser = require('vue-eslint-parser');
+const importPlugin = require('eslint-plugin-import');
 
 module.exports = [
   // 基础配置
@@ -52,6 +53,7 @@ module.exports = [
       },
     },
     plugins: {
+      import: importPlugin,
       '@typescript-eslint': typescript,
       vue,
     },
@@ -95,6 +97,7 @@ module.exports = [
       'no-console': 'warn',
       'no-debugger': 'error',
       'no-duplicate-imports': 'error',
+      'import/no-duplicates': 'error',
       'no-unused-expressions': 'error',
       'prefer-template': 'error',
       'object-shorthand': 'error',
@@ -104,6 +107,47 @@ module.exports = [
       'eol-last': 'error',
       'comma-dangle': ['error', 'always-multiline'],
       'no-multi-spaces': 'error',
+      // 禁止行尾空格
+      'no-trailing-spaces': [
+        'error',
+        {
+          skipBlankLines: false, // 不跳过空行
+          ignoreComments: false, // 不忽略注释
+        },
+      ],
+
+      // 禁止代码块开始和结束大括号内有多余空格
+      'block-spacing': ['error', 'always'],
+
+      // 控制逗号前后的空格
+      'comma-spacing': [
+        'error',
+        {
+          before: false,
+          after: true,
+        },
+      ],
+
+      // 函数调用括号前禁止空格
+      'func-call-spacing': ['error', 'never'],
+
+      // 关键字前后空格 (if/else/for 等)
+      'keyword-spacing': [
+        'error',
+        {
+          before: true,
+          after: true,
+        },
+      ],
+
+      // 对象冒号前后空格
+      'key-spacing': [
+        'error',
+        {
+          beforeColon: false,
+          afterColon: true,
+        },
+      ],
       quotes: ['error', 'double', { avoidEscape: true }],
       semi: ['error', 'always'],
       indent: ['error', 2, { SwitchCase: 1 }],

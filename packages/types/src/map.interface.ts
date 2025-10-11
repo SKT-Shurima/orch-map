@@ -1,5 +1,11 @@
 import { Coordinate, Coordinate3D } from "./geo.interface";
 
+// 颜色类型定义
+export type ColorValue =
+  | [number, number, number] // RGB 数组
+  | [number, number, number, number] // RGBA 数组
+  | string; // 16进制颜色值或颜色名称
+
 // 地图等级枚举
 export enum MapLevel {
   WORLD = "world",
@@ -20,26 +26,27 @@ export enum MapRendererType {
 // 基础地图点接口
 export interface BaseMapPoint {
   id: string;
+  name: string;
   coordinate: Coordinate;
   icon?: string;
-  color?: [number, number, number, number];
+  color?: ColorValue;
+  opacity?: number;
   size?: number;
-  label?: string;
+  label: {
+    show: boolean;
+    hoverShow: boolean;
+    formatter: (formatterParams: AnyObj) => string;
+  };
   tooltip?: string;
-  [key: string]: any; // 允许扩展属性
+  siblingPointId?: string[];
+  [key: string]: unknown;
 }
 
 // 3D 地图点接口
-export interface BaseMapPoint3D {
-  id: string;
+export interface BaseMapPoint3D extends Omit<BaseMapPoint, "coordinate"> {
   coordinate: Coordinate3D;
-  icon?: string;
-  color?: [number, number, number, number];
-  size?: number;
-  label?: string;
-  tooltip?: string;
   height?: number;
-  [key: string]: any; // 允许扩展属性
+  [key: string]: unknown;
 }
 
 // 基础地图线接口
@@ -47,7 +54,7 @@ export interface BaseMapLine {
   id: string;
   startCoordinate: Coordinate;
   endCoordinate: Coordinate;
-  color?: [number, number, number, number];
+  color?: ColorValue;
   width?: number;
   style?: "solid" | "dashed" | "dotted";
   [key: string]: any; // 允许扩展属性
@@ -58,7 +65,7 @@ export interface BaseMapLine3D {
   id: string;
   startCoordinate: Coordinate3D;
   endCoordinate: Coordinate3D;
-  color?: [number, number, number, number];
+  color?: ColorValue;
   width?: number;
   style?: "solid" | "dashed" | "dotted";
   height?: number;
@@ -69,9 +76,9 @@ export interface BaseMapLine3D {
 export interface BaseMapArea {
   id: string;
   coordinates: Coordinate[];
-  color?: [number, number, number, number];
-  fillColor?: [number, number, number, number];
-  strokeColor?: [number, number, number, number];
+  color?: ColorValue;
+  fillColor?: ColorValue;
+  strokeColor?: ColorValue;
   strokeWidth?: number;
   opacity?: number;
   [key: string]: any;

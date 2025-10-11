@@ -139,7 +139,7 @@ export function findFirstKeyByValue<T extends Record<string, string[]>>(
       return key;
     }
   }
-  
+
   // 如果没有找到匹配的键，则返回 undefined
   return undefined;
 }

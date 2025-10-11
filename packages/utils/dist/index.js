@@ -28,6 +28,7 @@ __export(index_exports, {
   TaskManager: () => TaskManager,
   animationManager: () => animationManager,
   colorUtils: () => colorUtils,
+  convertToColorCode: () => convertToColorCode,
   debounce: () => debounce,
   deepClone: () => deepClone,
   easing: () => easing,
@@ -38,6 +39,8 @@ __export(index_exports, {
   isUndef: () => isUndef,
   omit: () => import_lodash.omit,
   pick: () => import_lodash.pick,
+  rgbToHex: () => rgbToHex,
+  rgbaToString: () => rgbaToString,
   svgToBase64Symbol: () => svgToBase64Symbol,
   svgToEChartsSymbol: () => svgToEChartsSymbol,
   throttle: () => throttle
@@ -889,6 +892,46 @@ function svgToBase64Symbol(svgString) {
   const base64 = btoa(unescape(encodeURIComponent(svgString)));
   return `image://data:image/svg+xml;base64,${base64}`;
 }
+
+// src/color.ts
+function rgbToHex(rgbArray) {
+  for (let i = 0; i < 3; i++) {
+    const value = rgbArray[i];
+    if (typeof value !== "number" || value < 0 || value > 255 || !Number.isInteger(value)) {
+      throw new Error("RGB\u503C\u5FC5\u987B\u662F0-255\u4E4B\u95F4\u7684\u6574\u6570");
+    }
+  }
+  const hexColor = rgbArray.map(
+    (value) => value.toString(16).padStart(2, "0")
+  ).join("");
+  return `#${hexColor}`;
+}
+function rgbaToString(rgbaArray) {
+  for (let i = 0; i < 3; i++) {
+    const value = rgbaArray[i];
+    if (typeof value !== "number" || value < 0 || value > 255 || !Number.isInteger(value)) {
+      throw new Error("RGB\u503C\u5FC5\u987B\u662F0-255\u4E4B\u95F4\u7684\u6574\u6570");
+    }
+  }
+  const alpha = rgbaArray[3];
+  if (typeof alpha !== "number" || alpha < 0 || alpha > 255) {
+    throw new Error("Alpha\u503C\u5FC5\u987B\u662F0-255\u4E4B\u95F4\u7684\u6570\u5B57");
+  }
+  const normalizedAlpha = (alpha / 255).toFixed(2);
+  return `rgba(${rgbaArray[0]},${rgbaArray[1]},${rgbaArray[2]},${normalizedAlpha})`;
+}
+function convertToColorCode(colorArray) {
+  if (!Array.isArray(colorArray)) {
+    throw new Error("\u8F93\u5165\u5FC5\u987B\u662F\u4E00\u4E2A\u6570\u7EC4");
+  }
+  if (colorArray.length === 3) {
+    return rgbToHex(colorArray);
+  } else if (colorArray.length === 4) {
+    return rgbaToString(colorArray);
+  } else {
+    throw new Error("\u6570\u7EC4\u957F\u5EA6\u5FC5\u987B\u662F3\uFF08RGB\uFF09\u62164\uFF08RGBA\uFF09");
+  }
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   Animation,
@@ -899,6 +942,7 @@ function svgToBase64Symbol(svgString) {
   TaskManager,
   animationManager,
   colorUtils,
+  convertToColorCode,
   debounce,
   deepClone,
   easing,
@@ -909,6 +953,8 @@ function svgToBase64Symbol(svgString) {
   isUndef,
   omit,
   pick,
+  rgbToHex,
+  rgbaToString,
   svgToBase64Symbol,
   svgToEChartsSymbol,
   throttle

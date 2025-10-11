@@ -16,16 +16,16 @@ export class GeoJsonUtils {
   public static isPointInPolygon(point: Coordinate, polygon: number[][]): boolean {
     const [x, y] = point;
     let inside = false;
-    
+
     for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
       const [xi, yi] = polygon[i];
       const [xj, yj] = polygon[j];
-      
+
       if (((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi)) {
         inside = !inside;
       }
     }
-    
+
     return inside;
   }
 
@@ -37,17 +37,17 @@ export class GeoJsonUtils {
  */
   public static isPointInFeature(point: Coordinate, feature: GeoJsonFeature): boolean {
     const { geometry } = feature;
-  
+
     if (geometry.type === "Polygon") {
       return this.isPointInPolygon(point, geometry.coordinates[0] as number[][]);
     }
-  
+
     if (geometry.type === "MultiPolygon") {
-      return (geometry.coordinates as number[][][][]).some((polygon) => 
+      return (geometry.coordinates as number[][][][]).some((polygon) =>
         this.isPointInPolygon(point, polygon[0]),
       );
     }
-  
+
     return false;
   }
   /**
@@ -63,10 +63,10 @@ export class GeoJsonUtils {
     if (!transform?.default) {
       return lngLat;
     }
-    
+
     const { scale, translate } = transform.default;
     const [lng, lat] = lngLat;
-    
+
     return [
       lng * scale[0] + translate[0],
       lat * scale[1] + translate[1],
@@ -86,10 +86,10 @@ export class GeoJsonUtils {
     if (!transform?.default) {
       return projected;
     }
-    
+
     const { scale, translate } = transform.default;
     const [x, y] = projected;
-    
+
     return [
       (x - translate[0]) / scale[0],
       (y - translate[1]) / scale[1],
@@ -120,7 +120,7 @@ export class GeoJsonUtils {
       const yi = ring[i][1];
       const xj = ring[j][0];
       const yj = ring[j][1];
-      
+
       const a = xi * yj - xj * yi;
       area += a;
       x += (xi + xj) * a;
@@ -138,29 +138,29 @@ export class GeoJsonUtils {
    */
   public static getFeatureCenter(feature: GeoJsonFeature): Coordinate {
     const { geometry } = feature;
-    
+
     switch (geometry.type) {
       case "Point":
         return geometry.coordinates as Coordinate;
-      
+
       case "MultiPoint":
       case "LineString":
         return this.getLineCentroid(geometry.coordinates as Coordinate[]);
-      
+
       case "MultiLineString":
         return this.getLineCentroid(geometry.coordinates.flat() as Coordinate[]);
-      
+
       case "Polygon":
         return this.getPolygonCenter(geometry.coordinates as number[][][]);
-      
+
       case "MultiPolygon": {
         // 计算每个多边形的中心点，然后取平均值
-        const centers = geometry.coordinates.map((polygon: unknown) => 
+        const centers = geometry.coordinates.map((polygon: unknown) =>
           this.getPolygonCenter(polygon as number[][][]),
         );
         return this.getLineCentroid(centers);
       }
-      
+
       default:
         return [0, 0];
     }
@@ -175,10 +175,10 @@ export class GeoJsonUtils {
     if (!coordinates || coordinates.length === 0) {
       return [0, 0];
     }
-    
+
     const sumX = coordinates.reduce((sum, coord) => sum + coord[0], 0);
     const sumY = coordinates.reduce((sum, coord) => sum + coord[1], 0);
-    
+
     return [sumX / coordinates.length, sumY / coordinates.length];
   }
 
@@ -357,22 +357,22 @@ export class GeoJsonUtils {
   public static simplifyGeometry(geometry: GeoJsonGeometry, tolerance: number): GeoJsonGeometry {
     const simplifyCoords = (coords: Coordinate[]): Coordinate[] => {
       if (coords.length <= 2) return coords;
-      
+
       const result: Coordinate[] = [coords[0]];
       let prevPoint = coords[0];
-      
+
       for (let i = 1; i < coords.length - 1; i++) {
         if (this.distance(prevPoint, coords[i]) >= tolerance) {
           result.push(coords[i]);
           prevPoint = coords[i];
         }
       }
-      
+
       // 确保包含最后一个点
       if (coords.length > 1) {
         result.push(coords[coords.length - 1]);
       }
-      
+
       return result;
     };
 
@@ -380,40 +380,40 @@ export class GeoJsonUtils {
       switch (geom.type) {
         case "Point":
           return geom;
-          
+
         case "LineString":
           return {
             ...geom,
             coordinates: simplifyCoords(geom.coordinates as Coordinate[]),
           };
-          
+
         case "Polygon":
           return {
             ...geom,
-            coordinates: (geom.coordinates as Coordinate[][]).map(ring => 
+            coordinates: (geom.coordinates as Coordinate[][]).map(ring =>
               simplifyCoords(ring),
             ),
           };
-          
+
         case "MultiPoint":
           return geom;
-          
+
         case "MultiLineString":
           return {
             ...geom,
-            coordinates: (geom.coordinates as Coordinate[][]).map(line => 
+            coordinates: (geom.coordinates as Coordinate[][]).map(line =>
               simplifyCoords(line),
             ),
           };
-          
+
         case "MultiPolygon":
           return {
             ...geom,
-            coordinates: (geom.coordinates as Coordinate[][][]).map(polygon => 
+            coordinates: (geom.coordinates as Coordinate[][][]).map(polygon =>
               polygon.map(ring => simplifyCoords(ring)),
             ),
           };
-          
+
         default:
           return geom;
       }
@@ -441,9 +441,9 @@ export class GeoJsonUtils {
    * @returns 合并后的 FeatureCollection
    */
   public static mergeFeatureCollections(...collections: FeatureCollection[]): FeatureCollection {
-    const features = collections.reduce((acc, collection) => 
+    const features = collections.reduce((acc, collection) =>
       acc.concat(collection.features), [] as Feature[]);
-    
+
     return this.createFeatureCollection(features);
   }
 
@@ -454,40 +454,40 @@ export class GeoJsonUtils {
    */
   public static featureToWKT(feature: GeoJsonFeature): string {
     const { geometry } = feature;
-    
-    const coordsToWKT = (coords: number[]): string => 
+
+    const coordsToWKT = (coords: number[]): string =>
       `${coords[0]} ${coords[1]}`;
-    
+
     const ringsToWKT = (rings: number[][][]): string => {
       const ringsWKT = rings.map(ring => {
         const pointsWKT = ring.map(coordsToWKT).join(", ");
         return `(${pointsWKT})`;
       }).join(", ");
-      
+
       return ringsWKT;
     };
-    
+
     switch (geometry.type) {
       case "Point":
         return `POINT(${coordsToWKT(geometry.coordinates as number[])})`;
-        
+
       case "LineString":
         return `LINESTRING(${(geometry.coordinates as number[][]).map(coordsToWKT).join(", ")})`;
-        
+
       case "Polygon":
         return `POLYGON(${ringsToWKT(geometry.coordinates as number[][][])})`;
-        
+
       case "MultiPoint":
         return `MULTIPOINT(${(geometry.coordinates as number[][]).map(coord => `(${coordsToWKT(coord)})`).join(", ")})`;
-        
+
       case "MultiLineString":
-        return `MULTILINESTRING(${(geometry.coordinates as number[][][]).map(line => 
+        return `MULTILINESTRING(${(geometry.coordinates as number[][][]).map(line =>
           `(${line.map(coordsToWKT).join(", ")})`).join(", ")})`;
-        
+
       case "MultiPolygon":
-        return `MULTIPOLYGON(${(geometry.coordinates as number[][][][]).map(polygon => 
+        return `MULTIPOLYGON(${(geometry.coordinates as number[][][][]).map(polygon =>
           `(${ringsToWKT(polygon)})`).join(", ")})`;
-        
+
       default:
         throw new Error(`Unsupported geometry type: ${geometry.type}`);
     }

@@ -1,10 +1,11 @@
-import { type AnyObj } from "@orch-map/types"
+import { type AnyObj } from "@orch-map/types";
 
 /**
  * @description: Series 中的点的基本信息
  * 用于渲染数据列的时候，每个点所必备的信息
  */
 export interface PointSeriesDataItem<T> {
+  id: string
   name: string
   value: [number, number]
   businessInfo?: T
@@ -35,6 +36,7 @@ export interface PointSeries<T> {
  * @description: 点击或者hover的散点图的信息
  */
 export interface PointParam<T> {
+  id: string
   name: string
   componentType: "series"
   componentSubType: "scatter"

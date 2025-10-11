@@ -373,4 +373,23 @@ declare function svgToEChartsSymbol(svg: string | Element, options?: {
  */
 declare function svgToBase64Symbol(svgString: string): string;
 
-export { Animation, AnimationManager, CoordinateUtils, CurvatureCalculator, GeoJsonUtils, TaskManager, type TaskOptions, type TimerTask, animationManager, colorUtils, debounce, deepClone, easing, findFirstKeyByValue, generateId, isDef, isEmptyArray, isUndef, svgToBase64Symbol, svgToEChartsSymbol, throttle };
+/**
+ * 将RGB数组转换为十六进制颜色代码
+ * @param {number[]} rgbArray - 包含三个数字的RGB数组 [R,G,B]
+ * @return {string} 十六进制颜色代码，如 #123456
+ */
+declare function rgbToHex(rgbArray: number[]): string;
+/**
+ * 将RGBA数组转换为rgba(r,g,b,a)格式的字符串
+ * @param {number[]} rgbaArray - 包含四个数字的RGBA数组 [R,G,B,A]
+ * @return {string} rgba格式字符串，如 rgba(18,52,86,0.5)
+ */
+declare function rgbaToString(rgbaArray: number[]): string;
+/**
+ * 将数字数组转换为颜色代码
+ * @param {number[]} colorArray - 包含3个或4个数字的数组 [R,G,B] 或 [R,G,B,A]
+ * @return {string} 颜色代码，如果是3个数字则返回 #RRGGBB，如果是4个数字则返回 rgba(r,g,b,a)
+ */
+declare function convertToColorCode(colorArray: number[] | string): string;
+
+export { Animation, AnimationManager, CoordinateUtils, CurvatureCalculator, GeoJsonUtils, TaskManager, type TaskOptions, type TimerTask, animationManager, colorUtils, convertToColorCode, debounce, deepClone, easing, findFirstKeyByValue, generateId, isDef, isEmptyArray, isUndef, rgbToHex, rgbaToString, svgToBase64Symbol, svgToEChartsSymbol, throttle };

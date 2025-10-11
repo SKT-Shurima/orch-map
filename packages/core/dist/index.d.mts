@@ -1,33 +1,16 @@
-import * as _orch_map_types from '@orch-map/types';
 import { GeoJSONSourceInput, BaseMapPoint, BaseMapLine, MapLevel, MapRendererType as MapRendererType$1, AnyObj, FeatureCollection, GeoJSON as GeoJSON$1 } from '@orch-map/types';
 import { GeoJSON } from 'geojson';
 import { LinesSeriesOption } from 'echarts';
+import * as echarts from 'echarts/core';
 
-type AdapterPointInfo = {
-    id: string;
-    name: string;
-};
-/**
- * @description: 将大屏的配置信息进行统一口径处理
- */
-interface AdapterParams {
-    filterPoint?: AdapterPointInfo;
-    activePoints: AdapterPointInfo[];
-    staredPoints: AdapterPointInfo[];
-    showNamePoints: AdapterPointInfo[];
-}
 /**
  * 地图渲染器事件接口
  */
 interface MapRendererEvents {
     /** 点击点事件 */
-    onPointClick?: (point: BaseMapPoint) => void;
+    onPointClick?: (point: string) => void;
     /** 悬停点事件 */
-    onPointHover?: (point: BaseMapPoint | null) => void;
-    /** 点击线事件 */
-    onLineClick?: (line: BaseMapLine) => void;
-    /** 悬停线事件 */
-    onLineHover?: (line: BaseMapLine | null) => void;
+    onPointHover?: (point: string | null) => void;
     /** 点击区域事件 */
     onAreaClick?: (area: any) => void;
     /** 悬停区域事件 */
@@ -100,7 +83,7 @@ interface IMapRenderer {
      * 设置点数据
      * @param points 点数据数组
      */
-    setPoints(points: BaseMapPoint[], adapterParams: AdapterParams, iconMapIds: Record<string, string[]>): Promise<void> | void;
+    setPoints(points: BaseMapPoint[]): Promise<void> | void;
     /**
      * 设置线数据
      * @param lines 线数据数组
@@ -264,6 +247,7 @@ declare class DeckglMap {
  * 用于渲染数据列的时候，每个点所必备的信息
  */
 interface PointSeriesDataItem<T> {
+    id: string;
     name: string;
     value: [number, number];
     businessInfo?: T;
@@ -330,16 +314,12 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
     private container;
     /** ECharts 实例 */
     private chartInstance;
-    /** 图表系列配置 */
-    private series;
     /** 边界数据加载状态 */
     private boundaryLoading;
     /** 地图渲染器配置 */
     private config;
     /** 状态管理器取消订阅函数 */
     private unsubscribeState;
-    /** 曲率计算器实例 */
-    private curvatureCalculator;
     /**
      * 构造函数
      * @param container - 地图容器，可以是 DOM 元素或元素 ID 字符串
@@ -347,11 +327,6 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
      * @throws {Error} 当通过 ID 查找容器元素失败时抛出错误
      */
     constructor(container: HTMLElement | string, options: EchartsMapOptions | MapRendererConfig, geoJson: GeoJSONSourceInput);
-    /**
-     * 获取当前地图是否为中国地图
-     * @returns 是否为中国地图
-     */
-    private get currentMapIsChina();
     /**
      * 获取当前详细地图的 GeoJSON 数据
      * @returns 当前地图的 FeatureCollection 数据
@@ -368,88 +343,18 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
      */
     private registerEvents;
     /**
-     * 生成地图名称
-     * @returns 地图名称字符串
-     * @private
-     */
-    private generateMapName;
-    /**
      * 设置 ECharts 图表配置选项
      * @param option - ECharts 配置选项
      * @private
      */
     private setChartOption;
+    private updateGeoOption;
     /**
      * 设置地理数据并更新地图显示
      * @param boundary - 边界地理数据
      * @public
      */
     setGEOData(boundary: GeoJSON$1): void;
-    /**
-     * 规范化地理数据格式
-     * @param data - 地理数据
-     * @returns 标准化的 FeatureCollection 数据
-     * @private
-     */
-    private normalizeGeoData;
-    /**
-     * 将点数据转换为 ECharts Series
-     * @param points - 点数据数组
-     * @returns ECharts 系列配置数组
-     * @private
-     */
-    private convertPointsToSeries;
-    /**
-     * 将线数据转换为 ECharts Series
-     * @param lines - 线数据数组
-     * @returns ECharts 系列配置数组
-     * @private
-     */
-    private convertLinesToSeries;
-    /**
-     * 根据曲率生成曲线路径点
-     * @param startCoord - 起点坐标 [lng, lat]
-     * @param endCoord - 终点坐标 [lng, lat]
-     * @param curvature - 曲率值 (0-1)
-     * @returns 曲线路径点数组
-     * @private
-     */
-    private generateCurvedPath;
-    /**
-     * 二次贝塞尔曲线计算
-     * @param p0 - 起点
-     * @param p1 - 控制点
-     * @param p2 - 终点
-     * @param t - 参数 (0-1)
-     * @returns 曲线上的点
-     * @private
-     */
-    private quadraticBezier;
-    /**
-     * 将系列数据坐标转换为 GeoJSON 投影坐标
-     * @param series - ECharts 系列配置数组
-     * @returns 转换后的系列配置数组
-     * @private
-     */
-    /**
-     * 将 PointParam 参数转换为 BaseMapPoint 格式
-     * @param params - 点参数
-     * @returns 转换后的 BaseMapPoint 对象
-     * @private
-     */
-    private transPointParam2BaseMapPoint;
-    /**
-     * 鼠标悬停事件处理器
-     * @param params - 事件参数，包含组件类型和相关信息
-     * @private
-     */
-    private mouseoverHandler;
-    /**
-     * 鼠标移出事件处理器
-     * @param params - 事件参数，包含组件类型和相关信息
-     * @private
-     */
-    private mouseoutHandler;
     /**
      * 点击事件处理器
      * @param params - 事件参数，包含组件类型和相关信息
@@ -462,42 +367,6 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
      * @private
      */
     private dbClickHandler;
-    /**
-     * 检查地图入口资格，确定是否可以进入下一级地图
-     * @param params - 事件参数，包含区域名称等信息
-     * @returns 下一级地图层级，如果无法进入则返回 undefined
-     * @private
-     */
-    private checkMapEntryEligibility;
-    /**
-     * 根据地理要素名称获取行政区划代码
-     * @param name - 地理要素名称
-     * @returns 行政区划代码
-     * @private
-     */
-    private getPostCodeByGeoFeatures;
-    /**
-     * 处理区域变化事件的具体实现
-     * @param params - 地理参数，包含区域信息
-     * @private
-     */
-    private handleChangeAreaImpl;
-    /**
-     * 检查点是否在指定地理要素内
-     * @param coordinates - 点坐标 [经度, 纬度]
-     * @param feature - 地理要素
-     * @returns 点是否在要素内
-     * @private
-     */
-    private checkPointInFeature;
-    /**
-     * 检查点是否在多边形内（支持带洞的多边形）
-     * @param coordinates - 点坐标 [经度, 纬度]
-     * @param polygonRings - 多边形环数组，第一个是外环，其余是内环（洞）
-     * @returns 点是否在多边形内
-     * @private
-     */
-    private checkPointInPolygon;
     /**
      * 等待边界数据加载完成
      * @param timeout - 超时时间（毫秒），默认 5000ms
@@ -546,17 +415,11 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
      */
     updateSeries: (...args: unknown[]) => void;
     /**
-     * 区域变化处理方法（防抖，600ms 延迟）
-     * @param params - GEO参数
-     * @private
-     */
-    private handleChangeArea;
-    /**
      * # 更新地图上的点位
      * 该方法会移除旧的点位系列，然后添加新的点位系列
      * @param points 点位数组
      */
-    setPoints(points: BaseMapPoint[], adapterParams: AdapterParams, iconMapIds?: Record<string, string[]>): void;
+    setPoints(points: BaseMapPoint[]): void;
     /**
      * 在 ECharts 中更新线数据
      * @param lines - 线数据数组
@@ -620,7 +483,7 @@ declare class OrchMap {
      * 设置地图点位数据
      * @param {BaseMapPoint[]} points - 点位数据数组
      */
-    setPoints(points: BaseMapPoint[], adapterParams: AdapterParams, iconMapIds?: Record<string, string[]>): void;
+    setPoints(points: BaseMapPoint[]): void;
     /**
      * 设置地图线条数据
      * @param {BaseMapLine[]} lines - 线条数据数组
@@ -651,47 +514,31 @@ declare class OrchMap {
 }
 
 /**
- * @description: ECharts地图工具类，用于处理点和线的配置
- *
- * 点处理逻辑:
- * 根据 mapConfig 的配置以及依赖数据，将 point 转换为 echarts 的配置
- * 这里会根据聚合模式分为三种情况
- * 1、非聚合模式
- * 2、按城市聚合模式
- * 3、按省份聚合模式 （目前只有 CPE 大屏地图，并且是在中国大陆模式下才会有的）
- * 注意：这里只处理通用问题的通用解，如果涉及到根据特殊逻辑定制的，需要进行二次加工
- *
- * 线处理逻辑(可选):
- * 将线条转换为 echarts 的配置
+ * 连线图组件静态工具类
+ * 提供连线图相关的工具方法和配置
  */
-declare class EChartsGeoUtils {
+declare class LinesComponent {
+    /**
+     * 默认连线图系列配置
+     */
+    static defaultLinesSeries: LinesSeriesOption;
+    /**
+     * 曲率计算器实例
+     */
+    private static curvatureCalculator;
+    /**
+     * 将线数据转换为 ECharts Series
+     * @param lines - 线数据数组
+     * @returns ECharts 系列配置数组
+     */
+    private static convertLinesToSeries;
+    /**
+     * 设置连线图数据到图表
+     * @param chartInstance - ECharts 实例
+     * @param lines - 线数据数组
+     */
+    static setLines(chartInstance: echarts.ECharts, lines: BaseMapLine[]): void;
     private static curvatureMap;
-    /**
-     * @description: 获取点默认配置项
-     * @param point 点数据
-     * @warning 这里的 showLabelNotEmphasis 为 true 时，会展示 label，
-     * showLabelNotEmphasis 为 false 时，hover 时展示 label，正常不展示 label
-     */
-    static getPointDefaultOption<P extends BaseMapPoint>(point: P): AnyObj;
-    /**
-     * @description: 切换标签显示状态
-     * @param point 点配置
-     * @param showLabelNotEmphasis 是否在非强调状态下显示标签
-     */
-    private static toggleLabelShow;
-    /**
-     * @description: 计算数量后缀
-     * @param count 数量
-     * @returns 格式化后的后缀
-     */
-    private static countSuffix;
-    /**
-     * @description: 处理点数据，转换为 echarts 配置
-     * @param pointItem 点数据
-     * @param config 适配器参数
-     * @returns 处理后的点配置
-     */
-    static processPoint: <P extends BaseMapPoint>(pointItem: P, config: AdapterParams) => PointSeriesDataItem<P>;
     /**
      * @description: 字符串哈希函数，生成0到1之间的数值
      * 用确定性的方法替代 Math.random()
@@ -737,18 +584,7 @@ declare class EChartsGeoUtils {
      * @param config 曲率配置参数（可选）
      * @returns 线条配置
      */
-    static getLineDefaultOption<L extends BaseMapLine>(lineItem: L & BaseMapLine, config?: {
-        curvatureMin: number;
-        curvatureMax: number;
-    }): {
-        coords: _orch_map_types.Coordinate[];
-        lineStyle: {
-            color: string;
-            width: number;
-            opacity: number;
-            curveness: number;
-        };
-    };
+    private static getLineDefaultOption;
     /**
      * @description: 获取线条逆向连线的 series 配置
      * 将连线起终点对调，创建反向连线配置
@@ -756,25 +592,7 @@ declare class EChartsGeoUtils {
      * @param originLineSeries 原始线条系列配置
      * @returns 逆向连线的系列配置
      */
-    static getBuddyLineSeries: (originLineSeries: LinesSeriesOption) => LinesSeriesOption;
-    /**
-     * @description: 处理线条数据，转换为 echarts 配置
-     * @param lineItem 线条数据
-     * @param config 曲率配置参数（可选）
-     * @returns 处理后的线条配置
-     */
-    static processLine: <L extends BaseMapLine>(lineItem: L, config?: {
-        curvatureMin: number;
-        curvatureMax: number;
-    }) => {
-        coords: _orch_map_types.Coordinate[];
-        lineStyle: {
-            color: string;
-            width: number;
-            opacity: number;
-            curveness: number;
-        };
-    };
+    private static getBuddyLineSeries;
 }
 
-export { type AdapterParams, type AdapterPointInfo, EChartsGeoUtils, MapRendererType, OrchMap as default };
+export { LinesComponent as EChartsGeoUtils, MapRendererType, OrchMap as default };
