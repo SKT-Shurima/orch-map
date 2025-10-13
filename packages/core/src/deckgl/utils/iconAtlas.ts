@@ -29,64 +29,65 @@ export default class IconAtlas {
    */
   private static svgToImage(svgString: string): Promise<HTMLImageElement> {
     return new Promise((resolve, reject) => {
-      const img = new Image()
-      const blob = new Blob([svgString], { type: "image/svg+xml" })
-      const url = URL.createObjectURL(blob)
+      const img = new Image();
+      const blob = new Blob([svgString], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
 
       img.onload = () => {
-        URL.revokeObjectURL(url)
-        resolve(img)
-      }
+        URL.revokeObjectURL(url);
+        resolve(img);
+      };
 
       img.onerror = () => {
-        URL.revokeObjectURL(url)
-        reject(new Error("Failed to load SVG"))
-      }
+        URL.revokeObjectURL(url);
+        reject(new Error("Failed to load SVG"));
+      };
 
-      img.src = url
-    })
+      img.src = url;
+    });
   }
 
   // 构建图标集合的工具方法
   public static async buildIconAtlas(icons: { [key: string]: string }): Promise<IconAtlasResult> {
-    const iconMapping: IconMapping = {}
-    let canvasWidth = 0
-    let canvasHeight = 0
+    const iconMapping: IconMapping = {};
+    let canvasWidth = 0;
+    let canvasHeight = 0;
 
     // 首先计算需要的画布大小
     for (const [iconName, iconSvg] of Object.entries(icons)) {
-      const img = await IconAtlas.svgToImage(iconSvg)
+      const img = await IconAtlas.svgToImage(iconSvg);
       iconMapping[iconName] = {
         x: canvasWidth,
         y: 0,
         width: img.width,
         height: img.height,
         mask: true,
-      }
-      canvasWidth += img.width
-      canvasHeight = Math.max(canvasHeight, img.height)
+      };
+      canvasWidth += img.width;
+      canvasHeight = Math.max(canvasHeight, img.height);
     }
 
     // 创建最终的图标图集
-    const canvas = document.createElement("canvas")
-    const ctx = canvas.getContext("2d")
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
     if (!ctx) {
-      throw new Error("Failed to get 2D context from canvas")
+      throw new Error("Failed to get 2D context from canvas");
     }
 
-    canvas.width = canvasWidth
-    canvas.height = canvasHeight
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
 
     // 绘制所有图标到一个图集中
     for (const [iconName, iconSvg] of Object.entries(icons)) {
-      const img = await IconAtlas.svgToImage(iconSvg)
-      const { x } = iconMapping[iconName]
-      ctx.drawImage(img, x, 0)
+      const img = await IconAtlas.svgToImage(iconSvg);
+      const { x } = iconMapping[iconName];
+      ctx.drawImage(img, x, 0);
     }
 
     return {
       iconAtlas: canvas.toDataURL(),
       iconMapping,
-    }
+    };
   }
 }
+

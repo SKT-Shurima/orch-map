@@ -121,11 +121,12 @@ export default class ScatterComponent {
    * @returns 处理后的散点图数据
    */
   public static processPointsData(points: BaseMapPoint[]): PointSeriesDataItem<unknown>[] {
-    const iconMap = MapStateManager.extraSvgIcons;
+    // 使用已转换好的 ECharts symbol 格式
+    const symbolMap = MapStateManager.echartsSymbols;
     return points.map(point => {
       const processedPoint = ScatterComponent.processPoint(point);
       processedPoint.name = point.name;
-      processedPoint.symbol = point.icon ? iconMap[point.icon] : DEFAULT_POINT_CONFIG.symbol;
+      processedPoint.symbol = point.icon ? symbolMap[point.icon] : DEFAULT_POINT_CONFIG.symbol;
       processedPoint.symbolSize = point.size ?? DEFAULT_POINT_CONFIG.symbolSize;
       processedPoint.itemStyle = {
         color: convertToColorCode(point.color as ColorValue) ?? DEFAULT_POINT_CONFIG.itemStyle.color,

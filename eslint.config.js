@@ -39,6 +39,7 @@ module.exports = [
         Event: 'readonly',
         HTMLElement: 'readonly',
         HTMLCanvasElement: 'readonly',
+        HTMLImageElement: 'readonly',
         Element: 'readonly',
         DOMParser: 'readonly',
         btoa: 'readonly',
@@ -50,6 +51,9 @@ module.exports = [
         clearInterval: 'readonly',
         NodeJS: 'readonly',
         fetch: 'readonly',
+        Image: 'readonly',
+        Blob: 'readonly',
+        URL: 'readonly',
       },
     },
     plugins: {

@@ -21,11 +21,11 @@ export interface GeoJsonLayerProps {
 }
 
 /** 默认填充色 RGBA */
-export const DEFAULT_GEO_FILL_COLOR: [number, number, number, number] = [9, 71, 119, 255]
+export const DEFAULT_GEO_FILL_COLOR: [number, number, number, number] = [9, 71, 119, 255];
 /** 默认边线色 RGBA */
-export const DEFAULT_GEO_LINE_COLOR: [number, number, number, number] = [20, 128, 197, 255]
+export const DEFAULT_GEO_LINE_COLOR: [number, number, number, number] = [20, 128, 197, 255];
 /** 默认高亮色 RGBA */
-export const DEFAULT_GEO_HIGHLIGHT_COLOR: [number, number, number, number] = [48, 121, 200, 255]
+export const DEFAULT_GEO_HIGHLIGHT_COLOR: [number, number, number, number] = [48, 121, 200, 255];
 
 /**
  * 地理图层的默认属性配置
@@ -101,4 +101,5 @@ export const DEFAULT_GEO_LAYER_PROPS: Partial<GeoJsonLayerProps> = {
    * 文本标签的颜色，RGBA格式
    */
   getTextColor: [255, 255, 255, 255],
-}
+};
+

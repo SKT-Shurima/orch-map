@@ -30,8 +30,10 @@ export default class MapStateManager {
    */
   private static _geoData: GeoJSON = {} as GeoJSON;
   private static _mapVersion: "standard" | "international" = "standard";
-  /** 自定义图标库 */
+  /** 自定义图标库（原始 SVG 字符串，供 DeckGL 使用） */
   private static _extraSvgIcons: Record<string, string> = {};
+  /** ECharts 图标库（转换后的 symbol 格式，供 ECharts 使用） */
+  private static _echartsSymbols: Record<string, string> = {};
 
   // 属性监听器
   private static propertyListeners: Map<string, PropertyChangeListener[]> = new Map();
@@ -127,6 +129,14 @@ export default class MapStateManager {
 
   public static set extraSvgIcons(icons: Record<string, string>) {
     MapStateManager._extraSvgIcons = icons;
+  }
+
+  public static get echartsSymbols(): Record<string, string> {
+    return MapStateManager._echartsSymbols;
+  }
+
+  public static set echartsSymbols(symbols: Record<string, string>) {
+    MapStateManager._echartsSymbols = symbols;
   }
 
   /**

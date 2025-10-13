@@ -2,7 +2,7 @@ import { defineComponent, ref, onMounted } from "vue";
 import OrchMap, { MapRendererType } from "@orch-map/core";
 import { BaseMapLine, BaseMapPoint, MapLevel } from "@orch-map/types";
 import mock from "./mock.json";
-import { pick, svgToEChartsSymbol } from "@orch-map/utils";
+import { pick } from "@orch-map/utils";
 import diamond from "./assets/diamond.svg?raw";
 import star from "./assets/star.svg?raw";
 import { computePointStyle } from "./helper";
@@ -28,21 +28,22 @@ export default defineComponent({
     onMounted(() => {
       if (geoContainer.value) {
         mapInstance = new OrchMap({
-          renderType: MapRendererType.ECHARTS,
+          renderType: MapRendererType.DECKGL,
           mapVersion: "standard",
           mode: "2d",
           container: geoContainer.value,
-          curLevel: MapLevel.COUNTRY,
-          country: "China",
-          postcode: "100000",
+          curLevel: MapLevel.WORLD,
+          country: "",
+          postcode: "",
           events: {
             onMapClick: (event) => {
               console.log(event);
             },
           },
         }, {
-          cpe: svgToEChartsSymbol(diamond),
-          star: svgToEChartsSymbol(star),
+          // 直接传递原始 SVG 字符串，OrchMap 会自动处理 ECharts 和 DeckGL 的格式转换
+          cpe: diamond,
+          star,
         });
 
         const adapterParams: AdapterParams = {
@@ -53,7 +54,7 @@ export default defineComponent({
         };
 
         const points = mock.points.map((point: any) => {
-          const { labelShow, labelHoverShow, labelName, isStarred } = computePointStyle(point, adapterParams);
+          const { labelHoverShow, labelName, isStarred } = computePointStyle(point, adapterParams);
           return {
             ...point,
             icon: isStarred ? "star" : "cpe",
@@ -61,8 +62,9 @@ export default defineComponent({
             siblingPointId: [],
             label: {
               name: labelName,
-              show: labelShow,
+              show: true, // 默认显示所有点的标签
               hoverShow: labelHoverShow,
+              formatter: () => labelName ?? point.name ?? "",
             },
           };
         });

@@ -5,7 +5,7 @@ import EchartsMap from "./echarts-geo";
 import MapDataService, { GeoDataParams } from "@orch-map/mapData";
 import MapStateManager from "./MapStateManager";
 import { GeoUtils } from "./utils/geo.utils";
-import { isUndef } from "@orch-map/utils";
+import { isUndef, svgToEChartsSymbol } from "@orch-map/utils";
 
 
 /**
@@ -33,11 +33,20 @@ export default class OrchMap {
   /**
    * 构造函数
    * @param {MapRendererConfig} config - 地图渲染器配置
+   * @param {Record<string, string>} extraSvgIcons - 额外的 SVG 图标（原始 SVG 字符串）
    */
   public constructor(config: MapRendererConfig, extraSvgIcons: Record<string, string> = {}) {
     this.config = config;
     MapStateManager.mapVersion = this.config.mapVersion || "standard";
+    // 存储原始 SVG（供 DeckGL 使用）
     MapStateManager.extraSvgIcons = extraSvgIcons;
+    // 转换为 ECharts symbol 格式（供 ECharts 使用）
+    const echartsSymbols: Record<string, string> = {};
+    Object.keys(extraSvgIcons).forEach(key => {
+      echartsSymbols[key] = svgToEChartsSymbol(extraSvgIcons[key]);
+    });
+    MapStateManager.echartsSymbols = echartsSymbols;
+
     this._initPromise = this.initMap().then(() => {
       this._initialized = true;
       // 初始化完成后调用所有回调

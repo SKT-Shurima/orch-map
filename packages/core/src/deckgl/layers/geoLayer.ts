@@ -3,8 +3,8 @@
  * 说明：提供一个空数据的 GeoJsonLayer 构造器，便于初始化占位，避免空图层导致的渲染空指针问题。
  */
 
-import { GeoJsonLayer } from "@deck.gl/layers"
-import { DEFAULT_GEO_LAYER_PROPS } from "./glMap.const"
+import { GeoJsonLayer } from "@deck.gl/layers";
+import { DEFAULT_GEO_LAYER_PROPS } from "../utils/glMap.const";
 
 export default class GeoLayer {
   /**
@@ -15,6 +15,7 @@ export default class GeoLayer {
       ...DEFAULT_GEO_LAYER_PROPS,
       id: "geojson-layer",
       data: [],
-    })
+    });
   }
 }
+
