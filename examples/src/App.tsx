@@ -32,9 +32,9 @@ export default defineComponent({
           mapVersion: "standard",
           mode: "2d",
           container: geoContainer.value,
-          curLevel: MapLevel.WORLD,
-          country: "000000",
-          adcode: "000000",
+          curLevel: MapLevel.COUNTRY,
+          country: "China",
+          postcode: "100000",
           events: {
             onMapClick: (event) => {
               console.log(event);

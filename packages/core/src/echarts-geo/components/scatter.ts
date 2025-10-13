@@ -1,6 +1,7 @@
-import { AnyObj, type BaseMapPoint, type ColorValue } from "@orch-map/types";
+import type { BaseMapPoint, ColorValue } from "@orch-map/types";
 import { convertToColorCode } from "@orch-map/utils";
-import { EChartsOption, type SeriesOption } from "echarts";
+import type { EChartsOption, SeriesOption } from "echarts";
+import type { ECElementEvent } from "echarts/core";
 import * as echarts from "echarts/core";
 import MapStateManager from "../../MapStateManager";
 import { DEFAULT_POINT_CONFIG } from "../echart.option";
@@ -17,8 +18,10 @@ export default class ScatterComponent {
    * @warning 这里的 showLabelNotEmphasis 为 true 时，会展示 label，
    * showLabelNotEmphasis 为 false 时，hover 时展示 label，正常不展示 label
    */
-  public static getPointDefaultOption<P extends BaseMapPoint>(point: P): AnyObj {
+  public static getPointDefaultOption<P extends BaseMapPoint>(point: P): PointSeriesDataItem<unknown> {
     return {
+      id: point.id || "",
+      name: point.name || "",
       symbol: "circle",
       symbolSize: 12,
       symbolRotate: 0,
@@ -33,7 +36,6 @@ export default class ScatterComponent {
         color: "#fff",
         position: "bottom",
         formatter: (formatterParams: { data: PointSeriesDataItem<P> }) => {
-          console.log("formatterParams", formatterParams);
           return formatterParams.data.name ?? "";
         },
       },
@@ -57,7 +59,7 @@ export default class ScatterComponent {
         },
       },
       value: [point.coordinate[0], point.coordinate[1]],
-    };
+    } as PointSeriesDataItem<unknown>;
   }
 
   /**
@@ -104,8 +106,12 @@ export default class ScatterComponent {
       dataOption.name = pointItem.name + siblingCount;
 
     }
-    dataOption.label.show = pointItem.label.show;
-    dataOption.emphasis.label.show = pointItem.label.hoverShow;
+    if (dataOption.label) {
+      dataOption.label.show = pointItem.label.show;
+    }
+    if (dataOption.emphasis?.label) {
+      dataOption.emphasis.label.show = pointItem.label.hoverShow;
+    }
     return dataOption as PointSeriesDataItem<P>;
   };
 
@@ -331,14 +337,15 @@ export default class ScatterComponent {
    * @param params - 事件参数
    * @param onPointClick - 点击回调函数
    */
-  public static handleScatterClick<T>(
-    params: PointParam<T>,
+  public static handleScatterClick(
+    params: ECElementEvent,
     onPointClick?: (id: string) => void,
   ): void {
     if (
       params.componentType === "series" &&
       this.isScatterType(params.componentSubType) &&
-      onPointClick
+      onPointClick &&
+      typeof params.id === "string"
     ) {
       onPointClick(params.id);
     }
@@ -349,11 +356,11 @@ export default class ScatterComponent {
    * @param params - 事件参数
    * @param onPointHover - 悬停回调函数
    */
-  public static handleScatterHover<T>(
-    params: PointParam<T>,
+  public static handleScatterHover(
+    params: ECElementEvent,
     onPointHover?: (id: string) => void,
   ): void {
-    if (params.componentType === "series" && onPointHover) {
+    if (params.componentType === "series" && onPointHover && typeof params.id === "string") {
       onPointHover(params.id);
     }
   }

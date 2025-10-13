@@ -1,20 +1,11 @@
-// src/types.ts
-var MapDataPath = /* @__PURE__ */ ((MapDataPath2) => {
-  MapDataPath2["WORLD"] = "world/world-highres3.geo.json";
-  MapDataPath2["WORLD_BOUNDARY"] = "world/world_edge.geo.json";
-  MapDataPath2["WORLD_WGS84"] = "world/wgs84_world.geo.json";
-  MapDataPath2["WORLD_WGS84_FOR_US"] = "world/wgs84_world_for_US.geo.json";
-  MapDataPath2["CHINA"] = "china/100000_full.json";
-  MapDataPath2["CHINA_BOUNDARY"] = "china/000000_edge.json";
-  MapDataPath2["US_BOUNDARY"] = "us/united-states.json";
-  return MapDataPath2;
-})(MapDataPath || {});
-
 // src/pathManager.ts
 import { MapLevel } from "@orch-map/types";
 var MapDataPathManager = class {
   /**
    * 获取地图数据的基础路径
+   * 根据运行环境返回适当的基础路径
+   *
+   * @returns {string} 基础路径字符串
    */
   static getBasePath() {
     if (typeof window !== "undefined") {
@@ -25,63 +16,131 @@ var MapDataPathManager = class {
   }
   /**
    * 根据参数生成数据路径
+   *
+   * @param {Object} params - 路径生成参数
+   * @param {MapLevel} params.currentLevel - 当前地图级别
+   * @param {string} params.region - 区域代码或名称
+   * @param {string} params.country - 国家代码或名称
+   * @returns {string} 相对路径字符串
    */
   static generateDataPath(params) {
-    const { currentLevel, region, country, mapVersion = "default" } = params;
+    const { currentLevel, region, country, mapVersion = "standard" /* STANDARD */ } = params;
     switch (currentLevel) {
       case MapLevel.WORLD:
-        return mapVersion === "international" ? "world/wgs84_world_for_US.geo.json" /* WORLD_WGS84_FOR_US */ : "world/wgs84_world.geo.json" /* WORLD_WGS84 */;
+        return this.getWorldMapPath(mapVersion);
       case MapLevel.COUNTRY:
-        if (region === "100000") {
-          return "china/100000-2.json";
-        } else {
-          return `world/countries/${region}-all.geo.json`;
-        }
+        return this.getCountryMapPath(country, mapVersion);
       case MapLevel.PROVINCE:
-        return country === "100000" ? `china/${region}_full.json` : "";
+        return this.getProvinceMapPath(country, region);
       case MapLevel.CITY:
-        return country === "100000" ? `china/${region}.json` : "";
+        return this.getCityMapPath(country, region);
       case MapLevel.COUNTY:
-        return country === "100000" ? `china/${region}.json` : "";
+        return this.getCountyMapPath(country, region);
       default:
         return "";
     }
   }
   /**
+   * 获取世界地图数据路径
+   *
+   * @param {MapVersion} mapVersion - 地图版本
+   * @returns {string} 世界地图数据相对路径
+   */
+  static getWorldMapPath(mapVersion) {
+    switch (mapVersion) {
+      case "international":
+        return "world/wgs84_world_for_US.geo.json" /* WORLD_WGS84_FOR_US */;
+      case "standard":
+      default:
+        return "world/wgs84_world.geo.json" /* WORLD_WGS84 */;
+    }
+  }
+  /**
+   * 获取国家地图数据路径
+   *
+   * @param {string} country - 国家代码或名称
+   * @param {MapVersion} mapVersion - 地图版本
+   * @returns {string} 国家地图数据相对路径
+   */
+  static getCountryMapPath(country, mapVersion) {
+    if (country === "China" || country === "100000") {
+      switch (mapVersion) {
+        case "international" /* INTERNATIONAL */:
+          return "world/countries/cn-all.geo.json";
+        case "standard" /* STANDARD */:
+        default:
+          return "china/100000.json";
+      }
+    } else {
+      return `world/countries/${country}-all.geo.json`;
+    }
+  }
+  /**
+   * 获取省级地图数据路径
+   *
+   * @param {string} country - 国家代码或名称
+   * @param {string} region - 省级区域代码或名称
+   * @returns {string} 省级地图数据相对路径
+   */
+  static getProvinceMapPath(country, region) {
+    if (country === "China" || country === "100000") {
+      return `china/${region}_full.json`;
+    } else if (country === "USA" || country === "840") {
+      return `usa/states/${region}.json`;
+    } else {
+      return `world/regions/${country}/${region}.json`;
+    }
+  }
+  /**
+   * 获取城市级地图数据路径
+   *
+   * @param {string} country - 国家代码或名称
+   * @param {string} region - 城市区域代码或名称
+   * @returns {string} 城市级地图数据相对路径
+   */
+  static getCityMapPath(country, region) {
+    if (country === "China" || country === "100000") {
+      return `china/${region}.json`;
+    } else if (country === "USA" || country === "840") {
+      return `usa/cities/${region}.json`;
+    } else {
+      return `world/cities/${country}/${region}.json`;
+    }
+  }
+  /**
+   * 获取县级地图数据路径
+   *
+   * @param {string} country - 国家代码或名称
+   * @param {string} region - 县级区域代码或名称
+   * @returns {string} 县级地图数据相对路径
+   */
+  static getCountyMapPath(country, region) {
+    if (country === "China" || country === "100000") {
+      return `china/${region}.json`;
+    } else if (country === "USA" || country === "840") {
+      return `usa/counties/${region}.json`;
+    } else {
+      return `world/counties/${country}/${region}.json`;
+    }
+  }
+  /**
    * 获取完整的数据路径
+   *
+   * @param {string} relativePath - 相对路径
+   * @returns {string} 完整的数据访问路径
    */
   static getFullPath(relativePath) {
     const basePath = this.getBasePath();
     return `${basePath}/${relativePath}`;
   }
-  /**
-   * 获取所有可用的地图数据路径
-   */
-  static getAllPaths() {
-    return {
-      // 世界地图
-      world: "world/wgs84_world.geo.json" /* WORLD_WGS84 */,
-      worldBoundary: "world/world_edge.geo.json" /* WORLD_BOUNDARY */,
-      worldWgs84: "world/wgs84_world.geo.json" /* WORLD_WGS84 */,
-      worldWgs84ForUs: "world/wgs84_world_for_US.geo.json" /* WORLD_WGS84_FOR_US */,
-      // 中国地图
-      china: "china/100000_full.json" /* CHINA */,
-      chinaBoundary: "china/000000_edge.json" /* CHINA_BOUNDARY */,
-      // 美国地图
-      usBoundary: "us/united-states.json" /* US_BOUNDARY */
-    };
-  }
 };
 
 // src/dataService.ts
-var MapDataService = class {
+var MapDataService = class _MapDataService {
   /**
    * 根据路径获取地图数据
    */
   static async getMapData(path) {
-    if (this.cache[path]) {
-      return this.cache[path];
-    }
     let data;
     try {
       const fullPath = MapDataPathManager.getFullPath(path);
@@ -97,7 +156,6 @@ var MapDataService = class {
         features: []
       };
     }
-    this.cache[path] = data;
     return data || {
       type: "FeatureCollection",
       features: []
@@ -121,51 +179,25 @@ var MapDataService = class {
     return data;
   }
   /**
-   * 根据参数获取地图数据
-   */
-  static async fetchGeoJson(params) {
-    const path = MapDataPathManager.generateDataPath(params);
+  * 获取地图 GeoJSON 数据（对外接口，合并了 fetchGeoJson 和 getGeoJsonData）
+  */
+  static async getGeoJsonData(params) {
+    const path = MapDataPathManager.generateDataPath({
+      currentLevel: params.mapLevel,
+      country: params.country,
+      region: params.region
+    });
     if (!path) {
       throw new Error("Detail data path not found");
     }
-    let data = await this.getMapData(path);
-    if (params.currentLevel === "country" && params.region === "100000") {
-      data = this.processChinaMapData(data);
-    }
-    return data;
-  }
-  /**
-   * 获取地图 GeoJSON 数据（对外接口）
-   */
-  static async getGeoJsonData(params) {
-    return await this.fetchGeoJson({
-      currentLevel: params.mapLevel,
-      country: params.country,
-      region: params.region,
-      mapType: params.mapType ?? "echart"
-    });
-  }
-  /**
-   * 清除缓存
-   */
-  static clearCache() {
-    this.cache = {};
-  }
-  /**
-   * 获取缓存状态
-   */
-  static getCacheStatus() {
-    return {
-      size: Object.keys(this.cache).length,
-      keys: Object.keys(this.cache)
-    };
+    return await _MapDataService.getMapData(path);
   }
 };
-MapDataService.cache = {};
+
+// src/index.ts
+var index_default = MapDataService;
 export {
-  MapDataPath,
   MapDataPathManager,
-  MapDataService,
-  MapDataService as getGeoJsonData
+  index_default as default
 };
 //# sourceMappingURL=index.mjs.map

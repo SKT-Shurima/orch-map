@@ -1,10 +1,11 @@
 import { MapRendererConfig, MapRendererType } from "./interfaces";
-import { BaseMapLine, BaseMapPoint, MapLevel } from "@orch-map/types";
-import { GeoJSONSourceInput } from "echarts/types/src/coord/geo/geoTypes.js";
+import { BaseMapLine, BaseMapPoint } from "@orch-map/types";
 import DeckglMap from "./deckgl";
 import EchartsMap from "./echarts-geo";
-import { getGeoJsonData } from "./utils/geoDataService";
+import MapDataService, { GeoDataParams } from "@orch-map/mapData";
 import MapStateManager from "./MapStateManager";
+import { GeoUtils } from "./utils/geo.utils";
+import { isUndef } from "@orch-map/utils";
 
 
 /**
@@ -24,6 +25,10 @@ export default class OrchMap {
   private _initPromise: Promise<void>;
   /** 初始化回调队列 */
   private _initCallbacks: Array<() => void> = [];
+
+  private get mapType(): "echart" | "deckgl" {
+    return this.config.renderType === MapRendererType.ECHARTS ? "echart" : "deckgl";
+  }
 
   /**
    * 构造函数
@@ -47,15 +52,28 @@ export default class OrchMap {
    * @returns {Promise<void>} 初始化 Promise
    */
   public async initMap() {
-    const geoData = await getGeoJsonData({
-      mapLevel: this.config.curLevel ?? MapLevel.WORLD,
-      country: this.config.country ?? "100000",
-      region: this.config.adcode ?? "100000",
+    MapStateManager.curLevel = this.config.curLevel;
+    MapStateManager.postcode = this.config.postcode ?? "";
+    MapStateManager.country = this.config.country ?? "";
+    await this.getGeoData({
+      currentLevel: this.config.curLevel,
+      country: this.config.country ?? "",
+      region: this.config.postcode ?? "",
     });
-    MapStateManager.setGeoData(geoData);
     switch (this.config.renderType) {
       case MapRendererType.ECHARTS:
-        this.instance = new EchartsMap(this.config.container, this.config, geoData as GeoJSONSourceInput);
+        this.instance = new EchartsMap(this.config.container, {
+          ...this.config,
+          events: {
+            ...this.config.events,
+            onAreaDoubleClick: async (region: string) => {
+              this.config.events?.onAreaDoubleClick?.(region);
+              void await this.entryNextLevel(region) ;
+
+            },
+          },
+        },
+        MapStateManager.geoData);
         break;
       case MapRendererType.DECKGL:
         this.instance = new DeckglMap(this.config.container as HTMLCanvasElement, this.config.mode ?? "2d", () => {
@@ -84,6 +102,52 @@ export default class OrchMap {
       void this.instance.setLines(lines);
     });
   }
+
+
+  /**
+   * @description: 计算中国地图的行政区划代码
+   */
+  private calculateChinaPostcode(region: string) {
+    // 获取下一级地图的行政区划代码
+    const nextPostcode = GeoUtils.getPostCodeByGeoFeatures(region);
+    MapStateManager.postcode = nextPostcode;
+  }
+
+
+  private async entryNextLevel(region: string) {
+    const nextLevel = GeoUtils.checkMapEntryEligibility();
+    if (isUndef(nextLevel)) {
+      return;
+    }
+
+    // 检查是否支持下一级地图
+    if (nextLevel && !GeoUtils.isNextLevelSupported(nextLevel)) {
+      return;
+    }
+
+    this.calculateChinaPostcode(region);
+    MapStateManager.country = MapStateManager.country || region;
+    MapStateManager.region = region;
+    MapStateManager.curLevel = nextLevel;
+    await this.getGeoData({
+      currentLevel: nextLevel,
+      country: MapStateManager.country,
+      region: MapStateManager.country === "China" ? MapStateManager.postcode : region,
+    });
+    void this.instance.setGEOData(MapStateManager.geoData);
+  }
+
+
+  private async getGeoData(params: Omit<GeoDataParams, "mapType">) {
+    const geoData = await MapDataService.getGeoJsonData({
+      mapLevel: params.currentLevel,
+      country: params.country,
+      region: params.region,
+      mapType: this.mapType,
+    });
+    MapStateManager.setGeoData(geoData);
+  }
+
 
   /**
    * 在初始化完成后执行回调

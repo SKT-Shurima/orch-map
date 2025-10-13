@@ -374,7 +374,7 @@ TaskManager.Timer = class Timer {
 };
 
 // src/geoJson.ts
-var GeoJsonUtils = class {
+var GeoJsonUtils = class _GeoJsonUtils {
   /**
    * 检查点是否在多边形内（使用射线算法）
    * @param point 坐标点 [x, y]
@@ -402,11 +402,40 @@ var GeoJsonUtils = class {
   static isPointInFeature(point, feature) {
     const { geometry } = feature;
     if (geometry.type === "Polygon") {
-      return this.isPointInPolygon(point, geometry.coordinates[0]);
+      return _GeoJsonUtils.isPointInPolygon(point, geometry.coordinates[0]);
     }
     if (geometry.type === "MultiPolygon") {
       return geometry.coordinates.some(
-        (polygon) => this.isPointInPolygon(point, polygon[0])
+        (polygon) => _GeoJsonUtils.isPointInPolygon(point, polygon[0])
+      );
+    }
+    return false;
+  }
+  /**
+   * 检查点是否在多边形内（支持带洞的多边形）
+   * @param coordinates - 点坐标 [经度, 纬度]
+   * @param polygonRings - 多边形环数组，第一个是外环，其余是内环（洞）
+   * @returns 点是否在多边形内
+   */
+  static checkPointInPolygon(coordinates, polygonRings) {
+    return polygonRings.some((ring, index) => {
+      const isInRing = _GeoJsonUtils.isPointInPolygon(coordinates, ring);
+      return index === 0 ? isInRing : !isInRing;
+    });
+  }
+  /**
+   * 检查点是否在指定地理要素内
+   * @param coordinates - 点坐标 [经度, 纬度]
+   * @param feature - 地理要素
+   * @returns 点是否在要素内
+   */
+  static checkPointInFeature(coordinates, feature) {
+    if (feature.geometry.type === "Polygon") {
+      return _GeoJsonUtils.checkPointInPolygon(coordinates, feature.geometry.coordinates);
+    }
+    if (feature.geometry.type === "MultiPolygon") {
+      return feature.geometry.coordinates.some(
+        (polygon) => _GeoJsonUtils.checkPointInPolygon(coordinates, polygon)
       );
     }
     return false;
@@ -486,16 +515,16 @@ var GeoJsonUtils = class {
         return geometry.coordinates;
       case "MultiPoint":
       case "LineString":
-        return this.getLineCentroid(geometry.coordinates);
+        return _GeoJsonUtils.getLineCentroid(geometry.coordinates);
       case "MultiLineString":
-        return this.getLineCentroid(geometry.coordinates.flat());
+        return _GeoJsonUtils.getLineCentroid(geometry.coordinates.flat());
       case "Polygon":
-        return this.getPolygonCenter(geometry.coordinates);
+        return _GeoJsonUtils.getPolygonCenter(geometry.coordinates);
       case "MultiPolygon": {
         const centers = geometry.coordinates.map(
-          (polygon) => this.getPolygonCenter(polygon)
+          (polygon) => _GeoJsonUtils.getPolygonCenter(polygon)
         );
-        return this.getLineCentroid(centers);
+        return _GeoJsonUtils.getLineCentroid(centers);
       }
       default:
         return [0, 0];
@@ -553,7 +582,7 @@ var GeoJsonUtils = class {
     let maxX = -Infinity;
     let maxY = -Infinity;
     featureCollection.features.forEach((feature) => {
-      const [[fMinX, fMinY], [fMaxX, fMaxY]] = this.getBounds(feature);
+      const [[fMinX, fMinY], [fMaxX, fMaxY]] = _GeoJsonUtils.getBounds(feature);
       minX = Math.min(minX, fMinX);
       minY = Math.min(minY, fMinY);
       maxX = Math.max(maxX, fMaxX);
@@ -639,7 +668,7 @@ var GeoJsonUtils = class {
   static lineLength(line) {
     let length = 0;
     for (let i = 0; i < line.length - 1; i++) {
-      length += this.distance(line[i], line[i + 1]);
+      length += _GeoJsonUtils.distance(line[i], line[i + 1]);
     }
     return length;
   }
@@ -668,7 +697,7 @@ var GeoJsonUtils = class {
       const result = [coords[0]];
       let prevPoint = coords[0];
       for (let i = 1; i < coords.length - 1; i++) {
-        if (this.distance(prevPoint, coords[i]) >= tolerance) {
+        if (_GeoJsonUtils.distance(prevPoint, coords[i]) >= tolerance) {
           result.push(coords[i]);
           prevPoint = coords[i];
         }
@@ -725,7 +754,7 @@ var GeoJsonUtils = class {
   static simplifyFeature(feature, tolerance) {
     return {
       ...feature,
-      geometry: this.simplifyGeometry(feature.geometry, tolerance)
+      geometry: _GeoJsonUtils.simplifyGeometry(feature.geometry, tolerance)
     };
   }
   /**
@@ -735,7 +764,7 @@ var GeoJsonUtils = class {
    */
   static mergeFeatureCollections(...collections) {
     const features = collections.reduce((acc, collection) => acc.concat(collection.features), []);
-    return this.createFeatureCollection(features);
+    return _GeoJsonUtils.createFeatureCollection(features);
   }
   /**
    * 将 GeoJSON 特征转换为 WKT (Well-Known Text) 格式
@@ -872,6 +901,9 @@ function rgbaToString(rgbaArray) {
   return `rgba(${rgbaArray[0]},${rgbaArray[1]},${rgbaArray[2]},${normalizedAlpha})`;
 }
 function convertToColorCode(colorArray) {
+  if (typeof colorArray === "string") {
+    return colorArray;
+  }
   if (!Array.isArray(colorArray)) {
     throw new Error("\u8F93\u5165\u5FC5\u987B\u662F\u4E00\u4E2A\u6570\u7EC4");
   }

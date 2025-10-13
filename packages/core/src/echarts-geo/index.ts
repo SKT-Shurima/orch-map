@@ -1,15 +1,16 @@
-import { MapLevel, type AnyObj, type BaseMapPoint, type BaseMapLine, type GeoJSON, FeatureCollection, GeoJSONSourceInput } from "@orch-map/types";
+import { MapLevel, type BaseMapPoint, type BaseMapLine, type GeoJSON, FeatureCollection, GeoJSONSourceInput } from "@orch-map/types";
 import { debounce, isEmptyArray, isUndef } from "@orch-map/utils";
-import { EChartsOption, type SeriesOption } from "echarts";
+import type { EChartsOption, SeriesOption, GeoComponentOption } from "echarts";
 import { ScatterChart, LinesChart } from "echarts/charts";
 import * as echarts from "echarts/core";
+import type { ECElementEvent } from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { GeoComponent, TooltipComponent, TitleComponent } from "echarts/components";
 import type { IMapRenderer, MapRendererConfig } from "../interfaces/IMapRenderer";
 import MapStateManager from "../MapStateManager";
 
-import { type GEOParam } from "./types";
-import { type PointParam, type PointSeriesDataItem } from "./types/node.type";
+import type { GEOParam } from "./types";
+import type { PointSeriesDataItem } from "./types/node.type";
 import GeoComponentUtils from "./components/geo";
 import ScatterComponent from "./components/scatter";
 import LinesComponent from "./components/lines";
@@ -23,7 +24,6 @@ echarts.use([CanvasRenderer, GeoComponent, TooltipComponent, TitleComponent, Sca
 
 /**
  * ECharts 地图事件接口
- * @template T - 点数据的业务信息类型
  */
 interface EchartsMapEvents {
   /** 鼠标悬停在点上时触发 */
@@ -44,7 +44,6 @@ interface EchartsMapEvents {
 
 /**
  * ECharts 地图配置选项
- * @template T - 点数据的业务信息类型
  */
 interface EchartsMapOptions {
   /** 地图事件处理器 */
@@ -90,7 +89,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
   public constructor(
     container: HTMLElement | string,
     options: EchartsMapOptions | MapRendererConfig,
-    geoJson: GeoJSONSourceInput,
+    geoJson: GeoJSON,
   ) {
     // 处理容器参数
     if (typeof container === "string") {
@@ -107,25 +106,18 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
     this.config = options as MapRendererConfig;
 
     // 初始化图表和事件
-    this.initChart(geoJson).catch(error => {
+    void this.initChart(geoJson).catch(error => {
+      // eslint-disable-next-line no-console
       console.error(error);
     });
     this.registerEvents();
   }
 
   /**
-   * 获取当前详细地图的 GeoJSON 数据
-   * @returns 当前地图的 FeatureCollection 数据
-   */
-  private get detailGeojson(): GeoJSONSourceInput {
-    return (echarts.getMap(this.detailMap)?.geoJson ?? {});
-  }
-
-  /**
    * 初始化 ECharts 图表实例
    * @private
    */
-  private async initChart(geoJson:GeoJSONSourceInput ): Promise<void> {
+  private async initChart(geoJson: GeoJSON): Promise<void> {
     if (!this.container) {
       return;
     }
@@ -133,7 +125,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
     // 创建实例
     const instance = echarts.init(this.container);
     const title = getGeoJsonTitle(geoJson, MapStateManager.curLevel);
-    echarts.registerMap(title, geoJson);
+    echarts.registerMap(title, geoJson as GeoJSONSourceInput);
     this.chartInstance = instance;
     const geoOption = GeoComponentUtils.defaultGeoOption;
     geoOption.map = title;
@@ -153,9 +145,8 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
     };
     this.chartInstance?.setOption(baseOption, true);
 
-    // 绑定事件处理器
-    instance.on("click", (params: any) => this.clickHandler(params));
-    instance.on("dblclick", (params: any) => this.dbClickHandler(params));
+
+    instance.on("dblclick", this.dbClickHandler);
     instance.on("georoam", this.redrawMap);
   }
 
@@ -181,9 +172,9 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
    * @param option - ECharts 配置选项
    * @private
    */
-  private setChartOption(option: unknown): void {
+  private setChartOption(option: EChartsOption): void {
     if (!this.chartInstance) return;
-    this.chartInstance.setOption(option as EChartsOption);
+    this.chartInstance.setOption(option);
   }
 
   private updateGeoOption(): void {
@@ -198,7 +189,8 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
   public setGEOData(boundary: GeoJSON): void {
     // 注册地图并设置选项
     const geojson = MapStateManager.geoData;
-    GeoComponentUtils.registerMap(geojson as GeoJSONSourceInput);
+    GeoComponentUtils.registerMap(geojson);
+    this.updateGeoOption();
 
     if (!boundary || boundary.type !== "FeatureCollection" || !boundary.features || !Array.isArray(boundary.features) ) {
       this.boundaryLoading = false;
@@ -210,33 +202,11 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
 
 
   /**
-   * 点击事件处理器
-   * @param params - 事件参数，包含组件类型和相关信息
-   * @private
-   */
-  private clickHandler = (params: PointParam<T> | GEOParam) => {
-    if (!params?.event?.event || !params.componentType) {
-      return;
-    }
-
-    params.event.event.stopPropagation();
-
-    if (params.componentType === "geo") {
-      if (this.config.events?.onAreaClick) {
-        this.config.events.onAreaClick(params);
-      }
-      return;
-    }
-
-    ScatterComponent.handleScatterClick(params, this.config.events?.onPointClick);
-  };
-
-  /**
    * 双击事件处理器（用于地图层级切换）
    * @param params - 事件参数，包含组件类型和区域信息
    * @private
    */
-  private dbClickHandler = (params: PointParam<T> | GEOParam) => {
+  private dbClickHandler = (params: ECElementEvent) => {
     if (!params?.event?.event || !params.componentType) {
       return;
     }
@@ -244,46 +214,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
     params.event.event.stopPropagation();
 
     if (params.componentType === "geo") {
-      const nextLevel = GeoComponentUtils.checkMapEntryEligibility(params);
-      if (isUndef(nextLevel)) {
-        return;
-      }
-
-      // 检查是否支持下一级地图
-      if (nextLevel && !GeoComponentUtils.isNextLevelSupported(nextLevel)) {
-        return;
-      }
-
-      // 获取下一级地图的行政区划代码
-      const nextAdCode = GeoComponentUtils.getNextAdCode(params, this.detailGeojson);
-
-      // 确保 region 对象存在
-      if (!params.region) {
-        params.region = { name: params.name || "" };
-      }
-
-      params.region.adcode = nextAdCode;
-
-      // 触发双击区域事件
-      if (this.config.events?.onAreaDoubleClick) {
-        this.config.events.onAreaDoubleClick(params);
-      }
-
-      // 更新状态管理器
-      MapStateManager.curLevel = nextLevel ?? MapLevel.WORLD;
-      MapStateManager.adcode = nextAdCode;
-      MapStateManager.country = params.region.name ?? "";
-
-      // 加载新的地理数据
-      MapStateManager.getGeoJsonData({
-        mapLevel: nextLevel ?? MapLevel.WORLD,
-        country: params.region.name ?? "",
-        region: nextAdCode,
-      }).then((result) => {
-        MapStateManager.setGeoData(result);
-      }).catch(error => {
-        console.error("加载地理数据失败:", error);
-      });
+      this.config.events?.onAreaDoubleClick?.(params.name || "");
     }
   };
 
@@ -349,7 +280,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
       return;
     }
     const newOption = chartInstance.getOption();
-    const geo = newOption.geo as AnyObj[] | undefined;
+    const geo = newOption.geo as GeoComponentOption[] | undefined;
     if (!geo || isEmptyArray(geo) || isUndef(geo[0])) {
       return;
     }
@@ -363,6 +294,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
       center: geoComponent.center,
       zoom: geoComponent.zoom,
     });
+
 
     if (this.config.events?.onZoom && typeof geoComponent.zoom === "number") {
       this.config.events.onZoom(geoComponent.zoom);
@@ -386,11 +318,10 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
   public updateMapLevel(curLevel: MapLevel): void {
     MapStateManager.curLevel = curLevel;
 
-    const chart = this.chartInstance as { getOption?: () => AnyObj };
-    const currentOption = chart.getOption?.();
+    const currentOption = this.chartInstance?.getOption() as EChartsOption | undefined;
     if (!currentOption) return;
 
-    const geo = (currentOption.geo as AnyObj[]) || [];
+    const geo = (currentOption.geo as GeoComponentOption[]) || [];
     const hasInitializedGeo = Array.isArray(geo) && geo[0]?.map;
     if (!hasInitializedGeo) {
       return;
@@ -427,7 +358,8 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
    */
   public updateSeries = debounce((...args: unknown[]) => {
     const series = args[0] as SeriesOption[];
-    this.updateSeriesImpl(series).catch(console.error);
+    // eslint-disable-next-line no-console
+    void this.updateSeriesImpl(series).catch(console.error);
   }, 300);
 
 
@@ -456,11 +388,17 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
    * @public
    */
   public async setGeoData(boundary: GeoJSONSourceInput): Promise<void> {
-    if (!this.chartInstance) return;
+    return new Promise((resolve, reject) => {
+      if (!this.chartInstance) {
+        reject(new Error("图表实例不存在"));
+        return;
+      }
 
-    const geoData = GeoComponentUtils.normalizeGeoData(boundary);
-    // 更新状态管理器
-    MapStateManager.setGeoData(geoData);
+      const geoData = GeoComponentUtils.normalizeGeoData(boundary);
+      // 更新状态管理器
+      MapStateManager.setGeoData(geoData);
+      resolve();
+    });
   }
 
 

@@ -1,22 +1,17 @@
 import { FeatureCollection, GeoJSON } from "geojson";
 import { MapDataPathManager } from "./pathManager";
-import { GeoDataParams, MapDataCache, GetGeoJsonParams } from "./types";
+import { GetGeoJsonParams } from "./types";
 
 /**
  * 地图数据服务类
  * 负责获取和处理地图数据
  */
-export class MapDataService {
-  private static cache: MapDataCache = {};
-
+export default class MapDataService {
   /**
    * 根据路径获取地图数据
    */
   public static async getMapData(path: string): Promise<FeatureCollection> {
-    // 检查缓存
-    if (this.cache[path]) {
-      return this.cache[path];
-    }
+
 
     let data: FeatureCollection;
     try {
@@ -37,8 +32,6 @@ export class MapDataService {
       };
     }
 
-    // 缓存数据
-    this.cache[path] = data;
     return data || {
       type: "FeatureCollection",
       features: [],
@@ -73,53 +66,20 @@ export class MapDataService {
   }
 
   /**
-   * 根据参数获取地图数据
-   */
-  public static async fetchGeoJson(params: GeoDataParams): Promise<GeoJSON> {
-    // 生成数据路径
-    const path = MapDataPathManager.generateDataPath(params);
+ * 获取地图 GeoJSON 数据（对外接口，合并了 fetchGeoJson 和 getGeoJsonData）
+ */
+  public static async getGeoJsonData(params: GetGeoJsonParams): Promise<GeoJSON> {
+  // 生成数据路径
+    const path = MapDataPathManager.generateDataPath({
+      currentLevel: params.mapLevel,
+      country: params.country,
+      region: params.region,
+    });
 
     if (!path) {
       throw new Error("Detail data path not found");
     }
 
-    // 获取数据
-    let data = await this.getMapData(path);
-
-    // 对中国地图数据进行特殊处理
-    if (params.currentLevel === "country" && params.region === "100000") {
-      data = this.processChinaMapData(data);
-    }
-
-    return data;
-  }
-
-  /**
-   * 获取地图 GeoJSON 数据（对外接口）
-   */
-  public static async getGeoJsonData(params: GetGeoJsonParams): Promise<GeoJSON> {
-    return await this.fetchGeoJson({
-      currentLevel: params.mapLevel,
-      country: params.country,
-      region: params.region,
-      mapType: params.mapType ?? "echart",
-    });
-  }
-
-  /**
-   * 清除缓存
-   */
-  public static clearCache(): void {
-    this.cache = {};
-  }
-
-  /**
-   * 获取缓存状态
-   */
-  public static getCacheStatus(): { size: number; keys: string[] } {
-    return {
-      size: Object.keys(this.cache).length,
-      keys: Object.keys(this.cache),
-    };
+    return await MapDataService.getMapData(path);
   }
 }

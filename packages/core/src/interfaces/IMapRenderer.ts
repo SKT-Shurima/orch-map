@@ -1,5 +1,14 @@
 import { BaseMapPoint, BaseMapLine, MapLevel, GeoJSONSourceInput, MapRendererType } from "@orch-map/types";
 
+
+export interface DbClickEvent {
+  level: MapLevel
+  region: string
+  postCode: string
+  country: string
+}
+
+
 /**
  * 地图渲染器事件接口
  */
@@ -8,12 +17,10 @@ export interface MapRendererEvents {
   onPointClick?: (point: string ) => void
   /** 悬停点事件 */
   onPointHover?: (point: string | null) => void
-  /** 点击区域事件 */
-  onAreaClick?: (area: any) => void
   /** 悬停区域事件 */
-  onAreaHover?: (area: any | null) => void
+  onAreaHover?: (region: string) => void
   /** 双击区域事件 */
-  onAreaDoubleClick?: (area: any) => void
+  onAreaDoubleClick?: (region: string) => void
   /** 地图点击事件 */
   onMapClick?: (event: { lat: number; lng: number }) => void
   /** 地图缩放事件 */
@@ -37,7 +44,7 @@ export interface MapRendererConfig {
   /** 当前地图层级 */
   curLevel: MapLevel
   /** 行政区划代码 */
-  adcode?: string
+  postcode?: string
   /** 国家代码 */
   country?: string
   /** 中心国家 */

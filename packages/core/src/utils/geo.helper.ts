@@ -1,5 +1,6 @@
-import { MapLevel, AnyObj, CoordinateNumber, GeoJSONSourceInput } from "@orch-map/types";
+import { MapLevel, type AnyObj, type CoordinateNumber, type GeoJSON } from "@orch-map/types";
 import { isEmptyArray } from "@orch-map/utils";
+import { MUNICIPALITY_CODES } from "../constants";
 
 /**
  * @description: 这些值是根据 geoJSON 数据中的经纬度范围计算出来的
@@ -14,8 +15,8 @@ import { isEmptyArray } from "@orch-map/utils";
 const WORLD_DELTA_LNG = 11000;
 const WORLD_DELTA_LAT = 5200;
 
-// China adcode used internally for FE logic
-const CHINA_AD_CODE_JUST_FOR_FE = "100000";
+// China postcode used internally for FE logic
+const CHINA_POSTCODE_JUST_FOR_FE = "100000";
 
 /**
  * @description: 通过地图中所有点的地理坐标，计算出地图的中心点、经度最小的点，经度最大的点，纬度最小的点，纬度最大的点
@@ -79,13 +80,13 @@ export const getMapCenterAndZoomByGeometryCoordinates = (geometryCoordinates: An
 };
 
 /**
- * @description: 矫正地级市adCode
- * @warning 注意矫正地级市的adCode仅限在中国地图内，国外地图的adCode拿不到
+ * @description: 矫正地级市postcode
+ * @warning 注意矫正地级市的postcode仅限在中国地图内，国外地图的postcode拿不到
  * @param start
  * @param end
  * @param currLev
  */
-export const correctAdCodeByLevel = (start: string, end: string, currLev: MapLevel): string[] => {
+export const correctPostcodeByLevel = (start: string, end: string, currLev: MapLevel): string[] => {
   let bit = 0;
   switch (currLev) {
     case MapLevel.PROVINCE:
@@ -109,7 +110,7 @@ export const correctAdCodeByLevel = (start: string, end: string, currLev: MapLev
     const suffix: string = new Array(FULL - bit).fill("0").join("");
     return [start ? start.slice(0, bit) + suffix : "", end ? end.slice(0, bit) + suffix : ""];
   } else {
-    return [CHINA_AD_CODE_JUST_FOR_FE, ""];
+    return [CHINA_POSTCODE_JUST_FOR_FE, ""];
   }
 };
 
@@ -239,7 +240,7 @@ export const getCenterAndZoomByGeometryCoordinates = (
  * @param geoJson - GeoJSON 对象
  * @returns title 字段值，如果没有则返回空字符串
  */
-export function getGeoJsonTitle(geoJson: GeoJSONSourceInput, level: MapLevel): string {
+export function getGeoJsonTitle(geoJson: GeoJSON, level: MapLevel): string {
   if (
     !geoJson ||
     typeof geoJson !== "object" ||
@@ -288,3 +289,11 @@ export function getGeoJsonTitle(geoJson: GeoJSONSourceInput, level: MapLevel): s
 
   return defaultTitle;
 }
+
+
+/**
+ * 判断是否为直辖市
+ * @param postcode - 行政区划代码
+ * @returns 是否为直辖市
+ */
+export const isMunicipality = (postcode: string): boolean => MUNICIPALITY_CODES.has(postcode);

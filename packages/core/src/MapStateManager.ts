@@ -1,5 +1,5 @@
+import MapDataService from "@orch-map/mapdata";
 import { MapLevel, GeoJSON } from "@orch-map/types";
-import { getGeoJsonData } from "./utils/geoDataService";
 
 /**
  * 特定属性变化监听器
@@ -13,9 +13,22 @@ export type PropertyChangeListener<T = any> = (newValue: T, oldValue: T) => void
 export default class MapStateManager {
   // 静态属性，可直接访问
   private static _curLevel: MapLevel = MapLevel.WORLD;
-  private static _country: string = "100000"; // 默认中国
-  private static _adcode: string = "100000";
-  private static _geoData?: GeoJSON;
+  /**
+   * 当前地图所属国家
+   */
+  private static _country: string = "";
+  /**
+   * 当前地图所属地区
+   */
+  private static _region: string = "";
+  /**
+   * 当前地图所属地区代码
+   */
+  private static _postcode: string = "";
+  /**
+   * 当前地图数据
+   */
+  private static _geoData: GeoJSON = {} as GeoJSON;
   private static _mapVersion: "standard" | "international" = "standard";
   /** 自定义图标库 */
   private static _extraSvgIcons: Record<string, string> = {};
@@ -48,15 +61,26 @@ export default class MapStateManager {
     MapStateManager.notifyPropertyChange("country", country, oldValue);
   }
 
-  // 静态 getter/setter - adcode
-  public static get adcode(): string {
-    return MapStateManager._adcode;
+  // 静态 getter/setter - postcode
+  public static get postcode(): string {
+    return MapStateManager._postcode;
   }
 
-  public static set adcode(adcode: string) {
-    const oldValue = MapStateManager._adcode;
-    MapStateManager._adcode = adcode;
-    MapStateManager.notifyPropertyChange("adcode", adcode, oldValue);
+  public static set postcode(postcode: string) {
+    const oldValue = MapStateManager._postcode;
+    MapStateManager._postcode = postcode;
+    MapStateManager.notifyPropertyChange("postcode", postcode, oldValue);
+  }
+
+  // 静态 getter/setter - region
+  public static get region(): string {
+    return MapStateManager._region;
+  }
+
+  public static set region(region: string) {
+    const oldValue = MapStateManager._region;
+    MapStateManager._region = region;
+    MapStateManager.notifyPropertyChange("region", region, oldValue);
   }
 
   // 静态 getter/setter - mapVersion
@@ -69,11 +93,11 @@ export default class MapStateManager {
   }
 
   // 静态 getter/setter - geoData
-  public static get geoData(): GeoJSON | undefined {
+  public static get geoData(): GeoJSON {
     return MapStateManager._geoData;
   }
 
-  public static set geoData(data: GeoJSON | undefined) {
+  public static set geoData(data: GeoJSON) {
     const oldValue = MapStateManager._geoData;
     MapStateManager._geoData = data;
     MapStateManager.notifyPropertyChange("geoData", data, oldValue);
@@ -92,7 +116,7 @@ export default class MapStateManager {
     country: string
     region: string
   }): Promise<GeoJSON> {
-    const result = await getGeoJsonData(config);
+    const result = await MapDataService.getGeoJsonData(config);
     MapStateManager.setGeoData(result);
     return result;
   }
@@ -111,8 +135,8 @@ export default class MapStateManager {
   public static reset(): void {
     MapStateManager._curLevel = MapLevel.WORLD;
     MapStateManager._country = "100000";
-    MapStateManager._adcode = "100000";
-    MapStateManager._geoData = undefined;
+    MapStateManager._postcode = "100000";
+    MapStateManager._geoData = {} as GeoJSON;
   }
 
   /**
@@ -147,8 +171,8 @@ export default class MapStateManager {
    * 通知属性变化
    */
   private static notifyPropertyChange<T>(
-    property: string, 
-    newValue: T, 
+    property: string,
+    newValue: T,
     oldValue: T,
   ): void {
     const key = `property-${property}`;

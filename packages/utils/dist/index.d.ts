@@ -1,4 +1,4 @@
-import { Coordinate, GeoJsonFeature, HcTransform, FeatureCollection, Feature, GeoJsonGeometry } from '@orch-map/types';
+import { Coordinate, GeoJsonFeature, Feature, HcTransform, FeatureCollection, GeoJsonGeometry } from '@orch-map/types';
 export { omit, pick } from 'lodash';
 
 /**
@@ -236,6 +236,20 @@ declare class GeoJsonUtils {
    * @returns 如果点在特征内返回 true，否则返回 false
    */
     static isPointInFeature(point: Coordinate, feature: GeoJsonFeature): boolean;
+    /**
+     * 检查点是否在多边形内（支持带洞的多边形）
+     * @param coordinates - 点坐标 [经度, 纬度]
+     * @param polygonRings - 多边形环数组，第一个是外环，其余是内环（洞）
+     * @returns 点是否在多边形内
+     */
+    static checkPointInPolygon(coordinates: [number, number], polygonRings: number[][][]): boolean;
+    /**
+     * 检查点是否在指定地理要素内
+     * @param coordinates - 点坐标 [经度, 纬度]
+     * @param feature - 地理要素
+     * @returns 点是否在要素内
+     */
+    static checkPointInFeature(coordinates: [number, number], feature: Feature): boolean;
     /**
      * 将经纬度转换为投影坐标
      * @param transform 坐标转换对象

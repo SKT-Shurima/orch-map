@@ -1,5 +1,5 @@
-import { ColorValue, type BaseMapLine } from "@orch-map/types";
-import { EChartsOption, type LinesSeriesOption } from "echarts";
+import type { ColorValue, BaseMapLine } from "@orch-map/types";
+import type { EChartsOption, LinesSeriesOption } from "echarts";
 import { CurvatureCalculator } from "../../utils/curvatureCalculator";
 import { convertToColorCode, isUndef } from "@orch-map/utils";
 import * as echarts from "echarts/core";
@@ -24,8 +24,8 @@ export default class LinesComponent {
       // 特效运行速度，值越小速度越快
       period: 2,
       // 特效尾迹长度[0, 1]值越大，尾迹越长
-      trailLength: 0.01,
-      symbol: "arrow",
+      trailLength: 0.005,
+      symbol: "circle",
       symbolSize: 4,
       color: "#47C384",
       loop: true,
@@ -95,15 +95,18 @@ export default class LinesComponent {
     const mapOption = chartInstance.getOption() as EChartsOption;
     const series = this.convertLinesToSeries(lines);
     const doubleSeries = this.getBuddyLineSeries(series);
-    mapOption.series = (mapOption.series as LinesSeriesOption[]).map((item: LinesSeriesOption) => {
-      if (item.name === "lines-buddy") {
-        return doubleSeries;
-      } else if (item.name === "lines") {
-        return series;
-      }
-      return item;
-    });
-    chartInstance.setOption(mapOption, true);
+    const currentSeries = mapOption.series as LinesSeriesOption[] | undefined;
+    if (currentSeries && Array.isArray(currentSeries)) {
+      mapOption.series = currentSeries.map((item: LinesSeriesOption) => {
+        if (item.name === "lines-buddy") {
+          return doubleSeries;
+        } else if (item.name === "lines") {
+          return series;
+        }
+        return item;
+      });
+      chartInstance.setOption(mapOption, true);
+    }
   }
 
 
@@ -191,7 +194,15 @@ export default class LinesComponent {
    */
   private static getLineDefaultOption<L extends BaseMapLine>(
     lineItem: L & BaseMapLine,
-    config?: { curvatureMin: number; curvatureMax: number }) {
+    config?: { curvatureMin: number; curvatureMax: number }): {
+    coords: [[number, number], [number, number]];
+    lineStyle: {
+      color: string;
+      width: number;
+      opacity: number;
+      curveness: number;
+    };
+  } {
     const [startLng, startLat] = lineItem.startCoordinate;
     const [endLng, endLat] = lineItem.endCoordinate;
 

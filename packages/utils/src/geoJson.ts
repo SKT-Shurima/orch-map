@@ -39,17 +39,55 @@ export class GeoJsonUtils {
     const { geometry } = feature;
 
     if (geometry.type === "Polygon") {
-      return this.isPointInPolygon(point, geometry.coordinates[0] as number[][]);
+      return GeoJsonUtils.isPointInPolygon(point, geometry.coordinates[0] as number[][]);
     }
 
     if (geometry.type === "MultiPolygon") {
       return (geometry.coordinates as number[][][][]).some((polygon) =>
-        this.isPointInPolygon(point, polygon[0]),
+        GeoJsonUtils.isPointInPolygon(point, polygon[0]),
       );
     }
 
     return false;
   }
+
+
+  /**
+   * 检查点是否在多边形内（支持带洞的多边形）
+   * @param coordinates - 点坐标 [经度, 纬度]
+   * @param polygonRings - 多边形环数组，第一个是外环，其余是内环（洞）
+   * @returns 点是否在多边形内
+   */
+  public static checkPointInPolygon(coordinates: [number, number], polygonRings: number[][][]): boolean {
+    return polygonRings.some((ring, index) => {
+      const isInRing = GeoJsonUtils.isPointInPolygon(coordinates, ring);
+      // 如果是外环，需要点在其中才算 true；如果是内环（洞），则点必须 不 在其中才算 true
+      // 仅当满足 外环内 && 不在任何内环 才能最终判断为在多边形中
+      return index === 0 ? isInRing : !isInRing;
+    });
+  }
+
+
+  /**
+   * 检查点是否在指定地理要素内
+   * @param coordinates - 点坐标 [经度, 纬度]
+   * @param feature - 地理要素
+   * @returns 点是否在要素内
+   */
+  public static checkPointInFeature(coordinates: [number, number], feature: Feature): boolean {
+    if (feature.geometry.type === "Polygon") {
+      return GeoJsonUtils.checkPointInPolygon(coordinates, feature.geometry.coordinates as number[][][]);
+    }
+
+    if (feature.geometry.type === "MultiPolygon") {
+      return (feature.geometry.coordinates as number[][][][]).some(
+        (polygon: number[][][]) => GeoJsonUtils.checkPointInPolygon(coordinates, polygon),
+      );
+    }
+
+    return false;
+  }
+
   /**
    * 将经纬度转换为投影坐标
    * @param transform 坐标转换对象
@@ -145,20 +183,20 @@ export class GeoJsonUtils {
 
       case "MultiPoint":
       case "LineString":
-        return this.getLineCentroid(geometry.coordinates as Coordinate[]);
+        return GeoJsonUtils.getLineCentroid(geometry.coordinates as Coordinate[]);
 
       case "MultiLineString":
-        return this.getLineCentroid(geometry.coordinates.flat() as Coordinate[]);
+        return GeoJsonUtils.getLineCentroid(geometry.coordinates.flat() as Coordinate[]);
 
       case "Polygon":
-        return this.getPolygonCenter(geometry.coordinates as number[][][]);
+        return GeoJsonUtils.getPolygonCenter(geometry.coordinates as number[][][]);
 
       case "MultiPolygon": {
         // 计算每个多边形的中心点，然后取平均值
         const centers = geometry.coordinates.map((polygon: unknown) =>
-          this.getPolygonCenter(polygon as number[][][]),
+          GeoJsonUtils.getPolygonCenter(polygon as number[][][]),
         );
-        return this.getLineCentroid(centers);
+        return GeoJsonUtils.getLineCentroid(centers);
       }
 
       default:
@@ -227,7 +265,7 @@ export class GeoJsonUtils {
     let maxY = -Infinity;
 
     featureCollection.features.forEach(feature => {
-      const [[fMinX, fMinY], [fMaxX, fMaxY]] = this.getBounds(feature as GeoJsonFeature);
+      const [[fMinX, fMinY], [fMaxX, fMaxY]] = GeoJsonUtils.getBounds(feature as GeoJsonFeature);
       minX = Math.min(minX, fMinX);
       minY = Math.min(minY, fMinY);
       maxX = Math.max(maxX, fMaxX);
@@ -329,7 +367,7 @@ export class GeoJsonUtils {
   public static lineLength(line: Coordinate[]): number {
     let length = 0;
     for (let i = 0; i < line.length - 1; i++) {
-      length += this.distance(line[i], line[i + 1]);
+      length += GeoJsonUtils.distance(line[i], line[i + 1]);
     }
     return length;
   }
@@ -362,7 +400,7 @@ export class GeoJsonUtils {
       let prevPoint = coords[0];
 
       for (let i = 1; i < coords.length - 1; i++) {
-        if (this.distance(prevPoint, coords[i]) >= tolerance) {
+        if (GeoJsonUtils.distance(prevPoint, coords[i]) >= tolerance) {
           result.push(coords[i]);
           prevPoint = coords[i];
         }
@@ -431,7 +469,7 @@ export class GeoJsonUtils {
   public static simplifyFeature(feature: GeoJsonFeature, tolerance: number): GeoJsonFeature {
     return {
       ...feature,
-      geometry: this.simplifyGeometry(feature.geometry, tolerance),
+      geometry: GeoJsonUtils.simplifyGeometry(feature.geometry, tolerance),
     };
   }
 
@@ -444,7 +482,7 @@ export class GeoJsonUtils {
     const features = collections.reduce((acc, collection) =>
       acc.concat(collection.features), [] as Feature[]);
 
-    return this.createFeatureCollection(features);
+    return GeoJsonUtils.createFeatureCollection(features);
   }
 
   /**
