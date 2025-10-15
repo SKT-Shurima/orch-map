@@ -11,7 +11,7 @@ export interface IconMapping {
   [key: string]: {
     x: number
     y: number
-     width: number
+    width: number
     height: number
     mask: boolean
   }

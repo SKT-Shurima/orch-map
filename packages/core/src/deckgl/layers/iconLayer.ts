@@ -9,7 +9,7 @@
  */
 import { type BaseMapPoint } from "@orch-map/types";
 import { IconLayer as DeckIconLayer } from "@deck.gl/layers";
-import IconAtlas from "../utils/iconAtlas";
+import IconAtlas from "./iconAtlas";
 import MapStateManager from "../../MapStateManager";
 
 /**

@@ -2,7 +2,7 @@
  * @description: 曲率计算工具类
  * 用于计算地图连线的曲率值，提供确定性的曲率计算方法
  */
-export class CurvatureCalculator {
+export default class CurvatureCalculator {
   // 线条随机曲率映射表
   private curvatureMap: { [key: string]: number } = {};
 
@@ -89,6 +89,4 @@ export class CurvatureCalculator {
     return { ...this.curvatureMap };
   }
 }
-
-export default CurvatureCalculator;
 

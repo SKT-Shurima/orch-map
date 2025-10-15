@@ -1,10 +1,10 @@
 import { MapRendererConfig, MapRendererType } from "./interfaces";
-import { BaseMapLine, BaseMapPoint } from "@orch-map/types";
+import { BaseMapLine, BaseMapPoint, MapLevel } from "@orch-map/types";
 import DeckglMap from "./deckgl";
 import EchartsMap from "./echarts-geo";
 import MapDataService, { GeoDataParams } from "@orch-map/mapData";
 import MapStateManager from "./MapStateManager";
-import { GeoUtils } from "./utils/geo.utils";
+import { GeoUtils, MapLevelUtils } from "./utils";
 import { isUndef, svgToEChartsSymbol } from "@orch-map/utils";
 
 
@@ -85,9 +85,21 @@ export default class OrchMap {
         MapStateManager.geoData);
         break;
       case MapRendererType.DECKGL:
-        this.instance = new DeckglMap(this.config.container as HTMLCanvasElement, this.config.mode ?? "2d", () => {
-          console.log("DeckGL initialized");
-        });
+        this.instance = new DeckglMap(
+          this.config.container as HTMLCanvasElement,
+          this.config.mode ?? "2d",
+          () => {
+            // eslint-disable-next-line no-console
+            console.log("DeckGL initialized");
+          },
+          {
+            ...this.config.events,
+            onAreaDoubleClick: async (region: string) => {
+              this.config.events?.onAreaDoubleClick?.(region);
+              void await this.entryNextLevel(region);
+            },
+          },
+        );
         break;
     }
   }
@@ -97,8 +109,13 @@ export default class OrchMap {
    * @param {BaseMapPoint[]} points - 点位数据数组
    */
   public setPoints(points: BaseMapPoint[]) {
+    // 存储所有原始点位数据
+    MapStateManager.allPoints = points;
+
     this._executeWhenReady(() => {
-      void this.instance.setPoints(points);
+      // 根据当前地图层级过滤点位
+      const filteredPoints = this.filterPointsByCurrentLevel(points);
+      void this.instance.setPoints(filteredPoints);
     });
   }
 
@@ -107,8 +124,13 @@ export default class OrchMap {
    * @param {BaseMapLine[]} lines - 线条数据数组
    */
   public setLines(lines: BaseMapLine[]) {
+    // 存储所有原始线条数据
+    MapStateManager.allLines = lines;
+
     this._executeWhenReady(() => {
-      void this.instance.setLines(lines);
+      // 根据当前地图层级过滤线条
+      const filteredLines = this.filterLinesByCurrentLevel(lines);
+      void this.instance.setLines(filteredLines);
     });
   }
 
@@ -123,14 +145,14 @@ export default class OrchMap {
   }
 
 
-  private async entryNextLevel(region: string) {
-    const nextLevel = GeoUtils.checkMapEntryEligibility();
+  public async entryNextLevel(region: string) {
+    const nextLevel = MapLevelUtils.checkMapEntryEligibility();
     if (isUndef(nextLevel)) {
       return;
     }
 
     // 检查是否支持下一级地图
-    if (nextLevel && !GeoUtils.isNextLevelSupported(nextLevel)) {
+    if (nextLevel && !MapLevelUtils.isNextLevelSupported(nextLevel)) {
       return;
     }
 
@@ -144,6 +166,62 @@ export default class OrchMap {
       region: MapStateManager.country === "China" ? MapStateManager.postcode : region,
     });
     void this.instance.setGEOData(MapStateManager.geoData);
+
+    // 进入新层级后，重新过滤并更新点位和线条
+    this.updatePointsAndLinesForCurrentLevel();
+  }
+
+  /**
+   * 导航到指定地图层级
+   * @description 切换到指定的地图层级和区域
+   * @param {MapLevel} targetLevel - 目标地图层级
+   * @param {string} [country=""] - 国家代码（country 或 region 层级时需要）
+   * @param {string} [region=""] - 地区名称（region 层级时需要）
+   * @param {string} [postcode=""] - 邮政编码（用于中国地图的行政区划）
+   * @returns {Promise<void>} 导航操作的 Promise
+   * @example
+   * // 返回世界地图
+   * await mapInstance.navigateToLevel(MapLevel.WORLD);
+   *
+   * // 导航到美国地图
+   * await mapInstance.navigateToLevel(MapLevel.COUNTRY, "United States");
+   *
+   * // 导航到中国某个省份
+   * await mapInstance.navigateToLevel(MapLevel.REGION, "China", "北京", "110000");
+   */
+  public async navigateToLevel(
+    targetLevel: MapLevel,
+    country: string = "",
+    region: string = "",
+    postcode: string = "",
+  ): Promise<void> {
+    // 更新地图状态
+    MapStateManager.curLevel = targetLevel;
+    MapStateManager.country = country;
+    MapStateManager.region = region;
+    MapStateManager.postcode = postcode;
+
+    // 加载指定层级的地图数据
+    await this.getGeoData({
+      currentLevel: targetLevel,
+      country,
+      region: country === "China" ? postcode : region,
+    });
+
+    // 更新地图实例的地理数据
+    void this.instance.setGEOData(MapStateManager.geoData);
+
+    // 重新过滤并更新点位和线条
+    this.updatePointsAndLinesForCurrentLevel();
+  }
+
+  /**
+   * 返回到世界地图
+   * @description 快捷方法，重置地图状态并返回到世界地图视图
+   * @returns {Promise<void>} 返回操作的 Promise
+   */
+  public async returnToWorldMap(): Promise<void> {
+    return this.navigateToLevel(MapLevel.WORLD);
   }
 
 
@@ -155,6 +233,74 @@ export default class OrchMap {
       mapType: this.mapType,
     });
     MapStateManager.setGeoData(geoData);
+  }
+
+  /**
+   * 根据当前地图层级过滤点位
+   * @param points - 点位数据数组
+   * @returns 过滤后的点位数组
+   */
+  private filterPointsByCurrentLevel(points: BaseMapPoint[]): BaseMapPoint[] {
+    // 如果是世界地图，显示所有点位
+    if (MapStateManager.curLevel === "world") {
+      return points;
+    }
+
+    // 根据当前 GeoJSON 过滤点位
+    return GeoUtils.filterPointsInGeoJSON(points, MapStateManager.geoData);
+  }
+
+  /**
+   * 根据当前地图层级过滤线条
+   * @param lines - 线条数据数组
+   * @returns 过滤后的线条数组
+   */
+  private filterLinesByCurrentLevel(lines: BaseMapLine[]): BaseMapLine[] {
+    // 如果是世界地图，显示所有线条
+    if (MapStateManager.curLevel === "world") {
+      return lines;
+    }
+
+    const geoData = MapStateManager.geoData;
+
+    // 过滤：起点和终点都在当前区域内的线条
+    return lines.filter(line => {
+      const [startLng, startLat] = line.startCoordinate;
+      const [endLng, endLat] = line.endCoordinate;
+
+      const fromInRegion = GeoUtils.isPointInGeoJSON(
+        startLng,
+        startLat,
+        geoData,
+      );
+      const toInRegion = GeoUtils.isPointInGeoJSON(
+        endLng,
+        endLat,
+        geoData,
+      );
+
+      // 可以根据需求调整过滤策略：
+      // 1. 两端都在区域内：fromInRegion && toInRegion
+      // 2. 至少一端在区域内：fromInRegion || toInRegion
+      return fromInRegion && toInRegion;
+    });
+  }
+
+  /**
+   * 更新当前层级的点位和线条
+   */
+  private updatePointsAndLinesForCurrentLevel(): void {
+    // 过滤并更新点位
+    if (MapStateManager.allPoints.length > 0) {
+      const filteredPoints = this.filterPointsByCurrentLevel(MapStateManager.allPoints);
+      void this.instance.setPoints(filteredPoints);
+    }
+
+    // 过滤并更新线条
+    if (MapStateManager.allLines.length > 0) {
+      const filteredLines = this.filterLinesByCurrentLevel(MapStateManager.allLines);
+      void this.instance.setLines(filteredLines);
+    }
   }
 
 

@@ -129,6 +129,7 @@ declare class DeckglMap {
     private instanceId;
     /** DeckGL 实例 */
     private deckInstance;
+    private container;
     /** 图层存储：layerId -> layer 实例 */
     private layerMap;
     /** 折线数据源 */
@@ -141,6 +142,12 @@ declare class DeckglMap {
     private hoveredPointId;
     /** 2D/3D 模式 */
     private mode;
+    /** 事件处理器配置 */
+    private events?;
+    /** 单击延迟计时器 */
+    private clickTimer;
+    /** 点击延迟时间（毫秒） */
+    private readonly CLICK_DELAY;
     /** 动画计时器任务句柄 */
     private animationTimer;
     /**
@@ -148,8 +155,9 @@ declare class DeckglMap {
      * @param container - 容器元素
      * @param mode - 地图模式（2D/3D）
      * @param callback - 初始化完成回调函数
+     * @param events - 事件处理器配置（可选）
      */
-    constructor(container: HTMLCanvasElement, mode: "2d" | "3d", callback: () => void);
+    constructor(container: HTMLCanvasElement, mode: "2d" | "3d", callback: () => void, events?: MapRendererEvents);
     /**
      * 初始化地图
      * @param container - 容器元素
@@ -218,9 +226,15 @@ declare class DeckglMap {
     /**
      * 地图空白处点击处理（取消点选中）
      * @param info - 点击信息
-     * @param _event - 事件对象
+     * @param event - 事件对象
      */
     private handleClickMapView;
+    /**
+     * 地图双击处理（获取区域信息）
+     * @param info - 双击信息
+     * @param event - 事件对象
+     */
+    private handleDoubleClickMapView;
     /**
      * 点对象点击处理
      * @param info - 点击信息
@@ -236,6 +250,17 @@ declare class DeckglMap {
      * @param geojsonData - GeoJSON 数据
      */
     setGEOData(geojsonData: GeoJSON): Promise<void>;
+    /**
+     * 根据地理数据调整视图，使其居中并适应缩放
+     * @param geojsonData - GeoJSON 数据
+     */
+    private fitBoundsToGeoData;
+    /**
+     * 更新视图状态
+     * @param center - 中心点 [lng, lat]
+     * @param zoom - 缩放级别
+     */
+    private updateViewState;
     /**
      * 设置点数据
      * @param points - 点数据数组
@@ -538,8 +563,49 @@ declare class OrchMap {
      * @description: 计算中国地图的行政区划代码
      */
     private calculateChinaPostcode;
-    private entryNextLevel;
+    entryNextLevel(region: string): Promise<void>;
+    /**
+     * 导航到指定地图层级
+     * @description 切换到指定的地图层级和区域
+     * @param {MapLevel} targetLevel - 目标地图层级
+     * @param {string} [country=""] - 国家代码（country 或 region 层级时需要）
+     * @param {string} [region=""] - 地区名称（region 层级时需要）
+     * @param {string} [postcode=""] - 邮政编码（用于中国地图的行政区划）
+     * @returns {Promise<void>} 导航操作的 Promise
+     * @example
+     * // 返回世界地图
+     * await mapInstance.navigateToLevel(MapLevel.WORLD);
+     *
+     * // 导航到美国地图
+     * await mapInstance.navigateToLevel(MapLevel.COUNTRY, "United States");
+     *
+     * // 导航到中国某个省份
+     * await mapInstance.navigateToLevel(MapLevel.REGION, "China", "北京", "110000");
+     */
+    navigateToLevel(targetLevel: MapLevel, country?: string, region?: string, postcode?: string): Promise<void>;
+    /**
+     * 返回到世界地图
+     * @description 快捷方法，重置地图状态并返回到世界地图视图
+     * @returns {Promise<void>} 返回操作的 Promise
+     */
+    returnToWorldMap(): Promise<void>;
     private getGeoData;
+    /**
+     * 根据当前地图层级过滤点位
+     * @param points - 点位数据数组
+     * @returns 过滤后的点位数组
+     */
+    private filterPointsByCurrentLevel;
+    /**
+     * 根据当前地图层级过滤线条
+     * @param lines - 线条数据数组
+     * @returns 过滤后的线条数组
+     */
+    private filterLinesByCurrentLevel;
+    /**
+     * 更新当前层级的点位和线条
+     */
+    private updatePointsAndLinesForCurrentLevel;
     /**
      * 在初始化完成后执行回调
      * @private

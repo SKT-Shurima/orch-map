@@ -1,6 +1,6 @@
 import type { ColorValue, BaseMapLine } from "@orch-map/types";
 import type { EChartsOption, LinesSeriesOption } from "echarts";
-import { CurvatureCalculator } from "../../utils/curvatureCalculator";
+import CurvatureCalculator from "../../utils/curvatureCalculator";
 import { convertToColorCode, isUndef } from "@orch-map/utils";
 import * as echarts from "echarts/core";
 

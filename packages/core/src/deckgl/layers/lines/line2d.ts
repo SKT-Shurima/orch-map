@@ -9,7 +9,7 @@
  * - 支持 buddy 双向连线：为每条线生成镜像线（起终点互换），实现双向流动效果。
  */
 import type { BaseMapLine } from "@orch-map/types";
-import { CurvatureCalculator } from "../../../utils/curvatureCalculator";
+import CurvatureCalculator from "../../../utils/curvatureCalculator";
 import { PathLayer, ScatterplotLayer } from "@deck.gl/layers";
 
 // 默认连接线颜色（回退）

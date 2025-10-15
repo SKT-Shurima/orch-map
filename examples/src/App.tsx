@@ -76,6 +76,12 @@ export default defineComponent({
 
     return () => (
       <div class="hello-world" style={{ width: "100vw", height: "100vh", overflow: "hidden" }}>
+        <div style={{ position: "absolute", top: "10px", left: "10px", zIndex: 1000, display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <button onClick={() => mapInstance.returnToWorldMap()}>返回世界地图</button>
+          <button onClick={() => mapInstance.navigateToLevel(MapLevel.COUNTRY, "China")}>中国地图</button>
+          <button onClick={() => mapInstance.navigateToLevel(MapLevel.COUNTRY, "United States")}>美国地图</button>
+          <button onClick={() => mapInstance.navigateToLevel(MapLevel.PROVINCE, "China", "北京", "110000")}>北京地图</button>
+        </div>
         <div ref={geoContainer} style={{ width: "100%", height: "100%", backgroundColor: "rgb(17, 36, 100)" }}>
         </div>
       </div>

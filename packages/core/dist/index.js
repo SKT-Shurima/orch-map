@@ -47,71 +47,37 @@ var MapRendererType = /* @__PURE__ */ ((MapRendererType2) => {
 var import_layers6 = require("@deck.gl/layers");
 var import_core = require("@deck.gl/core");
 
-// src/deckgl/utils/glMap.const.ts
+// src/deckgl/layers/geoLayer.ts
+var import_layers = require("@deck.gl/layers");
 var DEFAULT_GEO_FILL_COLOR = [9, 71, 119, 255];
 var DEFAULT_GEO_LINE_COLOR = [20, 128, 197, 255];
 var DEFAULT_GEO_HIGHLIGHT_COLOR = [48, 121, 200, 255];
 var DEFAULT_GEO_LAYER_PROPS = {
-  /**
-   * 是否启用拾取功能，启用后可以与图层元素进行交互
-   */
+  /** 是否启用拾取功能，启用后可以与图层元素进行交互 */
   pickable: true,
-  /**
-   * 是否绘制要素的边框线条
-   */
+  /** 是否绘制要素的边框线条 */
   stroked: true,
-  /**
-   * 是否填充要素的内部区域
-   */
+  /** 是否填充要素的内部区域 */
   filled: true,
-  /**
-   * 是否将2D要素挤出为3D效果
-   */
-  // extruded: false, // Not part of local GeoJsonLayerProps
-  /**
-   * 线宽缩放比例，用于调整线条粗细
-   */
+  /** 线宽缩放比例，用于调整线条粗细 */
   lineWidthScale: 1,
-  /**
-   * 线条最小宽度（像素），确保线条在任何缩放级别下的可见性
-   */
+  /** 线条最小宽度（像素），确保线条在任何缩放级别下的可见性 */
   lineWidthMinPixels: 1,
-  /**
-   * 是否启用经度无限滚动，解决地图跨越180度经线的显示问题
-   */
+  /** 是否启用经度无限滚动，解决地图跨越180度经线的显示问题 */
   wrapLongitude: true,
-  /**
-   * 是否自动高亮鼠标悬停的要素
-   */
+  /** 是否自动高亮鼠标悬停的要素 */
   autoHighlight: true,
-  /**
-   * 高亮状态下要素的颜色，RGBA格式 - 格式为[r, g, b, a]，取值范围0-255
-   */
+  /** 高亮状态下要素的颜色，RGBA 格式 [r, g, b, a]，取值范围 0-255 */
   highlightColor: DEFAULT_GEO_HIGHLIGHT_COLOR,
-  /**
-   * 要素边框的默认颜色，RGBA格式 - 格式为[r, g, b, a]，取值范围0-255
-   */
+  /** 要素边框的默认颜色，返回 RGBA 数组 */
   getLineColor: (_d) => DEFAULT_GEO_LINE_COLOR,
-  /**
-   * 要素边框的宽度，单位为像素
-   */
-  getLineWidth: () => 1,
-  /**
-   * 点要素的半径，单位为像素
-   */
-  getPointRadius: 100,
-  /**
-   * 文本标签的字体大小，单位为像素
-   */
-  getTextSize: 12,
-  /**
-   * 文本标签的颜色，RGBA格式
-   */
-  getTextColor: [255, 255, 255, 255]
+  /** 要素边框的宽度，单位为像素 */
+  getLineWidth: () => 1
 };
 
 // src/deckgl/main.ts
-var import_utils = require("@orch-map/utils");
+var import_utils2 = require("@orch-map/utils");
+var import_types3 = require("@orch-map/types");
 
 // src/MapStateManager.ts
 var import_mapdata = __toESM(require("@orch-map/mapdata"));
@@ -277,9 +243,6 @@ _MapStateManager._echartsSymbols = {};
 _MapStateManager.propertyListeners = /* @__PURE__ */ new Map();
 var MapStateManager = _MapStateManager;
 
-// src/deckgl/layers/geoLayer.ts
-var import_layers = require("@deck.gl/layers");
-
 // src/utils/curvatureCalculator.ts
 var CurvatureCalculator = class {
   constructor() {
@@ -380,19 +343,31 @@ function buildQuadraticBezierPath(start, end, curvature, segments = 64) {
 }
 var LineRenderer2D = class {
   /**
+   * 获取当前曲率计算器实例
+   */
+  static getCurvatureCalculator() {
+    return this.curvatureCalculator;
+  }
+  /**
+   * 重置曲率计算器（用于清理缓存）
+   */
+  static resetCurvatureCalculator() {
+    this.curvatureCalculator = new CurvatureCalculator();
+  }
+  /**
    * 创建常驻曲线图层（PathLayer）
    * 实现 buddy 双向连线：为每条线生成原始线（起点→终点）和 buddy 镜像线（终点→起点）
-   * @param curvatureCalculator 曲率计算器实例
    * @param lines 业务线数据数组；每条线包含起终点经纬度
    * @returns PathLayer 实例（包含所有曲线及其 buddy 线，禁用拾取）
    */
-  static buildFullCurveLayer(curvatureCalculator, lines) {
+  static buildFullCurveLayer(lines) {
     const fullData = [];
     lines.forEach((line) => {
-      const curvature = curvatureCalculator.calculateCurvatureByCoordinates(
+      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
-        line.endCoordinate
+        line.endCoordinate,
+        { min: 0.5, max: 1 }
       );
       const color = line.color ?? DEFAULT_LINE_RGBA;
       const path = buildQuadraticBezierPath(line.startCoordinate, line.endCoordinate, curvature, 64);
@@ -405,7 +380,7 @@ var LineRenderer2D = class {
       data: fullData,
       pickable: false,
       widthScale: 1,
-      widthMinPixels: 0.3,
+      widthMinPixels: 0.5,
       getPath: (d) => d.path,
       getColor: (d) => d.color,
       getWidth: (d) => d.width,
@@ -417,7 +392,6 @@ var LineRenderer2D = class {
   /**
    * 创建同步移动的多圆点尾迹图层（ScatterplotLayer）
    * 实现 buddy 双向连线：为每条线生成原始尾迹和 buddy 镜像尾迹，实现双向流动效果
-   * @param curvatureCalculator 曲率计算器实例
    * @param lines 业务线数据数组；每条线包含起终点经纬度
    * @param progress 动画归一化进度 [0, 1)；所有线条共享进度，实现同步动画
    * @param options 尾迹外观参数（可选）
@@ -437,7 +411,7 @@ var LineRenderer2D = class {
    * @param options.trailSpan 尾迹覆盖曲线参数长度（0~1），控制"队列"长度，默认 0.06
    * @returns ScatterplotLayer 实例（尾迹小圆点）
    */
-  static buildMovingDotsLayer(curvatureCalculator, lines, progress, options) {
+  static buildMovingDotsLayer(lines, progress, options) {
     const dots = [];
     const dotsPerLine = options?.dotsPerLine ?? 12;
     const headRadius = options?.headRadius ?? 1;
@@ -448,7 +422,7 @@ var LineRenderer2D = class {
     const step = trailSpan / Math.max(1, dotsPerLine - 1);
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const curvature = curvatureCalculator.calculateCurvatureByCoordinates(
+      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
         line.endCoordinate
@@ -502,6 +476,8 @@ var LineRenderer2D = class {
     });
   }
 };
+/** 曲率计算器实例（用于 2D 模式） */
+LineRenderer2D.curvatureCalculator = new CurvatureCalculator();
 
 // src/deckgl/layers/lines/line3d.ts
 var import_layers3 = require("@deck.gl/layers");
@@ -564,19 +540,7 @@ var LineRenderer3D = class {
 };
 
 // src/deckgl/layers/lineLayer.ts
-var LineLayer = class {
-  /**
-   * 获取当前曲率计算器实例
-   */
-  static getCurvatureCalculator() {
-    return this.curvatureCalculator;
-  }
-  /**
-   * 重置曲率计算器（用于清理缓存）
-   */
-  static resetCurvatureCalculator() {
-    this.curvatureCalculator = new CurvatureCalculator();
-  }
+var _LineLayer = class _LineLayer {
   /**
    * 获取当前动画时间
    */
@@ -603,10 +567,10 @@ var LineLayer = class {
    */
   static update2DLayers(lines, config = {}, updateCallback) {
     const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
-    const baseLayer = LineRenderer2D.buildFullCurveLayer(this.curvatureCalculator, lines);
+    const baseLayer = LineRenderer2D.buildFullCurveLayer(lines);
     updateCallback("line-layer", baseLayer);
     const progress = this.currentTime / mergedConfig.timeLoop;
-    const dotsLayer = LineRenderer2D.buildMovingDotsLayer(this.curvatureCalculator, lines, progress);
+    const dotsLayer = LineRenderer2D.buildMovingDotsLayer(lines, progress);
     updateCallback("line-trail-layer", dotsLayer);
   }
   /**
@@ -636,9 +600,9 @@ var LineLayer = class {
    */
   static updateLayers(mode, lines, config = {}, updateCallback) {
     if (mode === "3d") {
-      this.update3DLayers(lines, config, updateCallback);
+      _LineLayer.update3DLayers(lines, config, updateCallback);
     } else {
-      this.update2DLayers(lines, config, updateCallback);
+      _LineLayer.update2DLayers(lines, config, updateCallback);
     }
   }
   /**
@@ -650,8 +614,8 @@ var LineLayer = class {
    */
   static advanceAnimation(mode, lines, config = {}, updateCallback) {
     const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
-    this.currentTime = (this.currentTime + mergedConfig.animationSpeed) % mergedConfig.timeLoop;
-    this.updateLayers(mode, lines, config, updateCallback);
+    _LineLayer.currentTime = (_LineLayer.currentTime + mergedConfig.animationSpeed) % mergedConfig.timeLoop;
+    _LineLayer.updateLayers(mode, lines, config, updateCallback);
   }
   /**
    * 清理所有线图层
@@ -662,23 +626,22 @@ var LineLayer = class {
     removeCallback("line-trail-layer");
   }
 };
-/** 曲率计算器实例（用于 2D 模式） */
-LineLayer.curvatureCalculator = new CurvatureCalculator();
 /** 当前动画时间（单位：秒的逻辑刻度） */
-LineLayer.currentTime = 0;
+_LineLayer.currentTime = 0;
 /** 默认动画配置 */
-LineLayer.DEFAULT_CONFIG = {
+_LineLayer.DEFAULT_CONFIG = {
   animationSpeed: 60,
   trailLength: 60 * 60,
   timeLoop: 6 * 60 * 60,
   lineOffset: 300,
   lineDuration: 1e3
 };
+var LineLayer = _LineLayer;
 
 // src/deckgl/layers/iconLayer.ts
-var import_layers5 = require("@deck.gl/layers");
+var import_layers4 = require("@deck.gl/layers");
 
-// src/deckgl/utils/iconAtlas.ts
+// src/deckgl/layers/iconAtlas.ts
 var IconAtlas = class _IconAtlas {
   /**
    * 将 SVG 字符串转为 HTMLImageElement
@@ -735,91 +698,8 @@ var IconAtlas = class _IconAtlas {
   }
 };
 
-// src/deckgl/layers/textLayer.ts
-var import_layers4 = require("@deck.gl/layers");
-var TextLayer = class {
-  /**
-   * 将业务点数据转换为 TextLayer 需要的数据结构
-   * 根据 label.show 和 label.hoverShow 配置决定是否显示标签
-   * @param points 业务点数据数组
-   * @param config 图层配置
-   * @returns TextLayer 需要的数据数组
-   */
-  static transformToTextData(points, config = {}) {
-    const { hoveredPointId, selectedPointId } = config;
-    return points.filter((point) => {
-      if (point.label?.show) {
-        return true;
-      }
-      if (point.label?.hoverShow && (hoveredPointId === point.id || selectedPointId === point.id)) {
-        return true;
-      }
-      return false;
-    }).map((point) => {
-      const text = point.label?.formatter ? point.label.formatter({ data: point }) : point.name || "";
-      return {
-        ...point,
-        // 抬升高度，显示在图标上方，避免遮挡
-        position: [point.coordinate[0], point.coordinate[1], 60],
-        text,
-        size: 12,
-        // 默认字体大小
-        color: [255, 255, 255, 255],
-        // 默认白色
-        anchorY: "top"
-        // 文本位于点下方
-      };
-    });
-  }
-  /**
-   * 创建文本标签图层
-   * @param textData 文本数据数组
-   * @returns TextLayer 实例
-   */
-  static createLayer(textData) {
-    return new import_layers4.TextLayer({
-      id: "label-layer",
-      data: textData,
-      getPosition: (d) => d.position,
-      getText: (d) => d.text,
-      getSize: (d) => d.size,
-      getColor: (d) => d.color,
-      getAngle: 0,
-      getTextAnchor: "middle",
-      getAlignmentBaseline: (d) => d.anchorY,
-      // 文本样式配置
-      fontFamily: "Arial, sans-serif",
-      fontWeight: "normal",
-      outlineWidth: 2,
-      outlineColor: [0, 0, 0, 255],
-      pickable: false,
-      // 标签不可交互
-      // 确保文本始终朝上
-      billboard: true
-    });
-  }
-  /**
-   * 更新文本图层
-   * @param points 业务点数据数组
-   * @param config 图层配置
-   * @param updateCallback 图层更新回调函数
-   */
-  static updateLayer(points, config = {}, updateCallback) {
-    const textData = this.transformToTextData(points, config);
-    const textLayer = this.createLayer(textData);
-    updateCallback("label-layer", textLayer);
-  }
-  /**
-   * 清理文本图层
-   * @param removeCallback 图层移除回调函数
-   */
-  static clearLayer(removeCallback) {
-    removeCallback("label-layer");
-  }
-};
-
 // src/deckgl/layers/iconLayer.ts
-var IconLayer = class {
+var IconLayer = class _IconLayer {
   /**
    * 将业务点数据转换为 IconLayer 需要的数据结构
    * @param points 业务点数据数组
@@ -854,7 +734,7 @@ var IconLayer = class {
       return null;
     }
     const iconAtlasResult = await IconAtlas.buildIconAtlas(registeredIcons);
-    const iconLayer = new import_layers5.IconLayer({
+    const iconLayer = new import_layers4.IconLayer({
       id: "point-layer",
       data: iconData,
       iconAtlas: iconAtlasResult.iconAtlas,
@@ -873,414 +753,31 @@ var IconLayer = class {
     return iconLayer;
   }
   /**
-   * 更新图标和文本图层
+   * 创建图标图层（纯静态方法，不负责渲染）
    * @param points 业务点数据数组
    * @param config 图层配置
-   * @param updateCallback 图层更新回调函数
+   * @returns 图标图层实例或 null（如果图标图集构建失败）
    */
-  static async updateLayers(points, config = {}, updateCallback) {
-    const iconData = this.transformToIconData(
+  static async create(points, config = {}) {
+    const iconData = _IconLayer.transformToIconData(
       points
     );
-    const iconLayer = await this.createIconLayer(iconData, config);
-    if (iconLayer) {
-      updateCallback("point-layer", iconLayer);
-    }
-    TextLayer.updateLayer(points, {
-      selectedPointId: config.selectedPointId,
-      hoveredPointId: config.hoveredPointId
-    }, updateCallback);
+    return await this.createIconLayer(iconData, config);
   }
   /**
-   * 仅更新文本图层（用于悬停状态变化等场景）
-   * @param points 业务点数据数组
-   * @param config 图层配置
-   * @param updateCallback 图层更新回调函数
+   * 获取图标图层的标识符
+   * @returns 图层ID
    */
-  static updateTextLayer(points, config = {}, updateCallback) {
-    TextLayer.updateLayer(points, {
-      selectedPointId: config.selectedPointId,
-      hoveredPointId: config.hoveredPointId
-    }, updateCallback);
-  }
-  /**
-   * 清理所有图标图层
-   * @param removeCallback 图层移除回调函数
-   */
-  static clearLayer(removeCallback) {
-    removeCallback("point-layer");
-  }
-  /**
-   * 清理图标和文本图层
-   * @param removeCallback 图层移除回调函数
-   */
-  static clearLayers(removeCallback) {
-    this.clearLayer(removeCallback);
-    TextLayer.clearLayer(removeCallback);
+  static getLayerId() {
+    return "point-layer";
   }
 };
 
-// src/deckgl/main.ts
-var _DeckglMap = class _DeckglMap {
-  /**
-   * 构造函数
-   */
-  constructor(container, mode, callback) {
-    /** DeckGL 实例 */
-    this.deckInstance = null;
-    /** 图层存储：layerId -> layer 实例 */
-    this.layerMap = /* @__PURE__ */ new Map();
-    /** 动画计时器任务句柄 */
-    this.animationTimer = null;
-    /** 折线数据源 */
-    this.lines = [];
-    /** 点数据源 */
-    this.points = [];
-    /** 选中点 ID */
-    this.selectedPointId = null;
-    /** 当前悬停的点 ID */
-    this.hoveredPointId = null;
-    /** 2D/3D 模式 */
-    this.mode = "2d";
-    this.instanceId = `deckgl-${Date.now()}-${Math.random()}`;
-    this.mode = mode;
-    const canvas = this.createCanvas(container);
-    void this.initDeck(canvas, callback);
-  }
-  /**
-   * 创建并初始化 Deck 实例
-   */
-  async createDeckInstance(container, initialViewState, props) {
-    if (this.deckInstance) {
-      throw new Error(`Deck instance already exists for ${this.instanceId}`);
-    }
-    const mode = props?.mode ?? "2d";
-    const mapView = new import_core.MapView({
-      repeat: true,
-      controller: {
-        scrollZoom: true,
-        dragPan: true,
-        dragRotate: true,
-        doubleClickZoom: true,
-        touchZoom: true,
-        touchRotate: true,
-        keyboard: true
-      }
-    });
-    this.deckInstance = new import_core.Deck({
-      canvas: container,
-      initialViewState: {
-        ..._DeckglMap.DEFAULT_VIEW_STATE,
-        ...mode === "3d" ? { pitch: 45 } : {},
-        ...initialViewState
-      },
-      views: mapView,
-      ...props,
-      onViewStateChange: (params) => {
-        const { viewState } = params;
-        const constrainedLatitude = Math.max(-30, Math.min(30, viewState.latitude));
-        const nextViewState = { ...viewState, latitude: constrainedLatitude };
-        return nextViewState;
-      },
-      layers: []
-    });
-  }
-  /**
-   * 获取当前 Deck 实例
-   */
-  get currentDeckInstance() {
-    if (!this.deckInstance) {
-      throw new Error(`Deck instance not initialized for ${this.instanceId}`);
-    }
-    return this.deckInstance;
-  }
-  /**
-   * 初始化 Deck 实例与图标图集
-   */
-  async initDeck(canvas, callback) {
-    const calculateMinZoom = (containerWidth) => {
-      const zoom = Math.log2(containerWidth / 256);
-      return zoom - 1;
-    };
-    const minZoom = calculateMinZoom(canvas.parentNode.clientWidth);
-    await this.createDeckInstance(
-      canvas,
-      {
-        zoom: Math.max(0, Math.min(20, minZoom)),
-        latitude: 30,
-        longitude: 0
-      },
-      {
-        mode: this.mode,
-        // @ts-ignore
-        onClick: async (info, event) => {
-          await this.handleClickMapView(info, event);
-        }
-      }
-    );
-    if (MapStateManager.geoData) {
-      await this.setGEOData(MapStateManager.geoData);
-    }
-    callback();
-    this.startArcAnimation();
-  }
-  /**
-   * 创建 Canvas 元素
-   */
-  createCanvas(container) {
-    container.innerHTML = "";
-    const canvas = document.createElement("canvas");
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
-    container.appendChild(canvas);
-    return canvas;
-  }
-  /**
-   * 新增图层（若已存在则委托为 update）
-   */
-  addLayer(id, layer) {
-    if (this.layerMap.has(id)) {
-      this.updateLayerById(id, layer);
-      return;
-    }
-    this.layerMap.set(id, layer);
-  }
-  /**
-   * 更新图层
-   */
-  updateLayerById(id, layerOrProps) {
-    const isLayerInstance = (candidate) => !!candidate && typeof candidate === "object" && "constructor" in candidate && typeof candidate.constructor === "function";
-    if (!this.layerMap.has(id)) {
-      if (isLayerInstance(layerOrProps)) {
-        this.layerMap.set(id, layerOrProps);
-      }
-      return;
-    }
-    const oldLayer = this.layerMap.get(id);
-    if (isLayerInstance(layerOrProps)) {
-      const incomingLayer = layerOrProps;
-      const incomingProps = incomingLayer.props ?? {};
-      const incomingId = incomingProps["id"];
-      if (typeof incomingId === "string" && incomingId !== id) {
-        const Ctor = incomingLayer.constructor;
-        const rebuilt = new Ctor({
-          ...incomingProps,
-          id
-        });
-        this.layerMap.set(id, rebuilt);
-      } else {
-        this.layerMap.set(id, incomingLayer);
-      }
-      return;
-    }
-    const OldCtor = oldLayer.constructor;
-    const newLayer = new OldCtor({
-      ...oldLayer.props ?? {},
-      ...layerOrProps,
-      id
-    });
-    this.layerMap.set(id, newLayer);
-  }
-  /**
-   * 移除图层
-   */
-  removeLayer(id) {
-    if (this.layerMap.has(id)) {
-      this.layerMap.delete(id);
-    }
-  }
-  /**
-   * 以固定顺序返回所有图层实例
-   */
-  getLayers() {
-    return ["geojson-layer", "point-layer", "line-layer", "line-trail-layer", "label-layer"].map((id) => this.layerMap.get(id));
-  }
-  /**
-   * 地图空白处点击处理（取消点选中）
-   */
-  async handleClickMapView(info, _event) {
-    const pick = info;
-    if (!pick?.object || pick.layer?.id !== "point-layer") {
-      if (this.selectedPointId) {
-        this.selectedPointId = null;
-        await this.updateIconLayers();
-      }
-    }
-  }
-  /**
-   * 设置国家/省份 GeoJSON 数据并注册基础底图图层
-   */
-  async setGEOData(geojsonData) {
-    let hoveredFeatureName = null;
-    const geojsonLayer = new import_layers6.GeoJsonLayer({
-      ...DEFAULT_GEO_LAYER_PROPS,
-      id: "geojson-layer",
-      data: geojsonData,
-      getFillColor: (feature) => {
-        if ((0, import_utils.isDef)(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
-          return [255, 255, 255, 255];
-        }
-        return DEFAULT_GEO_FILL_COLOR;
-      },
-      updateTriggers: {
-        getFillColor: hoveredFeatureName
-      },
-      onHover: (info) => {
-        const hover = info;
-        if (hoveredFeatureName !== hover?.object?.properties?.name) {
-          this.currentDeckInstance?.redraw();
-        }
-        if (hover?.object) {
-          hoveredFeatureName = hover.object.properties?.name ?? null;
-        } else {
-          hoveredFeatureName = null;
-        }
-        return true;
-      }
-    });
-    this.addLayer("geojson-layer", geojsonLayer);
-    this.updateLayer();
-  }
-  /**
-   * 点对象点击处理
-   */
-  async handleClickPoint(info) {
-    const pick = info;
-    const clickedId = pick?.object?.id ?? null;
-    this.selectedPointId = clickedId;
-    await this.updateIconLayers();
-  }
-  /**
-   * 点对象悬停处理
-   */
-  async handleHoverPoint(info) {
-    const pick = info;
-    const hoveredId = pick?.object?.id ?? null;
-    if (this.hoveredPointId !== hoveredId) {
-      this.hoveredPointId = hoveredId;
-      IconLayer.updateTextLayer(
-        this.points,
-        {
-          selectedPointId: this.selectedPointId,
-          hoveredPointId: this.hoveredPointId
-        },
-        this.updateLayerById.bind(this)
-      );
-      this.updateLayer();
-    }
-  }
-  /**
-   * 设置点数据
-   */
-  async setPoints(points) {
-    this.points = points;
-    await this.updateIconLayers();
-  }
-  /**
-   * 设置折线数据
-   */
-  setLines(lines) {
-    this.lines = lines;
-  }
-  /**
-   * 将当前图层刷新到 Deck 实例
-   */
-  updateLayer() {
-    const layers = this.getLayers();
-    const validLayers = layers.filter((layer) => layer !== void 0);
-    this.currentDeckInstance?.setProps({
-      layers: validLayers
-    });
-  }
-  /**
-   * 更新动画
-   */
-  updateArcAnimation() {
-    LineLayer.advanceAnimation(this.mode, this.lines, {}, this.updateLayerById.bind(this));
-    this.updateLayer();
-  }
-  /**
-   * 更新图标和文本图层
-   */
-  async updateIconLayers() {
-    await IconLayer.updateLayers(
-      this.points,
-      {
-        selectedPointId: this.selectedPointId,
-        hoveredPointId: this.hoveredPointId,
-        onClick: (info) => {
-          void this.handleClickPoint(info);
-        },
-        onHover: (info) => {
-          void this.handleHoverPoint(info);
-        }
-      },
-      this.updateLayerById.bind(this)
-    );
-    this.updateLayer();
-  }
-  /**
-   * 启动动画定时器
-   */
-  startArcAnimation() {
-    if (this.animationTimer) {
-      this.animationTimer.destroy();
-      this.animationTimer = null;
-    }
-    this.animationTimer = new import_utils.TaskManager.Timer({
-      description: "glmap-arc-animation",
-      time: 10,
-      once: false,
-      fn: this.updateArcAnimation.bind(this)
-    });
-  }
-  /**
-   * 销毁内部资源
-   */
-  destroy() {
-    if (this.animationTimer) {
-      this.animationTimer.destroy();
-      this.animationTimer = null;
-    }
-    if (this.deckInstance) {
-      this.deckInstance.finalize();
-      this.deckInstance = null;
-    }
-    this.layerMap.clear();
-    LineLayer.clearLayers(this.removeLayer.bind(this));
-    LineLayer.resetTime();
-    IconLayer.clearLayers(this.removeLayer.bind(this));
-  }
-};
-/** 默认视图状态 */
-_DeckglMap.DEFAULT_VIEW_STATE = {
-  longitude: 0,
-  latitude: 30,
-  zoom: 1,
-  pitch: 0
-};
-var DeckglMap = _DeckglMap;
+// src/deckgl/layers/textLayer.ts
+var import_layers5 = require("@deck.gl/layers");
+var import_utils = require("@orch-map/utils");
 
-// src/deckgl/index.ts
-var deckgl_default = DeckglMap;
-
-// src/echarts-geo/index.ts
-var import_utils6 = require("@orch-map/utils");
-var import_charts = require("echarts/charts");
-var echarts2 = __toESM(require("echarts/core"));
-var import_renderers = require("echarts/renderers");
-var import_components = require("echarts/components");
-
-// src/echarts-geo/components/geo.ts
-var import_types4 = require("@orch-map/types");
-var echarts = __toESM(require("echarts/core"));
-var import_utils3 = require("@orch-map/utils");
-
-// src/utils/geo.helper.ts
-var import_types2 = require("@orch-map/types");
-var import_utils2 = require("@orch-map/utils");
-
-// src/constants/index.ts
+// src/constants/mapConfig.ts
 var RENDER_MODES = {
   MODE_2D: "2d",
   MODE_3D: "3d"
@@ -1292,80 +789,111 @@ var DEFAULT_CONFIG = {
   INTERACTIVE: true,
   SHOW_CONTROLS: false
 };
+
+// src/constants/geoData.ts
 var CHINA_AD_CODE_JUST_FOR_FE = "100000";
 var US_AD_CODE_JUST_FOR_FE = "us";
 var MUNICIPALITY_CODES = /* @__PURE__ */ new Set(["110000", "120000", "310000", "500000"]);
 var JUST_SUPPORTED_NEXT_LEVEL_COUNTRIES_AD_CODE = [CHINA_AD_CODE_JUST_FOR_FE, US_AD_CODE_JUST_FOR_FE];
 var G2 = { CHINA: "\u4E2D\u56FD", USA: "\u7F8E\u56FD" };
 
-// src/utils/geo.helper.ts
-var getCenterAndZoomByGeometryCoordinates = (coords) => {
-  const flat = [];
-  const collect = (c) => {
-    if (Array.isArray(c)) {
-      if (c.length === 2 && typeof c[0] === "number" && typeof c[1] === "number") {
-        flat.push([c[0], c[1]]);
-      } else {
-        for (const sub of c) {
-          collect(sub);
-        }
-      }
-    }
-  };
-  collect(coords);
-  if (flat.length === 0) {
-    return { center: null, zoom: 1 };
-  }
-  let minLng = flat[0][0];
-  let maxLng = flat[0][0];
-  let minLat = flat[0][1];
-  let maxLat = flat[0][1];
-  for (const [lng, lat] of flat) {
-    minLng = Math.min(minLng, lng);
-    maxLng = Math.max(maxLng, lng);
-    minLat = Math.min(minLat, lat);
-    maxLat = Math.max(maxLat, lat);
-  }
-  const center = [
-    (minLng + maxLng) / 2,
-    (minLat + maxLat) / 2
-  ];
-  const lngDiff = Math.max(1e-4, Math.abs(maxLng - minLng));
-  const latDiff = Math.max(1e-4, Math.abs(maxLat - minLat));
-  const zoom = Math.min(Math.log2(360 / lngDiff), Math.log2(180 / latDiff));
-  return { center, zoom: Math.max(0.5, Math.min(zoom, 6)) };
+// src/constants/point.ts
+var POINT_DEFAULT_STYLE = {
+  size: 12,
+  color: "#ffffff",
+  borderColor: "#fff",
+  shadowColor: "#fff",
+  borderWidth: 0,
+  shadowBlur: 0
 };
-function getGeoJsonTitle(geoJson, level) {
-  if (!geoJson || typeof geoJson !== "object" || geoJson.type !== "FeatureCollection") {
-    return "";
+
+// src/deckgl/layers/textLayer.ts
+var TextLayer = class {
+  /**
+   * 将业务点数据转换为 TextLayer 需要的数据结构
+   * 根据 label.show 和 label.hoverShow 配置决定是否显示标签
+   * @param points 业务点数据数组
+   * @param config 图层配置
+   * @returns TextLayer 需要的数据数组
+   */
+  static transformToTextData(points, config = {}) {
+    const { hoveredPointId, selectedPointId } = config;
+    return points.filter((point) => {
+      if (!point.label) {
+        return true;
+      }
+      if (point.label?.show) {
+        return true;
+      }
+      if (point.label?.hoverShow && (hoveredPointId === point.id || selectedPointId === point.id)) {
+        return true;
+      }
+      return false;
+    }).map((point) => {
+      return {
+        ...point,
+        // 抬升高度，显示在图标上方，避免遮挡
+        position: [point.coordinate[0], point.coordinate[1], 120],
+        size: point.size ?? 16
+      };
+    });
   }
-  if ("title" in geoJson && typeof geoJson.title === "string") {
-    return geoJson.title;
+  /**
+   * 创建文本标签图层
+   * @param textData 文本数据数组
+   * @returns TextLayer 实例
+   */
+  static createLayer(textData) {
+    const color = (0, import_utils.hexToRgba)(POINT_DEFAULT_STYLE.color);
+    return new import_layers5.TextLayer({
+      id: "label-layer",
+      data: textData,
+      characterSet: "auto",
+      fontSettings: {
+        buffer: 8
+      },
+      getPosition: (d) => d.position,
+      getText: (d) => d.name,
+      getSize: (d) => d.size ? d.size / 1.5 : 8,
+      getColor: () => color,
+      maxWidth: 64 * 12,
+      getAngle: 0,
+      getTextAnchor: "middle",
+      getAlignmentBaseline: () => "bottom",
+      pickable: false,
+      // 标签不可交互
+      // 确保文本始终朝上
+      billboard: true,
+      // 确保文本在最顶层
+      modelMatrix: null
+    });
   }
-  let defaultTitle = "";
-  switch (level) {
-    case import_types2.MapLevel.COUNTRY:
-      defaultTitle = "country";
-      break;
-    case import_types2.MapLevel.PROVINCE:
-      defaultTitle = "province";
-      break;
-    case import_types2.MapLevel.CITY:
-      defaultTitle = "city";
-      break;
-    case import_types2.MapLevel.COUNTY:
-      defaultTitle = "county";
-      break;
-    case import_types2.MapLevel.WORLD:
-      defaultTitle = "world";
-      break;
+  /**
+   * 创建文本图层（纯静态方法，不负责渲染）
+   * @param points 业务点数据数组
+   * @param config 图层配置
+   * @returns TextLayer 实例
+   */
+  static create(points, config = {}) {
+    const textData = this.transformToTextData(points, config);
+    console.log("[TextLayer] create called:", {
+      pointsCount: points.length,
+      textDataCount: textData.length,
+      sampleTextData: textData.slice(0, 3)
+    });
+    return this.createLayer(textData);
   }
-  if (Array.isArray(geoJson.features) && geoJson.features.length > 0 && typeof geoJson.features[0] === "object" && geoJson.features[0] !== null && "properties" in geoJson.features[0] && geoJson.features[0].properties && typeof geoJson.features[0].properties.title === "string") {
-    return geoJson.features[0].properties.title ?? defaultTitle;
+  /**
+   * 获取文本图层的标识符
+   * @returns 图层ID
+   */
+  static getLayerId() {
+    return "label-layer";
   }
-  return defaultTitle;
-}
-var isMunicipality = (postcode) => MUNICIPALITY_CODES.has(postcode);
+};
+
+// src/utils/geoUtils.ts
+var import_types2 = require("@orch-map/types");
 
 // src/echarts-geo/echart.option.ts
 var POST_CODE_KEY = "hc-key";
@@ -1378,38 +906,82 @@ var DEFAULT_POINT_CONFIG = {
   }
 };
 
-// src/utils/geo.utils.ts
-var import_types3 = require("@orch-map/types");
+// src/utils/geoUtils.ts
+var CHINA_POSTCODE_JUST_FOR_FE = "100000";
 var GeoUtils = class _GeoUtils {
   /**
-   * 检查地图入口资格，确定是否可以进入下一级地图
-   * @param params - 事件参数，包含区域名称等信息
-   * @returns 下一级地图层级，如果无法进入则返回 undefined
+   * 获取 geoJSON 的 title
+   * @param geoJson - GeoJSON 对象
+   * @param level - 地图层级
+   * @returns title 字段值，如果没有则返回空字符串
    */
-  static checkMapEntryEligibility() {
-    switch (MapStateManager.curLevel) {
-      case import_types3.MapLevel.WORLD: {
-        return import_types3.MapLevel.COUNTRY;
-      }
-      case import_types3.MapLevel.COUNTRY: {
-        return import_types3.MapLevel.PROVINCE;
-      }
-      case import_types3.MapLevel.PROVINCE:
-        return import_types3.MapLevel.CITY;
-      case import_types3.MapLevel.CITY:
-        if (!isMunicipality(MapStateManager.postcode)) {
-          return import_types3.MapLevel.COUNTY;
-        }
-        return void 0;
-      case import_types3.MapLevel.COUNTY:
+  static getGeoJsonTitle(geoJson, level) {
+    if (!geoJson || typeof geoJson !== "object" || geoJson.type !== "FeatureCollection") {
+      return "";
+    }
+    if ("title" in geoJson && typeof geoJson.title === "string") {
+      return geoJson.title;
+    }
+    let defaultTitle = "";
+    switch (level) {
+      case import_types2.MapLevel.COUNTRY:
+        defaultTitle = "country";
+        break;
+      case import_types2.MapLevel.PROVINCE:
+        defaultTitle = "province";
+        break;
+      case import_types2.MapLevel.CITY:
+        defaultTitle = "city";
+        break;
+      case import_types2.MapLevel.COUNTY:
+        defaultTitle = "county";
+        break;
+      case import_types2.MapLevel.WORLD:
+        defaultTitle = "world";
+        break;
+    }
+    if (Array.isArray(geoJson.features) && geoJson.features.length > 0 && typeof geoJson.features[0] === "object" && geoJson.features[0] !== null && "properties" in geoJson.features[0] && geoJson.features[0].properties && typeof geoJson.features[0].properties.title === "string") {
+      return geoJson.features[0].properties.title ?? defaultTitle;
+    }
+    return defaultTitle;
+  }
+  /**
+   * @description: 矫正地级市postcode
+   * @warning 注意矫正地级市的postcode仅限在中国地图内，国外地图的postcode拿不到
+   * @param start - 起始postcode
+   * @param end - 结束postcode
+   * @param currLev - 当前地图层级
+   * @returns 矫正后的postcode数组 [start, end]
+   */
+  static correctPostcodeByLevel(start, end, currLev) {
+    let bit = 0;
+    switch (currLev) {
+      case import_types2.MapLevel.PROVINCE:
+        bit = 2;
+        break;
+      case import_types2.MapLevel.CITY:
+        bit = 4;
+        break;
+      case import_types2.MapLevel.COUNTY:
+        bit = 6;
+        break;
+      case import_types2.MapLevel.COUNTRY:
+      case import_types2.MapLevel.WORLD:
       default:
-        return void 0;
+        bit = 0;
+        break;
+    }
+    if (bit) {
+      const FULL = 6;
+      const suffix = new Array(FULL - bit).fill("0").join("");
+      return [start ? start.slice(0, bit) + suffix : "", end ? end.slice(0, bit) + suffix : ""];
+    } else {
+      return [CHINA_POSTCODE_JUST_FOR_FE, ""];
     }
   }
   /**
    * 根据地理要素名称获取行政区划代码
    * @param name - 地理要素名称
-   * @param detailGeojson - 详细地理数据
    * @returns 行政区划代码
    */
   static getPostCodeByGeoFeatures(name) {
@@ -1446,13 +1018,12 @@ var GeoUtils = class _GeoUtils {
   }
   /**
    * 获取下一级地图的行政区划代码
-   * @param params - 事件参数
-   * @param detailGeojson - 详细地理数据
+   * @param name - 区域名称
    * @returns 下一级行政区划代码
    */
   static getNextPostcode(name) {
     let nextPostcode = "";
-    if (MapStateManager.curLevel === import_types3.MapLevel.WORLD) {
+    if (MapStateManager.curLevel === import_types2.MapLevel.WORLD) {
       if (name === G2.CHINA) {
         nextPostcode = CHINA_AD_CODE_JUST_FOR_FE;
       } else if (name === G2.USA) {
@@ -1465,20 +1036,547 @@ var GeoUtils = class _GeoUtils {
     }
     return nextPostcode;
   }
-  /**
-   * 检查是否支持下一级地图
-   * @param nextLevel - 下一级地图层级
-   * @returns 是否支持
-   */
-  static isNextLevelSupported(nextLevel) {
-    if (MapStateManager.curLevel === import_types3.MapLevel.COUNTRY && nextLevel === import_types3.MapLevel.PROVINCE) {
-      return JUST_SUPPORTED_NEXT_LEVEL_COUNTRIES_AD_CODE.includes(MapStateManager.postcode);
-    }
-    return true;
-  }
 };
 
+// src/deckgl/main.ts
+var _DeckglMap = class _DeckglMap {
+  //===== 生命周期管理 =====
+  /**
+   * 构造函数
+   * @param container - 容器元素
+   * @param mode - 地图模式（2D/3D）
+   * @param callback - 初始化完成回调函数
+   * @param events - 事件处理器配置（可选）
+   */
+  constructor(container, mode, callback, events) {
+    //===== 实例标识和核心组件 =====
+    /** 实例唯一标识 */
+    this.instanceId = "deckgl-instance";
+    /** DeckGL 实例 */
+    this.deckInstance = null;
+    this.container = null;
+    /** 图层存储：layerId -> layer 实例 */
+    this.layerMap = /* @__PURE__ */ new Map();
+    //===== 数据源 =====
+    /** 折线数据源 */
+    this.lines = [];
+    /** 点数据源 */
+    this.points = [];
+    //===== 状态管理 =====
+    /** 选中点 ID */
+    this.selectedPointId = null;
+    /** 当前悬停的点 ID */
+    this.hoveredPointId = null;
+    /** 2D/3D 模式 */
+    this.mode = "2d";
+    //===== 点击事件控制 =====
+    /** 单击延迟计时器 */
+    this.clickTimer = null;
+    /** 点击延迟时间（毫秒） */
+    this.CLICK_DELAY = 250;
+    //===== 动画控制 =====
+    /** 动画计时器任务句柄 */
+    this.animationTimer = null;
+    this.mode = mode;
+    this.events = events;
+    this.container = container;
+    void this.initializeMap(container, callback);
+  }
+  /**
+   * 初始化地图
+   * @param container - 容器元素
+   * @param callback - 初始化完成回调函数
+   */
+  async initializeMap(container, callback) {
+    const canvas = this.createCanvas(container);
+    await this.initDeck(canvas, callback);
+  }
+  /**
+   * 初始化 Deck 实例与图标图集
+   * @param canvas - Canvas 元素
+   * @param callback - 初始化完成回调函数
+   */
+  async initDeck(canvas, callback) {
+    const minZoom = GeoUtils.calculateMinZoom(canvas.parentNode.clientWidth);
+    await this.createDeckInstance(
+      canvas,
+      {
+        zoom: Math.max(0, Math.min(20, minZoom)),
+        latitude: 30,
+        longitude: 0
+      },
+      {
+        mode: this.mode,
+        // @ts-ignore
+        onClick: async (info, event) => {
+          await this.handleClickMapView(info, event);
+        },
+        // @ts-ignore
+        onDblClick: async (info, event) => {
+          await this.handleDoubleClickMapView(info, event);
+        }
+      }
+    );
+    this.initializeDefaultLayers();
+    callback();
+    this.startArcAnimation();
+  }
+  /**
+   * 初始化默认图层
+   */
+  initializeDefaultLayers() {
+    if (MapStateManager.geoData) {
+      void this.setGEOData(MapStateManager.geoData);
+    }
+  }
+  /**
+   * 销毁内部资源
+   */
+  destroy() {
+    if (this.clickTimer) {
+      clearTimeout(this.clickTimer);
+      this.clickTimer = null;
+    }
+    if (this.animationTimer) {
+      this.animationTimer.destroy();
+      this.animationTimer = null;
+    }
+    if (this.deckInstance) {
+      this.deckInstance.finalize();
+      this.deckInstance = null;
+    }
+    this.layerMap.clear();
+    LineLayer.clearLayers(this.removeLayer.bind(this));
+    LineLayer.resetTime();
+    this.removeLayer(IconLayer.getLayerId());
+    this.removeLayer(TextLayer.getLayerId());
+  }
+  //===== 核心实例管理 =====
+  /**
+   * 创建 Canvas 元素
+   * @param container - 容器元素
+   * @returns Canvas 元素
+   */
+  createCanvas(container) {
+    container.innerHTML = "";
+    const canvas = document.createElement("canvas");
+    canvas.style.width = "100%";
+    canvas.style.height = "100%";
+    container.appendChild(canvas);
+    return canvas;
+  }
+  /**
+   * 创建并初始化 Deck 实例
+   * @param container - Canvas 容器
+   * @param initialViewState - 初始视图状态
+   * @param props - 附加属性
+   */
+  async createDeckInstance(container, initialViewState, props) {
+    if (this.deckInstance) {
+      throw new Error(`Deck instance already exists for ${this.instanceId}`);
+    }
+    const mode = props?.mode ?? "2d";
+    const mapView = new import_core.MapView({
+      repeat: true,
+      controller: {
+        scrollZoom: true,
+        dragPan: true,
+        dragRotate: true,
+        doubleClickZoom: false,
+        // 禁用双击放大
+        touchZoom: true,
+        touchRotate: true,
+        keyboard: true
+      }
+    });
+    this.deckInstance = new import_core.Deck({
+      canvas: container,
+      initialViewState: {
+        ..._DeckglMap.DEFAULT_VIEW_STATE,
+        ...mode === "3d" ? { pitch: 45 } : {},
+        ...initialViewState
+      },
+      views: mapView,
+      ...props,
+      onViewStateChange: (params) => {
+        const { viewState } = params;
+        const constrainedLatitude = Math.max(-30, Math.min(30, viewState.latitude));
+        const nextViewState = { ...viewState, latitude: constrainedLatitude };
+        return nextViewState;
+      },
+      layers: []
+    });
+  }
+  /**
+   * 获取当前 Deck 实例
+   * @returns 当前的 Deck 实例
+   * @throws 如果实例未初始化则抛出错误
+   */
+  get currentDeckInstance() {
+    if (!this.deckInstance) {
+      throw new Error(`Deck instance not initialized for ${this.instanceId}`);
+    }
+    return this.deckInstance;
+  }
+  //===== 图层管理 =====
+  /**
+   * 新增图层（若已存在则委托为 update）
+   * @param id - 图层 ID
+   * @param layer - 图层实例
+   */
+  addLayer(id, layer) {
+    if (this.layerMap.has(id)) {
+      this.updateLayerById(id, layer);
+      return;
+    }
+    this.layerMap.set(id, layer);
+  }
+  /**
+   * 更新图层
+   * @param id - 图层 ID
+   * @param layerOrProps - 图层实例或图层属性
+   */
+  updateLayerById(id, layerOrProps) {
+    const isLayerInstance = (candidate) => !!candidate && typeof candidate === "object" && "constructor" in candidate && typeof candidate.constructor === "function";
+    if (!this.layerMap.has(id)) {
+      if (isLayerInstance(layerOrProps)) {
+        this.layerMap.set(id, layerOrProps);
+        console.log("[DeckglMap] Layer added to layerMap:", id);
+      }
+      return;
+    }
+    const oldLayer = this.layerMap.get(id);
+    if (isLayerInstance(layerOrProps)) {
+      const incomingLayer = layerOrProps;
+      const incomingProps = incomingLayer.props ?? {};
+      const incomingId = incomingProps["id"];
+      if (typeof incomingId === "string" && incomingId !== id) {
+        const Ctor = incomingLayer.constructor;
+        const rebuilt = new Ctor({
+          ...incomingProps,
+          id
+        });
+        this.layerMap.set(id, rebuilt);
+        console.log("[DeckglMap] Layer updated (rebuilt) in layerMap:", id);
+      } else {
+        this.layerMap.set(id, incomingLayer);
+      }
+      return;
+    }
+    const OldCtor = oldLayer.constructor;
+    const newLayer = new OldCtor({
+      ...oldLayer.props ?? {},
+      ...layerOrProps,
+      id
+    });
+    this.layerMap.set(id, newLayer);
+  }
+  /**
+   * 移除图层
+   * @param id - 图层 ID
+   */
+  removeLayer(id) {
+    if (this.layerMap.has(id)) {
+      this.layerMap.delete(id);
+    }
+  }
+  /**
+   * 以固定顺序返回所有图层实例
+   * @returns 图层数组
+   */
+  getLayers() {
+    const layerIds = ["geojson-layer", "point-layer", "line-layer", "line-trail-layer", "label-layer"];
+    const layers = layerIds.map((id) => this.layerMap.get(id));
+    return layers;
+  }
+  /**
+   * 将当前图层刷新到 Deck 实例
+   */
+  updateLayer() {
+    const layers = this.getLayers();
+    const validLayers = layers.filter((layer) => layer !== void 0);
+    this.currentDeckInstance?.setProps({
+      layers: validLayers
+    });
+  }
+  //===== 事件处理 =====
+  /**
+   * 地图空白处点击处理（取消点选中）
+   * @param info - 点击信息
+   * @param event - 事件对象
+   */
+  async handleClickMapView(info, event) {
+    const nativeEvent = event?.srcEvent;
+    if (nativeEvent && "detail" in nativeEvent && nativeEvent.detail === 2) {
+      return;
+    }
+    const pick = info;
+    if (!pick?.object || pick.layer?.id !== "point-layer") {
+      if (this.clickTimer) {
+        clearTimeout(this.clickTimer);
+      }
+      this.clickTimer = setTimeout(() => {
+        if (this.selectedPointId) {
+          this.selectedPointId = null;
+          void this.updateIconLayers();
+        }
+      }, this.CLICK_DELAY);
+    }
+  }
+  /**
+   * 地图双击处理（获取区域信息）
+   * @param info - 双击信息
+   * @param event - 事件对象
+   */
+  async handleDoubleClickMapView(info, event) {
+    if (this.clickTimer) {
+      clearTimeout(this.clickTimer);
+      this.clickTimer = null;
+    }
+    const pick = info;
+    if (event?.srcEvent) {
+      event.srcEvent.stopPropagation();
+      event.srcEvent.preventDefault();
+    }
+    console.log("\u53CC\u51FB\u4E8B\u4EF6\u89E6\u53D1", pick);
+    if (pick?.object && pick.layer?.id === "geojson-layer") {
+      const regionName = pick.object.properties?.name ?? "";
+      console.log("\u53CC\u51FB\u5730\u56FE\u533A\u57DF\u4FE1\u606F:", {
+        \u533A\u57DF\u540D\u79F0: regionName,
+        \u533A\u57DF\u4EE3\u7801: pick.object.properties?.code,
+        \u5750\u6807: pick.coordinate,
+        \u5B8C\u6574\u6570\u636E: pick.object.properties
+      });
+      if (this.events?.onAreaDoubleClick) {
+        this.events.onAreaDoubleClick(regionName);
+      }
+    }
+  }
+  /**
+   * 点对象点击处理
+   * @param info - 点击信息
+   */
+  async handleClickPoint(info) {
+    const pick = info;
+    const clickedId = pick?.object?.id ?? null;
+    this.selectedPointId = clickedId;
+    await this.updateIconLayers();
+  }
+  /**
+   * 点对象悬停处理
+   * @param info - 悬停信息
+   */
+  async handleHoverPoint(info) {
+    const pick = info;
+    const hoveredId = pick?.object?.id ?? null;
+    if (this.hoveredPointId !== hoveredId) {
+      this.hoveredPointId = hoveredId;
+      const textLayer = TextLayer.create(
+        this.points,
+        {
+          selectedPointId: this.selectedPointId,
+          hoveredPointId: this.hoveredPointId
+        }
+      );
+      this.updateLayerById(TextLayer.getLayerId(), textLayer);
+      this.updateLayer();
+    }
+  }
+  //===== 数据设置与更新 =====
+  /**
+   * 设置国家/省份 GeoJSON 数据并注册基础底图图层
+   * @param geojsonData - GeoJSON 数据
+   */
+  async setGEOData(geojsonData) {
+    let hoveredFeatureName = null;
+    let lastClickTime = 0;
+    const DOUBLE_CLICK_THRESHOLD = 300;
+    const geojsonLayer = new import_layers6.GeoJsonLayer({
+      ...DEFAULT_GEO_LAYER_PROPS,
+      id: "geojson-layer",
+      data: geojsonData,
+      getFillColor: (feature) => {
+        if ((0, import_utils2.isDef)(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
+          return [255, 255, 255, 255];
+        }
+        return DEFAULT_GEO_FILL_COLOR;
+      },
+      updateTriggers: {
+        getFillColor: hoveredFeatureName
+      },
+      onClick: (info) => {
+        const currentTime = Date.now();
+        const timeSinceLastClick = currentTime - lastClickTime;
+        if (timeSinceLastClick < DOUBLE_CLICK_THRESHOLD) {
+          const pick = info;
+          if (pick?.object) {
+            const regionName = pick.object.properties?.name ?? "";
+            console.log("\u53CC\u51FB\u5730\u56FE\u533A\u57DF\u4FE1\u606F:", {
+              \u533A\u57DF\u540D\u79F0: regionName,
+              \u533A\u57DF\u4EE3\u7801: pick.object.properties?.code,
+              \u5B8C\u6574\u6570\u636E: pick.object.properties
+            });
+            if (this.events?.onAreaDoubleClick) {
+              this.events.onAreaDoubleClick(regionName);
+            }
+          }
+          lastClickTime = 0;
+        } else {
+          lastClickTime = currentTime;
+        }
+        return true;
+      },
+      onHover: (info) => {
+        const hover = info;
+        if (hoveredFeatureName !== hover?.object?.properties?.name) {
+          this.currentDeckInstance?.redraw();
+        }
+        if (hover?.object) {
+          hoveredFeatureName = hover.object.properties?.name ?? null;
+        } else {
+          hoveredFeatureName = null;
+        }
+        return true;
+      }
+    });
+    this.addLayer("geojson-layer", geojsonLayer);
+    this.updateLayer();
+    this.fitBoundsToGeoData(geojsonData);
+  }
+  /**
+   * 根据地理数据调整视图，使其居中并适应缩放
+   * @param geojsonData - GeoJSON 数据
+   */
+  fitBoundsToGeoData(geojsonData) {
+    const curLevel = MapStateManager.curLevel;
+    if (curLevel === import_types3.MapLevel.WORLD) {
+      this.updateViewState([0, 30], 1);
+      return;
+    }
+    const canvasElement = this.container;
+    const containerWidth = canvasElement?.parentElement?.clientWidth ?? 1e3;
+    const containerHeight = canvasElement?.parentElement?.clientHeight ?? 800;
+    const result = GeoUtils.getCenterAndZoom(geojsonData, containerWidth, containerHeight);
+    if (!result) {
+      return;
+    }
+    this.updateViewState(result.center, result.zoom);
+  }
+  /**
+   * 更新视图状态
+   * @param center - 中心点 [lng, lat]
+   * @param zoom - 缩放级别
+   */
+  updateViewState(center, zoom) {
+    const newViewState = {
+      longitude: center[0],
+      latitude: center[1],
+      zoom,
+      pitch: this.mode === "3d" ? 45 : 0,
+      transitionDuration: 500,
+      // 500ms 动画过渡
+      transitionInterpolator: new import_core.FlyToInterpolator()
+    };
+    this.currentDeckInstance?.setProps({
+      initialViewState: newViewState
+    });
+  }
+  /**
+   * 设置点数据
+   * @param points - 点数据数组
+   */
+  async setPoints(points) {
+    this.points = points;
+    await this.updateIconLayers();
+  }
+  /**
+   * 设置折线数据
+   * @param lines - 折线数据数组
+   */
+  setLines(lines) {
+    this.lines = lines;
+  }
+  /**
+   * 更新图标和文本图层
+   */
+  async updateIconLayers() {
+    console.log("[DeckglMap] updateIconLayers called, points count:", this.points.length);
+    const iconLayer = await IconLayer.create(
+      this.points,
+      {
+        selectedPointId: this.selectedPointId,
+        hoveredPointId: this.hoveredPointId,
+        onClick: (info) => {
+          void this.handleClickPoint(info);
+        },
+        onHover: (info) => {
+          void this.handleHoverPoint(info);
+        }
+      }
+    );
+    if (iconLayer) {
+      this.updateLayerById(IconLayer.getLayerId(), iconLayer);
+    }
+    console.log("[DeckglMap] IconLayer updated, now updating TextLayer");
+    const textLayer = TextLayer.create(
+      this.points,
+      {
+        selectedPointId: this.selectedPointId,
+        hoveredPointId: this.hoveredPointId
+      }
+    );
+    this.updateLayerById(TextLayer.getLayerId(), textLayer);
+    console.log("[DeckglMap] TextLayer updated, now calling updateLayer()");
+    this.updateLayer();
+  }
+  //===== 动画控制 =====
+  /**
+   * 启动动画定时器
+   */
+  startArcAnimation() {
+    if (this.animationTimer) {
+      this.animationTimer.destroy();
+      this.animationTimer = null;
+    }
+    this.animationTimer = new import_utils2.TaskManager.Timer({
+      description: "glmap-arc-animation",
+      time: 10,
+      once: false,
+      fn: this.updateArcAnimation.bind(this)
+    });
+  }
+  /**
+   * 更新动画
+   */
+  updateArcAnimation() {
+    LineLayer.advanceAnimation(this.mode, this.lines, {}, this.updateLayerById.bind(this));
+    this.updateLayer();
+  }
+};
+//===== 静态常量 =====
+/** 默认视图状态 */
+_DeckglMap.DEFAULT_VIEW_STATE = {
+  longitude: 0,
+  latitude: 30,
+  zoom: 1,
+  pitch: 0
+};
+var DeckglMap = _DeckglMap;
+
+// src/deckgl/index.ts
+var deckgl_default = DeckglMap;
+
+// src/echarts-geo/index.ts
+var import_utils6 = require("@orch-map/utils");
+var import_charts = require("echarts/charts");
+var echarts2 = __toESM(require("echarts/core"));
+var import_renderers = require("echarts/renderers");
+var import_components = require("echarts/components");
+
 // src/echarts-geo/components/geo.ts
+var import_types4 = require("@orch-map/types");
+var echarts = __toESM(require("echarts/core"));
+var import_utils3 = require("@orch-map/utils");
 var _GeoComponent = class _GeoComponent {
   /**
    * 生成地图名称
@@ -1508,33 +1606,21 @@ var _GeoComponent = class _GeoComponent {
    * @param chartInstance - ECharts 实例
    * @param centralCountry - 中心国家代码
    */
-  static updateGeoOption(chartInstance, centralCountry) {
+  static updateGeoOption(chartInstance, container) {
     if (!chartInstance) return;
-    let center = null;
-    let scale = 1;
+    const center = null;
+    const scale = 1;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
     const geoJson = MapStateManager.geoData;
-    if (MapStateManager.curLevel === import_types4.MapLevel.WORLD) {
-      if (centralCountry && geoJson.type === "FeatureCollection") {
-        const feature = geoJson.features.find((item) => item.id === centralCountry);
-        const targetCoordinates = feature?.geometry && "coordinates" in feature.geometry ? feature.geometry.coordinates : [];
-        const { center: c, zoom: z } = getCenterAndZoomByGeometryCoordinates(targetCoordinates);
-        scale = z;
-        center = c;
-      }
-    } else if (MapStateManager.curLevel !== import_types4.MapLevel.COUNTRY && geoJson.type === "FeatureCollection") {
-      const targetCoordinates = geoJson.features.map(
-        (item) => "coordinates" in item.geometry ? item.geometry.coordinates : []
-      );
-      const { center: c } = getCenterAndZoomByGeometryCoordinates(targetCoordinates);
-      center = c;
-    }
+    const result = GeoUtils.getCenterAndZoom(geoJson, containerWidth, containerHeight) ?? { center, zoom: scale };
     const isWorld = MapStateManager.curLevel === import_types4.MapLevel.WORLD;
     const options = chartInstance.getOption();
     const geo = options.geo;
     if (geo && geo.length > 0) {
       geo[0].map = _GeoComponent.generateMapName();
-      geo[0].center = center ?? geo[0].center;
-      geo[0].zoom = scale || (isWorld ? 1.3 : 1);
+      geo[0].center = result.center ?? geo[0].center;
+      geo[0].zoom = result.zoom || (isWorld ? 1.3 : 1);
       geo[0].itemStyle = {
         ...geo[0].itemStyle
       };
@@ -2268,7 +2354,7 @@ var EchartsMap = class {
       return;
     }
     const instance = echarts2.init(this.container);
-    const title = getGeoJsonTitle(geoJson, MapStateManager.curLevel);
+    const title = GeoUtils.getGeoJsonTitle(geoJson, MapStateManager.curLevel);
     echarts2.registerMap(title, geoJson);
     this.chartInstance = instance;
     const geoOption = GeoComponent.defaultGeoOption;
@@ -2313,7 +2399,7 @@ var EchartsMap = class {
     this.chartInstance.setOption(option);
   }
   updateGeoOption() {
-    GeoComponent.updateGeoOption(this.chartInstance, this.centralCountry);
+    GeoComponent.updateGeoOption(this.chartInstance, this.container);
   }
   /**
    * 设置地理数据并更新地图显示
@@ -2650,8 +2736,95 @@ var MapDataService2 = class _MapDataService {
 };
 var index_default = MapDataService2;
 
+// src/utils/mapLevelUtils.ts
+var import_types6 = require("@orch-map/types");
+
+// src/utils/mapHelper.ts
+var isMunicipality = (postcode) => {
+  return MUNICIPALITY_CODES.has(postcode);
+};
+
+// src/utils/mapLevelUtils.ts
+var MapLevelUtils = class {
+  /**
+   * @description: 判断地图下钻层级
+   * 根据地图下钻层级 来判断是否能继续下钻
+   * @param level - 地图层级
+   * @returns 层级数值 (0-4)
+   */
+  static mapLevelMatrix(level) {
+    switch (level) {
+      case import_types6.MapLevel.COUNTRY:
+        return 1;
+      case import_types6.MapLevel.PROVINCE:
+        return 2;
+      case import_types6.MapLevel.CITY:
+        return 3;
+      case import_types6.MapLevel.COUNTY:
+        return 4;
+      case import_types6.MapLevel.WORLD:
+      default:
+        return 0;
+    }
+  }
+  /**
+   * 将层级数值转换为地图层级枚举
+   * @param level - 层级数值
+   * @returns 地图层级枚举
+   */
+  static levelNumToLevel(level) {
+    switch (level) {
+      case 1:
+        return import_types6.MapLevel.COUNTRY;
+      case 2:
+        return import_types6.MapLevel.PROVINCE;
+      case 3:
+        return import_types6.MapLevel.CITY;
+      case 4:
+        return import_types6.MapLevel.COUNTY;
+      default:
+        return import_types6.MapLevel.WORLD;
+    }
+  }
+  /**
+   * 检查地图入口资格，确定是否可以进入下一级地图
+   * @returns 下一级地图层级，如果无法进入则返回 undefined
+   */
+  static checkMapEntryEligibility() {
+    switch (MapStateManager.curLevel) {
+      case import_types6.MapLevel.WORLD: {
+        return import_types6.MapLevel.COUNTRY;
+      }
+      case import_types6.MapLevel.COUNTRY: {
+        return import_types6.MapLevel.PROVINCE;
+      }
+      case import_types6.MapLevel.PROVINCE:
+        return import_types6.MapLevel.CITY;
+      case import_types6.MapLevel.CITY:
+        if (!isMunicipality(MapStateManager.postcode)) {
+          return import_types6.MapLevel.COUNTY;
+        }
+        return void 0;
+      case import_types6.MapLevel.COUNTY:
+      default:
+        return void 0;
+    }
+  }
+  /**
+   * 检查是否支持下一级地图
+   * @param nextLevel - 下一级地图层级
+   * @returns 是否支持
+   */
+  static isNextLevelSupported(nextLevel) {
+    if (MapStateManager.curLevel === import_types6.MapLevel.COUNTRY && nextLevel === import_types6.MapLevel.PROVINCE) {
+      return JUST_SUPPORTED_NEXT_LEVEL_COUNTRIES_AD_CODE.includes(MapStateManager.postcode);
+    }
+    return true;
+  }
+};
+
 // src/main.ts
-var import_utils7 = require("@orch-map/utils");
+var import_utils8 = require("@orch-map/utils");
 var OrchMap = class {
   /**
    * 构造函数
@@ -2668,7 +2841,7 @@ var OrchMap = class {
     MapStateManager.extraSvgIcons = extraSvgIcons;
     const echartsSymbols = {};
     Object.keys(extraSvgIcons).forEach((key) => {
-      echartsSymbols[key] = (0, import_utils7.svgToEChartsSymbol)(extraSvgIcons[key]);
+      echartsSymbols[key] = (0, import_utils8.svgToEChartsSymbol)(extraSvgIcons[key]);
     });
     MapStateManager.echartsSymbols = echartsSymbols;
     this._initPromise = this.initMap().then(() => {
@@ -2712,9 +2885,20 @@ var OrchMap = class {
         );
         break;
       case "deckgl" /* DECKGL */:
-        this.instance = new deckgl_default(this.config.container, this.config.mode ?? "2d", () => {
-          console.log("DeckGL initialized");
-        });
+        this.instance = new deckgl_default(
+          this.config.container,
+          this.config.mode ?? "2d",
+          () => {
+            console.log("DeckGL initialized");
+          },
+          {
+            ...this.config.events,
+            onAreaDoubleClick: async (region) => {
+              this.config.events?.onAreaDoubleClick?.(region);
+              void await this.entryNextLevel(region);
+            }
+          }
+        );
         break;
     }
   }
@@ -2744,11 +2928,11 @@ var OrchMap = class {
     MapStateManager.postcode = nextPostcode;
   }
   async entryNextLevel(region) {
-    const nextLevel = GeoUtils.checkMapEntryEligibility();
-    if ((0, import_utils7.isUndef)(nextLevel)) {
+    const nextLevel = MapLevelUtils.checkMapEntryEligibility();
+    if ((0, import_utils8.isUndef)(nextLevel)) {
       return;
     }
-    if (nextLevel && !GeoUtils.isNextLevelSupported(nextLevel)) {
+    if (nextLevel && !MapLevelUtils.isNextLevelSupported(nextLevel)) {
       return;
     }
     this.calculateChinaPostcode(region);

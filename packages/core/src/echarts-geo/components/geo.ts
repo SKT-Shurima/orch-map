@@ -3,9 +3,8 @@ import type { GeoComponentOption } from "echarts";
 import * as echarts from "echarts/core";
 import { GeoJsonUtils } from "@orch-map/utils";
 import MapStateManager from "../../MapStateManager";
-import { getCenterAndZoomByGeometryCoordinates } from "../../utils/geo.helper";
 import type { GEOParam, PointSeriesDataItem } from "../types";
-import { GeoUtils } from "../../utils/geo.utils";
+import EchartGeoUtils from "../../utils/echartGeoUtils";
 import { US_AD_CODE_JUST_FOR_FE } from "../../constants";
 
 
@@ -74,47 +73,39 @@ export default class GeoComponent {
     }
   }
 
+  public static calculateScaleAndCenter(container: HTMLElement): { scale: number, center: [number, number] | null } {
+    const center: [number, number] | null = null;
+    let scale = 1;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const geoJson = MapStateManager.geoData;
+    const result = EchartGeoUtils.getCenterAndZoom(geoJson, { containerWidth, containerHeight }) ?? { center, zoom: scale };
+    scale = result.zoom;
+    return { scale, center: result.center };
+
+  }
+
   /**
    * 更新地理组件选项
    * @param chartInstance - ECharts 实例
    * @param centralCountry - 中心国家代码
    */
-  public static updateGeoOption(chartInstance: echarts.ECharts | null, centralCountry?: string): void {
+  public static updateGeoOption(chartInstance: echarts.ECharts, container: HTMLElement): void {
     if (!chartInstance) return;
-
-    let center: [number, number] | null = null;
-    let scale = 1;
-    const geoJson = MapStateManager.geoData;
-
-    // 根据不同地图层级计算中心点和缩放比例
-    if (MapStateManager.curLevel === MapLevel.WORLD) {
-      if (centralCountry && geoJson.type === "FeatureCollection") {
-        const feature = geoJson.features.find((item: Feature) => item.id === centralCountry);
-        const targetCoordinates = (feature?.geometry && "coordinates" in feature.geometry) ? feature.geometry.coordinates : [];
-        const { center: c, zoom: z } = getCenterAndZoomByGeometryCoordinates(targetCoordinates);
-        scale = z;
-        center = c;
-      }
-    } else if (MapStateManager.curLevel !== MapLevel.COUNTRY && geoJson.type === "FeatureCollection") {
-      const targetCoordinates = geoJson.features.map(item =>
-        ("coordinates" in item.geometry) ? item.geometry.coordinates : [],
-      );
-      const { center: c } = getCenterAndZoomByGeometryCoordinates(targetCoordinates);
-      center = c;
-    }
-
-    const isWorld = MapStateManager.curLevel === MapLevel.WORLD;
+    const { scale, center } = GeoComponent.calculateScaleAndCenter(container);
     const options = chartInstance.getOption();
     const geo = options.geo as GeoComponentOption[] | undefined;
     if (geo && geo.length > 0) {
       geo[0].map = GeoComponent.generateMapName();
       geo[0].center = center ?? geo[0].center;
-      geo[0].zoom = scale || (isWorld ? 1.3 : 1);
+      geo[0].zoom = scale;
       geo[0].itemStyle = {
         ...geo[0].itemStyle,
       };
       options.geo = geo;
       chartInstance.setOption(options, true);
+      chartInstance.resize();
+
     }
   }
 
@@ -198,10 +189,10 @@ export default class GeoComponent {
    * @returns 是否需要投影变换
    */
   public static needsProjectionTransform(): boolean {
-    const currentMapIsChina = GeoUtils.getCurrentMapIsChina();
-    if (currentMapIsChina) {
-      return false;
-    }
+    // const currentMapIsChina = EchartGeoUtils.getCurrentMapIsChina();
+    // if (currentMapIsChina) {
+    //   return false;
+    // }
 
     if (MapStateManager.curLevel === MapLevel.COUNTRY && MapStateManager.postcode === US_AD_CODE_JUST_FOR_FE) {
       return false;

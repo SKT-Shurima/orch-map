@@ -14,7 +14,7 @@ import type { PointSeriesDataItem } from "./types/node.type";
 import GeoComponentUtils from "./components/geo";
 import ScatterComponent from "./components/scatter";
 import LinesComponent from "./components/lines";
-import { getGeoJsonTitle } from "../utils/geo.helper";
+import GeoUtils from "../utils/geoUtils";
 
 // 注册必要的 ECharts 组件
 echarts.use([CanvasRenderer, GeoComponent, TooltipComponent, TitleComponent, ScatterChart, LinesChart]);
@@ -67,7 +67,6 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
 
   /** ECharts 实例 */
   private chartInstance!: echarts.ECharts;
-
 
   /** 边界数据加载状态 */
   private boundaryLoading = false;
@@ -124,7 +123,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
 
     // 创建实例
     const instance = echarts.init(this.container);
-    const title = getGeoJsonTitle(geoJson, MapStateManager.curLevel);
+    const title = GeoUtils.getGeoJsonTitle(geoJson, MapStateManager.curLevel);
     echarts.registerMap(title, geoJson as GeoJSONSourceInput);
     this.chartInstance = instance;
     const geoOption = GeoComponentUtils.defaultGeoOption;
@@ -143,6 +142,9 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
         },
       ],
     };
+    const zoom = GeoComponentUtils.calculateScaleAndCenter(this.container).scale;
+    geoOption.zoom = zoom;
+    baseOption.geo = geoOption;
     this.chartInstance?.setOption(baseOption, true);
 
 
@@ -178,7 +180,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
   }
 
   private updateGeoOption(): void {
-    GeoComponentUtils.updateGeoOption(this.chartInstance, this.centralCountry);
+    GeoComponentUtils.updateGeoOption(this.chartInstance, this.container);
   }
 
   /**

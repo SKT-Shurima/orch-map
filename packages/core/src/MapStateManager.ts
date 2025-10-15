@@ -1,5 +1,5 @@
 import MapDataService from "@orch-map/mapdata";
-import { MapLevel, GeoJSON } from "@orch-map/types";
+import { MapLevel, GeoJSON, BaseMapPoint, BaseMapLine } from "@orch-map/types";
 
 /**
  * 特定属性变化监听器
@@ -34,6 +34,10 @@ export default class MapStateManager {
   private static _extraSvgIcons: Record<string, string> = {};
   /** ECharts 图标库（转换后的 symbol 格式，供 ECharts 使用） */
   private static _echartsSymbols: Record<string, string> = {};
+  /** 所有原始点位数据（用于层级切换时过滤） */
+  private static _allPoints: BaseMapPoint[] = [];
+  /** 所有原始线条数据（用于层级切换时过滤） */
+  private static _allLines: BaseMapLine[] = [];
 
   // 属性监听器
   private static propertyListeners: Map<string, PropertyChangeListener[]> = new Map();
@@ -139,6 +143,24 @@ export default class MapStateManager {
     MapStateManager._echartsSymbols = symbols;
   }
 
+  // 静态 getter/setter - allPoints
+  public static get allPoints(): BaseMapPoint[] {
+    return MapStateManager._allPoints;
+  }
+
+  public static set allPoints(points: BaseMapPoint[]) {
+    MapStateManager._allPoints = points;
+  }
+
+  // 静态 getter/setter - allLines
+  public static get allLines(): BaseMapLine[] {
+    return MapStateManager._allLines;
+  }
+
+  public static set allLines(lines: BaseMapLine[]) {
+    MapStateManager._allLines = lines;
+  }
+
   /**
    * 重置到默认状态
    */
@@ -147,6 +169,8 @@ export default class MapStateManager {
     MapStateManager._country = "100000";
     MapStateManager._postcode = "100000";
     MapStateManager._geoData = {} as GeoJSON;
+    MapStateManager._allPoints = [];
+    MapStateManager._allLines = [];
   }
 
   /**
