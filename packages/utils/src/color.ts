@@ -75,3 +75,13 @@ export function convertToColorCode(colorArray: number[] | string) {
   }
 }
 
+
+/**
+ * 将十六进制颜色字符串（如 #RRGGBB 或 #RRGGBBAA）转换为 RGBA 数组
+ * @param {string} hex - 十六进制颜色字符串，例如 "#FFAABB" 或 "#FFAABBCC"
+ * @returns {[number, number, number, number]} RGBA 数组，格式为 [r, g, b, a]，a 不存在时默认为 255
+ */
+export function hexToRgba(hex: string): [number, number, number, number] {
+  const [r, g, b, a] = hex.match(/\w\w/g)?.map(c => parseInt(c, 16)) ?? [0, 0, 0, 255];
+  return [r, g, b, a ?? 255];
+}

@@ -131,8 +131,6 @@ declare class DeckglMap {
     private deckInstance;
     /** 图层存储：layerId -> layer 实例 */
     private layerMap;
-    /** 动画计时器任务句柄 */
-    private animationTimer;
     /** 折线数据源 */
     private lines;
     /** 点数据源 */
@@ -143,74 +141,111 @@ declare class DeckglMap {
     private hoveredPointId;
     /** 2D/3D 模式 */
     private mode;
+    /** 动画计时器任务句柄 */
+    private animationTimer;
     /**
      * 构造函数
+     * @param container - 容器元素
+     * @param mode - 地图模式（2D/3D）
+     * @param callback - 初始化完成回调函数
      */
     constructor(container: HTMLCanvasElement, mode: "2d" | "3d", callback: () => void);
     /**
+     * 初始化地图
+     * @param container - 容器元素
+     * @param callback - 初始化完成回调函数
+     */
+    private initializeMap;
+    /**
+     * 初始化 Deck 实例与图标图集
+     * @param canvas - Canvas 元素
+     * @param callback - 初始化完成回调函数
+     */
+    private initDeck;
+    /**
+     * 初始化默认图层
+     */
+    private initializeDefaultLayers;
+    /**
+     * 销毁内部资源
+     */
+    destroy(): void;
+    /**
+     * 创建 Canvas 元素
+     * @param container - 容器元素
+     * @returns Canvas 元素
+     */
+    private createCanvas;
+    /**
      * 创建并初始化 Deck 实例
+     * @param container - Canvas 容器
+     * @param initialViewState - 初始视图状态
+     * @param props - 附加属性
      */
     private createDeckInstance;
     /**
      * 获取当前 Deck 实例
+     * @returns 当前的 Deck 实例
+     * @throws 如果实例未初始化则抛出错误
      */
     private get currentDeckInstance();
     /**
-     * 初始化 Deck 实例与图标图集
-     */
-    private initDeck;
-    /**
-     * 创建 Canvas 元素
-     */
-    private createCanvas;
-    /**
      * 新增图层（若已存在则委托为 update）
+     * @param id - 图层 ID
+     * @param layer - 图层实例
      */
     private addLayer;
     /**
      * 更新图层
+     * @param id - 图层 ID
+     * @param layerOrProps - 图层实例或图层属性
      */
     private updateLayerById;
     /**
      * 移除图层
+     * @param id - 图层 ID
      */
     private removeLayer;
     /**
      * 以固定顺序返回所有图层实例
+     * @returns 图层数组
      */
     private getLayers;
-    /**
-     * 地图空白处点击处理（取消点选中）
-     */
-    private handleClickMapView;
-    /**
-     * 设置国家/省份 GeoJSON 数据并注册基础底图图层
-     */
-    setGEOData(geojsonData: GeoJSON): Promise<void>;
-    /**
-     * 点对象点击处理
-     */
-    private handleClickPoint;
-    /**
-     * 点对象悬停处理
-     */
-    private handleHoverPoint;
-    /**
-     * 设置点数据
-     */
-    setPoints(points: BaseMapPoint[]): Promise<void>;
-    /**
-     * 设置折线数据
-     */
-    setLines(lines: BaseMapLine[]): void;
     /**
      * 将当前图层刷新到 Deck 实例
      */
     private updateLayer;
     /**
-     * 更新动画
+     * 地图空白处点击处理（取消点选中）
+     * @param info - 点击信息
+     * @param _event - 事件对象
      */
-    private updateArcAnimation;
+    private handleClickMapView;
+    /**
+     * 点对象点击处理
+     * @param info - 点击信息
+     */
+    private handleClickPoint;
+    /**
+     * 点对象悬停处理
+     * @param info - 悬停信息
+     */
+    private handleHoverPoint;
+    /**
+     * 设置国家/省份 GeoJSON 数据并注册基础底图图层
+     * @param geojsonData - GeoJSON 数据
+     */
+    setGEOData(geojsonData: GeoJSON): Promise<void>;
+    /**
+     * 设置点数据
+     * @param points - 点数据数组
+     */
+    setPoints(points: BaseMapPoint[]): Promise<void>;
+    /**
+     * 设置折线数据
+     * @param lines - 折线数据数组
+     */
+    setLines(lines: BaseMapLine[]): void;
     /**
      * 更新图标和文本图层
      */
@@ -220,9 +255,9 @@ declare class DeckglMap {
      */
     private startArcAnimation;
     /**
-     * 销毁内部资源
+     * 更新动画
      */
-    destroy(): void;
+    private updateArcAnimation;
 }
 
 /**

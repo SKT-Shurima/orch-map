@@ -11,7 +11,6 @@ import { type BaseMapPoint } from "@orch-map/types";
 import { IconLayer as DeckIconLayer } from "@deck.gl/layers";
 import IconAtlas from "../utils/iconAtlas";
 import MapStateManager from "../../MapStateManager";
-import { TextLayer } from "./textLayer";
 
 /**
  * 图标点数据结构
@@ -22,12 +21,6 @@ export type IconPoint = BaseMapPoint & {
   size: number
   color: [number, number, number, number]
 }
-
-/**
- * 图层更新回调函数类型
- */
-export type LayerUpdateCallback = (layerId: string, layer: any) => void;
-export type LayerRemoveCallback = (layerId: string) => void;
 
 /**
  * 图标图层配置
@@ -116,66 +109,30 @@ export class IconLayer {
   }
 
   /**
-   * 更新图标和文本图层
+   * 创建图标图层（纯静态方法，不负责渲染）
    * @param points 业务点数据数组
    * @param config 图层配置
-   * @param updateCallback 图层更新回调函数
+   * @returns 图标图层实例或 null（如果图标图集构建失败）
    */
-  public static async updateLayers(
+  public static async create(
     points: BaseMapPoint[],
     config: IconLayerConfig = {},
-    updateCallback: LayerUpdateCallback,
-  ): Promise<void> {
+  ): Promise<DeckIconLayer<IconPoint> | null> {
     // 转换数据
-    const iconData = this.transformToIconData(
+    const iconData = IconLayer.transformToIconData(
       points as Array<BaseMapPoint & { icon?: string; color?: [number, number, number, number] }>,
     );
 
     // 创建图标图层
-    const iconLayer = await this.createIconLayer(iconData, config);
-    if (iconLayer) {
-      updateCallback("point-layer", iconLayer);
-    }
-
-    // 同时更新文本图层
-    TextLayer.updateLayer(points, {
-      selectedPointId: config.selectedPointId,
-      hoveredPointId: config.hoveredPointId,
-    }, updateCallback);
+    return await this.createIconLayer(iconData, config);
   }
 
   /**
-   * 仅更新文本图层（用于悬停状态变化等场景）
-   * @param points 业务点数据数组
-   * @param config 图层配置
-   * @param updateCallback 图层更新回调函数
+   * 获取图标图层的标识符
+   * @returns 图层ID
    */
-  public static updateTextLayer(
-    points: BaseMapPoint[],
-    config: IconLayerConfig = {},
-    updateCallback: LayerUpdateCallback,
-  ): void {
-    TextLayer.updateLayer(points, {
-      selectedPointId: config.selectedPointId,
-      hoveredPointId: config.hoveredPointId,
-    }, updateCallback);
-  }
-
-  /**
-   * 清理所有图标图层
-   * @param removeCallback 图层移除回调函数
-   */
-  public static clearLayer(removeCallback: LayerRemoveCallback): void {
-    removeCallback("point-layer");
-  }
-
-  /**
-   * 清理图标和文本图层
-   * @param removeCallback 图层移除回调函数
-   */
-  public static clearLayers(removeCallback: LayerRemoveCallback): void {
-    this.clearLayer(removeCallback);
-    TextLayer.clearLayer(removeCallback);
+  public static getLayerId(): string {
+    return "point-layer";
   }
 }
 

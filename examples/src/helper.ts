@@ -40,7 +40,7 @@ export const computePointStyle = (
       labelHoverShow = false;
     }
   } else {
-    labelName = point.name as string;
+    labelName = point.name;
   }
   return {
     labelShow,

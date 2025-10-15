@@ -14,13 +14,9 @@ export {
   IconLayer,
   type IconLayerConfig,
   type IconPoint,
-  type LayerUpdateCallback as IconLayerUpdateCallback,
-  type LayerRemoveCallback as IconLayerRemoveCallback,
 } from "./iconLayer";
 export {
   TextLayer,
   type TextLayerConfig,
   type TextPoint,
-  type LayerUpdateCallback as TextLayerUpdateCallback,
-  type LayerRemoveCallback as TextLayerRemoveCallback,
 } from "./textLayer";

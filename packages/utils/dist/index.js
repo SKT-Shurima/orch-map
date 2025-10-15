@@ -34,6 +34,7 @@ __export(index_exports, {
   easing: () => easing,
   findFirstKeyByValue: () => findFirstKeyByValue,
   generateId: () => generateId,
+  hexToRgba: () => hexToRgba,
   isDef: () => isDef,
   isEmptyArray: () => isEmptyArray,
   isUndef: () => isUndef,
@@ -964,6 +965,10 @@ function convertToColorCode(colorArray) {
     throw new Error("\u6570\u7EC4\u957F\u5EA6\u5FC5\u987B\u662F3\uFF08RGB\uFF09\u62164\uFF08RGBA\uFF09");
   }
 }
+function hexToRgba(hex) {
+  const [r, g, b, a] = hex.match(/\w\w/g)?.map((c) => parseInt(c, 16)) ?? [0, 0, 0, 255];
+  return [r, g, b, a ?? 255];
+}
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
   Animation,
@@ -980,6 +985,7 @@ function convertToColorCode(colorArray) {
   easing,
   findFirstKeyByValue,
   generateId,
+  hexToRgba,
   isDef,
   isEmptyArray,
   isUndef,

@@ -7,7 +7,6 @@
  * - 集中管理时间进度、尾迹长度等动画参数。
  */
 import { type BaseMapLine } from "@orch-map/types";
-import { CurvatureCalculator } from "../../utils/curvatureCalculator";
 import { LineRenderer2D } from "./lines/line2d";
 import { LineRenderer3D } from "./lines/line3d";
 
@@ -37,9 +36,6 @@ export interface LineAnimationConfig {
  * 线图层管理器（静态工具类）
  */
 export class LineLayer {
-  /** 曲率计算器实例（用于 2D 模式） */
-  private static curvatureCalculator: CurvatureCalculator = new CurvatureCalculator();
-
   /** 当前动画时间（单位：秒的逻辑刻度） */
   private static currentTime = 0;
 
@@ -51,20 +47,6 @@ export class LineLayer {
     lineOffset: 300,
     lineDuration: 1000,
   };
-
-  /**
-   * 获取当前曲率计算器实例
-   */
-  public static getCurvatureCalculator(): CurvatureCalculator {
-    return this.curvatureCalculator;
-  }
-
-  /**
-   * 重置曲率计算器（用于清理缓存）
-   */
-  public static resetCurvatureCalculator(): void {
-    this.curvatureCalculator = new CurvatureCalculator();
-  }
 
   /**
    * 获取当前动画时间
@@ -101,12 +83,12 @@ export class LineLayer {
     const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
 
     // 构建常驻曲线图层
-    const baseLayer = LineRenderer2D.buildFullCurveLayer(this.curvatureCalculator, lines);
+    const baseLayer = LineRenderer2D.buildFullCurveLayer(lines);
     updateCallback("line-layer", baseLayer);
 
     // 计算当前进度并构建移动尾迹图层
     const progress = this.currentTime / mergedConfig.timeLoop;
-    const dotsLayer = LineRenderer2D.buildMovingDotsLayer(this.curvatureCalculator, lines, progress);
+    const dotsLayer = LineRenderer2D.buildMovingDotsLayer(lines, progress);
     updateCallback("line-trail-layer", dotsLayer);
   }
 
@@ -151,9 +133,9 @@ export class LineLayer {
     updateCallback: LayerUpdateCallback,
   ): void {
     if (mode === "3d") {
-      this.update3DLayers(lines, config, updateCallback);
+      LineLayer.update3DLayers(lines, config, updateCallback);
     } else {
-      this.update2DLayers(lines, config, updateCallback);
+      LineLayer.update2DLayers(lines, config, updateCallback);
     }
   }
 
@@ -173,10 +155,10 @@ export class LineLayer {
     const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
 
     // 推进时间
-    this.currentTime = (this.currentTime + mergedConfig.animationSpeed) % mergedConfig.timeLoop;
+    LineLayer.currentTime = (LineLayer.currentTime + mergedConfig.animationSpeed) % mergedConfig.timeLoop;
 
     // 更新图层
-    this.updateLayers(mode, lines, config, updateCallback);
+    LineLayer.updateLayers(mode, lines, config, updateCallback);
   }
 
   /**

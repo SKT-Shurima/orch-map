@@ -9,7 +9,7 @@
  * - 支持 buddy 双向连线：为每条线生成镜像线（起终点互换），实现双向流动效果。
  */
 import type { BaseMapLine } from "@orch-map/types";
-import type { CurvatureCalculator } from "../../../utils/curvatureCalculator";
+import { CurvatureCalculator } from "../../../utils/curvatureCalculator";
 import { PathLayer, ScatterplotLayer } from "@deck.gl/layers";
 
 // 默认连接线颜色（回退）
@@ -85,22 +85,39 @@ export function buildQuadraticBezierPath(
  * 说明：封装 2D 曲线渲染与尾迹渲染逻辑，供地图主类组合使用。
  */
 export class LineRenderer2D {
+  /** 曲率计算器实例（用于 2D 模式） */
+  private static curvatureCalculator: CurvatureCalculator = new CurvatureCalculator();
+
+  /**
+   * 获取当前曲率计算器实例
+   */
+  public static getCurvatureCalculator(): CurvatureCalculator {
+    return this.curvatureCalculator;
+  }
+
+  /**
+   * 重置曲率计算器（用于清理缓存）
+   */
+  public static resetCurvatureCalculator(): void {
+    this.curvatureCalculator = new CurvatureCalculator();
+  }
+
   /**
    * 创建常驻曲线图层（PathLayer）
    * 实现 buddy 双向连线：为每条线生成原始线（起点→终点）和 buddy 镜像线（终点→起点）
-   * @param curvatureCalculator 曲率计算器实例
    * @param lines 业务线数据数组；每条线包含起终点经纬度
    * @returns PathLayer 实例（包含所有曲线及其 buddy 线，禁用拾取）
    */
-  public static buildFullCurveLayer(curvatureCalculator: CurvatureCalculator, lines: BaseMapLine[]) {
+  public static buildFullCurveLayer(lines: BaseMapLine[]) {
     const fullData: FullPath[] = [];
 
     // 为每条线生成原始线和 buddy 镜像线
     lines.forEach(line => {
-      const curvature = curvatureCalculator.calculateCurvatureByCoordinates(
+      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
         line.endCoordinate,
+        { min: 0.5, max: 1 },
       );
       const color = (line.color ?? DEFAULT_LINE_RGBA) as [number, number, number, number];
 
@@ -118,7 +135,7 @@ export class LineRenderer2D {
       data: fullData,
       pickable: false,
       widthScale: 1,
-      widthMinPixels: 0.3,
+      widthMinPixels: 0.5,
       getPath: (d: FullPath) => d.path,
       getColor: (d: FullPath) => d.color,
       getWidth: (d: FullPath) => d.width,
@@ -131,7 +148,6 @@ export class LineRenderer2D {
   /**
    * 创建同步移动的多圆点尾迹图层（ScatterplotLayer）
    * 实现 buddy 双向连线：为每条线生成原始尾迹和 buddy 镜像尾迹，实现双向流动效果
-   * @param curvatureCalculator 曲率计算器实例
    * @param lines 业务线数据数组；每条线包含起终点经纬度
    * @param progress 动画归一化进度 [0, 1)；所有线条共享进度，实现同步动画
    * @param options 尾迹外观参数（可选）
@@ -152,7 +168,6 @@ export class LineRenderer2D {
    * @returns ScatterplotLayer 实例（尾迹小圆点）
    */
   public static buildMovingDotsLayer(
-    curvatureCalculator: CurvatureCalculator,
     lines: BaseMapLine[],
     progress: number,
     options?: {
@@ -175,7 +190,7 @@ export class LineRenderer2D {
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const curvature = curvatureCalculator.calculateCurvatureByCoordinates(
+      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
         line.endCoordinate,

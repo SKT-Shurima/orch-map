@@ -8,22 +8,14 @@
  */
 import { type BaseMapPoint } from "@orch-map/types";
 import { TextLayer as DeckTextLayer } from "@deck.gl/layers";
-
-/**
- * 图层更新回调函数类型
- */
-export type LayerUpdateCallback = (layerId: string, layer: any) => void;
-export type LayerRemoveCallback = (layerId: string) => void;
+import { hexToRgba } from "@orch-map/utils";
+import { POINT_DEFAULT_STYLE } from "../../constants";
 
 /**
  * 文本标签数据结构
  */
 export type TextPoint = BaseMapPoint & {
   position: [number, number, number]
-  text: string
-  size: number
-  color: [number, number, number, number]
-  anchorY: "top" | "center" | "bottom"
 }
 
 /**
@@ -70,19 +62,11 @@ export class TextLayer {
         return false;
       })
       .map(point => {
-        // 使用 label.formatter 或默认显示 name
-        const text = point.label?.formatter
-          ? point.label.formatter({ data: point })
-          : point.name || "";
-
         return {
           ...point,
           // 抬升高度，显示在图标上方，避免遮挡
-          position: [point.coordinate[0], point.coordinate[1], 60] as [number, number, number],
-          text,
-          size: 12, // 默认字体大小
-          color: [255, 255, 255, 255] as [number, number, number, number], // 默认白色
-          anchorY: "top" as const, // 文本位于点下方
+          position: [point.coordinate[0], point.coordinate[1], 120] as [number, number, number],
+          size: point.size ?? 16,
         };
       });
   }
@@ -93,49 +77,56 @@ export class TextLayer {
    * @returns TextLayer 实例
    */
   public static createLayer(textData: TextPoint[]): DeckTextLayer<TextPoint> {
+    const color = hexToRgba(POINT_DEFAULT_STYLE.color);
     return new DeckTextLayer<TextPoint>({
       id: "label-layer",
       data: textData,
+      characterSet: "auto",
+      fontSettings: {
+        buffer: 8,
+      },
       getPosition: (d) => d.position,
-      getText: (d) => d.text,
-      getSize: (d) => d.size,
-      getColor: (d) => d.color,
+      getText: (d) => d.name,
+      getSize: (d) => d.size ? d.size / 1.5 : 8,
+      getColor: () => color,
+      maxWidth: 64 * 12,
       getAngle: 0,
       getTextAnchor: "middle",
-      getAlignmentBaseline: (d) => d.anchorY,
-      // 文本样式配置
-      fontFamily: "Arial, sans-serif",
-      fontWeight: "normal",
-      outlineWidth: 2,
-      outlineColor: [0, 0, 0, 255],
+      getAlignmentBaseline: () => "bottom",
       pickable: false, // 标签不可交互
       // 确保文本始终朝上
       billboard: true,
+      // 确保文本在最顶层
+      modelMatrix: null,
     });
   }
 
   /**
-   * 更新文本图层
+   * 创建文本图层（纯静态方法，不负责渲染）
    * @param points 业务点数据数组
    * @param config 图层配置
-   * @param updateCallback 图层更新回调函数
+   * @returns TextLayer 实例
    */
-  public static updateLayer(
+  public static create(
     points: BaseMapPoint[],
     config: TextLayerConfig = {},
-    updateCallback: LayerUpdateCallback,
-  ): void {
+  ): DeckTextLayer<TextPoint> {
     const textData = this.transformToTextData(points, config);
-    const textLayer = this.createLayer(textData);
-    updateCallback("label-layer", textLayer);
+    // eslint-disable-next-line no-console
+    console.log("[TextLayer] create called:", {
+      pointsCount: points.length,
+      textDataCount: textData.length,
+      sampleTextData: textData.slice(0, 3),
+    });
+    return this.createLayer(textData);
   }
 
   /**
-   * 清理文本图层
-   * @param removeCallback 图层移除回调函数
+   * 获取文本图层的标识符
+   * @returns 图层ID
    */
-  public static clearLayer(removeCallback: LayerRemoveCallback): void {
-    removeCallback("label-layer");
+  public static getLayerId(): string {
+    return "label-layer";
   }
 }
 
