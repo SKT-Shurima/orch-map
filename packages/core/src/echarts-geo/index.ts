@@ -194,7 +194,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
     GeoComponentUtils.registerMap(geojson);
     this.updateGeoOption();
 
-    if (!boundary || boundary.type !== "FeatureCollection" || !boundary.features || !Array.isArray(boundary.features) ) {
+    if (boundary?.type !== "FeatureCollection" || !Array.isArray(boundary?.features)) {
       this.boundaryLoading = false;
       return;
     }

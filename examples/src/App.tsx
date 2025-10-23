@@ -30,7 +30,7 @@ export default defineComponent({
         mapInstance = new OrchMap({
           renderType: MapRendererType.DECKGL,
           mapVersion: "standard",
-          mode: "2d",
+          mode: "3d",
           container: geoContainer.value,
           curLevel: MapLevel.WORLD,
           country: "",

@@ -54,6 +54,7 @@ module.exports = [
         Image: 'readonly',
         Blob: 'readonly',
         URL: 'readonly',
+        structuredClone: 'readonly',
       },
     },
     plugins: {

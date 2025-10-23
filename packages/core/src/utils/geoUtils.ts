@@ -349,7 +349,7 @@ export default class GeoUtils {
    * @returns 是否在区域内
    */
   public static isPointInGeoJSON(lng: number, lat: number, geoData: GeoJSON): boolean {
-    if (!geoData || geoData.type !== "FeatureCollection" || !geoData.features) {
+    if (geoData?.type !== "FeatureCollection" || !geoData?.features) {
       return false;
     }
 
@@ -400,7 +400,7 @@ export default class GeoUtils {
       return [];
     }
 
-    if (!geoData || geoData.type !== "FeatureCollection") {
+    if (geoData?.type !== "FeatureCollection") {
       return points;
     }
 

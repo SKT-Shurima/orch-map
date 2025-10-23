@@ -2,18 +2,14 @@
  * 模块：DeckGL 主模块
  * 说明：DeckGL 地图主类，整合了实例管理、图层管理和业务逻辑
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-import { AnimatedArcLayer, GeoJsonLayer } from "@deck.gl/layers";
 import { Deck, MapView, MapViewState, ViewStateChangeParameters, FlyToInterpolator } from "@deck.gl/core";
 import type { MjolnirGestureEvent } from "mjolnir.js";
-import { Feature, GeoJSON } from "geojson";
-import { DEFAULT_GEO_FILL_COLOR, DEFAULT_GEO_LAYER_PROPS } from "./layers/geoLayer";
-import { isDef, TaskManager, type TimerTask } from "@orch-map/utils";
-import { type BaseMapPoint, type BaseMapLine, MapLevel } from "@orch-map/types";
-import MapStateManager from "../MapStateManager";
-import { LineLayer, IconLayer, TextLayer } from "./layers";
+import { GeoJSON } from "geojson";
+import { type BaseMapPoint, type BaseMapLine } from "@orch-map/types";
+import { Line2DManager, Line3DManager, IconLayer, TextLayer } from "./layers";
 import type { MapRendererEvents } from "../interfaces/IMapRenderer";
-import GeoUtils from "../utils/geoUtils";
+import GeoLayer from "./layers/geoLayer";
+import type { PointState, LayerUpdateCallback } from "./layers/iconLayer";
 
 // 类型定义
 type LayerLike = any;
@@ -57,11 +53,11 @@ export default class DeckglMap {
 
   //===== 状态管理 =====
 
-  /** 选中点 ID */
-  private selectedPointId: string | null = null;
-
-  /** 当前悬停的点 ID */
-  private hoveredPointId: string | null = null;
+  /** 点状态管理 */
+  private pointState: PointState = {
+    selectedPointId: null,
+    hoveredPointId: null,
+  };
 
   /** 2D/3D 模式 */
   private mode: "2d" | "3d" = "2d";
@@ -81,8 +77,8 @@ export default class DeckglMap {
 
   //===== 动画控制 =====
 
-  /** 动画计时器任务句柄 */
-  private animationTimer: TimerTask | null = null;
+  /** 当前动画时间（单位：秒的逻辑刻度） */
+  private currentTime = 0;
 
   //===== 生命周期管理 =====
 
@@ -121,12 +117,9 @@ export default class DeckglMap {
    * @param callback - 初始化完成回调函数
    */
   private async initDeck(canvas: HTMLCanvasElement, callback: () => void) {
-    // const minZoom = GeoUtils.calculateMinZoom((canvas.parentNode as HTMLElement).clientWidth);
-    // const zoom = EchartGeoUtils.getCenterAndZoom(MapStateManager.geoData, { containerWidth: canvas.clientWidth, containerHeight: canvas.clientHeight });
     await this.createDeckInstance(
       canvas,
       {
-        // zoom: Math.max(0, Math.min(20, minZoom)),
         zoom: 1,
         latitude: 30,
         longitude: 0,
@@ -155,9 +148,29 @@ export default class DeckglMap {
    * 初始化默认图层
    */
   private initializeDefaultLayers(): void {
-    if (MapStateManager.geoData) {
-      void this.setGEOData(MapStateManager.geoData);
+    if (GeoLayer.shouldInitializeDefaultLayers()) {
+      const geoData = GeoLayer.getDefaultGeoData();
+      if (geoData) {
+        void this.setGEOData(geoData);
+      }
     }
+  }
+
+  private get lineLayerManager() {
+    return this.mode === "2d" ? Line2DManager : Line3DManager;
+  }
+
+  /**
+   * 图层更新回调方法
+   */
+  private get layerUpdateCallback(): LayerUpdateCallback {
+    return (layerId?: string, layer?: any) => {
+      if (layerId && layer) {
+        this.updateLayerById(layerId, layer);
+      } else {
+        this.updateLayer();
+      }
+    };
   }
 
   /**
@@ -170,11 +183,8 @@ export default class DeckglMap {
       this.clickTimer = null;
     }
 
-    // 清理动画定时器
-    if (this.animationTimer) {
-      this.animationTimer.destroy();
-      this.animationTimer = null;
-    }
+    // 停止动画
+    this.stopArcAnimation();
 
     // 销毁 Deck 实例
     if (this.deckInstance) {
@@ -184,8 +194,6 @@ export default class DeckglMap {
 
     // 清理图层
     this.layerMap.clear();
-    LineLayer.clearLayers(this.removeLayer.bind(this));
-    LineLayer.resetTime();
     this.removeLayer(IconLayer.getLayerId());
     this.removeLayer(TextLayer.getLayerId());
   }
@@ -359,7 +367,15 @@ export default class DeckglMap {
    * @returns 图层数组
    */
   private getLayers(): (LayerLike | undefined)[] {
-    const layerIds = ["geojson-layer", "point-layer", "line-layer", "line-trail-layer", "label-layer"];
+    const layerIds = [
+      GeoLayer.getLayerId(),
+      IconLayer.getLayerId(),
+      "line-layer",
+      "line-trail-layer",
+      "arc-base-layer",
+      "arc-trail-layer",
+      TextLayer.getLayerId(),
+    ];
     const layers = layerIds.map(id => this.layerMap.get(id));
     return layers;
   }
@@ -390,16 +406,17 @@ export default class DeckglMap {
       return;
     }
 
-    const pick = info as { object?: { id?: string }; layer?: { id?: string } } | null;
-    if (!pick?.object || pick.layer?.id !== "point-layer") {
+    if (!IconLayer.isPointLayerClick(info)) {
       // 延迟处理单击，给双击事件留出时间
       if (this.clickTimer) {
         clearTimeout(this.clickTimer);
       }
-      this.clickTimer = setTimeout(() => {
-        if (this.selectedPointId) {
-          this.selectedPointId = null;
-          void this.updateIconLayers();
+      this.clickTimer = setTimeout(async () => {
+        if (this.pointState.selectedPointId) {
+          this.pointState = await IconLayer.clearSelection(
+            { ...this.pointState, points: this.points },
+            this.layerUpdateCallback,
+          );
         }
       }, this.CLICK_DELAY);
     }
@@ -430,20 +447,9 @@ export default class DeckglMap {
       event.srcEvent.preventDefault();
     }
 
-    // eslint-disable-next-line no-console
-    console.log("双击事件触发", pick);
-
     // 如果双击的是 GeoJSON 图层（地图区域）
-    if (pick?.object && pick.layer?.id === "geojson-layer") {
+    if (pick?.object && pick.layer?.id === GeoLayer.getLayerId()) {
       const regionName = pick.object.properties?.name ?? "";
-
-      // eslint-disable-next-line no-console
-      console.log("双击地图区域信息:", {
-        区域名称: regionName,
-        区域代码: pick.object.properties?.code,
-        坐标: pick.coordinate,
-        完整数据: pick.object.properties,
-      });
 
       // 触发双击区域事件回调
       if (this.events?.onAreaDoubleClick) {
@@ -457,10 +463,11 @@ export default class DeckglMap {
    * @param info - 点击信息
    */
   private async handleClickPoint(info: unknown) {
-    const pick = info as { object?: { id?: string | null } } | null;
-    const clickedId: string | null = pick?.object?.id ?? null;
-    this.selectedPointId = clickedId;
-    await this.updateIconLayers();
+    this.pointState = await IconLayer.handleClickPoint(
+      info,
+      { ...this.pointState, points: this.points },
+      this.layerUpdateCallback,
+    );
   }
 
   /**
@@ -468,21 +475,11 @@ export default class DeckglMap {
    * @param info - 悬停信息
    */
   private async handleHoverPoint(info: unknown) {
-    const pick = info as { object?: { id?: string | null } } | null;
-    const hoveredId: string | null = pick?.object?.id ?? null;
-
-    if (this.hoveredPointId !== hoveredId) {
-      this.hoveredPointId = hoveredId;
-      const textLayer = TextLayer.create(
-        this.points,
-        {
-          selectedPointId: this.selectedPointId,
-          hoveredPointId: this.hoveredPointId,
-        },
-      );
-      this.updateLayerById(TextLayer.getLayerId(), textLayer);
-      this.updateLayer();
-    }
+    this.pointState = await IconLayer.handleHoverPoint(
+      info,
+      { ...this.pointState, points: this.points },
+      this.layerUpdateCallback,
+    );
   }
 
   //===== 数据设置与更新 =====
@@ -492,65 +489,8 @@ export default class DeckglMap {
    * @param geojsonData - GeoJSON 数据
    */
   public async setGEOData(geojsonData: GeoJSON) {
-    let hoveredFeatureName: string | null = null;
-    let lastClickTime = 0;
-    const DOUBLE_CLICK_THRESHOLD = 300; // 毫秒
-
-    const geojsonLayer = new GeoJsonLayer({
-      ...DEFAULT_GEO_LAYER_PROPS,
-      id: "geojson-layer",
-      data: geojsonData,
-      getFillColor: (feature: Feature) => {
-        if (isDef(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
-          return [255, 255, 255, 255];
-        }
-        return DEFAULT_GEO_FILL_COLOR;
-      },
-      updateTriggers: {
-        getFillColor: hoveredFeatureName,
-      },
-      onClick: (info: unknown) => {
-        const currentTime = Date.now();
-        const timeSinceLastClick = currentTime - lastClickTime;
-
-        if (timeSinceLastClick < DOUBLE_CLICK_THRESHOLD) {
-          // 这是双击
-          const pick = info as { object?: { properties?: { name?: string; code?: string } } } | null;
-          if (pick?.object) {
-            const regionName = pick.object.properties?.name ?? "";
-            // eslint-disable-next-line no-console
-            console.log("双击地图区域信息:", {
-              区域名称: regionName,
-              区域代码: pick.object.properties?.code,
-              完整数据: pick.object.properties,
-            });
-
-            // 触发双击区域事件回调
-            if (this.events?.onAreaDoubleClick) {
-              this.events.onAreaDoubleClick(regionName);
-            }
-          }
-          lastClickTime = 0; // 重置
-        } else {
-          // 这是单击
-          lastClickTime = currentTime;
-        }
-        return true;
-      },
-      onHover: (info: unknown) => {
-        const hover = info as { object?: { properties?: { name?: string } } } | null;
-        if (hoveredFeatureName !== hover?.object?.properties?.name) {
-          this.currentDeckInstance?.redraw();
-        }
-        if (hover?.object) {
-          hoveredFeatureName = hover.object.properties?.name ?? null;
-        } else {
-          hoveredFeatureName = null;
-        }
-        return true;
-      },
-    });
-    this.addLayer("geojson-layer", geojsonLayer);
+    const geojsonLayer = GeoLayer.createWithData(geojsonData, this.events);
+    this.addLayer(GeoLayer.getLayerId(), geojsonLayer);
     this.updateLayer();
 
     // 更新视图以适应新的地理数据
@@ -562,29 +502,19 @@ export default class DeckglMap {
    * @param geojsonData - GeoJSON 数据
    */
   private fitBoundsToGeoData(geojsonData: GeoJSON): void {
-
-    // // 根据地图层级计算中心点和缩放
-    const curLevel = MapStateManager.curLevel;
-
-    if (curLevel === MapLevel.WORLD) {
-      // 世界地图使用默认视图
-      const result = GeoUtils.getCenterAndZoom(geojsonData, { containerWidth: 1000, containerHeight: 800 });
-      this.updateViewState(result?.center ?? [0, 30], result?.zoom ?? 0);
-      return;
-    }
-
     // 获取容器尺寸
     const canvasElement = this.container;
     const containerWidth = canvasElement?.parentElement?.clientWidth ?? 1000;
     const containerHeight = canvasElement?.parentElement?.clientHeight ?? 800;
 
-    // 计算中心点和缩放级别
-    const result = GeoUtils.getCenterAndZoom(geojsonData, { containerWidth, containerHeight });
-    if (!result) {
-      return;
-    }
+    // 使用 GeoLayer 静态方法计算视图状态
+    const viewState = GeoLayer.calculateViewState(
+      geojsonData,
+      { width: containerWidth, height: containerHeight },
+      this.mode,
+    );
 
-    this.updateViewState(result.center ?? [0, 30], result.zoom);
+    this.updateViewState([viewState.longitude, viewState.latitude], viewState.zoom);
   }
 
   /**
@@ -615,7 +545,11 @@ export default class DeckglMap {
    */
   public async setPoints(points: BaseMapPoint[]) {
     this.points = points;
-    await this.updateIconLayers();
+    this.pointState = await IconLayer.setPoints(
+      points,
+      this.pointState,
+      this.layerUpdateCallback,
+    );
   }
 
   /**
@@ -626,75 +560,115 @@ export default class DeckglMap {
     this.lines = lines;
   }
 
-  /**
-   * 更新图标和文本图层
-   */
-  private async updateIconLayers() {
-    // eslint-disable-next-line no-console
-    console.log("[DeckglMap] updateIconLayers called, points count:", this.points.length);
-
-    // 创建图标图层
-    const iconLayer = await IconLayer.create(
-      this.points,
-      {
-        selectedPointId: this.selectedPointId,
-        hoveredPointId: this.hoveredPointId,
-        onClick: (info: unknown) => {
-          void this.handleClickPoint(info);
-        },
-        onHover: (info: unknown) => {
-          void this.handleHoverPoint(info);
-        },
-      },
-    );
-
-    // 将图层添加到渲染管理器
-    if (iconLayer) {
-      this.updateLayerById(IconLayer.getLayerId(), iconLayer);
-    }
-
-    // eslint-disable-next-line no-console
-    console.log("[DeckglMap] IconLayer updated, now updating TextLayer");
-
-    // 创建文本图层
-    const textLayer = TextLayer.create(
-      this.points,
-      {
-        selectedPointId: this.selectedPointId,
-        hoveredPointId: this.hoveredPointId,
-      },
-    );
-    this.updateLayerById(TextLayer.getLayerId(), textLayer);
-
-    // eslint-disable-next-line no-console
-    console.log("[DeckglMap] TextLayer updated, now calling updateLayer()");
-
-    this.updateLayer();
-  }
 
   //===== 动画控制 =====
 
+  // ==================== 时间管理方法 ====================
+
+  /** RAF 动画 ID */
+  private rafId: number | null = null;
+
+  /** 动画开始时间 */
+  private animationStartTime: number = 0;
+
+  /** 动画是否正在运行 */
+  private isAnimating: boolean = false;
+
   /**
-   * 启动动画定时器
+   * 获取当前动画时间
+   */
+  public getCurrentTime(): number {
+    return this.currentTime;
+  }
+
+  /**
+   * 设置当前动画时间
+   */
+  public setCurrentTime(time: number): void {
+    this.currentTime = time;
+  }
+
+  /**
+   * 重置动画时间
+   */
+  public resetTime(): void {
+    this.currentTime = 0;
+  }
+
+  /**
+   * 启动动画定时器（使用 requestAnimationFrame）
    */
   private startArcAnimation() {
-    if (this.animationTimer) {
-      this.animationTimer.destroy();
-      this.animationTimer = null;
+    if (this.isAnimating) {
+      this.stopArcAnimation();
     }
-    this.animationTimer = new TaskManager.Timer({
-      description: "glmap-arc-animation",
-      time: 10,
-      once: false,
-      fn: this.updateArcAnimation.bind(this),
-    });
+
+    this.isAnimating = true;
+    this.animationStartTime = Date.now();
+    this.animate();
   }
+
+  /**
+   * 停止动画
+   */
+  private stopArcAnimation() {
+    this.isAnimating = false;
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+  }
+
+  /**
+   * RAF 动画循环
+   */
+  private animate = () => {
+    if (!this.isAnimating) {
+      return;
+    }
+
+    const currentTime = Date.now();
+    const deltaTime = currentTime - this.animationStartTime;
+
+    // 根据模式设置不同的动画速度
+    // 原实现：每10ms推进60单位，即每毫秒推进6单位
+    // 原实现：每10ms推进1.0单位，即每毫秒推进0.1单位
+    const animationSpeed = this.mode === "2d" ? 12 : 0.1; // 每毫秒的时间单位
+    const timeLoop = 6 * 60 * 60; // 时间循环周期
+
+    // 计算新的动画时间
+    const newTime = (deltaTime * animationSpeed) % timeLoop;
+    this.setCurrentTime(newTime);
+
+    // 更新图层
+    this.updateArcAnimation();
+
+    // 继续下一帧
+    this.rafId = requestAnimationFrame(this.animate);
+  };
 
   /**
    * 更新动画
    */
   private updateArcAnimation() {
-    LineLayer.advanceAnimation(this.mode, this.lines, {}, this.updateLayerById.bind(this));
+    const currentTime = this.getCurrentTime();
+
+    if (this.mode === "2d") {
+      // 使用 createLayers 创建图层
+      const layers = Line2DManager.createLayers(this.lines, {}, currentTime);
+
+      // 更新图层
+      this.updateLayerById("line-layer", layers[0]);
+      this.updateLayerById("line-trail-layer", layers[1]);
+    } else {
+      // 使用 createLayers 创建图层
+      const [baseLayer, trailLayer] = Line3DManager.createLayers(this.lines, {}, currentTime);
+
+      // 更新图层
+      this.updateLayerById("arc-base-layer", baseLayer);
+      this.updateLayerById("arc-trail-layer", trailLayer);
+    }
+
     this.updateLayer();
   }
 }

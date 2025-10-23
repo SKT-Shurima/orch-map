@@ -1,16 +1,18 @@
 /**
  * 模块：图标图层管理器
- * 说明：统一管理图标图层的创建与更新逻辑
+ * 说明：统一管理图标图层的创建与更新逻辑，包括点数据管理和事件处理
  * 设计要点：
  * - 提供静态方法，避免实例化；
  * - 封装 IconLayer 的构建逻辑；
  * - 处理图标图集的动态构建；
- * - 支持点的选中和悬停状态。
+ * - 支持点的选中和悬停状态；
+ * - 提供点数据管理和事件处理的完整解决方案。
  */
 import { type BaseMapPoint } from "@orch-map/types";
 import { IconLayer as DeckIconLayer } from "@deck.gl/layers";
 import IconAtlas from "./iconAtlas";
 import MapStateManager from "../../MapStateManager";
+import { TextLayer } from "./textLayer";
 
 /**
  * 图标点数据结构
@@ -36,6 +38,28 @@ export interface IconLayerConfig {
   onClick?: (info: unknown) => void;
   /** 悬停回调 */
   onHover?: (info: unknown) => void;
+}
+
+/**
+ * 点状态管理接口
+ */
+export interface PointState {
+  /** 选中点的 ID */
+  selectedPointId: string | null;
+  /** 悬停点的 ID */
+  hoveredPointId: string | null;
+  /** 点数据数组（可选） */
+  points?: BaseMapPoint[];
+}
+
+/**
+ * 图层更新回调接口
+ */
+export interface LayerUpdateCallback {
+  /** 更新图层的方法 */
+  (layerId: string, layer: unknown): void;
+  /** 更新所有图层的方法 */
+  (): void;
 }
 
 /**
@@ -133,6 +157,187 @@ export class IconLayer {
    */
   public static getLayerId(): string {
     return "point-layer";
+  }
+
+  /**
+   * 处理点对象点击事件
+   * @param info - 点击信息
+   * @param currentState - 当前点状态
+   * @param updateCallback - 图层更新回调
+   * @returns 更新后的点状态
+   */
+  public static async handleClickPoint(
+    info: unknown,
+    currentState: PointState,
+    updateCallback: LayerUpdateCallback,
+  ): Promise<PointState> {
+    const pick = info as { object?: { id?: string | null } } | null;
+    const clickedId: string | null = pick?.object?.id ?? null;
+
+    const newState = {
+      ...currentState,
+      selectedPointId: clickedId,
+    };
+
+    await IconLayer.updateIconLayers(
+      currentState.points ?? [],
+      newState,
+      updateCallback,
+    );
+
+    return newState;
+  }
+
+  /**
+   * 处理点对象悬停事件
+   * @param info - 悬停信息
+   * @param currentState - 当前点状态
+   * @param updateCallback - 图层更新回调
+   * @returns 更新后的点状态
+   */
+  public static async handleHoverPoint(
+    info: unknown,
+    currentState: PointState,
+    updateCallback: LayerUpdateCallback,
+  ): Promise<PointState> {
+    const pick = info as { object?: { id?: string | null } } | null;
+    const hoveredId: string | null = pick?.object?.id ?? null;
+
+    if (currentState.hoveredPointId !== hoveredId) {
+      const newState = {
+        ...currentState,
+        hoveredPointId: hoveredId,
+      };
+
+      // 更新文本图层
+      const textLayer = TextLayer.create(
+        currentState.points ?? [],
+        {
+          selectedPointId: newState.selectedPointId,
+          hoveredPointId: newState.hoveredPointId,
+        },
+      );
+      updateCallback(TextLayer.getLayerId(), textLayer);
+      updateCallback();
+
+      return newState;
+    }
+
+    return currentState;
+  }
+
+  /**
+   * 更新图标和文本图层
+   * @param points - 点数据数组
+   * @param state - 点状态
+   * @param updateCallback - 图层更新回调
+   */
+  public static async updateIconLayers(
+    points: BaseMapPoint[],
+    state: PointState & { points?: BaseMapPoint[] },
+    updateCallback: LayerUpdateCallback,
+  ): Promise<void> {
+    // eslint-disable-next-line no-console
+    console.log("[IconLayer] updateIconLayers called, points count:", points.length);
+
+    // 创建图标图层
+    const iconLayer = await IconLayer.create(
+      points,
+      {
+        selectedPointId: state.selectedPointId,
+        hoveredPointId: state.hoveredPointId,
+        onClick: (_info: unknown) => {
+          // 这里需要外部提供点击处理逻辑
+          // 因为静态方法无法直接访问实例状态
+        },
+        onHover: (_info: unknown) => {
+          // 这里需要外部提供悬停处理逻辑
+          // 因为静态方法无法直接访问实例状态
+        },
+      },
+    );
+
+    // 将图层添加到渲染管理器
+    if (iconLayer) {
+      updateCallback(IconLayer.getLayerId(), iconLayer);
+    }
+
+    // eslint-disable-next-line no-console
+    console.log("[IconLayer] IconLayer updated, now updating TextLayer");
+
+    // 创建文本图层
+    const textLayer = TextLayer.create(
+      points,
+      {
+        selectedPointId: state.selectedPointId,
+        hoveredPointId: state.hoveredPointId,
+      },
+    );
+    updateCallback(TextLayer.getLayerId(), textLayer);
+
+    // eslint-disable-next-line no-console
+    console.log("[IconLayer] TextLayer updated, now calling updateLayer()");
+
+    updateCallback();
+  }
+
+  /**
+   * 设置点数据并更新图层
+   * @param points - 点数据数组
+   * @param state - 当前点状态
+   * @param updateCallback - 图层更新回调
+   * @returns 更新后的点状态
+   */
+  public static async setPoints(
+    points: BaseMapPoint[],
+    state: PointState,
+    updateCallback: LayerUpdateCallback,
+  ): Promise<PointState> {
+    const newState = {
+      ...state,
+      points,
+    };
+
+    await IconLayer.updateIconLayers(points, newState, updateCallback);
+    return newState;
+  }
+
+  /**
+   * 检查点击是否在点图层上
+   * @param info - 点击信息
+   * @returns 是否在点图层上
+   */
+  public static isPointLayerClick(info: unknown): boolean {
+    const pick = info as { object?: { id?: string }; layer?: { id?: string } } | null;
+    return !!(pick?.object && pick.layer?.id === IconLayer.getLayerId());
+  }
+
+  /**
+   * 清除选中状态
+   * @param currentState - 当前点状态
+   * @param updateCallback - 图层更新回调
+   * @returns 更新后的点状态
+   */
+  public static async clearSelection(
+    currentState: PointState,
+    updateCallback: LayerUpdateCallback,
+  ): Promise<PointState> {
+    if (currentState.selectedPointId) {
+      const newState = {
+        ...currentState,
+        selectedPointId: null,
+      };
+
+      await IconLayer.updateIconLayers(
+        currentState.points ?? [],
+        newState,
+        updateCallback,
+      );
+
+      return newState;
+    }
+
+    return currentState;
   }
 }
 

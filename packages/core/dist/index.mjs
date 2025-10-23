@@ -5,40 +5,16 @@ var MapRendererType = /* @__PURE__ */ ((MapRendererType2) => {
   return MapRendererType2;
 })(MapRendererType || {});
 
+// src/main.ts
+import { MapLevel as MapLevel7 } from "@orch-map/types";
+
 // src/deckgl/main.ts
-import { GeoJsonLayer as GeoJsonLayer2 } from "@deck.gl/layers";
 import { Deck, MapView, FlyToInterpolator } from "@deck.gl/core";
+import { TaskManager } from "@orch-map/utils";
 
 // src/deckgl/layers/geoLayer.ts
 import { GeoJsonLayer } from "@deck.gl/layers";
-var DEFAULT_GEO_FILL_COLOR = [9, 71, 119, 255];
-var DEFAULT_GEO_LINE_COLOR = [20, 128, 197, 255];
-var DEFAULT_GEO_HIGHLIGHT_COLOR = [48, 121, 200, 255];
-var DEFAULT_GEO_LAYER_PROPS = {
-  /** 是否启用拾取功能，启用后可以与图层元素进行交互 */
-  pickable: true,
-  /** 是否绘制要素的边框线条 */
-  stroked: true,
-  /** 是否填充要素的内部区域 */
-  filled: true,
-  /** 线宽缩放比例，用于调整线条粗细 */
-  lineWidthScale: 1,
-  /** 线条最小宽度（像素），确保线条在任何缩放级别下的可见性 */
-  lineWidthMinPixels: 1,
-  /** 是否启用经度无限滚动，解决地图跨越180度经线的显示问题 */
-  wrapLongitude: true,
-  /** 是否自动高亮鼠标悬停的要素 */
-  autoHighlight: true,
-  /** 高亮状态下要素的颜色，RGBA 格式 [r, g, b, a]，取值范围 0-255 */
-  highlightColor: DEFAULT_GEO_HIGHLIGHT_COLOR,
-  /** 要素边框的默认颜色，返回 RGBA 数组 */
-  getLineColor: (_d) => DEFAULT_GEO_LINE_COLOR,
-  /** 要素边框的宽度，单位为像素 */
-  getLineWidth: () => 1
-};
-
-// src/deckgl/main.ts
-import { isDef, TaskManager } from "@orch-map/utils";
+import { isDef } from "@orch-map/utils";
 import { MapLevel as MapLevel3 } from "@orch-map/types";
 
 // src/MapStateManager.ts
@@ -123,6 +99,20 @@ var _MapStateManager = class _MapStateManager {
   static set echartsSymbols(symbols) {
     _MapStateManager._echartsSymbols = symbols;
   }
+  // 静态 getter/setter - allPoints
+  static get allPoints() {
+    return _MapStateManager._allPoints;
+  }
+  static set allPoints(points) {
+    _MapStateManager._allPoints = points;
+  }
+  // 静态 getter/setter - allLines
+  static get allLines() {
+    return _MapStateManager._allLines;
+  }
+  static set allLines(lines) {
+    _MapStateManager._allLines = lines;
+  }
   /**
    * 重置到默认状态
    */
@@ -131,6 +121,8 @@ var _MapStateManager = class _MapStateManager {
     _MapStateManager._country = "100000";
     _MapStateManager._postcode = "100000";
     _MapStateManager._geoData = {};
+    _MapStateManager._allPoints = [];
+    _MapStateManager._allLines = [];
   }
   /**
    * 监听特定属性变化
@@ -201,543 +193,16 @@ _MapStateManager._mapVersion = "standard";
 _MapStateManager._extraSvgIcons = {};
 /** ECharts 图标库（转换后的 symbol 格式，供 ECharts 使用） */
 _MapStateManager._echartsSymbols = {};
+/** 所有原始点位数据（用于层级切换时过滤） */
+_MapStateManager._allPoints = [];
+/** 所有原始线条数据（用于层级切换时过滤） */
+_MapStateManager._allLines = [];
 // 属性监听器
 _MapStateManager.propertyListeners = /* @__PURE__ */ new Map();
 var MapStateManager = _MapStateManager;
 
-// src/utils/curvatureCalculator.ts
-var CurvatureCalculator = class {
-  constructor() {
-    // 线条随机曲率映射表
-    this.curvatureMap = {};
-  }
-  /**
-   * @description: 字符串哈希函数，生成0到1之间的数值
-   * 用确定性的方法替代 Math.random()
-   * @param str 输入字符串
-   * @returns 0到1之间的数值
-   */
-  hashString(str) {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-      hash = (hash << 5) - hash + str.charCodeAt(i);
-      hash |= 0;
-    }
-    return Math.abs(hash) / 2147483647;
-  }
-  /**
-   * @description: 计算线条曲率
-   * 主要是根据连线的 id 计算两点之后连线的曲率
-   * @param key 线条的唯一标识
-   * @param min 最小曲率值
-   * @param max 最大曲率值
-   * @returns 计算出的曲率值
-   */
-  curvature(key, min = 0, max = 1) {
-    var _a;
-    (_a = this.curvatureMap)[key] ?? (_a[key] = this.hashString(key) * (max - min) + min);
-    return this.curvatureMap[key];
-  }
-  /**
-   * @description: 计算连线的曲率范围
-   * 根据连线两端点的经纬度差值计算合适的曲率范围
-   */
-  calculateCurvatureRange(startLng, startLat, endLng, endLat) {
-    if (startLat === endLat && startLng === endLng) {
-      return { min: 0.1, max: 0.3 };
-    }
-    const deltaLng = Math.abs(endLng - startLng);
-    const deltaLat = Math.abs(endLat - startLat);
-    const ratio = Math.min(deltaLng / deltaLat, deltaLat / deltaLng);
-    const min = ratio > 0.5 ? 0.5 : 0.2;
-    const max = ratio > 0.5 ? 1 : 0.5;
-    return { min, max };
-  }
-  /**
-   * @description: 根据起终点坐标计算曲率值
-   * 综合使用曲率范围计算和曲率计算方法
-   */
-  calculateCurvatureByCoordinates(key, startCoordinate, endCoordinate, customRange) {
-    const [startLng, startLat] = startCoordinate;
-    const [endLng, endLat] = endCoordinate;
-    const range = customRange ?? this.calculateCurvatureRange(startLng, startLat, endLng, endLat);
-    if (range.min < 0 || range.max > 1 || range.min > range.max) {
-      throw new Error("\u65E0\u6548\u7684\u66F2\u7387\u8303\u56F4\u3002\u5FC5\u987B\u6EE1\u8DB3: 0 <= min <= max <= 1");
-    }
-    return this.curvature(key, range.min, range.max);
-  }
-  /** 清空曲率缓存 */
-  clearCache() {
-    this.curvatureMap = {};
-  }
-  /** 获取当前缓存映射表（仅调试用途） */
-  getCacheMap() {
-    return { ...this.curvatureMap };
-  }
-};
-
-// src/deckgl/layers/lines/line2d.ts
-import { PathLayer, ScatterplotLayer } from "@deck.gl/layers";
-var DEFAULT_LINE_RGBA = [170, 170, 170, 90];
-var DEFAULT_DOT_RGB = [255, 255, 255];
-function buildQuadraticBezierPath(start, end, curvature, segments = 64) {
-  const [sx, sy] = start;
-  const [ex, ey] = end;
-  const mx = (sx + ex) / 2;
-  const my = (sy + ey) / 2;
-  const dx = ex - sx;
-  const dy = ey - sy;
-  const length = Math.hypot(dx, dy) || 1;
-  const nx = -dy / length;
-  const ny = dx / length;
-  const offset = curvature * 0.3 * length;
-  const cx = mx + nx * offset;
-  const cy = my + ny * offset;
-  const path = [];
-  for (let i = 0; i <= segments; i++) {
-    const t = i / segments;
-    const oneMinusT = 1 - t;
-    const x = oneMinusT * oneMinusT * sx + 2 * oneMinusT * t * cx + t * t * ex;
-    const y = oneMinusT * oneMinusT * sy + 2 * oneMinusT * t * cy + t * t * ey;
-    path.push([x, y]);
-  }
-  return path;
-}
-var LineRenderer2D = class {
-  /**
-   * 获取当前曲率计算器实例
-   */
-  static getCurvatureCalculator() {
-    return this.curvatureCalculator;
-  }
-  /**
-   * 重置曲率计算器（用于清理缓存）
-   */
-  static resetCurvatureCalculator() {
-    this.curvatureCalculator = new CurvatureCalculator();
-  }
-  /**
-   * 创建常驻曲线图层（PathLayer）
-   * 实现 buddy 双向连线：为每条线生成原始线（起点→终点）和 buddy 镜像线（终点→起点）
-   * @param lines 业务线数据数组；每条线包含起终点经纬度
-   * @returns PathLayer 实例（包含所有曲线及其 buddy 线，禁用拾取）
-   */
-  static buildFullCurveLayer(lines) {
-    const fullData = [];
-    lines.forEach((line) => {
-      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
-        line.id,
-        line.startCoordinate,
-        line.endCoordinate,
-        { min: 0.5, max: 1 }
-      );
-      const color = line.color ?? DEFAULT_LINE_RGBA;
-      const path = buildQuadraticBezierPath(line.startCoordinate, line.endCoordinate, curvature, 64);
-      fullData.push({ path, color, width: 0.3 });
-      const buddyPath = buildQuadraticBezierPath(line.endCoordinate, line.startCoordinate, curvature, 64);
-      fullData.push({ path: buddyPath, color, width: 0.3 });
-    });
-    return new PathLayer({
-      id: "line-layer",
-      data: fullData,
-      pickable: false,
-      widthScale: 1,
-      widthMinPixels: 0.5,
-      getPath: (d) => d.path,
-      getColor: (d) => d.color,
-      getWidth: (d) => d.width,
-      // 启用虚线以降低视觉重量
-      dashJustified: true,
-      parameters: { cullMode: "none" }
-    });
-  }
-  /**
-   * 创建同步移动的多圆点尾迹图层（ScatterplotLayer）
-   * 实现 buddy 双向连线：为每条线生成原始尾迹和 buddy 镜像尾迹，实现双向流动效果
-   * @param lines 业务线数据数组；每条线包含起终点经纬度
-   * @param progress 动画归一化进度 [0, 1)；所有线条共享进度，实现同步动画
-   * @param options 尾迹外观参数（可选）
-   *
-   * 间距说明：
-   * - 尾迹点之间的"参数间距"由 step = trailSpan / (dotsPerLine - 1) 决定；
-   * - 想更密：增大 dotsPerLine 或减小 trailSpan；想更疏：相反调整。
-   *
-   * 大小说明：
-   * - 点半径沿尾迹从头到尾插值：radius = tailRadius + (headRadius - tailRadius) * w；
-   * - headRadius 控制最大半径，tailRadius 控制最小半径。
-   * @param options.dotsPerLine 每条线的尾迹圆点数量；越大越密集，默认 12
-   * @param options.headRadius 尾迹最前端（头部）圆点半径（像素），默认 3
-   * @param options.tailRadius 尾迹末端（尾部）圆点半径（像素），默认 1
-   * @param options.headAlpha 尾迹头部圆点透明度（0-255），默认 255
-   * @param options.tailAlpha 尾迹尾部圆点透明度（0-255），默认 60
-   * @param options.trailSpan 尾迹覆盖曲线参数长度（0~1），控制"队列"长度，默认 0.06
-   * @returns ScatterplotLayer 实例（尾迹小圆点）
-   */
-  static buildMovingDotsLayer(lines, progress, options) {
-    const dots = [];
-    const dotsPerLine = options?.dotsPerLine ?? 12;
-    const headRadius = options?.headRadius ?? 1;
-    const tailRadius = options?.tailRadius ?? 0.5;
-    const headAlpha = options?.headAlpha ?? 255;
-    const tailAlpha = options?.tailAlpha ?? 60;
-    const trailSpan = options?.trailSpan ?? 0.01;
-    const step = trailSpan / Math.max(1, dotsPerLine - 1);
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
-        line.id,
-        line.startCoordinate,
-        line.endCoordinate
-      );
-      const baseRgb = Array.isArray(line.color) ? [
-        line.color[0] ?? DEFAULT_DOT_RGB[0],
-        line.color[1] ?? DEFAULT_DOT_RGB[1],
-        line.color[2] ?? DEFAULT_DOT_RGB[2]
-      ] : DEFAULT_DOT_RGB;
-      const generateDots = (start, end) => {
-        const sx = start[0];
-        const sy = start[1];
-        const ex = end[0];
-        const ey = end[1];
-        const mx = (sx + ex) / 2;
-        const my = (sy + ey) / 2;
-        const dx = ex - sx;
-        const dy = ey - sy;
-        const length = Math.hypot(dx, dy) || 1;
-        const nx = -dy / length;
-        const ny = dx / length;
-        const offset = curvature * 0.3 * length;
-        const cx = mx + nx * offset;
-        const cy = my + ny * offset;
-        for (let j = 0; j < dotsPerLine; j++) {
-          const w = 1 - j / Math.max(1, dotsPerLine - 1);
-          const tRaw = progress - j * step;
-          const t = (tRaw % 1 + 1) % 1;
-          const oneMinusT = 1 - t;
-          const px = oneMinusT * oneMinusT * sx + 2 * oneMinusT * t * cx + t * t * ex;
-          const py = oneMinusT * oneMinusT * sy + 2 * oneMinusT * t * cy + t * t * ey;
-          const radius = Math.round(tailRadius + (headRadius - tailRadius) * w);
-          const alpha = Math.round(tailAlpha + (headAlpha - tailAlpha) * Math.pow(w, 1.5));
-          dots.push({ position: [px, py], color: [baseRgb[0], baseRgb[1], baseRgb[2], alpha], radius });
-        }
-      };
-      generateDots(line.startCoordinate, line.endCoordinate);
-      generateDots(line.endCoordinate, line.startCoordinate);
-    }
-    return new ScatterplotLayer({
-      id: "line-trail-layer",
-      data: dots,
-      pickable: false,
-      radiusUnits: "pixels",
-      radiusMinPixels: tailRadius,
-      radiusMaxPixels: headRadius + 2,
-      getPosition: (d) => d.position,
-      getFillColor: (d) => d.color,
-      getRadius: (d) => d.radius,
-      parameters: { cullMode: "none" }
-    });
-  }
-};
-/** 曲率计算器实例（用于 2D 模式） */
-LineRenderer2D.curvatureCalculator = new CurvatureCalculator();
-
-// src/deckgl/layers/lines/line3d.ts
-import { ArcLayer } from "@deck.gl/layers";
-var DEFAULT_RGB = [200, 200, 200];
-var LineRenderer3D = class {
-  /**
-   * 创建 ArcLayer 图层（包含原始线和 buddy 镜像线）
-   * 实现 buddy 双向连线：为每条线生成原始线（起点→终点）和 buddy 镜像线（终点→起点）
-   * 两条线同步动画，形成双向流动的视觉效果
-   * @param lines 业务线数据
-   * @param timeRange 可见时间窗口 [start, end]
-   * @param lineOffset 每条线的起始偏移（秒）
-   * @param lineDuration 每条线的持续时长（秒）
-   * @returns ArcLayer 实例（包含所有弧线及其 buddy 线）
-   */
-  static buildAnimatedLayer(lines, timeRange, lineOffset, lineDuration) {
-    const allLines = [];
-    lines.forEach((line, index) => {
-      allLines.push({ ...line, isBuddy: false, originalIndex: index });
-      allLines.push({
-        ...line,
-        id: `${line.id}-buddy`,
-        startCoordinate: line.endCoordinate,
-        endCoordinate: line.startCoordinate,
-        isBuddy: true,
-        originalIndex: index
-      });
-    });
-    return new ArcLayer({
-      id: "line-layer",
-      data: allLines,
-      pickable: true,
-      getSourcePosition: (d) => [d.startCoordinate[0], d.startCoordinate[1], 100],
-      getTargetPosition: (d) => [d.endCoordinate[0], d.endCoordinate[1], 100],
-      getSourceTimestamp: (_d, { index }) => {
-        const originalIdx = Math.floor(index / 2);
-        return originalIdx * lineOffset;
-      },
-      getTargetTimestamp: (_d, { index }) => {
-        const originalIdx = Math.floor(index / 2);
-        return originalIdx * lineOffset + lineDuration;
-      },
-      timeRange,
-      getHeight: 0.6,
-      getSourceColor: (d) => {
-        if (Array.isArray(d.color)) {
-          return [d.color[0] ?? DEFAULT_RGB[0], d.color[1] ?? DEFAULT_RGB[1], d.color[2] ?? DEFAULT_RGB[2]];
-        }
-        return DEFAULT_RGB;
-      },
-      getTargetColor: (d) => {
-        if (Array.isArray(d.color)) {
-          return [d.color[0] ?? DEFAULT_RGB[0], d.color[1] ?? DEFAULT_RGB[1], d.color[2] ?? DEFAULT_RGB[2]];
-        }
-        return DEFAULT_RGB;
-      },
-      parameters: { cullMode: "none" }
-    });
-  }
-};
-
-// src/deckgl/layers/lineLayer.ts
-var _LineLayer = class _LineLayer {
-  /**
-   * 获取当前动画时间
-   */
-  static getCurrentTime() {
-    return this.currentTime;
-  }
-  /**
-   * 设置当前动画时间
-   */
-  static setCurrentTime(time) {
-    this.currentTime = time;
-  }
-  /**
-   * 重置动画时间
-   */
-  static resetTime() {
-    this.currentTime = 0;
-  }
-  /**
-   * 更新 2D 线图层（常驻曲线 + 移动尾迹）
-   * @param lines 线数据数组
-   * @param config 动画配置
-   * @param updateCallback 图层更新回调函数
-   */
-  static update2DLayers(lines, config = {}, updateCallback) {
-    const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
-    const baseLayer = LineRenderer2D.buildFullCurveLayer(lines);
-    updateCallback("line-layer", baseLayer);
-    const progress = this.currentTime / mergedConfig.timeLoop;
-    const dotsLayer = LineRenderer2D.buildMovingDotsLayer(lines, progress);
-    updateCallback("line-trail-layer", dotsLayer);
-  }
-  /**
-   * 更新 3D 线图层（动画弧线）
-   * @param lines 线数据数组
-   * @param config 动画配置
-   * @param updateCallback 图层更新回调函数
-   */
-  static update3DLayers(lines, config = {}, updateCallback) {
-    const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
-    const startTime = Math.max(0, this.currentTime - mergedConfig.trailLength);
-    const timeRange = [startTime, this.currentTime];
-    const animatedLayer = LineRenderer3D.buildAnimatedLayer(
-      lines,
-      timeRange,
-      mergedConfig.lineOffset,
-      mergedConfig.lineDuration
-    );
-    updateCallback("line-layer", animatedLayer);
-  }
-  /**
-   * 根据模式更新线图层
-   * @param mode 渲染模式（2D 或 3D）
-   * @param lines 线数据数组
-   * @param config 动画配置
-   * @param updateCallback 图层更新回调函数
-   */
-  static updateLayers(mode, lines, config = {}, updateCallback) {
-    if (mode === "3d") {
-      _LineLayer.update3DLayers(lines, config, updateCallback);
-    } else {
-      _LineLayer.update2DLayers(lines, config, updateCallback);
-    }
-  }
-  /**
-   * 推进动画时间并更新图层
-   * @param mode 渲染模式（2D 或 3D）
-   * @param lines 线数据数组
-   * @param config 动画配置
-   * @param updateCallback 图层更新回调函数
-   */
-  static advanceAnimation(mode, lines, config = {}, updateCallback) {
-    const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
-    _LineLayer.currentTime = (_LineLayer.currentTime + mergedConfig.animationSpeed) % mergedConfig.timeLoop;
-    _LineLayer.updateLayers(mode, lines, config, updateCallback);
-  }
-  /**
-   * 清理所有线图层
-   * @param removeCallback 图层移除回调函数
-   */
-  static clearLayers(removeCallback) {
-    removeCallback("line-layer");
-    removeCallback("line-trail-layer");
-  }
-};
-/** 当前动画时间（单位：秒的逻辑刻度） */
-_LineLayer.currentTime = 0;
-/** 默认动画配置 */
-_LineLayer.DEFAULT_CONFIG = {
-  animationSpeed: 60,
-  trailLength: 60 * 60,
-  timeLoop: 6 * 60 * 60,
-  lineOffset: 300,
-  lineDuration: 1e3
-};
-var LineLayer = _LineLayer;
-
-// src/deckgl/layers/iconLayer.ts
-import { IconLayer as DeckIconLayer } from "@deck.gl/layers";
-
-// src/deckgl/layers/iconAtlas.ts
-var IconAtlas = class _IconAtlas {
-  /**
-   * 将 SVG 字符串转为 HTMLImageElement
-   */
-  static svgToImage(svgString) {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      const blob = new Blob([svgString], { type: "image/svg+xml" });
-      const url = URL.createObjectURL(blob);
-      img.onload = () => {
-        URL.revokeObjectURL(url);
-        resolve(img);
-      };
-      img.onerror = () => {
-        URL.revokeObjectURL(url);
-        reject(new Error("Failed to load SVG"));
-      };
-      img.src = url;
-    });
-  }
-  // 构建图标集合的工具方法
-  static async buildIconAtlas(icons) {
-    const iconMapping = {};
-    let canvasWidth = 0;
-    let canvasHeight = 0;
-    for (const [iconName, iconSvg] of Object.entries(icons)) {
-      const img = await _IconAtlas.svgToImage(iconSvg);
-      iconMapping[iconName] = {
-        x: canvasWidth,
-        y: 0,
-        width: img.width,
-        height: img.height,
-        mask: true
-      };
-      canvasWidth += img.width;
-      canvasHeight = Math.max(canvasHeight, img.height);
-    }
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    if (!ctx) {
-      throw new Error("Failed to get 2D context from canvas");
-    }
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    for (const [iconName, iconSvg] of Object.entries(icons)) {
-      const img = await _IconAtlas.svgToImage(iconSvg);
-      const { x } = iconMapping[iconName];
-      ctx.drawImage(img, x, 0);
-    }
-    return {
-      iconAtlas: canvas.toDataURL(),
-      iconMapping
-    };
-  }
-};
-
-// src/deckgl/layers/iconLayer.ts
-var IconLayer = class _IconLayer {
-  /**
-   * 将业务点数据转换为 IconLayer 需要的数据结构
-   * @param points 业务点数据数组
-   * @returns IconLayer 需要的数据数组
-   */
-  static transformToIconData(points) {
-    return points.map((point) => ({
-      ...point,
-      // 抬升少量高度，避免与地面发生深度冲突/遮挡
-      position: [point.coordinate[0], point.coordinate[1], 50],
-      icon: point.icon ?? "star",
-      size: point.size ?? 16,
-      color: point.color ?? [255, 255, 255, 255]
-    }));
-  }
-  /**
-   * 创建图标图层
-   * @param iconData 图标数据数组
-   * @param config 图层配置
-   * @returns IconLayer 实例或 null（如果图标图集构建失败）
-   */
-  static async createIconLayer(iconData, config = {}) {
-    const {
-      selectedPointId = null,
-      selectedSizeMultiplier = 1.6,
-      onClick,
-      onHover
-    } = config;
-    const registeredIcons = MapStateManager.extraSvgIcons || {};
-    if (Object.keys(registeredIcons).length === 0) {
-      console.warn("No icons registered in MapStateManager, skipping IconLayer creation");
-      return null;
-    }
-    const iconAtlasResult = await IconAtlas.buildIconAtlas(registeredIcons);
-    const iconLayer = new DeckIconLayer({
-      id: "point-layer",
-      data: iconData,
-      iconAtlas: iconAtlasResult.iconAtlas,
-      iconMapping: iconAtlasResult.iconMapping,
-      getPosition: (d) => d.position,
-      getIcon: (d) => d.icon,
-      getSize: (d) => selectedPointId && d.id === selectedPointId ? d.size * selectedSizeMultiplier : d.size,
-      getColor: (d) => d.color,
-      pickable: true,
-      updateTriggers: {
-        getSize: selectedPointId
-      },
-      onClick,
-      onHover
-    });
-    return iconLayer;
-  }
-  /**
-   * 创建图标图层（纯静态方法，不负责渲染）
-   * @param points 业务点数据数组
-   * @param config 图层配置
-   * @returns 图标图层实例或 null（如果图标图集构建失败）
-   */
-  static async create(points, config = {}) {
-    const iconData = _IconLayer.transformToIconData(
-      points
-    );
-    return await this.createIconLayer(iconData, config);
-  }
-  /**
-   * 获取图标图层的标识符
-   * @returns 图层ID
-   */
-  static getLayerId() {
-    return "point-layer";
-  }
-};
-
-// src/deckgl/layers/textLayer.ts
-import { TextLayer as DeckTextLayer } from "@deck.gl/layers";
-import { hexToRgba } from "@orch-map/utils";
+// src/utils/geoUtils.ts
+import { MapLevel as MapLevel2 } from "@orch-map/types";
 
 // src/constants/mapConfig.ts
 var RENDER_MODES = {
@@ -756,7 +221,6 @@ var DEFAULT_CONFIG = {
 var CHINA_AD_CODE_JUST_FOR_FE = "100000";
 var US_AD_CODE_JUST_FOR_FE = "us";
 var MUNICIPALITY_CODES = /* @__PURE__ */ new Set(["110000", "120000", "310000", "500000"]);
-var JUST_SUPPORTED_NEXT_LEVEL_COUNTRIES_AD_CODE = [CHINA_AD_CODE_JUST_FOR_FE, US_AD_CODE_JUST_FOR_FE];
 var G2 = { CHINA: "\u4E2D\u56FD", USA: "\u7F8E\u56FD" };
 
 // src/constants/point.ts
@@ -768,94 +232,6 @@ var POINT_DEFAULT_STYLE = {
   borderWidth: 0,
   shadowBlur: 0
 };
-
-// src/deckgl/layers/textLayer.ts
-var TextLayer = class {
-  /**
-   * 将业务点数据转换为 TextLayer 需要的数据结构
-   * 根据 label.show 和 label.hoverShow 配置决定是否显示标签
-   * @param points 业务点数据数组
-   * @param config 图层配置
-   * @returns TextLayer 需要的数据数组
-   */
-  static transformToTextData(points, config = {}) {
-    const { hoveredPointId, selectedPointId } = config;
-    return points.filter((point) => {
-      if (!point.label) {
-        return true;
-      }
-      if (point.label?.show) {
-        return true;
-      }
-      if (point.label?.hoverShow && (hoveredPointId === point.id || selectedPointId === point.id)) {
-        return true;
-      }
-      return false;
-    }).map((point) => {
-      return {
-        ...point,
-        // 抬升高度，显示在图标上方，避免遮挡
-        position: [point.coordinate[0], point.coordinate[1], 120],
-        size: point.size ?? 16
-      };
-    });
-  }
-  /**
-   * 创建文本标签图层
-   * @param textData 文本数据数组
-   * @returns TextLayer 实例
-   */
-  static createLayer(textData) {
-    const color = hexToRgba(POINT_DEFAULT_STYLE.color);
-    return new DeckTextLayer({
-      id: "label-layer",
-      data: textData,
-      characterSet: "auto",
-      fontSettings: {
-        buffer: 8
-      },
-      getPosition: (d) => d.position,
-      getText: (d) => d.name,
-      getSize: (d) => d.size ? d.size / 1.5 : 8,
-      getColor: () => color,
-      maxWidth: 64 * 12,
-      getAngle: 0,
-      getTextAnchor: "middle",
-      getAlignmentBaseline: () => "bottom",
-      pickable: false,
-      // 标签不可交互
-      // 确保文本始终朝上
-      billboard: true,
-      // 确保文本在最顶层
-      modelMatrix: null
-    });
-  }
-  /**
-   * 创建文本图层（纯静态方法，不负责渲染）
-   * @param points 业务点数据数组
-   * @param config 图层配置
-   * @returns TextLayer 实例
-   */
-  static create(points, config = {}) {
-    const textData = this.transformToTextData(points, config);
-    console.log("[TextLayer] create called:", {
-      pointsCount: points.length,
-      textDataCount: textData.length,
-      sampleTextData: textData.slice(0, 3)
-    });
-    return this.createLayer(textData);
-  }
-  /**
-   * 获取文本图层的标识符
-   * @returns 图层ID
-   */
-  static getLayerId() {
-    return "label-layer";
-  }
-};
-
-// src/utils/geoUtils.ts
-import { MapLevel as MapLevel2 } from "@orch-map/types";
 
 // src/echarts-geo/echart.option.ts
 var POST_CODE_KEY = "hc-key";
@@ -998,7 +374,1149 @@ var GeoUtils = class _GeoUtils {
     }
     return nextPostcode;
   }
+  /**
+   * 计算 GeoJSON 的边界框
+   * @param geojsonData - GeoJSON 数据
+   * @returns 边界框对象，包含 minLng、maxLng、minLat、maxLat
+   */
+  static calculateGeoBounds(geojsonData) {
+    if (geojsonData.type !== "FeatureCollection" || !geojsonData.features?.length) {
+      return null;
+    }
+    let minLng = Infinity;
+    let maxLng = -Infinity;
+    let minLat = Infinity;
+    let maxLat = -Infinity;
+    const extractCoordinates = (coords) => {
+      if (Array.isArray(coords)) {
+        if (coords.length === 2 && typeof coords[0] === "number" && typeof coords[1] === "number") {
+          const [lng, lat] = coords;
+          minLng = Math.min(minLng, lng);
+          maxLng = Math.max(maxLng, lng);
+          minLat = Math.min(minLat, lat);
+          maxLat = Math.max(maxLat, lat);
+        } else {
+          coords.forEach((item) => extractCoordinates(item));
+        }
+      }
+    };
+    geojsonData.features.forEach((feature) => {
+      if (feature.geometry && "coordinates" in feature.geometry) {
+        extractCoordinates(feature.geometry.coordinates);
+      }
+    });
+    if (minLng === Infinity || maxLng === -Infinity || minLat === Infinity || maxLat === -Infinity) {
+      return null;
+    }
+    return { minLng, maxLng, minLat, maxLat };
+  }
+  /**
+   * 计算边界框中心点
+   * @param bounds - 边界框对象
+   * @returns 中心点坐标 [lng, lat]
+   */
+  static calculateBoundsCenter(bounds) {
+    return [
+      (bounds.minLng + bounds.maxLng) / 2,
+      (bounds.minLat + bounds.maxLat) / 2
+    ];
+  }
+  /**
+   * 根据边界框计算合适的缩放级别
+   * @param bounds - 边界框对象
+   * @param containerWidth - 容器宽度（默认 1000）
+   * @param containerHeight - 容器高度（默认 800）
+   * @param padding - 内边距比例（默认 0.8）
+   * @returns 缩放级别
+   */
+  static calculateZoomForBounds(bounds, containerWidth = 1e3, containerHeight = 800, padding = 0.8) {
+    const lngDiff = Math.abs(bounds.maxLng - bounds.minLng);
+    const latDiff = Math.abs(bounds.maxLat - bounds.minLat);
+    const zoomLng = Math.log2(containerWidth * padding * 360 / (256 * lngDiff));
+    const centerLat = (bounds.minLat + bounds.maxLat) / 2;
+    const latScale = 1 / Math.cos(centerLat * Math.PI / 180);
+    const zoomLat = Math.log2(containerHeight * padding * 180 / (256 * latDiff * latScale));
+    const zoom = Math.min(zoomLng, zoomLat);
+    return Math.max(0, Math.min(12, zoom));
+  }
+  /**
+   * 获取 GeoJSON 的中心点和缩放级别
+   * @param geojsonData - GeoJSON 数据
+   * @param containerWidth - 容器宽度
+   * @param containerHeight - 容器高度
+   * @returns 包含中心点和缩放级别的对象，如果计算失败则返回 null
+   */
+  static getCenterAndZoom(geojsonData, {
+    containerWidth,
+    containerHeight
+  }) {
+    const bounds = _GeoUtils.calculateGeoBounds(geojsonData);
+    if (!bounds) {
+      return null;
+    }
+    const center = _GeoUtils.calculateBoundsCenter(bounds);
+    const zoom = _GeoUtils.calculateZoomForBounds(bounds, containerWidth, containerHeight);
+    return { center, zoom };
+  }
+  /**
+   * 根据容器宽度计算最小缩放级别
+   * @param containerWidth - 容器宽度
+   * @returns 最小缩放级别
+   */
+  static calculateMinZoom(containerWidth) {
+    const zoom = Math.log2(containerWidth / 256);
+    return zoom - 1;
+  }
+  /**
+   * 判断点是否在多边形内（射线法）
+   * @param point - 点坐标 [lng, lat]
+   * @param polygon - 多边形坐标数组
+   * @returns 是否在多边形内
+   */
+  static isPointInPolygon(point, polygon) {
+    const [x, y] = point;
+    for (const ring of polygon) {
+      let inside = false;
+      for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+        const xi = ring[i][0];
+        const yi = ring[i][1];
+        const xj = ring[j][0];
+        const yj = ring[j][1];
+        const intersect = yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
+        if (intersect) inside = !inside;
+      }
+      if (inside) return true;
+    }
+    return false;
+  }
+  /**
+   * 判断点是否在 MultiPolygon 内
+   * @param point - 点坐标 [lng, lat]
+   * @param multiPolygon - MultiPolygon 坐标数组
+   * @returns 是否在 MultiPolygon 内
+   */
+  static isPointInMultiPolygon(point, multiPolygon) {
+    for (const polygon of multiPolygon) {
+      if (_GeoUtils.isPointInPolygon(point, polygon)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  /**
+   * 判断点是否在 GeoJSON 区域内
+   * @param lng - 经度
+   * @param lat - 纬度
+   * @param geoData - GeoJSON 数据
+   * @returns 是否在区域内
+   */
+  static isPointInGeoJSON(lng, lat, geoData) {
+    if (geoData?.type !== "FeatureCollection" || !geoData?.features) {
+      return false;
+    }
+    const point = [lng, lat];
+    const bounds = _GeoUtils.calculateGeoBounds(geoData);
+    if (!bounds) {
+      return false;
+    }
+    if (lng < bounds.minLng || lng > bounds.maxLng || lat < bounds.minLat || lat > bounds.maxLat) {
+      return false;
+    }
+    for (const feature of geoData.features) {
+      if (!feature.geometry || !("coordinates" in feature.geometry)) continue;
+      const { type, coordinates } = feature.geometry;
+      if (type === "Polygon") {
+        if (_GeoUtils.isPointInPolygon(point, coordinates)) {
+          return true;
+        }
+      } else if (type === "MultiPolygon") {
+        if (_GeoUtils.isPointInMultiPolygon(point, coordinates)) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  /**
+   * 过滤在 GeoJSON 区域内的点位
+   * @param points - 点位数组
+   * @param geoData - GeoJSON 数据
+   * @returns 过滤后的点位数组
+   */
+  static filterPointsInGeoJSON(points, geoData) {
+    if (!points || points.length === 0) {
+      return [];
+    }
+    if (geoData?.type !== "FeatureCollection") {
+      return points;
+    }
+    return points.filter((point) => {
+      const [lng, lat] = point.coordinate;
+      return _GeoUtils.isPointInGeoJSON(lng, lat, geoData);
+    });
+  }
 };
+
+// src/deckgl/layers/geoLayer.ts
+var DEFAULT_GEO_FILL_COLOR = [9, 71, 119, 255];
+var DEFAULT_GEO_LINE_COLOR = [20, 128, 197, 255];
+var DEFAULT_GEO_HIGHLIGHT_COLOR = [48, 121, 200, 255];
+var DEFAULT_GEO_LAYER_PROPS = {
+  /** 是否启用拾取功能，启用后可以与图层元素进行交互 */
+  pickable: true,
+  /** 是否绘制要素的边框线条 */
+  stroked: true,
+  /** 是否填充要素的内部区域 */
+  filled: true,
+  /** 线宽缩放比例，用于调整线条粗细 */
+  lineWidthScale: 1,
+  /** 线条最小宽度（像素），确保线条在任何缩放级别下的可见性 */
+  lineWidthMinPixels: 1,
+  /** 是否启用经度无限滚动，解决地图跨越180度经线的显示问题 */
+  wrapLongitude: true,
+  /** 是否自动高亮鼠标悬停的要素 */
+  autoHighlight: true,
+  /** 高亮状态下要素的颜色，RGBA 格式 [r, g, b, a]，取值范围 0-255 */
+  highlightColor: DEFAULT_GEO_HIGHLIGHT_COLOR,
+  /** 要素边框的默认颜色，返回 RGBA 数组 */
+  getLineColor: (_d) => DEFAULT_GEO_LINE_COLOR,
+  /** 要素边框的宽度，单位为像素 */
+  getLineWidth: () => 1
+};
+var GeoLayer = class {
+  /**
+   * 创建一个空数据的 GeoJsonLayer
+   */
+  static create() {
+    return new GeoJsonLayer({
+      ...DEFAULT_GEO_LAYER_PROPS,
+      id: "geojson-layer",
+      data: []
+    });
+  }
+  /**
+   * 创建带有完整功能的 GeoJSON 图层
+   * @param geojsonData - GeoJSON 数据
+   * @param events - 事件处理器配置（可选）
+   * @returns 配置好的 GeoJsonLayer 实例
+   */
+  static createWithData(geojsonData, events) {
+    let hoveredFeatureName = null;
+    let lastClickTime = 0;
+    const DOUBLE_CLICK_THRESHOLD = 300;
+    return new GeoJsonLayer({
+      ...DEFAULT_GEO_LAYER_PROPS,
+      id: "geojson-layer",
+      data: geojsonData,
+      getFillColor: (feature) => {
+        if (isDef(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
+          return [255, 255, 255, 255];
+        }
+        return DEFAULT_GEO_FILL_COLOR;
+      },
+      updateTriggers: {
+        getFillColor: hoveredFeatureName
+      },
+      onClick: (info) => {
+        const currentTime = Date.now();
+        const timeSinceLastClick = currentTime - lastClickTime;
+        if (timeSinceLastClick < DOUBLE_CLICK_THRESHOLD) {
+          const pick = info;
+          if (pick?.object) {
+            const regionName = pick.object.properties?.name ?? "";
+            console.log("\u53CC\u51FB\u5730\u56FE\u533A\u57DF\u4FE1\u606F:", {
+              \u533A\u57DF\u540D\u79F0: regionName,
+              \u533A\u57DF\u4EE3\u7801: pick.object.properties?.code,
+              \u5B8C\u6574\u6570\u636E: pick.object.properties
+            });
+            if (events?.onAreaDoubleClick) {
+              events.onAreaDoubleClick(regionName);
+            }
+          }
+          lastClickTime = 0;
+        } else {
+          lastClickTime = currentTime;
+        }
+        return true;
+      },
+      onHover: (info) => {
+        const hover = info;
+        if (hoveredFeatureName !== hover?.object?.properties?.name) {
+        }
+        if (hover?.object) {
+          hoveredFeatureName = hover.object.properties?.name ?? null;
+        } else {
+          hoveredFeatureName = null;
+        }
+        return true;
+      }
+    });
+  }
+  /**
+   * 根据地理数据计算适合的视图状态
+   * @param geojsonData - GeoJSON 数据
+   * @param containerSize - 容器尺寸
+   * @param mode - 地图模式（2D/3D）
+   * @returns 计算后的视图状态
+   */
+  static calculateViewState(geojsonData, containerSize, mode = "2d") {
+    const curLevel = MapStateManager.curLevel;
+    if (curLevel === MapLevel3.WORLD) {
+      const result2 = GeoUtils.getCenterAndZoom(geojsonData, {
+        containerWidth: containerSize.width,
+        containerHeight: containerSize.height
+      });
+      return {
+        longitude: result2?.center?.[0] ?? 0,
+        latitude: result2?.center?.[1] ?? 30,
+        zoom: result2?.zoom ?? 0,
+        pitch: mode === "3d" ? 45 : 0
+      };
+    }
+    const result = GeoUtils.getCenterAndZoom(geojsonData, {
+      containerWidth: containerSize.width,
+      containerHeight: containerSize.height
+    });
+    if (!result) {
+      return {
+        longitude: 0,
+        latitude: 30,
+        zoom: 1,
+        pitch: mode === "3d" ? 45 : 0
+      };
+    }
+    return {
+      longitude: result.center?.[0] ?? 0,
+      latitude: result.center?.[1] ?? 30,
+      zoom: result.zoom ?? 1,
+      pitch: mode === "3d" ? 45 : 0
+    };
+  }
+  /**
+   * 检查是否应该初始化默认图层
+   * @returns 是否应该初始化
+   */
+  static shouldInitializeDefaultLayers() {
+    return !!MapStateManager.geoData;
+  }
+  /**
+   * 获取默认的 GeoJSON 数据
+   * @returns 默认的 GeoJSON 数据
+   */
+  static getDefaultGeoData() {
+    return MapStateManager.geoData;
+  }
+  /**
+   * 获取图层 ID
+   * @returns 图层 ID
+   */
+  static getLayerId() {
+    return "geojson-layer";
+  }
+};
+
+// src/deckgl/layers/iconLayer.ts
+import { IconLayer as DeckIconLayer } from "@deck.gl/layers";
+
+// src/deckgl/layers/iconAtlas.ts
+var IconAtlas = class _IconAtlas {
+  /**
+   * 将 SVG 字符串转为 HTMLImageElement
+   */
+  static svgToImage(svgString) {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      const blob = new Blob([svgString], { type: "image/svg+xml" });
+      const url = URL.createObjectURL(blob);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        resolve(img);
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("Failed to load SVG"));
+      };
+      img.src = url;
+    });
+  }
+  // 构建图标集合的工具方法
+  static async buildIconAtlas(icons) {
+    const iconMapping = {};
+    let canvasWidth = 0;
+    let canvasHeight = 0;
+    for (const [iconName, iconSvg] of Object.entries(icons)) {
+      const img = await _IconAtlas.svgToImage(iconSvg);
+      iconMapping[iconName] = {
+        x: canvasWidth,
+        y: 0,
+        width: img.width,
+        height: img.height,
+        mask: true
+      };
+      canvasWidth += img.width;
+      canvasHeight = Math.max(canvasHeight, img.height);
+    }
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    if (!ctx) {
+      throw new Error("Failed to get 2D context from canvas");
+    }
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    for (const [iconName, iconSvg] of Object.entries(icons)) {
+      const img = await _IconAtlas.svgToImage(iconSvg);
+      const { x } = iconMapping[iconName];
+      ctx.drawImage(img, x, 0);
+    }
+    return {
+      iconAtlas: canvas.toDataURL(),
+      iconMapping
+    };
+  }
+};
+
+// src/deckgl/layers/textLayer.ts
+import { TextLayer as DeckTextLayer } from "@deck.gl/layers";
+import { hexToRgba } from "@orch-map/utils";
+var TextLayer = class {
+  /**
+   * 将业务点数据转换为 TextLayer 需要的数据结构
+   * 根据 label.show 和 label.hoverShow 配置决定是否显示标签
+   * @param points 业务点数据数组
+   * @param config 图层配置
+   * @returns TextLayer 需要的数据数组
+   */
+  static transformToTextData(points, config = {}) {
+    const { hoveredPointId, selectedPointId } = config;
+    return points.filter((point) => {
+      if (!point.label) {
+        return true;
+      }
+      if (point.label?.show) {
+        return true;
+      }
+      if (point.label?.hoverShow && (hoveredPointId === point.id || selectedPointId === point.id)) {
+        return true;
+      }
+      return false;
+    }).map((point) => {
+      return {
+        ...point,
+        // 抬升高度，显示在图标上方，避免遮挡
+        position: [point.coordinate[0], point.coordinate[1], 120],
+        size: point.size ?? 16
+      };
+    });
+  }
+  /**
+   * 创建文本标签图层
+   * @param textData 文本数据数组
+   * @returns TextLayer 实例
+   */
+  static createLayer(textData) {
+    const color = hexToRgba(POINT_DEFAULT_STYLE.color);
+    return new DeckTextLayer({
+      id: "label-layer",
+      data: textData,
+      characterSet: "auto",
+      fontSettings: {
+        buffer: 8
+      },
+      getPosition: (d) => d.position,
+      getText: (d) => d.name,
+      getSize: (d) => d.size ? d.size / 1.5 : 8,
+      getColor: () => color,
+      maxWidth: 64 * 12,
+      getAngle: 0,
+      getTextAnchor: "middle",
+      getAlignmentBaseline: () => "bottom",
+      pickable: false,
+      // 标签不可交互
+      // 确保文本始终朝上
+      billboard: true,
+      // 确保文本在最顶层
+      modelMatrix: null
+    });
+  }
+  /**
+   * 创建文本图层（纯静态方法，不负责渲染）
+   * @param points 业务点数据数组
+   * @param config 图层配置
+   * @returns TextLayer 实例
+   */
+  static create(points, config = {}) {
+    const textData = this.transformToTextData(points, config);
+    console.log("[TextLayer] create called:", {
+      pointsCount: points.length,
+      textDataCount: textData.length,
+      sampleTextData: textData.slice(0, 3)
+    });
+    return this.createLayer(textData);
+  }
+  /**
+   * 获取文本图层的标识符
+   * @returns 图层ID
+   */
+  static getLayerId() {
+    return "label-layer";
+  }
+};
+
+// src/deckgl/layers/iconLayer.ts
+var IconLayer = class _IconLayer {
+  /**
+   * 将业务点数据转换为 IconLayer 需要的数据结构
+   * @param points 业务点数据数组
+   * @returns IconLayer 需要的数据数组
+   */
+  static transformToIconData(points) {
+    return points.map((point) => ({
+      ...point,
+      // 抬升少量高度，避免与地面发生深度冲突/遮挡
+      position: [point.coordinate[0], point.coordinate[1], 50],
+      icon: point.icon ?? "star",
+      size: point.size ?? 16,
+      color: point.color ?? [255, 255, 255, 255]
+    }));
+  }
+  /**
+   * 创建图标图层
+   * @param iconData 图标数据数组
+   * @param config 图层配置
+   * @returns IconLayer 实例或 null（如果图标图集构建失败）
+   */
+  static async createIconLayer(iconData, config = {}) {
+    const {
+      selectedPointId = null,
+      selectedSizeMultiplier = 1.6,
+      onClick,
+      onHover
+    } = config;
+    const registeredIcons = MapStateManager.extraSvgIcons || {};
+    if (Object.keys(registeredIcons).length === 0) {
+      console.warn("No icons registered in MapStateManager, skipping IconLayer creation");
+      return null;
+    }
+    const iconAtlasResult = await IconAtlas.buildIconAtlas(registeredIcons);
+    const iconLayer = new DeckIconLayer({
+      id: "point-layer",
+      data: iconData,
+      iconAtlas: iconAtlasResult.iconAtlas,
+      iconMapping: iconAtlasResult.iconMapping,
+      getPosition: (d) => d.position,
+      getIcon: (d) => d.icon,
+      getSize: (d) => selectedPointId && d.id === selectedPointId ? d.size * selectedSizeMultiplier : d.size,
+      getColor: (d) => d.color,
+      pickable: true,
+      updateTriggers: {
+        getSize: selectedPointId
+      },
+      onClick,
+      onHover
+    });
+    return iconLayer;
+  }
+  /**
+   * 创建图标图层（纯静态方法，不负责渲染）
+   * @param points 业务点数据数组
+   * @param config 图层配置
+   * @returns 图标图层实例或 null（如果图标图集构建失败）
+   */
+  static async create(points, config = {}) {
+    const iconData = _IconLayer.transformToIconData(
+      points
+    );
+    return await this.createIconLayer(iconData, config);
+  }
+  /**
+   * 获取图标图层的标识符
+   * @returns 图层ID
+   */
+  static getLayerId() {
+    return "point-layer";
+  }
+  /**
+   * 处理点对象点击事件
+   * @param info - 点击信息
+   * @param currentState - 当前点状态
+   * @param updateCallback - 图层更新回调
+   * @returns 更新后的点状态
+   */
+  static async handleClickPoint(info, currentState, updateCallback) {
+    const pick = info;
+    const clickedId = pick?.object?.id ?? null;
+    const newState = {
+      ...currentState,
+      selectedPointId: clickedId
+    };
+    await _IconLayer.updateIconLayers(
+      currentState.points ?? [],
+      newState,
+      updateCallback
+    );
+    return newState;
+  }
+  /**
+   * 处理点对象悬停事件
+   * @param info - 悬停信息
+   * @param currentState - 当前点状态
+   * @param updateCallback - 图层更新回调
+   * @returns 更新后的点状态
+   */
+  static async handleHoverPoint(info, currentState, updateCallback) {
+    const pick = info;
+    const hoveredId = pick?.object?.id ?? null;
+    if (currentState.hoveredPointId !== hoveredId) {
+      const newState = {
+        ...currentState,
+        hoveredPointId: hoveredId
+      };
+      const textLayer = TextLayer.create(
+        currentState.points ?? [],
+        {
+          selectedPointId: newState.selectedPointId,
+          hoveredPointId: newState.hoveredPointId
+        }
+      );
+      updateCallback(TextLayer.getLayerId(), textLayer);
+      updateCallback();
+      return newState;
+    }
+    return currentState;
+  }
+  /**
+   * 更新图标和文本图层
+   * @param points - 点数据数组
+   * @param state - 点状态
+   * @param updateCallback - 图层更新回调
+   */
+  static async updateIconLayers(points, state, updateCallback) {
+    console.log("[IconLayer] updateIconLayers called, points count:", points.length);
+    const iconLayer = await _IconLayer.create(
+      points,
+      {
+        selectedPointId: state.selectedPointId,
+        hoveredPointId: state.hoveredPointId,
+        onClick: (_info) => {
+        },
+        onHover: (_info) => {
+        }
+      }
+    );
+    if (iconLayer) {
+      updateCallback(_IconLayer.getLayerId(), iconLayer);
+    }
+    console.log("[IconLayer] IconLayer updated, now updating TextLayer");
+    const textLayer = TextLayer.create(
+      points,
+      {
+        selectedPointId: state.selectedPointId,
+        hoveredPointId: state.hoveredPointId
+      }
+    );
+    updateCallback(TextLayer.getLayerId(), textLayer);
+    console.log("[IconLayer] TextLayer updated, now calling updateLayer()");
+    updateCallback();
+  }
+  /**
+   * 设置点数据并更新图层
+   * @param points - 点数据数组
+   * @param state - 当前点状态
+   * @param updateCallback - 图层更新回调
+   * @returns 更新后的点状态
+   */
+  static async setPoints(points, state, updateCallback) {
+    const newState = {
+      ...state,
+      points
+    };
+    await _IconLayer.updateIconLayers(points, newState, updateCallback);
+    return newState;
+  }
+  /**
+   * 检查点击是否在点图层上
+   * @param info - 点击信息
+   * @returns 是否在点图层上
+   */
+  static isPointLayerClick(info) {
+    const pick = info;
+    return !!(pick?.object && pick.layer?.id === _IconLayer.getLayerId());
+  }
+  /**
+   * 清除选中状态
+   * @param currentState - 当前点状态
+   * @param updateCallback - 图层更新回调
+   * @returns 更新后的点状态
+   */
+  static async clearSelection(currentState, updateCallback) {
+    if (currentState.selectedPointId) {
+      const newState = {
+        ...currentState,
+        selectedPointId: null
+      };
+      await _IconLayer.updateIconLayers(
+        currentState.points ?? [],
+        newState,
+        updateCallback
+      );
+      return newState;
+    }
+    return currentState;
+  }
+};
+
+// src/utils/curvatureCalculator.ts
+var CurvatureCalculator = class {
+  constructor() {
+    // 线条随机曲率映射表
+    this.curvatureMap = {};
+  }
+  /**
+   * @description: 字符串哈希函数，生成0到1之间的数值
+   * 用确定性的方法替代 Math.random()
+   * @param str 输入字符串
+   * @returns 0到1之间的数值
+   */
+  hashString(str) {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      hash = (hash << 5) - hash + str.charCodeAt(i);
+      hash |= 0;
+    }
+    return Math.abs(hash) / 2147483647;
+  }
+  /**
+   * @description: 计算线条曲率
+   * 主要是根据连线的 id 计算两点之后连线的曲率
+   * @param key 线条的唯一标识
+   * @param min 最小曲率值
+   * @param max 最大曲率值
+   * @returns 计算出的曲率值
+   */
+  curvature(key, min = 0, max = 1) {
+    var _a;
+    (_a = this.curvatureMap)[key] ?? (_a[key] = this.hashString(key) * (max - min) + min);
+    return this.curvatureMap[key];
+  }
+  /**
+   * @description: 计算连线的曲率范围
+   * 根据连线两端点的经纬度差值计算合适的曲率范围
+   */
+  calculateCurvatureRange(startLng, startLat, endLng, endLat) {
+    if (startLat === endLat && startLng === endLng) {
+      return { min: 0.1, max: 0.3 };
+    }
+    const deltaLng = Math.abs(endLng - startLng);
+    const deltaLat = Math.abs(endLat - startLat);
+    const ratio = Math.min(deltaLng / deltaLat, deltaLat / deltaLng);
+    const min = ratio > 0.5 ? 0.5 : 0.2;
+    const max = ratio > 0.5 ? 1 : 0.5;
+    return { min, max };
+  }
+  /**
+   * @description: 根据起终点坐标计算曲率值
+   * 综合使用曲率范围计算和曲率计算方法
+   */
+  calculateCurvatureByCoordinates(key, startCoordinate, endCoordinate, customRange) {
+    const [startLng, startLat] = startCoordinate;
+    const [endLng, endLat] = endCoordinate;
+    const range = customRange ?? this.calculateCurvatureRange(startLng, startLat, endLng, endLat);
+    if (range.min < 0 || range.max > 1 || range.min > range.max) {
+      throw new Error("\u65E0\u6548\u7684\u66F2\u7387\u8303\u56F4\u3002\u5FC5\u987B\u6EE1\u8DB3: 0 <= min <= max <= 1");
+    }
+    return this.curvature(key, range.min, range.max);
+  }
+  /** 清空曲率缓存 */
+  clearCache() {
+    this.curvatureMap = {};
+  }
+  /** 获取当前缓存映射表（仅调试用途） */
+  getCacheMap() {
+    return { ...this.curvatureMap };
+  }
+};
+
+// src/deckgl/layers/lineLayer.ts
+import { PathLayer, ScatterplotLayer } from "@deck.gl/layers";
+var DEFAULT_LINE_RGBA = [170, 170, 170, 90];
+var DEFAULT_DOT_RGB = [255, 255, 255];
+function buildQuadraticBezierPath(start, end, curvature, segments = 64) {
+  const [sx, sy] = start;
+  const [ex, ey] = end;
+  const mx = (sx + ex) / 2;
+  const my = (sy + ey) / 2;
+  const dx = ex - sx;
+  const dy = ey - sy;
+  const length = Math.hypot(dx, dy) || 1;
+  const nx = -dy / length;
+  const ny = dx / length;
+  const offset = curvature * 0.3 * length;
+  const cx = mx + nx * offset;
+  const cy = my + ny * offset;
+  const path = [];
+  for (let i = 0; i <= segments; i++) {
+    const t = i / segments;
+    const oneMinusT = 1 - t;
+    const x = oneMinusT * oneMinusT * sx + 2 * oneMinusT * t * cx + t * t * ex;
+    const y = oneMinusT * oneMinusT * sy + 2 * oneMinusT * t * cy + t * t * ey;
+    path.push([x, y]);
+  }
+  return path;
+}
+var _Line2DManager = class _Line2DManager {
+  // ==================== 曲率计算器管理 ====================
+  /**
+   * 获取当前曲率计算器实例
+   */
+  static getCurvatureCalculator() {
+    return _Line2DManager.curvatureCalculator;
+  }
+  /**
+   * 重置曲率计算器（用于清理缓存）
+   */
+  static resetCurvatureCalculator() {
+    _Line2DManager.curvatureCalculator = new CurvatureCalculator();
+  }
+  // ==================== 渲染器方法 ====================
+  /**
+   * 创建常驻曲线图层（PathLayer）
+   * 实现 buddy 双向连线：为每条线生成原始线（起点→终点）和 buddy 镜像线（终点→起点）
+   * @param lines 业务线数据数组；每条线包含起终点经纬度
+   * @returns PathLayer 实例（包含所有曲线及其 buddy 线，禁用拾取）
+   */
+  static buildFullCurveLayer(lines) {
+    const fullData = [];
+    lines.forEach((line) => {
+      const curvature = _Line2DManager.curvatureCalculator.calculateCurvatureByCoordinates(
+        line.id,
+        line.startCoordinate,
+        line.endCoordinate,
+        { min: 0.5, max: 1 }
+      );
+      const color = line.color ?? DEFAULT_LINE_RGBA;
+      const path = buildQuadraticBezierPath(line.startCoordinate, line.endCoordinate, curvature, 64);
+      fullData.push({ path, color, width: 0.3 });
+      const buddyPath = buildQuadraticBezierPath(line.endCoordinate, line.startCoordinate, curvature, 64);
+      fullData.push({ path: buddyPath, color, width: 0.3 });
+    });
+    return new PathLayer({
+      id: "line-layer",
+      data: fullData,
+      pickable: false,
+      widthScale: 1,
+      widthMinPixels: 0.5,
+      getPath: (d) => d.path,
+      getColor: (d) => d.color,
+      getWidth: (d) => d.width,
+      // 启用虚线以降低视觉重量
+      dashJustified: true,
+      parameters: { cullMode: "none" }
+    });
+  }
+  /**
+   * 创建同步移动的多圆点尾迹图层（ScatterplotLayer）
+   * 实现 buddy 双向连线：为每条线生成原始尾迹和 buddy 镜像尾迹，实现双向流动效果
+   * @param lines 业务线数据数组；每条线包含起终点经纬度
+   * @param progress 动画归一化进度 [0, 1)；所有线条共享进度，实现同步动画
+   * @param options 尾迹外观参数（可选）
+   * @returns ScatterplotLayer 实例（尾迹小圆点）
+   */
+  static buildMovingDotsLayer(lines, progress, options) {
+    const dots = [];
+    const dotsPerLine = options?.dotsPerLine ?? 12;
+    const headRadius = options?.headRadius ?? 1;
+    const tailRadius = options?.tailRadius ?? 0.5;
+    const headAlpha = options?.headAlpha ?? 255;
+    const tailAlpha = options?.tailAlpha ?? 60;
+    const trailSpan = options?.trailSpan ?? 0.01;
+    const step = trailSpan / Math.max(1, dotsPerLine - 1);
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
+        line.id,
+        line.startCoordinate,
+        line.endCoordinate
+      );
+      const baseRgb = Array.isArray(line.color) ? [
+        line.color[0] ?? DEFAULT_DOT_RGB[0],
+        line.color[1] ?? DEFAULT_DOT_RGB[1],
+        line.color[2] ?? DEFAULT_DOT_RGB[2]
+      ] : DEFAULT_DOT_RGB;
+      const generateDots = (start, end) => {
+        const sx = start[0];
+        const sy = start[1];
+        const ex = end[0];
+        const ey = end[1];
+        const mx = (sx + ex) / 2;
+        const my = (sy + ey) / 2;
+        const dx = ex - sx;
+        const dy = ey - sy;
+        const length = Math.hypot(dx, dy) || 1;
+        const nx = -dy / length;
+        const ny = dx / length;
+        const offset = curvature * 0.3 * length;
+        const cx = mx + nx * offset;
+        const cy = my + ny * offset;
+        for (let j = 0; j < dotsPerLine; j++) {
+          const w = 1 - j / Math.max(1, dotsPerLine - 1);
+          const tRaw = progress - j * step;
+          const t = (tRaw % 1 + 1) % 1;
+          const oneMinusT = 1 - t;
+          const px = oneMinusT * oneMinusT * sx + 2 * oneMinusT * t * cx + t * t * ex;
+          const py = oneMinusT * oneMinusT * sy + 2 * oneMinusT * t * cy + t * t * ey;
+          const radius = Math.round(tailRadius + (headRadius - tailRadius) * w);
+          const alpha = Math.round(tailAlpha + (headAlpha - tailAlpha) * Math.pow(w, 1.5));
+          dots.push({ position: [px, py], color: [baseRgb[0], baseRgb[1], baseRgb[2], alpha], radius });
+        }
+      };
+      generateDots(line.startCoordinate, line.endCoordinate);
+      generateDots(line.endCoordinate, line.startCoordinate);
+    }
+    return new ScatterplotLayer({
+      id: "line-trail-layer",
+      data: dots,
+      pickable: false,
+      radiusUnits: "pixels",
+      radiusMinPixels: tailRadius,
+      radiusMaxPixels: headRadius + 2,
+      getPosition: (d) => d.position,
+      getFillColor: (d) => d.color,
+      getRadius: (d) => d.radius,
+      parameters: { cullMode: "none" }
+    });
+  }
+  // ==================== 管理器方法 ====================
+  /**
+   * 构造 2D 线图层（常驻曲线 + 移动尾迹）
+   * @param lines 线数据数组
+   * @param config 动画配置
+   * @param currentTime 当前动画时间（可选，默认从外部获取）
+   * @returns 图层数组，包含常驻曲线图层和移动尾迹图层
+   */
+  static createLayers(lines, config = {}, currentTime) {
+    const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
+    const baseLayer = this.buildFullCurveLayer(lines);
+    const time = currentTime ?? 0;
+    const progress = time / mergedConfig.timeLoop;
+    const dotsLayer = this.buildMovingDotsLayer(lines, progress, mergedConfig.trailOptions);
+    return [baseLayer, dotsLayer];
+  }
+  /**
+   * 获取需要清理的 2D 线图层 ID 列表
+   * @returns 图层 ID 数组
+   */
+  static getLayerIdsToRemove() {
+    return ["line-layer", "line-trail-layer"];
+  }
+};
+/** 曲率计算器实例（用于 2D 模式） */
+_Line2DManager.curvatureCalculator = new CurvatureCalculator();
+/** 默认动画配置 */
+_Line2DManager.DEFAULT_CONFIG = {
+  animationSpeed: 60,
+  trailLength: 60 * 60,
+  timeLoop: 6 * 60 * 60,
+  trailOptions: {
+    dotsPerLine: 12,
+    headRadius: 1,
+    tailRadius: 0.5,
+    headAlpha: 255,
+    tailAlpha: 60,
+    trailSpan: 0.01
+  }
+};
+var Line2DManager = _Line2DManager;
+
+// src/deckgl/layers/lineLayerFor3d.ts
+import { ArcTripsLayer } from "@deck.gl/layers";
+function generateFlightRoutes(lines, currentTime, config = {}) {
+  const defaultConfig = {
+    animationSpeed: 1,
+    trailLength: 100,
+    timeLoop: 6 * 60 * 60,
+    lineOffset: 50,
+    lineDuration: 200,
+    fadeTrail: true,
+    showFullArc: false,
+    dotSize: 0.01,
+    dotTrailLength: 0.1,
+    width: 1.2,
+    height: 0.6,
+    pickable: true,
+    autoHighlight: true,
+    onClick: (info) => {
+      if (info.object) {
+        console.log("Arc clicked:", info.object);
+      }
+    },
+    enableBidirectional: true,
+    baseArcColor: [255, 255, 0, 150],
+    // 黄色基础弧线，低透明度
+    trailColor: [255, 0, 0, 255]
+    // 红色尾迹
+  };
+  const mergedConfig = { ...defaultConfig, ...config };
+  const routes = [];
+  lines.forEach((line, index) => {
+    const lineOffset = mergedConfig.lineOffset || 50;
+    const lineDuration = mergedConfig.lineDuration || 200;
+    const baseTime = index % 20 * lineOffset;
+    const travelTime = lineDuration + Math.random() * 100;
+    const lineColor = Array.isArray(line.color) ? line.color.slice(0, 3) : [200, 200, 200];
+    const sourcePos = [
+      line.startCoordinate[0],
+      line.startCoordinate[1],
+      0
+    ];
+    const targetPos = [
+      line.endCoordinate[0],
+      line.endCoordinate[1],
+      0
+    ];
+    routes.push({
+      id: line.id,
+      sourcePosition: sourcePos,
+      targetPosition: targetPos,
+      sourceTimestamp: baseTime,
+      targetTimestamp: baseTime + travelTime,
+      sourceColor: lineColor,
+      targetColor: lineColor,
+      width: line.width ?? mergedConfig.width,
+      height: mergedConfig.height
+    });
+    if (mergedConfig.enableBidirectional) {
+      const reverseSourcePos = [
+        line.endCoordinate[0],
+        line.endCoordinate[1],
+        0
+      ];
+      const reverseTargetPos = [
+        line.startCoordinate[0],
+        line.startCoordinate[1],
+        0
+      ];
+      routes.push({
+        id: `${line.id}-buddy`,
+        sourcePosition: reverseSourcePos,
+        targetPosition: reverseTargetPos,
+        sourceTimestamp: baseTime + travelTime / 2,
+        // Offset to create alternating flow
+        targetTimestamp: baseTime + travelTime + travelTime / 2,
+        sourceColor: lineColor,
+        targetColor: lineColor,
+        width: line.width ?? mergedConfig.width,
+        height: mergedConfig.height
+      });
+    }
+  });
+  return routes;
+}
+var _Line3DManager = class _Line3DManager {
+  // ==================== 渲染器方法 ====================
+  // ==================== 管理器方法 ====================
+  /**
+   * 构造 3D 线图层（基础弧线 + 尾迹弧线）
+   * @param lines 线数据数组
+   * @param config 动画配置
+   * @param currentTime 当前动画时间（可选，默认从外部获取）
+   * @returns 图层数组，包含基础弧线图层和尾迹弧线图层
+   */
+  static createLayers(lines, config = {}, currentTime = 0) {
+    const mergedConfig = { ..._Line3DManager.DEFAULT_CONFIG, ...config };
+    const routes = generateFlightRoutes(lines, currentTime, config);
+    const baseLayer = new ArcTripsLayer({
+      id: "arc-base-layer",
+      data: routes,
+      getSourcePosition: (d) => d.sourcePosition,
+      getTargetPosition: (d) => d.targetPosition,
+      getSourceColor: mergedConfig.baseArcColor,
+      getTargetColor: mergedConfig.baseArcColor,
+      getWidth: (d) => d.width,
+      getHeight: (d) => d.height,
+      getSourceTimestamp: (d) => d.sourceTimestamp,
+      getTargetTimestamp: (d) => d.targetTimestamp,
+      // Animation properties - 基础层显示完整弧线，无动画效果
+      currentTime: currentTime * mergedConfig.animationSpeed,
+      fadeTrail: false,
+      // 不使用动画效果，显示完整弧线
+      trailLength: mergedConfig.trailLength,
+      showFullArc: true,
+      // 显示完整弧线
+      dotSize: mergedConfig.dotSize,
+      dotTrailLength: mergedConfig.dotTrailLength,
+      animationSpeed: mergedConfig.animationSpeed,
+      // Arc properties
+      greatCircle: true,
+      numSegments: 50,
+      widthMinPixels: 1
+    });
+    const trailLayer = new ArcTripsLayer({
+      id: "arc-trail-layer",
+      data: routes,
+      getSourcePosition: (d) => d.sourcePosition,
+      getTargetPosition: (d) => d.targetPosition,
+      getSourceColor: mergedConfig.trailColor,
+      getTargetColor: mergedConfig.trailColor,
+      getWidth: (d) => d.width,
+      getHeight: (d) => d.height,
+      getSourceTimestamp: (d) => d.sourceTimestamp,
+      getTargetTimestamp: (d) => d.targetTimestamp,
+      // Animation properties - 尾迹层只显示动画部分
+      currentTime: currentTime * mergedConfig.animationSpeed,
+      fadeTrail: mergedConfig.fadeTrail,
+      // 启用渐变尾迹效果
+      trailLength: mergedConfig.trailLength,
+      showFullArc: false,
+      // 只显示尾迹部分
+      dotSize: mergedConfig.dotSize,
+      dotTrailLength: mergedConfig.dotTrailLength,
+      animationSpeed: mergedConfig.animationSpeed,
+      // Arc properties
+      greatCircle: true,
+      numSegments: 50,
+      widthMinPixels: 1,
+      // Interactive
+      pickable: mergedConfig.pickable,
+      autoHighlight: mergedConfig.autoHighlight,
+      onClick: mergedConfig.onClick
+    });
+    return [baseLayer, trailLayer];
+  }
+  /**
+   * 获取需要清理的 3D 线图层 ID 列表
+   * @returns 图层 ID 数组
+   */
+  static getLayerIdsToRemove() {
+    return ["arc-base-layer", "arc-trail-layer"];
+  }
+};
+/** 默认动画配置 */
+_Line3DManager.DEFAULT_CONFIG = {
+  animationSpeed: 1,
+  trailLength: 100,
+  timeLoop: 6 * 60 * 60,
+  lineOffset: 50,
+  lineDuration: 200,
+  fadeTrail: true,
+  showFullArc: false,
+  dotSize: 0.01,
+  dotTrailLength: 0.1,
+  width: 1.2,
+  height: 0.6,
+  pickable: true,
+  autoHighlight: true,
+  onClick: (info) => {
+    if (info.object) {
+      console.log("Arc clicked:", info.object);
+    }
+  },
+  enableBidirectional: true,
+  baseArcColor: [255, 255, 0, 150],
+  // 黄色基础弧线，低透明度
+  trailColor: [255, 0, 0, 255]
+  // 红色尾迹
+};
+var Line3DManager = _Line3DManager;
 
 // src/deckgl/main.ts
 var _DeckglMap = class _DeckglMap {
@@ -1025,10 +1543,11 @@ var _DeckglMap = class _DeckglMap {
     /** 点数据源 */
     this.points = [];
     //===== 状态管理 =====
-    /** 选中点 ID */
-    this.selectedPointId = null;
-    /** 当前悬停的点 ID */
-    this.hoveredPointId = null;
+    /** 点状态管理 */
+    this.pointState = {
+      selectedPointId: null,
+      hoveredPointId: null
+    };
     /** 2D/3D 模式 */
     this.mode = "2d";
     //===== 点击事件控制 =====
@@ -1039,6 +1558,8 @@ var _DeckglMap = class _DeckglMap {
     //===== 动画控制 =====
     /** 动画计时器任务句柄 */
     this.animationTimer = null;
+    /** 当前动画时间（单位：秒的逻辑刻度） */
+    this.currentTime = 0;
     this.mode = mode;
     this.events = events;
     this.container = container;
@@ -1059,11 +1580,10 @@ var _DeckglMap = class _DeckglMap {
    * @param callback - 初始化完成回调函数
    */
   async initDeck(canvas, callback) {
-    const minZoom = GeoUtils.calculateMinZoom(canvas.parentNode.clientWidth);
     await this.createDeckInstance(
       canvas,
       {
-        zoom: Math.max(0, Math.min(20, minZoom)),
+        zoom: 1,
         latitude: 30,
         longitude: 0
       },
@@ -1087,9 +1607,27 @@ var _DeckglMap = class _DeckglMap {
    * 初始化默认图层
    */
   initializeDefaultLayers() {
-    if (MapStateManager.geoData) {
-      void this.setGEOData(MapStateManager.geoData);
+    if (GeoLayer.shouldInitializeDefaultLayers()) {
+      const geoData = GeoLayer.getDefaultGeoData();
+      if (geoData) {
+        void this.setGEOData(geoData);
+      }
     }
+  }
+  get lineLayerManager() {
+    return this.mode === "2d" ? Line2DManager : Line3DManager;
+  }
+  /**
+   * 图层更新回调方法
+   */
+  get layerUpdateCallback() {
+    return (layerId, layer) => {
+      if (layerId && layer) {
+        this.updateLayerById(layerId, layer);
+      } else {
+        this.updateLayer();
+      }
+    };
   }
   /**
    * 销毁内部资源
@@ -1108,8 +1646,6 @@ var _DeckglMap = class _DeckglMap {
       this.deckInstance = null;
     }
     this.layerMap.clear();
-    LineLayer.clearLayers(this.removeLayer.bind(this));
-    LineLayer.resetTime();
     this.removeLayer(IconLayer.getLayerId());
     this.removeLayer(TextLayer.getLayerId());
   }
@@ -1122,8 +1658,8 @@ var _DeckglMap = class _DeckglMap {
   createCanvas(container) {
     container.innerHTML = "";
     const canvas = document.createElement("canvas");
-    canvas.style.width = "100%";
-    canvas.style.height = "100%";
+    canvas.setAttribute("width", "100%");
+    canvas.setAttribute("height", "100%");
     container.appendChild(canvas);
     return canvas;
   }
@@ -1153,6 +1689,8 @@ var _DeckglMap = class _DeckglMap {
     });
     this.deckInstance = new Deck({
       canvas: container,
+      width: container.parentElement?.clientWidth,
+      height: container.parentElement?.clientHeight,
       initialViewState: {
         ..._DeckglMap.DEFAULT_VIEW_STATE,
         ...mode === "3d" ? { pitch: 45 } : {},
@@ -1247,7 +1785,15 @@ var _DeckglMap = class _DeckglMap {
    * @returns 图层数组
    */
   getLayers() {
-    const layerIds = ["geojson-layer", "point-layer", "line-layer", "line-trail-layer", "label-layer"];
+    const layerIds = [
+      GeoLayer.getLayerId(),
+      IconLayer.getLayerId(),
+      "line-layer",
+      "line-trail-layer",
+      "arc-base-layer",
+      "arc-trail-layer",
+      TextLayer.getLayerId()
+    ];
     const layers = layerIds.map((id) => this.layerMap.get(id));
     return layers;
   }
@@ -1272,15 +1818,16 @@ var _DeckglMap = class _DeckglMap {
     if (nativeEvent && "detail" in nativeEvent && nativeEvent.detail === 2) {
       return;
     }
-    const pick = info;
-    if (!pick?.object || pick.layer?.id !== "point-layer") {
+    if (!IconLayer.isPointLayerClick(info)) {
       if (this.clickTimer) {
         clearTimeout(this.clickTimer);
       }
-      this.clickTimer = setTimeout(() => {
-        if (this.selectedPointId) {
-          this.selectedPointId = null;
-          void this.updateIconLayers();
+      this.clickTimer = setTimeout(async () => {
+        if (this.pointState.selectedPointId) {
+          this.pointState = await IconLayer.clearSelection(
+            { ...this.pointState, points: this.points },
+            this.layerUpdateCallback
+          );
         }
       }, this.CLICK_DELAY);
     }
@@ -1300,15 +1847,8 @@ var _DeckglMap = class _DeckglMap {
       event.srcEvent.stopPropagation();
       event.srcEvent.preventDefault();
     }
-    console.log("\u53CC\u51FB\u4E8B\u4EF6\u89E6\u53D1", pick);
-    if (pick?.object && pick.layer?.id === "geojson-layer") {
+    if (pick?.object && pick.layer?.id === GeoLayer.getLayerId()) {
       const regionName = pick.object.properties?.name ?? "";
-      console.log("\u53CC\u51FB\u5730\u56FE\u533A\u57DF\u4FE1\u606F:", {
-        \u533A\u57DF\u540D\u79F0: regionName,
-        \u533A\u57DF\u4EE3\u7801: pick.object.properties?.code,
-        \u5750\u6807: pick.coordinate,
-        \u5B8C\u6574\u6570\u636E: pick.object.properties
-      });
       if (this.events?.onAreaDoubleClick) {
         this.events.onAreaDoubleClick(regionName);
       }
@@ -1319,30 +1859,22 @@ var _DeckglMap = class _DeckglMap {
    * @param info - 点击信息
    */
   async handleClickPoint(info) {
-    const pick = info;
-    const clickedId = pick?.object?.id ?? null;
-    this.selectedPointId = clickedId;
-    await this.updateIconLayers();
+    this.pointState = await IconLayer.handleClickPoint(
+      info,
+      { ...this.pointState, points: this.points },
+      this.layerUpdateCallback
+    );
   }
   /**
    * 点对象悬停处理
    * @param info - 悬停信息
    */
   async handleHoverPoint(info) {
-    const pick = info;
-    const hoveredId = pick?.object?.id ?? null;
-    if (this.hoveredPointId !== hoveredId) {
-      this.hoveredPointId = hoveredId;
-      const textLayer = TextLayer.create(
-        this.points,
-        {
-          selectedPointId: this.selectedPointId,
-          hoveredPointId: this.hoveredPointId
-        }
-      );
-      this.updateLayerById(TextLayer.getLayerId(), textLayer);
-      this.updateLayer();
-    }
+    this.pointState = await IconLayer.handleHoverPoint(
+      info,
+      { ...this.pointState, points: this.points },
+      this.layerUpdateCallback
+    );
   }
   //===== 数据设置与更新 =====
   /**
@@ -1350,58 +1882,8 @@ var _DeckglMap = class _DeckglMap {
    * @param geojsonData - GeoJSON 数据
    */
   async setGEOData(geojsonData) {
-    let hoveredFeatureName = null;
-    let lastClickTime = 0;
-    const DOUBLE_CLICK_THRESHOLD = 300;
-    const geojsonLayer = new GeoJsonLayer2({
-      ...DEFAULT_GEO_LAYER_PROPS,
-      id: "geojson-layer",
-      data: geojsonData,
-      getFillColor: (feature) => {
-        if (isDef(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
-          return [255, 255, 255, 255];
-        }
-        return DEFAULT_GEO_FILL_COLOR;
-      },
-      updateTriggers: {
-        getFillColor: hoveredFeatureName
-      },
-      onClick: (info) => {
-        const currentTime = Date.now();
-        const timeSinceLastClick = currentTime - lastClickTime;
-        if (timeSinceLastClick < DOUBLE_CLICK_THRESHOLD) {
-          const pick = info;
-          if (pick?.object) {
-            const regionName = pick.object.properties?.name ?? "";
-            console.log("\u53CC\u51FB\u5730\u56FE\u533A\u57DF\u4FE1\u606F:", {
-              \u533A\u57DF\u540D\u79F0: regionName,
-              \u533A\u57DF\u4EE3\u7801: pick.object.properties?.code,
-              \u5B8C\u6574\u6570\u636E: pick.object.properties
-            });
-            if (this.events?.onAreaDoubleClick) {
-              this.events.onAreaDoubleClick(regionName);
-            }
-          }
-          lastClickTime = 0;
-        } else {
-          lastClickTime = currentTime;
-        }
-        return true;
-      },
-      onHover: (info) => {
-        const hover = info;
-        if (hoveredFeatureName !== hover?.object?.properties?.name) {
-          this.currentDeckInstance?.redraw();
-        }
-        if (hover?.object) {
-          hoveredFeatureName = hover.object.properties?.name ?? null;
-        } else {
-          hoveredFeatureName = null;
-        }
-        return true;
-      }
-    });
-    this.addLayer("geojson-layer", geojsonLayer);
+    const geojsonLayer = GeoLayer.createWithData(geojsonData, this.events);
+    this.addLayer(GeoLayer.getLayerId(), geojsonLayer);
     this.updateLayer();
     this.fitBoundsToGeoData(geojsonData);
   }
@@ -1410,19 +1892,15 @@ var _DeckglMap = class _DeckglMap {
    * @param geojsonData - GeoJSON 数据
    */
   fitBoundsToGeoData(geojsonData) {
-    const curLevel = MapStateManager.curLevel;
-    if (curLevel === MapLevel3.WORLD) {
-      this.updateViewState([0, 30], 1);
-      return;
-    }
     const canvasElement = this.container;
     const containerWidth = canvasElement?.parentElement?.clientWidth ?? 1e3;
     const containerHeight = canvasElement?.parentElement?.clientHeight ?? 800;
-    const result = GeoUtils.getCenterAndZoom(geojsonData, containerWidth, containerHeight);
-    if (!result) {
-      return;
-    }
-    this.updateViewState(result.center, result.zoom);
+    const viewState = GeoLayer.calculateViewState(
+      geojsonData,
+      { width: containerWidth, height: containerHeight },
+      this.mode
+    );
+    this.updateViewState([viewState.longitude, viewState.latitude], viewState.zoom);
   }
   /**
    * 更新视图状态
@@ -1449,7 +1927,11 @@ var _DeckglMap = class _DeckglMap {
    */
   async setPoints(points) {
     this.points = points;
-    await this.updateIconLayers();
+    this.pointState = await IconLayer.setPoints(
+      points,
+      this.pointState,
+      this.layerUpdateCallback
+    );
   }
   /**
    * 设置折线数据
@@ -1458,40 +1940,26 @@ var _DeckglMap = class _DeckglMap {
   setLines(lines) {
     this.lines = lines;
   }
-  /**
-   * 更新图标和文本图层
-   */
-  async updateIconLayers() {
-    console.log("[DeckglMap] updateIconLayers called, points count:", this.points.length);
-    const iconLayer = await IconLayer.create(
-      this.points,
-      {
-        selectedPointId: this.selectedPointId,
-        hoveredPointId: this.hoveredPointId,
-        onClick: (info) => {
-          void this.handleClickPoint(info);
-        },
-        onHover: (info) => {
-          void this.handleHoverPoint(info);
-        }
-      }
-    );
-    if (iconLayer) {
-      this.updateLayerById(IconLayer.getLayerId(), iconLayer);
-    }
-    console.log("[DeckglMap] IconLayer updated, now updating TextLayer");
-    const textLayer = TextLayer.create(
-      this.points,
-      {
-        selectedPointId: this.selectedPointId,
-        hoveredPointId: this.hoveredPointId
-      }
-    );
-    this.updateLayerById(TextLayer.getLayerId(), textLayer);
-    console.log("[DeckglMap] TextLayer updated, now calling updateLayer()");
-    this.updateLayer();
-  }
   //===== 动画控制 =====
+  // ==================== 时间管理方法 ====================
+  /**
+   * 获取当前动画时间
+   */
+  getCurrentTime() {
+    return this.currentTime;
+  }
+  /**
+   * 设置当前动画时间
+   */
+  setCurrentTime(time) {
+    this.currentTime = time;
+  }
+  /**
+   * 重置动画时间
+   */
+  resetTime() {
+    this.currentTime = 0;
+  }
   /**
    * 启动动画定时器
    */
@@ -1503,7 +1971,7 @@ var _DeckglMap = class _DeckglMap {
     this.animationTimer = new TaskManager.Timer({
       description: "glmap-arc-animation",
       time: 10,
-      once: false,
+      once: true,
       fn: this.updateArcAnimation.bind(this)
     });
   }
@@ -1511,7 +1979,25 @@ var _DeckglMap = class _DeckglMap {
    * 更新动画
    */
   updateArcAnimation() {
-    LineLayer.advanceAnimation(this.mode, this.lines, {}, this.updateLayerById.bind(this));
+    if (this.mode === "2d") {
+      const currentTime = this.getCurrentTime();
+      const animationSpeed = 60;
+      const timeLoop = 6 * 60 * 60;
+      const newTime = (currentTime + animationSpeed) % timeLoop;
+      this.setCurrentTime(newTime);
+      const layers = Line2DManager.createLayers(this.lines, {}, newTime);
+      this.updateLayerById("line-layer", layers[0]);
+      this.updateLayerById("line-trail-layer", layers[1]);
+    } else {
+      const currentTime = this.getCurrentTime();
+      const animationSpeed = 1;
+      const timeLoop = 6 * 60 * 60;
+      const newTime = (currentTime + animationSpeed) % timeLoop;
+      this.setCurrentTime(newTime);
+      const [baseLayer, trailLayer] = Line3DManager.createLayers(this.lines, {}, newTime);
+      this.updateLayerById("arc-base-layer", baseLayer);
+      this.updateLayerById("arc-trail-layer", trailLayer);
+    }
     this.updateLayer();
   }
 };
@@ -1539,6 +2025,91 @@ import { GeoComponent as GeoComponent2, TooltipComponent, TitleComponent } from 
 import { MapLevel as MapLevel4 } from "@orch-map/types";
 import * as echarts from "echarts/core";
 import { GeoJsonUtils } from "@orch-map/utils";
+
+// src/utils/echartGeoUtils.ts
+function getZoomLevelFromWorldWidth(worldWidth) {
+  const zoomLevel = Math.log2(worldWidth / 256);
+  return zoomLevel;
+}
+var EchartGeoUtils = class _EchartGeoUtils {
+  /**
+   * 获取 GeoJSON 中的所有坐标数据
+   * @param geoJson GeoJSON 数据
+   * @returns 所有坐标数组
+   */
+  static getAllCoordinates(geoJson) {
+    const coordinates = [];
+    if (geoJson.type === "FeatureCollection") {
+      geoJson.features.forEach((feature) => {
+        if (feature.geometry?.coordinates) {
+          coordinates.push(feature.geometry.coordinates);
+        }
+      });
+    } else if (geoJson.type === "Feature") {
+      if (geoJson.geometry?.coordinates) {
+        coordinates.push(geoJson.geometry.coordinates);
+      }
+    } else if (geoJson.coordinates) {
+      coordinates.push(geoJson.coordinates);
+    }
+    return coordinates;
+  }
+  /**
+   * 将地图坐标扁平化为 [number, number] 数组
+   * 处理多层嵌套的坐标数据，转为一维数组
+   * @param arr 嵌套的坐标数据
+   * @returns 扁平化后的坐标数组
+   */
+  static flattenCoordinate(arr) {
+    const result = [];
+    function flatten(item) {
+      if (Array.isArray(item)) {
+        if (Array.isArray(item[0]) || typeof item[0] === "object") {
+          item.forEach(flatten);
+        } else if (typeof item[0] === "number" && typeof item[1] === "number") {
+          result.push(item);
+        }
+      }
+    }
+    arr.forEach(flatten);
+    return result;
+  }
+  /**
+   * 通过坐标列表计算地图的中心点和缩放比例
+   * @param coordinateList 扁平化后的坐标列表
+   * @returns 中心点和缩放比例
+   */
+  static getCenterAndZoom(geoJson, {
+    containerWidth,
+    containerHeight
+  }) {
+    const coordinateList = this.getAllCoordinates(geoJson);
+    if (coordinateList.length === 0) {
+      return {
+        center: null,
+        zoom: 1
+      };
+    }
+    const lngList = _EchartGeoUtils.flattenCoordinate(coordinateList).map((item) => item[0]);
+    const latList = _EchartGeoUtils.flattenCoordinate(coordinateList).map((item) => item[1]);
+    const minLng = Math.min(...lngList);
+    const maxLng = Math.max(...lngList);
+    const minLat = Math.min(...latList);
+    const maxLat = Math.max(...latList);
+    const lngDelta = Math.abs(maxLng - minLng) || 1;
+    const latDelta = Math.abs(maxLat - minLat) || 1;
+    const ratio = getZoomLevelFromWorldWidth(containerWidth);
+    const latScale = containerHeight / (latDelta * ratio);
+    const lngScale = containerWidth / (lngDelta * ratio);
+    const zoom = Math.min(lngScale, latScale);
+    return {
+      center: [(minLng + maxLng) / 2, (minLat + maxLat) / 2],
+      zoom
+    };
+  }
+};
+
+// src/echarts-geo/components/geo.ts
 var _GeoComponent = class _GeoComponent {
   /**
    * 生成地图名称
@@ -1563,6 +2134,16 @@ var _GeoComponent = class _GeoComponent {
         return "default";
     }
   }
+  static calculateScaleAndCenter(container) {
+    const center = null;
+    let scale = 1;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    const geoJson = MapStateManager.geoData;
+    const result = EchartGeoUtils.getCenterAndZoom(geoJson, { containerWidth, containerHeight }) ?? { center, zoom: scale };
+    scale = result.zoom;
+    return { scale, center: result.center };
+  }
   /**
    * 更新地理组件选项
    * @param chartInstance - ECharts 实例
@@ -1570,24 +2151,19 @@ var _GeoComponent = class _GeoComponent {
    */
   static updateGeoOption(chartInstance, container) {
     if (!chartInstance) return;
-    const center = null;
-    const scale = 1;
-    const containerWidth = container.clientWidth;
-    const containerHeight = container.clientHeight;
-    const geoJson = MapStateManager.geoData;
-    const result = GeoUtils.getCenterAndZoom(geoJson, containerWidth, containerHeight) ?? { center, zoom: scale };
-    const isWorld = MapStateManager.curLevel === MapLevel4.WORLD;
+    const { scale, center } = _GeoComponent.calculateScaleAndCenter(container);
     const options = chartInstance.getOption();
     const geo = options.geo;
     if (geo && geo.length > 0) {
       geo[0].map = _GeoComponent.generateMapName();
-      geo[0].center = result.center ?? geo[0].center;
-      geo[0].zoom = result.zoom || (isWorld ? 1.3 : 1);
+      geo[0].center = center ?? geo[0].center;
+      geo[0].zoom = scale;
       geo[0].itemStyle = {
         ...geo[0].itemStyle
       };
       options.geo = geo;
       chartInstance.setOption(options, true);
+      chartInstance.resize();
     }
   }
   /**
@@ -1649,10 +2225,6 @@ var _GeoComponent = class _GeoComponent {
    * @returns 是否需要投影变换
    */
   static needsProjectionTransform() {
-    const currentMapIsChina = GeoUtils.getCurrentMapIsChina();
-    if (currentMapIsChina) {
-      return false;
-    }
     if (MapStateManager.curLevel === MapLevel4.COUNTRY && MapStateManager.postcode === US_AD_CODE_JUST_FOR_FE) {
       return false;
     }
@@ -2335,6 +2907,9 @@ var EchartsMap = class {
         }
       ]
     };
+    const zoom = GeoComponent.calculateScaleAndCenter(this.container).scale;
+    geoOption.zoom = zoom;
+    baseOption.geo = geoOption;
     this.chartInstance?.setOption(baseOption, true);
     instance.on("dblclick", this.dbClickHandler);
     instance.on("georoam", this.redrawMap);
@@ -2372,7 +2947,7 @@ var EchartsMap = class {
     const geojson = MapStateManager.geoData;
     GeoComponent.registerMap(geojson);
     this.updateGeoOption();
-    if (!boundary || boundary.type !== "FeatureCollection" || !boundary.features || !Array.isArray(boundary.features)) {
+    if (boundary?.type !== "FeatureCollection" || !Array.isArray(boundary?.features)) {
       this.boundaryLoading = false;
       return;
     }
@@ -2779,7 +3354,7 @@ var MapLevelUtils = class {
    */
   static isNextLevelSupported(nextLevel) {
     if (MapStateManager.curLevel === MapLevel6.COUNTRY && nextLevel === MapLevel6.PROVINCE) {
-      return JUST_SUPPORTED_NEXT_LEVEL_COUNTRIES_AD_CODE.includes(MapStateManager.postcode);
+      return MapStateManager.country === "China" || MapStateManager.country === "United States";
     }
     return true;
   }
@@ -2869,8 +3444,10 @@ var OrchMap = class {
    * @param {BaseMapPoint[]} points - 点位数据数组
    */
   setPoints(points) {
+    MapStateManager.allPoints = points;
     this._executeWhenReady(() => {
-      void this.instance.setPoints(points);
+      const filteredPoints = this.filterPointsByCurrentLevel(points);
+      void this.instance.setPoints(filteredPoints);
     });
   }
   /**
@@ -2878,8 +3455,10 @@ var OrchMap = class {
    * @param {BaseMapLine[]} lines - 线条数据数组
    */
   setLines(lines) {
+    MapStateManager.allLines = lines;
     this._executeWhenReady(() => {
-      void this.instance.setLines(lines);
+      const filteredLines = this.filterLinesByCurrentLevel(lines);
+      void this.instance.setLines(filteredLines);
     });
   }
   /**
@@ -2907,6 +3486,46 @@ var OrchMap = class {
       region: MapStateManager.country === "China" ? MapStateManager.postcode : region
     });
     void this.instance.setGEOData(MapStateManager.geoData);
+    this.updatePointsAndLinesForCurrentLevel();
+  }
+  /**
+   * 导航到指定地图层级
+   * @description 切换到指定的地图层级和区域
+   * @param {MapLevel} targetLevel - 目标地图层级
+   * @param {string} [country=""] - 国家代码（country 或 region 层级时需要）
+   * @param {string} [region=""] - 地区名称（region 层级时需要）
+   * @param {string} [postcode=""] - 邮政编码（用于中国地图的行政区划）
+   * @returns {Promise<void>} 导航操作的 Promise
+   * @example
+   * // 返回世界地图
+   * await mapInstance.navigateToLevel(MapLevel.WORLD);
+   *
+   * // 导航到美国地图
+   * await mapInstance.navigateToLevel(MapLevel.COUNTRY, "United States");
+   *
+   * // 导航到中国某个省份
+   * await mapInstance.navigateToLevel(MapLevel.REGION, "China", "北京", "110000");
+   */
+  async navigateToLevel(targetLevel, country = "", region = "", postcode = "") {
+    MapStateManager.curLevel = targetLevel;
+    MapStateManager.country = country;
+    MapStateManager.region = region;
+    MapStateManager.postcode = postcode;
+    await this.getGeoData({
+      currentLevel: targetLevel,
+      country,
+      region: country === "China" ? postcode : region
+    });
+    void this.instance.setGEOData(MapStateManager.geoData);
+    this.updatePointsAndLinesForCurrentLevel();
+  }
+  /**
+   * 返回到世界地图
+   * @description 快捷方法，重置地图状态并返回到世界地图视图
+   * @returns {Promise<void>} 返回操作的 Promise
+   */
+  async returnToWorldMap() {
+    return this.navigateToLevel(MapLevel7.WORLD);
   }
   async getGeoData(params) {
     const geoData = await index_default.getGeoJsonData({
@@ -2916,6 +3535,56 @@ var OrchMap = class {
       mapType: this.mapType
     });
     MapStateManager.setGeoData(geoData);
+  }
+  /**
+   * 根据当前地图层级过滤点位
+   * @param points - 点位数据数组
+   * @returns 过滤后的点位数组
+   */
+  filterPointsByCurrentLevel(points) {
+    if (MapStateManager.curLevel === "world") {
+      return points;
+    }
+    return GeoUtils.filterPointsInGeoJSON(points, MapStateManager.geoData);
+  }
+  /**
+   * 根据当前地图层级过滤线条
+   * @param lines - 线条数据数组
+   * @returns 过滤后的线条数组
+   */
+  filterLinesByCurrentLevel(lines) {
+    if (MapStateManager.curLevel === "world") {
+      return lines;
+    }
+    const geoData = MapStateManager.geoData;
+    return lines.filter((line) => {
+      const [startLng, startLat] = line.startCoordinate;
+      const [endLng, endLat] = line.endCoordinate;
+      const fromInRegion = GeoUtils.isPointInGeoJSON(
+        startLng,
+        startLat,
+        geoData
+      );
+      const toInRegion = GeoUtils.isPointInGeoJSON(
+        endLng,
+        endLat,
+        geoData
+      );
+      return fromInRegion && toInRegion;
+    });
+  }
+  /**
+   * 更新当前层级的点位和线条
+   */
+  updatePointsAndLinesForCurrentLevel() {
+    if (MapStateManager.allPoints.length > 0) {
+      const filteredPoints = this.filterPointsByCurrentLevel(MapStateManager.allPoints);
+      void this.instance.setPoints(filteredPoints);
+    }
+    if (MapStateManager.allLines.length > 0) {
+      const filteredLines = this.filterLinesByCurrentLevel(MapStateManager.allLines);
+      void this.instance.setLines(filteredLines);
+    }
   }
   /**
    * 在初始化完成后执行回调

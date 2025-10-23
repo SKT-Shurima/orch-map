@@ -63,7 +63,7 @@ interface BaseMapPoint {
     label: {
         show: boolean;
         hoverShow: boolean;
-        formatter: () => string;
+        formatter: (formatterParams: AnyObj) => string;
     };
     tooltip?: string;
     siblingPointId?: string[];

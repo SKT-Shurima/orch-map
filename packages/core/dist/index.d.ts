@@ -136,10 +136,8 @@ declare class DeckglMap {
     private lines;
     /** 点数据源 */
     private points;
-    /** 选中点 ID */
-    private selectedPointId;
-    /** 当前悬停的点 ID */
-    private hoveredPointId;
+    /** 点状态管理 */
+    private pointState;
     /** 2D/3D 模式 */
     private mode;
     /** 事件处理器配置 */
@@ -150,6 +148,8 @@ declare class DeckglMap {
     private readonly CLICK_DELAY;
     /** 动画计时器任务句柄 */
     private animationTimer;
+    /** 当前动画时间（单位：秒的逻辑刻度） */
+    private currentTime;
     /**
      * 构造函数
      * @param container - 容器元素
@@ -174,6 +174,11 @@ declare class DeckglMap {
      * 初始化默认图层
      */
     private initializeDefaultLayers;
+    private get lineLayerManager();
+    /**
+     * 图层更新回调方法
+     */
+    private get layerUpdateCallback();
     /**
      * 销毁内部资源
      */
@@ -272,9 +277,17 @@ declare class DeckglMap {
      */
     setLines(lines: BaseMapLine[]): void;
     /**
-     * 更新图标和文本图层
+     * 获取当前动画时间
      */
-    private updateIconLayers;
+    getCurrentTime(): number;
+    /**
+     * 设置当前动画时间
+     */
+    setCurrentTime(time: number): void;
+    /**
+     * 重置动画时间
+     */
+    resetTime(): void;
     /**
      * 启动动画定时器
      */

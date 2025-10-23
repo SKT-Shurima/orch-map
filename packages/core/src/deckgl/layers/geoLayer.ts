@@ -1,9 +1,15 @@
 /**
  * 模块：Geo 基础图层
- * 说明：提供一个空数据的 GeoJsonLayer 构造器，便于初始化占位，避免空图层导致的渲染空指针问题。
+ * 说明：提供 GeoJSON 图层的完整管理功能，包括创建、事件处理和视图适配
  */
 
 import { GeoJsonLayer } from "@deck.gl/layers";
+import { Feature, GeoJSON } from "geojson";
+import { isDef } from "@orch-map/utils";
+import { MapLevel } from "@orch-map/types";
+import MapStateManager from "../../MapStateManager";
+import GeoUtils from "../../utils/geoUtils";
+import type { MapRendererEvents } from "../../interfaces/IMapRenderer";
 
 /**
  * GeoJSON 图层属性配置接口
@@ -84,6 +90,24 @@ export const DEFAULT_GEO_LAYER_PROPS: Partial<GeoJsonLayerProps> = {
   getLineWidth: () => 1,
 };
 
+/**
+ * 视图状态接口
+ */
+export interface ViewState {
+  longitude: number;
+  latitude: number;
+  zoom: number;
+  pitch?: number;
+}
+
+/**
+ * 容器尺寸接口
+ */
+export interface ContainerSize {
+  width: number;
+  height: number;
+}
+
 export default class GeoLayer {
   /**
    * 创建一个空数据的 GeoJsonLayer
@@ -94,6 +118,148 @@ export default class GeoLayer {
       id: "geojson-layer",
       data: [],
     });
+  }
+
+  /**
+   * 创建带有完整功能的 GeoJSON 图层
+   * @param geojsonData - GeoJSON 数据
+   * @param events - 事件处理器配置（可选）
+   * @returns 配置好的 GeoJsonLayer 实例
+   */
+  public static createWithData(geojsonData: GeoJSON, events?: MapRendererEvents) {
+    let hoveredFeatureName: string | null = null;
+    let lastClickTime = 0;
+    const DOUBLE_CLICK_THRESHOLD = 300; // 毫秒
+
+    return new GeoJsonLayer({
+      ...DEFAULT_GEO_LAYER_PROPS,
+      id: "geojson-layer",
+      data: geojsonData,
+      getFillColor: (feature: Feature) => {
+        if (isDef(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
+          return [255, 255, 255, 255];
+        }
+        return DEFAULT_GEO_FILL_COLOR;
+      },
+      updateTriggers: {
+        getFillColor: hoveredFeatureName,
+      },
+      onClick: (info: unknown) => {
+        const currentTime = Date.now();
+        const timeSinceLastClick = currentTime - lastClickTime;
+
+        if (timeSinceLastClick < DOUBLE_CLICK_THRESHOLD) {
+          // 这是双击
+          const pick = info as { object?: { properties?: { name?: string; code?: string } } } | null;
+          if (pick?.object) {
+            const regionName = pick.object.properties?.name ?? "";
+            // eslint-disable-next-line no-console
+            console.log("双击地图区域信息:", {
+              区域名称: regionName,
+              区域代码: pick.object.properties?.code,
+              完整数据: pick.object.properties,
+            });
+
+            // 触发双击区域事件回调
+            if (events?.onAreaDoubleClick) {
+              events.onAreaDoubleClick(regionName);
+            }
+          }
+          lastClickTime = 0; // 重置
+        } else {
+          // 这是单击
+          lastClickTime = currentTime;
+        }
+        return true;
+      },
+      onHover: (info: unknown) => {
+        const hover = info as { object?: { properties?: { name?: string } } } | null;
+        if (hoveredFeatureName !== hover?.object?.properties?.name) {
+          // 需要重绘时，这里应该触发重绘，但静态方法无法直接访问 deck 实例
+          // 这个逻辑需要在调用方处理
+        }
+        if (hover?.object) {
+          hoveredFeatureName = hover.object.properties?.name ?? null;
+        } else {
+          hoveredFeatureName = null;
+        }
+        return true;
+      },
+    });
+  }
+
+  /**
+   * 根据地理数据计算适合的视图状态
+   * @param geojsonData - GeoJSON 数据
+   * @param containerSize - 容器尺寸
+   * @param mode - 地图模式（2D/3D）
+   * @returns 计算后的视图状态
+   */
+  public static calculateViewState(
+    geojsonData: GeoJSON,
+    containerSize: ContainerSize,
+    mode: "2d" | "3d" = "2d",
+  ): ViewState {
+    const curLevel = MapStateManager.curLevel;
+
+    if (curLevel === MapLevel.WORLD) {
+      // 世界地图使用默认视图
+      const result = GeoUtils.getCenterAndZoom(geojsonData, {
+        containerWidth: containerSize.width,
+        containerHeight: containerSize.height,
+      });
+      return {
+        longitude: result?.center?.[0] ?? 0,
+        latitude: result?.center?.[1] ?? 30,
+        zoom: result?.zoom ?? 0,
+        pitch: mode === "3d" ? 45 : 0,
+      };
+    }
+
+    // 计算中心点和缩放级别
+    const result = GeoUtils.getCenterAndZoom(geojsonData, {
+      containerWidth: containerSize.width,
+      containerHeight: containerSize.height,
+    });
+    if (!result) {
+      return {
+        longitude: 0,
+        latitude: 30,
+        zoom: 1,
+        pitch: mode === "3d" ? 45 : 0,
+      };
+    }
+
+    return {
+      longitude: result.center?.[0] ?? 0,
+      latitude: result.center?.[1] ?? 30,
+      zoom: result.zoom ?? 1,
+      pitch: mode === "3d" ? 45 : 0,
+    };
+  }
+
+  /**
+   * 检查是否应该初始化默认图层
+   * @returns 是否应该初始化
+   */
+  public static shouldInitializeDefaultLayers(): boolean {
+    return !!MapStateManager.geoData;
+  }
+
+  /**
+   * 获取默认的 GeoJSON 数据
+   * @returns 默认的 GeoJSON 数据
+   */
+  public static getDefaultGeoData(): GeoJSON | null {
+    return MapStateManager.geoData;
+  }
+
+  /**
+   * 获取图层 ID
+   * @returns 图层 ID
+   */
+  public static getLayerId(): string {
+    return "geojson-layer";
   }
 }
 
