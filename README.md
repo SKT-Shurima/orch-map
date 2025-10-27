@@ -2,7 +2,7 @@
 
 一个基于 ECharts 的地理坐标系组件库 monorepo 项目，提供对 ECharts Geo 组件的二次封装。
 
-> 📚 **[查看完整文档](./docs/README.md)** | 🚀 **[快速开始](./docs/QUICK_START.md)** | 📖 **[使用指南](./docs/USAGE.md)**
+> 📚 **[查看完整文档](./docs/README.md)** | 🚀 **[快速开始](./docs/QUICK_START.md)** | 📥 **[安装指南](./docs/INSTALLATION.md)** | 📖 **[使用指南](./docs/USAGE.md)**
 
 ## 项目结构
 
