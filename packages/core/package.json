@@ -39,6 +39,11 @@
   "peerDependencies": {
     "echarts": "^5.6.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SKT-Shurima/orch-map.git",
+    "directory": "packages/core"
+  },
   "publishConfig": {
     "access": "public"
   }

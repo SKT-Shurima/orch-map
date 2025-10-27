@@ -2,6 +2,8 @@
 
 一个基于 ECharts 的地理坐标系组件库 monorepo 项目，提供对 ECharts Geo 组件的二次封装。
 
+> 📚 **[查看完整文档](./docs/README.md)** | 🚀 **[快速开始](./docs/QUICK_START.md)** | 📖 **[使用指南](./docs/USAGE.md)**
+
 ## 项目结构
 
 ```
@@ -9,12 +11,15 @@ orch-map/
 ├── packages/           # 核心依赖包
 │   ├── types/         # 简单类型定义
 │   ├── utils/         # 简单工具函数
+│   ├── mapdata/       # 地图数据
 │   └── core/          # 核心地图功能
+├── docs/              # 项目文档
+│   ├── README.md      # 文档索引
+│   ├── QUICK_START.md # 快速开始
+│   ├── USAGE.md       # 使用指南
+│   ├── PUBLISHING.md  # 发布指南
+│   └── example-project-setup.md # 项目集成示例
 ├── examples/          # 简单示例 (Vue3 + TSX)
-│   ├── src/
-│   │   ├── App.tsx    # 主应用组件
-│   │   └── main.ts    # 入口文件
-│   └── package.json   # 示例项目配置
 ├── package.json       # 根配置文件
 └── pnpm-workspace.yaml # pnpm workspace 配置
 ```
@@ -146,6 +151,30 @@ pnpm dev
 - **前端框架**: Vue3 + TSX
 - **地图引擎**: ECharts 5.6
 - **开发服务器**: Vite
+
+## 发布和使用
+
+### 发布到 GitHub
+
+将项目推送到 GitHub 后，可以通过 Git 依赖在其他项目中使用这些包：
+
+```json
+{
+  "dependencies": {
+    "@orch-map/core": "github:SKT-Shurima/orch-map#packages/core",
+    "@orch-map/types": "github:SKT-Shurima/orch-map#packages/types",
+    "@orch-map/utils": "github:SKT-Shurima/orch-map#packages/utils",
+    "@orch-map/mapdata": "github:SKT-Shurima/orch-map#packages/mapData"
+  }
+}
+```
+
+详细说明请查看：
+
+- **[QUICK_START.md](./docs/QUICK_START.md)** - 快速开始
+- **[USAGE.md](./docs/USAGE.md)** - 使用指南
+- **[PUBLISHING.md](./docs/PUBLISHING.md)** - 发布指南（npm/GitHub/GitHub Packages）
+- **[example-project-setup.md](./docs/example-project-setup.md)** - 在外部项目中使用示例
 
 ## 许可证
 
