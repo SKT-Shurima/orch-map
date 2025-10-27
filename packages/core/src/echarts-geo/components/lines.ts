@@ -52,7 +52,7 @@ export default class LinesComponent {
     const defaultLineSeries = LinesComponent.defaultLinesSeries;
     const lineData = lines.map(line => {
       // 计算曲率值
-      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
+      const curvature = LinesComponent.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
         line.endCoordinate,
@@ -93,8 +93,8 @@ export default class LinesComponent {
     if (!chartInstance) return;
 
     const mapOption = chartInstance.getOption() as EChartsOption;
-    const series = this.convertLinesToSeries(lines);
-    const doubleSeries = this.getBuddyLineSeries(series);
+    const series = LinesComponent.convertLinesToSeries(lines);
+    const doubleSeries = LinesComponent.getBuddyLineSeries(series);
     const currentSeries = mapOption.series as LinesSeriesOption[] | undefined;
     if (currentSeries && Array.isArray(currentSeries)) {
       mapOption.series = currentSeries.map((item: LinesSeriesOption) => {

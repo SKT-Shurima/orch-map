@@ -8,6 +8,28 @@ import { GetGeoJsonParams } from "./types";
  */
 export default class MapDataService {
   /**
+   * 检查 geo JSON 文件是否存在
+   * @param path - 相对路径
+   * @returns {Promise<boolean>} 文件是否存在
+   */
+  public static async checkGeoJsonExists(path: string): Promise<boolean> {
+    if (!path) {
+      return false;
+    }
+
+    try {
+      // 获取完整路径
+      const fullPath = MapDataPathManager.getFullPath(path);
+      const response = await fetch(fullPath, { method: "HEAD" });
+
+      return response.ok;
+    } catch (error) {
+      console.error(`Failed to check geo JSON file exists: ${path}:`, error);
+      return false;
+    }
+  }
+
+  /**
    * 根据路径获取地图数据
    */
   public static async getMapData(path: string): Promise<FeatureCollection> {
@@ -38,31 +60,24 @@ export default class MapDataService {
     };
   }
 
+
   /**
-   * 处理中国地图特殊数据（移除9段线等）
+   * 检查是否可以为指定的参数获取 geo JSON 数据
+   * @param params - 地图数据获取参数
+   * @returns {Promise<boolean>} 数据是否存在
    */
-  private static processChinaMapData(data: FeatureCollection): FeatureCollection {
-    // 移除空名称的特征和处理海南省数据
-    data.features = data.features.filter(feature => {
-      if (!feature.properties?.name) {
-        return false;
-      }
-
-      // 处理海南省，只保留海南岛
-      if (feature.properties.name === "海南省") {
-        if (feature.geometry &&
-            feature.geometry.type === "MultiPolygon" &&
-            feature.geometry.coordinates &&
-            Array.isArray(feature.geometry.coordinates)) {
-          // 只保留第一个坐标组（海南岛），移除其他小岛
-          feature.geometry.coordinates = feature.geometry.coordinates.slice(0, 1);
-        }
-      }
-
-      return true;
+  public static async checkGeoJsonExistsForParams(params: GetGeoJsonParams): Promise<boolean> {
+    const path = MapDataPathManager.generateDataPath({
+      currentLevel: params.mapLevel,
+      country: params.country,
+      region: params.region,
     });
 
-    return data;
+    if (!path) {
+      return false;
+    }
+
+    return await MapDataService.checkGeoJsonExists(path);
   }
 
   /**

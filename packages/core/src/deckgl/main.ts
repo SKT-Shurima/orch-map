@@ -5,11 +5,12 @@
 import { Deck, MapView, MapViewState, ViewStateChangeParameters, FlyToInterpolator } from "@deck.gl/core";
 import type { MjolnirGestureEvent } from "mjolnir.js";
 import { GeoJSON } from "geojson";
-import { type BaseMapPoint, type BaseMapLine } from "@orch-map/types";
+import { type BaseMapPoint, type BaseMapLine, MapLevel } from "@orch-map/types";
 import { Line2DManager, Line3DManager, IconLayer, TextLayer } from "./layers";
 import type { MapRendererEvents } from "../interfaces/IMapRenderer";
 import GeoLayer from "./layers/geoLayer";
 import type { PointState, LayerUpdateCallback } from "./layers/iconLayer";
+import MapStateManager from "../MapStateManager";
 
 // 类型定义
 type LayerLike = any;
@@ -25,7 +26,7 @@ export default class DeckglMap {
   /** 默认视图状态 */
   private static readonly DEFAULT_VIEW_STATE: MapViewState = {
     longitude: 0,
-    latitude: 30,
+    latitude: 0,
     zoom: 1,
     pitch: 0,
   };
@@ -61,6 +62,9 @@ export default class DeckglMap {
 
   /** 2D/3D 模式 */
   private mode: "2d" | "3d" = "2d";
+
+  /** 第一次加载时计算的最小缩放比例 */
+  private initialMinZoom: number | null = null;
 
   //===== 事件配置 =====
 
@@ -121,7 +125,7 @@ export default class DeckglMap {
       canvas,
       {
         zoom: 1,
-        latitude: 30,
+        latitude: 0,
         longitude: 0,
       },
       {
@@ -235,7 +239,7 @@ export default class DeckglMap {
 
     const mode = props?.mode ?? "2d";
     const mapView = new MapView({
-      repeat: true,
+      repeat: MapStateManager.curLevel === MapLevel.WORLD,
       controller: {
         scrollZoom: true,
         dragPan: true,
@@ -262,9 +266,20 @@ export default class DeckglMap {
         params: ViewStateChangeParameters<ViewStateT>,
       ): ViewStateT | void => {
         const { viewState } = params as { viewState: MapViewState };
-        // 限制纬度范围，防止上下拖动超出边界
-        const constrainedLatitude = Math.max(-30, Math.min(30, viewState.latitude));
-        const nextViewState = { ...viewState, latitude: constrainedLatitude } as unknown as ViewStateT;
+
+        // 限制纬度范围，防止上下拖动超出北极圈和南极圈边界
+        const constrainedLatitude = Math.max(-66.5, Math.min(66.5, viewState.latitude));
+
+        // 限制最小缩放级别，使用第一次加载时计算的比例
+        // 如果还没有计算过初始最小缩放比例，则使用默认值 0
+        const minZoom = this.initialMinZoom ?? 0;
+        const constrainedZoom = Math.max(minZoom, viewState.zoom);
+
+        const nextViewState = {
+          ...viewState,
+          latitude: constrainedLatitude,
+          zoom: constrainedZoom,
+        } as unknown as ViewStateT;
         return nextViewState;
       },
       layers: [],
@@ -314,8 +329,6 @@ export default class DeckglMap {
     if (!this.layerMap.has(id)) {
       if (isLayerInstance(layerOrProps)) {
         this.layerMap.set(id, layerOrProps);
-        // eslint-disable-next-line no-console
-        console.log("[DeckglMap] Layer added to layerMap:", id);
       }
       return;
     }
@@ -334,8 +347,6 @@ export default class DeckglMap {
           id,
         });
         this.layerMap.set(id, rebuilt);
-        // eslint-disable-next-line no-console
-        console.log("[DeckglMap] Layer updated (rebuilt) in layerMap:", id);
       } else {
         this.layerMap.set(id, incomingLayer);
       }
@@ -514,7 +525,34 @@ export default class DeckglMap {
       this.mode,
     );
 
+    // 如果是第一次加载，计算并存储最小缩放比例
+    this.initialMinZoom ??= this.calculateInitialMinZoom(containerWidth, containerHeight);
+
     this.updateViewState([viewState.longitude, viewState.latitude], viewState.zoom);
+  }
+
+  /**
+   * 计算初始最小缩放比例
+   * 基于容器尺寸计算能够显示整个世界地图的最小缩放级别
+   * @param containerWidth - 容器宽度
+   * @param containerHeight - 容器高度
+   * @returns 最小缩放级别
+   */
+  private calculateInitialMinZoom(containerWidth: number, containerHeight: number): number {
+    // 世界地图的经纬度范围
+    const worldLngRange = 360; // 经度范围：-180 到 180
+    const worldLatRange = 180; // 纬度范围：-90 到 90
+
+    // 计算基于容器尺寸的最小缩放级别
+    // 使用与 GeoUtils.calculateZoomForBounds 类似的逻辑
+    const zoomLng = Math.log2((containerWidth * 0.8 * worldLngRange) / (256 * worldLngRange));
+    const zoomLat = Math.log2((containerHeight * 0.8 * worldLatRange) / (256 * worldLatRange));
+
+    // 取较小的缩放级别，确保整个世界地图都能在容器中显示
+    const minZoom = Math.min(zoomLng, zoomLat);
+
+    // 限制在合理范围内，确保不会太小
+    return Math.max(0, Math.min(2, minZoom));
   }
 
   /**

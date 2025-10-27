@@ -140,14 +140,14 @@ declare class DeckglMap {
     private pointState;
     /** 2D/3D 模式 */
     private mode;
+    /** 第一次加载时计算的最小缩放比例 */
+    private initialMinZoom;
     /** 事件处理器配置 */
     private events?;
     /** 单击延迟计时器 */
     private clickTimer;
     /** 点击延迟时间（毫秒） */
     private readonly CLICK_DELAY;
-    /** 动画计时器任务句柄 */
-    private animationTimer;
     /** 当前动画时间（单位：秒的逻辑刻度） */
     private currentTime;
     /**
@@ -261,6 +261,14 @@ declare class DeckglMap {
      */
     private fitBoundsToGeoData;
     /**
+     * 计算初始最小缩放比例
+     * 基于容器尺寸计算能够显示整个世界地图的最小缩放级别
+     * @param containerWidth - 容器宽度
+     * @param containerHeight - 容器高度
+     * @returns 最小缩放级别
+     */
+    private calculateInitialMinZoom;
+    /**
      * 更新视图状态
      * @param center - 中心点 [lng, lat]
      * @param zoom - 缩放级别
@@ -276,6 +284,12 @@ declare class DeckglMap {
      * @param lines - 折线数据数组
      */
     setLines(lines: BaseMapLine[]): void;
+    /** RAF 动画 ID */
+    private rafId;
+    /** 动画开始时间 */
+    private animationStartTime;
+    /** 动画是否正在运行 */
+    private isAnimating;
     /**
      * 获取当前动画时间
      */
@@ -289,9 +303,17 @@ declare class DeckglMap {
      */
     resetTime(): void;
     /**
-     * 启动动画定时器
+     * 启动动画定时器（使用 requestAnimationFrame）
      */
     private startArcAnimation;
+    /**
+     * 停止动画
+     */
+    private stopArcAnimation;
+    /**
+     * RAF 动画循环
+     */
+    private animate;
     /**
      * 更新动画
      */

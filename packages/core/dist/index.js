@@ -44,11 +44,11 @@ var MapRendererType = /* @__PURE__ */ ((MapRendererType2) => {
 })(MapRendererType || {});
 
 // src/main.ts
-var import_types7 = require("@orch-map/types");
+var import_types10 = require("@orch-map/types");
 
 // src/deckgl/main.ts
 var import_core = require("@deck.gl/core");
-var import_utils3 = require("@orch-map/utils");
+var import_types4 = require("@orch-map/types");
 
 // src/deckgl/layers/geoLayer.ts
 var import_layers = require("@deck.gl/layers");
@@ -662,11 +662,6 @@ var GeoLayer = class {
           const pick = info;
           if (pick?.object) {
             const regionName = pick.object.properties?.name ?? "";
-            console.log("\u53CC\u51FB\u5730\u56FE\u533A\u57DF\u4FE1\u606F:", {
-              \u533A\u57DF\u540D\u79F0: regionName,
-              \u533A\u57DF\u4EE3\u7801: pick.object.properties?.code,
-              \u5B8C\u6574\u6570\u636E: pick.object.properties
-            });
             if (events?.onAreaDoubleClick) {
               events.onAreaDoubleClick(regionName);
             }
@@ -706,7 +701,7 @@ var GeoLayer = class {
       });
       return {
         longitude: result2?.center?.[0] ?? 0,
-        latitude: result2?.center?.[1] ?? 30,
+        latitude: result2?.center?.[1] ?? 0,
         zoom: result2?.zoom ?? 0,
         pitch: mode === "3d" ? 45 : 0
       };
@@ -718,14 +713,14 @@ var GeoLayer = class {
     if (!result) {
       return {
         longitude: 0,
-        latitude: 30,
+        latitude: 0,
         zoom: 1,
         pitch: mode === "3d" ? 45 : 0
       };
     }
     return {
       longitude: result.center?.[0] ?? 0,
-      latitude: result.center?.[1] ?? 30,
+      latitude: result.center?.[1] ?? 0,
       zoom: result.zoom ?? 1,
       pitch: mode === "3d" ? 45 : 0
     };
@@ -816,7 +811,7 @@ var IconAtlas = class _IconAtlas {
 // src/deckgl/layers/textLayer.ts
 var import_layers2 = require("@deck.gl/layers");
 var import_utils2 = require("@orch-map/utils");
-var TextLayer = class {
+var TextLayer = class _TextLayer {
   /**
    * 将业务点数据转换为 TextLayer 需要的数据结构
    * 根据 label.show 和 label.hoverShow 配置决定是否显示标签
@@ -883,13 +878,8 @@ var TextLayer = class {
    * @returns TextLayer 实例
    */
   static create(points, config = {}) {
-    const textData = this.transformToTextData(points, config);
-    console.log("[TextLayer] create called:", {
-      pointsCount: points.length,
-      textDataCount: textData.length,
-      sampleTextData: textData.slice(0, 3)
-    });
-    return this.createLayer(textData);
+    const textData = _TextLayer.transformToTextData(points, config);
+    return _TextLayer.createLayer(textData);
   }
   /**
    * 获取文本图层的标识符
@@ -964,7 +954,7 @@ var IconLayer = class _IconLayer {
     const iconData = _IconLayer.transformToIconData(
       points
     );
-    return await this.createIconLayer(iconData, config);
+    return await _IconLayer.createIconLayer(iconData, config);
   }
   /**
    * 获取图标图层的标识符
@@ -1270,7 +1260,7 @@ var _Line2DManager = class _Line2DManager {
     const step = trailSpan / Math.max(1, dotsPerLine - 1);
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
+      const curvature = _Line2DManager.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
         line.endCoordinate
@@ -1332,11 +1322,11 @@ var _Line2DManager = class _Line2DManager {
    * @returns 图层数组，包含常驻曲线图层和移动尾迹图层
    */
   static createLayers(lines, config = {}, currentTime) {
-    const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
-    const baseLayer = this.buildFullCurveLayer(lines);
+    const mergedConfig = { ..._Line2DManager.DEFAULT_CONFIG, ...config };
+    const baseLayer = _Line2DManager.buildFullCurveLayer(lines);
     const time = currentTime ?? 0;
     const progress = time / mergedConfig.timeLoop;
-    const dotsLayer = this.buildMovingDotsLayer(lines, progress, mergedConfig.trailOptions);
+    const dotsLayer = _Line2DManager.buildMovingDotsLayer(lines, progress, mergedConfig.trailOptions);
     return [baseLayer, dotsLayer];
   }
   /**
@@ -1352,7 +1342,7 @@ _Line2DManager.curvatureCalculator = new CurvatureCalculator();
 /** 默认动画配置 */
 _Line2DManager.DEFAULT_CONFIG = {
   animationSpeed: 60,
-  trailLength: 60 * 60,
+  trailLength: 1e3,
   timeLoop: 6 * 60 * 60,
   trailOptions: {
     dotsPerLine: 12,
@@ -1367,6 +1357,22 @@ var Line2DManager = _Line2DManager;
 
 // src/deckgl/layers/lineLayerFor3d.ts
 var import_layers5 = require("@deck.gl/layers");
+function calculateDistance(lat1, lng1, lat2, lng2) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLng = (lng2 - lng1) * Math.PI / 180;
+  const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLng / 2) * Math.sin(dLng / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
+}
+function calculateDynamicHeight(distance, _baseHeight) {
+  const shortDistanceHeight = 3;
+  const longDistanceHeight = 5e-3;
+  const maxDistance = 1e4;
+  const normalizedDistance = Math.min(distance / maxDistance, 1);
+  const height = shortDistanceHeight - (shortDistanceHeight - longDistanceHeight) * normalizedDistance;
+  return height;
+}
 function generateFlightRoutes(lines, currentTime, config = {}) {
   const defaultConfig = {
     animationSpeed: 1,
@@ -1378,8 +1384,8 @@ function generateFlightRoutes(lines, currentTime, config = {}) {
     showFullArc: false,
     dotSize: 0.01,
     dotTrailLength: 0.1,
-    width: 1.2,
-    height: 0.6,
+    width: 1.8,
+    height: 2.8,
     pickable: true,
     autoHighlight: true,
     onClick: (info) => {
@@ -1401,6 +1407,17 @@ function generateFlightRoutes(lines, currentTime, config = {}) {
     const baseTime = index % 20 * lineOffset;
     const travelTime = lineDuration + Math.random() * 100;
     const lineColor = Array.isArray(line.color) ? line.color.slice(0, 3) : [200, 200, 200];
+    const distance = calculateDistance(
+      line.startCoordinate[1],
+      // lat1
+      line.startCoordinate[0],
+      // lng1
+      line.endCoordinate[1],
+      // lat2
+      line.endCoordinate[0]
+      // lng2
+    );
+    const dynamicHeight = calculateDynamicHeight(distance, mergedConfig.height);
     const sourcePos = [
       line.startCoordinate[0],
       line.startCoordinate[1],
@@ -1420,7 +1437,7 @@ function generateFlightRoutes(lines, currentTime, config = {}) {
       sourceColor: lineColor,
       targetColor: lineColor,
       width: line.width ?? mergedConfig.width,
-      height: mergedConfig.height
+      height: dynamicHeight
     });
     if (mergedConfig.enableBidirectional) {
       const reverseSourcePos = [
@@ -1443,7 +1460,7 @@ function generateFlightRoutes(lines, currentTime, config = {}) {
         sourceColor: lineColor,
         targetColor: lineColor,
         width: line.width ?? mergedConfig.width,
-        height: mergedConfig.height
+        height: dynamicHeight
       });
     }
   });
@@ -1467,8 +1484,8 @@ var _Line3DManager = class _Line3DManager {
       data: routes,
       getSourcePosition: (d) => d.sourcePosition,
       getTargetPosition: (d) => d.targetPosition,
-      getSourceColor: mergedConfig.baseArcColor,
-      getTargetColor: mergedConfig.baseArcColor,
+      getSourceColor: (d) => [...d.sourceColor, 0.3 * 255],
+      getTargetColor: (d) => [...d.targetColor, 0.3 * 255],
       getWidth: (d) => d.width,
       getHeight: (d) => d.height,
       getSourceTimestamp: (d) => d.sourceTimestamp,
@@ -1493,8 +1510,8 @@ var _Line3DManager = class _Line3DManager {
       data: routes,
       getSourcePosition: (d) => d.sourcePosition,
       getTargetPosition: (d) => d.targetPosition,
-      getSourceColor: mergedConfig.trailColor,
-      getTargetColor: mergedConfig.trailColor,
+      getSourceColor: (d) => [...d.sourceColor, 255],
+      getTargetColor: (d) => [...d.targetColor, 255],
       getWidth: (d) => d.width,
       getHeight: (d) => d.height,
       getSourceTimestamp: (d) => d.sourceTimestamp,
@@ -1588,16 +1605,40 @@ var _DeckglMap = class _DeckglMap {
     };
     /** 2D/3D 模式 */
     this.mode = "2d";
+    /** 第一次加载时计算的最小缩放比例 */
+    this.initialMinZoom = null;
     //===== 点击事件控制 =====
     /** 单击延迟计时器 */
     this.clickTimer = null;
     /** 点击延迟时间（毫秒） */
     this.CLICK_DELAY = 250;
     //===== 动画控制 =====
-    /** 动画计时器任务句柄 */
-    this.animationTimer = null;
     /** 当前动画时间（单位：秒的逻辑刻度） */
     this.currentTime = 0;
+    //===== 动画控制 =====
+    // ==================== 时间管理方法 ====================
+    /** RAF 动画 ID */
+    this.rafId = null;
+    /** 动画开始时间 */
+    this.animationStartTime = 0;
+    /** 动画是否正在运行 */
+    this.isAnimating = false;
+    /**
+     * RAF 动画循环
+     */
+    this.animate = () => {
+      if (!this.isAnimating) {
+        return;
+      }
+      const currentTime = Date.now();
+      const deltaTime = currentTime - this.animationStartTime;
+      const animationSpeed = this.mode === "2d" ? 12 : 0.1;
+      const timeLoop = 6 * 60 * 60;
+      const newTime = deltaTime * animationSpeed % timeLoop;
+      this.setCurrentTime(newTime);
+      this.updateArcAnimation();
+      this.rafId = requestAnimationFrame(this.animate);
+    };
     this.mode = mode;
     this.events = events;
     this.container = container;
@@ -1622,7 +1663,7 @@ var _DeckglMap = class _DeckglMap {
       canvas,
       {
         zoom: 1,
-        latitude: 30,
+        latitude: 0,
         longitude: 0
       },
       {
@@ -1675,10 +1716,7 @@ var _DeckglMap = class _DeckglMap {
       clearTimeout(this.clickTimer);
       this.clickTimer = null;
     }
-    if (this.animationTimer) {
-      this.animationTimer.destroy();
-      this.animationTimer = null;
-    }
+    this.stopArcAnimation();
     if (this.deckInstance) {
       this.deckInstance.finalize();
       this.deckInstance = null;
@@ -1713,7 +1751,7 @@ var _DeckglMap = class _DeckglMap {
     }
     const mode = props?.mode ?? "2d";
     const mapView = new import_core.MapView({
-      repeat: true,
+      repeat: MapStateManager.curLevel === import_types4.MapLevel.WORLD,
       controller: {
         scrollZoom: true,
         dragPan: true,
@@ -1738,8 +1776,14 @@ var _DeckglMap = class _DeckglMap {
       ...props,
       onViewStateChange: (params) => {
         const { viewState } = params;
-        const constrainedLatitude = Math.max(-30, Math.min(30, viewState.latitude));
-        const nextViewState = { ...viewState, latitude: constrainedLatitude };
+        const constrainedLatitude = Math.max(-66.5, Math.min(66.5, viewState.latitude));
+        const minZoom = this.initialMinZoom ?? 0;
+        const constrainedZoom = Math.max(minZoom, viewState.zoom);
+        const nextViewState = {
+          ...viewState,
+          latitude: constrainedLatitude,
+          zoom: constrainedZoom
+        };
         return nextViewState;
       },
       layers: []
@@ -1779,7 +1823,6 @@ var _DeckglMap = class _DeckglMap {
     if (!this.layerMap.has(id)) {
       if (isLayerInstance(layerOrProps)) {
         this.layerMap.set(id, layerOrProps);
-        console.log("[DeckglMap] Layer added to layerMap:", id);
       }
       return;
     }
@@ -1795,7 +1838,6 @@ var _DeckglMap = class _DeckglMap {
           id
         });
         this.layerMap.set(id, rebuilt);
-        console.log("[DeckglMap] Layer updated (rebuilt) in layerMap:", id);
       } else {
         this.layerMap.set(id, incomingLayer);
       }
@@ -1938,7 +1980,23 @@ var _DeckglMap = class _DeckglMap {
       { width: containerWidth, height: containerHeight },
       this.mode
     );
+    this.initialMinZoom ?? (this.initialMinZoom = this.calculateInitialMinZoom(containerWidth, containerHeight));
     this.updateViewState([viewState.longitude, viewState.latitude], viewState.zoom);
+  }
+  /**
+   * 计算初始最小缩放比例
+   * 基于容器尺寸计算能够显示整个世界地图的最小缩放级别
+   * @param containerWidth - 容器宽度
+   * @param containerHeight - 容器高度
+   * @returns 最小缩放级别
+   */
+  calculateInitialMinZoom(containerWidth, containerHeight) {
+    const worldLngRange = 360;
+    const worldLatRange = 180;
+    const zoomLng = Math.log2(containerWidth * 0.8 * worldLngRange / (256 * worldLngRange));
+    const zoomLat = Math.log2(containerHeight * 0.8 * worldLatRange / (256 * worldLatRange));
+    const minZoom = Math.min(zoomLng, zoomLat);
+    return Math.max(0, Math.min(2, minZoom));
   }
   /**
    * 更新视图状态
@@ -1978,8 +2036,6 @@ var _DeckglMap = class _DeckglMap {
   setLines(lines) {
     this.lines = lines;
   }
-  //===== 动画控制 =====
-  // ==================== 时间管理方法 ====================
   /**
    * 获取当前动画时间
    */
@@ -1999,40 +2055,37 @@ var _DeckglMap = class _DeckglMap {
     this.currentTime = 0;
   }
   /**
-   * 启动动画定时器
+   * 启动动画定时器（使用 requestAnimationFrame）
    */
   startArcAnimation() {
-    if (this.animationTimer) {
-      this.animationTimer.destroy();
-      this.animationTimer = null;
+    if (this.isAnimating) {
+      this.stopArcAnimation();
     }
-    this.animationTimer = new import_utils3.TaskManager.Timer({
-      description: "glmap-arc-animation",
-      time: 10,
-      once: true,
-      fn: this.updateArcAnimation.bind(this)
-    });
+    this.isAnimating = true;
+    this.animationStartTime = Date.now();
+    this.animate();
+  }
+  /**
+   * 停止动画
+   */
+  stopArcAnimation() {
+    this.isAnimating = false;
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
   }
   /**
    * 更新动画
    */
   updateArcAnimation() {
+    const currentTime = this.getCurrentTime();
     if (this.mode === "2d") {
-      const currentTime = this.getCurrentTime();
-      const animationSpeed = 60;
-      const timeLoop = 6 * 60 * 60;
-      const newTime = (currentTime + animationSpeed) % timeLoop;
-      this.setCurrentTime(newTime);
-      const layers = Line2DManager.createLayers(this.lines, {}, newTime);
+      const layers = Line2DManager.createLayers(this.lines, {}, currentTime);
       this.updateLayerById("line-layer", layers[0]);
       this.updateLayerById("line-trail-layer", layers[1]);
     } else {
-      const currentTime = this.getCurrentTime();
-      const animationSpeed = 1;
-      const timeLoop = 6 * 60 * 60;
-      const newTime = (currentTime + animationSpeed) % timeLoop;
-      this.setCurrentTime(newTime);
-      const [baseLayer, trailLayer] = Line3DManager.createLayers(this.lines, {}, newTime);
+      const [baseLayer, trailLayer] = Line3DManager.createLayers(this.lines, {}, currentTime);
       this.updateLayerById("arc-base-layer", baseLayer);
       this.updateLayerById("arc-trail-layer", trailLayer);
     }
@@ -2043,7 +2096,7 @@ var _DeckglMap = class _DeckglMap {
 /** 默认视图状态 */
 _DeckglMap.DEFAULT_VIEW_STATE = {
   longitude: 0,
-  latitude: 30,
+  latitude: 0,
   zoom: 1,
   pitch: 0
 };
@@ -2053,16 +2106,16 @@ var DeckglMap = _DeckglMap;
 var deckgl_default = DeckglMap;
 
 // src/echarts-geo/index.ts
-var import_utils7 = require("@orch-map/utils");
+var import_utils6 = require("@orch-map/utils");
 var import_charts = require("echarts/charts");
 var echarts2 = __toESM(require("echarts/core"));
 var import_renderers = require("echarts/renderers");
 var import_components = require("echarts/components");
 
 // src/echarts-geo/components/geo.ts
-var import_types4 = require("@orch-map/types");
+var import_types5 = require("@orch-map/types");
 var echarts = __toESM(require("echarts/core"));
-var import_utils4 = require("@orch-map/utils");
+var import_utils3 = require("@orch-map/utils");
 
 // src/utils/echartGeoUtils.ts
 function getZoomLevelFromWorldWidth(worldWidth) {
@@ -2158,15 +2211,15 @@ var _GeoComponent = class _GeoComponent {
     const country = MapStateManager.country;
     const postcode = MapStateManager.postcode;
     switch (level) {
-      case import_types4.MapLevel.WORLD:
+      case import_types5.MapLevel.WORLD:
         return "world";
-      case import_types4.MapLevel.COUNTRY:
+      case import_types5.MapLevel.COUNTRY:
         return country === "China" ? "china" : "usa";
-      case import_types4.MapLevel.PROVINCE:
+      case import_types5.MapLevel.PROVINCE:
         return `province-${postcode}`;
-      case import_types4.MapLevel.CITY:
+      case import_types5.MapLevel.CITY:
         return `city-${postcode}`;
-      case import_types4.MapLevel.COUNTY:
+      case import_types5.MapLevel.COUNTY:
         return `county-${postcode}`;
       default:
         return "default";
@@ -2248,7 +2301,7 @@ var _GeoComponent = class _GeoComponent {
     }
     points.forEach((point) => {
       const coordinates = point.value;
-      const isInRegion = import_utils4.GeoJsonUtils.checkPointInFeature(coordinates, hoverFeature);
+      const isInRegion = import_utils3.GeoJsonUtils.checkPointInFeature(coordinates, hoverFeature);
       if (isInRegion && point.businessInfo && typeof point.businessInfo === "object" && "siblingPointId" in point.businessInfo) {
         const ids = point.businessInfo.siblingPointId;
         if (Array.isArray(ids)) {
@@ -2263,7 +2316,7 @@ var _GeoComponent = class _GeoComponent {
    * @returns 是否需要投影变换
    */
   static needsProjectionTransform() {
-    if (MapStateManager.curLevel === import_types4.MapLevel.COUNTRY && MapStateManager.postcode === US_AD_CODE_JUST_FOR_FE) {
+    if (MapStateManager.curLevel === import_types5.MapLevel.COUNTRY && MapStateManager.postcode === US_AD_CODE_JUST_FOR_FE) {
       return false;
     }
     return true;
@@ -2305,7 +2358,7 @@ _GeoComponent.defaultGeoOption = {
 var GeoComponent = _GeoComponent;
 
 // src/echarts-geo/components/scatter.ts
-var import_utils5 = require("@orch-map/utils");
+var import_utils4 = require("@orch-map/utils");
 var _ScatterComponent = class _ScatterComponent {
   /**
    * @description: 获取点默认配置项
@@ -2369,7 +2422,7 @@ var _ScatterComponent = class _ScatterComponent {
       processedPoint.symbol = point.icon ? symbolMap[point.icon] : DEFAULT_POINT_CONFIG.symbol;
       processedPoint.symbolSize = point.size ?? DEFAULT_POINT_CONFIG.symbolSize;
       processedPoint.itemStyle = {
-        color: (0, import_utils5.convertToColorCode)(point.color) ?? DEFAULT_POINT_CONFIG.itemStyle.color,
+        color: (0, import_utils4.convertToColorCode)(point.color) ?? DEFAULT_POINT_CONFIG.itemStyle.color,
         opacity: point.opacity ?? DEFAULT_POINT_CONFIG.itemStyle.opacity
       };
       return processedPoint;
@@ -2401,8 +2454,8 @@ var _ScatterComponent = class _ScatterComponent {
     if (!chartInstance) return;
     const mapOption = chartInstance.getOption();
     const series = mapOption.series;
-    const pointData = this.processPointsData(points);
-    const updatedSeries = this.updateScatterSeriesData(series, pointData);
+    const pointData = _ScatterComponent.processPointsData(points);
+    const updatedSeries = _ScatterComponent.updateScatterSeriesData(series, pointData);
     mapOption.series = updatedSeries;
     chartInstance.setOption(mapOption, true);
   }
@@ -2436,7 +2489,7 @@ var _ScatterComponent = class _ScatterComponent {
    */
   static setPointStyle(chartInstance, seriesName, styleProcessor) {
     if (!chartInstance) return;
-    this.setPointStyleInternal(chartInstance, seriesName, (dataItem) => {
+    _ScatterComponent.setPointStyleInternal(chartInstance, seriesName, (dataItem) => {
       const tempParam = {
         id: dataItem.id,
         name: dataItem.name ?? "",
@@ -2477,7 +2530,7 @@ var _ScatterComponent = class _ScatterComponent {
    * @returns 散点图数据数组
    */
   static getScatterData(series) {
-    const pointSeries = this.findScatterSeries(series);
+    const pointSeries = _ScatterComponent.findScatterSeries(series);
     return pointSeries?.data;
   }
   /**
@@ -2497,7 +2550,7 @@ var _ScatterComponent = class _ScatterComponent {
    */
   static createScatterSeries(name = "points", data = [], options = {}) {
     return {
-      ...this.defaultScatterSeries,
+      ..._ScatterComponent.defaultScatterSeries,
       name,
       data,
       type: "scatter",
@@ -2519,7 +2572,7 @@ var _ScatterComponent = class _ScatterComponent {
       easing = "cubicOut"
     } = animationConfig;
     return {
-      ...this.defaultScatterSeries,
+      ..._ScatterComponent.defaultScatterSeries,
       name,
       data,
       type: "scatter",
@@ -2535,7 +2588,7 @@ var _ScatterComponent = class _ScatterComponent {
    * @param onPointClick - 点击回调函数
    */
   static handleScatterClick(params, onPointClick) {
-    if (params.componentType === "series" && this.isScatterType(params.componentSubType) && onPointClick && typeof params.id === "string") {
+    if (params.componentType === "series" && _ScatterComponent.isScatterType(params.componentSubType) && onPointClick && typeof params.id === "string") {
       onPointClick(params.id);
     }
   }
@@ -2601,7 +2654,7 @@ _ScatterComponent.processPoint = (pointItem) => {
 var ScatterComponent = _ScatterComponent;
 
 // src/echarts-geo/components/lines.ts
-var import_utils6 = require("@orch-map/utils");
+var import_utils5 = require("@orch-map/utils");
 var _LinesComponent = class _LinesComponent {
   /**
    * 将线数据转换为 ECharts Series
@@ -2611,7 +2664,7 @@ var _LinesComponent = class _LinesComponent {
   static convertLinesToSeries(lines) {
     const defaultLineSeries = _LinesComponent.defaultLinesSeries;
     const lineData = lines.map((line) => {
-      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
+      const curvature = _LinesComponent.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
         line.endCoordinate
@@ -2622,11 +2675,11 @@ var _LinesComponent = class _LinesComponent {
         coords: [line.startCoordinate, line.endCoordinate],
         effect: {
           ...defaultLineSeries.effect,
-          color: (0, import_utils6.convertToColorCode)(line.color) ?? defaultLineSeries.effect?.color
+          color: (0, import_utils5.convertToColorCode)(line.color) ?? defaultLineSeries.effect?.color
         },
         lineStyle: {
           ...defaultLineStyle,
-          color: (0, import_utils6.convertToColorCode)(line.color) ?? defaultLineStyle?.color,
+          color: (0, import_utils5.convertToColorCode)(line.color) ?? defaultLineStyle?.color,
           width: line.width ?? defaultLineStyle?.width,
           opacity: line.opacity ?? defaultLineStyle?.opacity,
           curveness: curvature
@@ -2646,8 +2699,8 @@ var _LinesComponent = class _LinesComponent {
   static setLines(chartInstance, lines) {
     if (!chartInstance) return;
     const mapOption = chartInstance.getOption();
-    const series = this.convertLinesToSeries(lines);
-    const doubleSeries = this.getBuddyLineSeries(series);
+    const series = _LinesComponent.convertLinesToSeries(lines);
+    const doubleSeries = _LinesComponent.getBuddyLineSeries(series);
     const currentSeries = mapOption.series;
     if (currentSeries && Array.isArray(currentSeries)) {
       mapOption.series = currentSeries.map((item) => {
@@ -2684,7 +2737,7 @@ var _LinesComponent = class _LinesComponent {
    * @returns 计算出的曲率值
    */
   static curvature(key, min = 0, max = 1) {
-    if ((0, import_utils6.isUndef)(_LinesComponent.curvatureMap[key])) {
+    if ((0, import_utils5.isUndef)(_LinesComponent.curvatureMap[key])) {
       _LinesComponent.curvatureMap[key] = _LinesComponent.hashString(key) * (max - min) + min;
     }
     return _LinesComponent.curvatureMap[key];
@@ -2870,7 +2923,7 @@ var EchartsMap = class {
       }
       const newOption = chartInstance.getOption();
       const geo = newOption.geo;
-      if (!geo || (0, import_utils7.isEmptyArray)(geo) || (0, import_utils7.isUndef)(geo[0])) {
+      if (!geo || (0, import_utils6.isEmptyArray)(geo) || (0, import_utils6.isUndef)(geo[0])) {
         return;
       }
       const geoComponent = geo[0];
@@ -2898,7 +2951,7 @@ var EchartsMap = class {
      * @param series - ECharts 系列配置
      * @public
      */
-    this.updateSeries = (0, import_utils7.debounce)((...args) => {
+    this.updateSeries = (0, import_utils6.debounce)((...args) => {
       const series = args[0];
       void this.updateSeriesImpl(series).catch(console.error);
     }, 300);
@@ -3111,60 +3164,17 @@ var EchartsMap = class {
 };
 
 // ../mapData/dist/index.mjs
-var import_types5 = require("@orch-map/types");
-var MapDataPathManager = class {
-  /**
-   * 获取地图数据的基础路径
-   * 根据运行环境返回适当的基础路径
-   *
-   * @returns {string} 基础路径字符串
-   */
-  static getBasePath() {
-    if (typeof window !== "undefined") {
-      return "/mapData";
-    } else {
-      return "./data";
-    }
-  }
-  /**
-   * 根据参数生成数据路径
-   *
-   * @param {Object} params - 路径生成参数
-   * @param {MapLevel} params.currentLevel - 当前地图级别
-   * @param {string} params.region - 区域代码或名称
-   * @param {string} params.country - 国家代码或名称
-   * @returns {string} 相对路径字符串
-   */
-  static generateDataPath(params) {
-    const {
-      currentLevel,
-      region,
-      country,
-      mapVersion = "standard"
-      /* STANDARD */
-    } = params;
-    switch (currentLevel) {
-      case import_types5.MapLevel.WORLD:
-        return this.getWorldMapPath(mapVersion);
-      case import_types5.MapLevel.COUNTRY:
-        return this.getCountryMapPath(country, mapVersion);
-      case import_types5.MapLevel.PROVINCE:
-        return this.getProvinceMapPath(country, region);
-      case import_types5.MapLevel.CITY:
-        return this.getCityMapPath(country, region);
-      case import_types5.MapLevel.COUNTY:
-        return this.getCountyMapPath(country, region);
-      default:
-        return "";
-    }
-  }
+var import_types6 = require("@orch-map/types");
+var import_types7 = require("@orch-map/types");
+var import_types8 = require("@orch-map/types");
+var WorldPathManager = class {
   /**
    * 获取世界地图数据路径
    *
    * @param {MapVersion} mapVersion - 地图版本
    * @returns {string} 世界地图数据相对路径
    */
-  static getWorldMapPath(mapVersion) {
+  static getWorldMapPath(mapVersion = "standard") {
     switch (mapVersion) {
       case "international":
         return "world/wgs84_world_for_US.geo.json";
@@ -3174,71 +3184,15 @@ var MapDataPathManager = class {
     }
   }
   /**
-   * 获取国家地图数据路径
+   * 根据运行环境返回适当的基础路径
    *
-   * @param {string} country - 国家代码或名称
-   * @param {MapVersion} mapVersion - 地图版本
-   * @returns {string} 国家地图数据相对路径
+   * @returns {string} 基础路径字符串
    */
-  static getCountryMapPath(country, mapVersion) {
-    if (country === "China" || country === "100000") {
-      switch (mapVersion) {
-        case "international":
-          return "world/countries/cn-all.geo.json";
-        case "standard":
-        default:
-          return "china/100000.json";
-      }
+  static getBasePath() {
+    if (typeof window !== "undefined") {
+      return "/mapData";
     } else {
-      return `world/countries/${country}-all.geo.json`;
-    }
-  }
-  /**
-   * 获取省级地图数据路径
-   *
-   * @param {string} country - 国家代码或名称
-   * @param {string} region - 省级区域代码或名称
-   * @returns {string} 省级地图数据相对路径
-   */
-  static getProvinceMapPath(country, region) {
-    if (country === "China" || country === "100000") {
-      return `china/${region}_full.json`;
-    } else if (country === "USA" || country === "840") {
-      return `usa/states/${region}.json`;
-    } else {
-      return `world/regions/${country}/${region}.json`;
-    }
-  }
-  /**
-   * 获取城市级地图数据路径
-   *
-   * @param {string} country - 国家代码或名称
-   * @param {string} region - 城市区域代码或名称
-   * @returns {string} 城市级地图数据相对路径
-   */
-  static getCityMapPath(country, region) {
-    if (country === "China" || country === "100000") {
-      return `china/${region}.json`;
-    } else if (country === "USA" || country === "840") {
-      return `usa/cities/${region}.json`;
-    } else {
-      return `world/cities/${country}/${region}.json`;
-    }
-  }
-  /**
-   * 获取县级地图数据路径
-   *
-   * @param {string} country - 国家代码或名称
-   * @param {string} region - 县级区域代码或名称
-   * @returns {string} 县级地图数据相对路径
-   */
-  static getCountyMapPath(country, region) {
-    if (country === "China" || country === "100000") {
-      return `china/${region}.json`;
-    } else if (country === "USA" || country === "840") {
-      return `usa/counties/${region}.json`;
-    } else {
-      return `world/counties/${country}/${region}.json`;
+      return "./data";
     }
   }
   /**
@@ -3252,7 +3206,592 @@ var MapDataPathManager = class {
     return `${basePath}/${relativePath}`;
   }
 };
+var ChinaPathManager = class _ChinaPathManager {
+  /**
+   * 获取国家级别的地图数据路径
+   *
+   * @param {string} _country - 国家代码或名称（应该是 "China" 或 "100000"）
+   * @returns {string} 国家地图数据相对路径
+   */
+  static getCountryPath(_country) {
+    return "china/100000.json";
+  }
+  /**
+   * 获取省级地图数据路径
+   *
+   * 中国省份使用6位数字编码（前两位表示省）
+   * 直辖市（11-北京, 12-天津, 31-上海, 50-重庆, 81-香港, 82-澳门）文件在 china/ 目录下
+   * 其他省份文件在 china/xxxxx/xxxxxx.json 目录下
+   *
+   * @param {string} region - 省级区域代码（如 "110000"）
+   * @returns {string} 省级地图数据相对路径
+   */
+  static getProvincePath(region) {
+    const provinceCode = region.substring(0, 2);
+    const isDirectCity = ["11", "12", "31", "50", "81", "82"].includes(provinceCode);
+    if (isDirectCity) {
+      return `china/${region}.json`;
+    } else {
+      return `china/${region}/${region}.json`;
+    }
+  }
+  /**
+   * 获取城市级地图数据路径
+   *
+   * 中国城市使用6位数字编码（前四位表示省+市）
+   * 例如：110100 - 北京市（北京直辖市的区县）
+   *       330100 - 杭州市
+   *
+   * @param {string} region - 城市区域代码（如 "110100"）
+   * @returns {string} 城市级地图数据相对路径
+   */
+  static getCityPath(region) {
+    if (region.length === 6) {
+      const provinceCode = `${region.substring(0, 2)}0000`;
+      return `china/${provinceCode}/${region}.json`;
+    }
+    return `china/${region}.json`;
+  }
+  /**
+   * 获取县级地图数据路径
+   *
+   * 中国县级使用6位数字编码
+   * 例如：110101 - 东城区
+   *
+   * @param {string} region - 县级区域代码（如 "110101"）
+   * @returns {string} 县级地图数据相对路径
+   */
+  static getCountyPath(region) {
+    return _ChinaPathManager.getCityPath(region);
+  }
+  /**
+   * 根据地图级别获取路径
+   *
+   * @param {MapLevel} level - 地图级别
+   * @param {string} region - 区域代码或名称
+   * @returns {string} 地图数据相对路径
+   */
+  static getPathByLevel(level, region) {
+    switch (level) {
+      case import_types7.MapLevel.COUNTRY:
+        return _ChinaPathManager.getCountryPath(region);
+      case import_types7.MapLevel.PROVINCE:
+        return _ChinaPathManager.getProvincePath(region);
+      case import_types7.MapLevel.CITY:
+        return _ChinaPathManager.getCityPath(region);
+      case import_types7.MapLevel.COUNTY:
+        return _ChinaPathManager.getCountyPath(region);
+      default:
+        return "";
+    }
+  }
+};
+var usaStateMap_default = {
+  "Alabama": "al",
+  "Alaska": "ak",
+  "Arizona": "az",
+  "Arkansas": "ar",
+  "California": "ca",
+  "Colorado": "co",
+  "Connecticut": "ct",
+  "Delaware": "de",
+  "District of Columbia": "dc",
+  "Florida": "fl",
+  "Georgia": "ga",
+  "Hawaii": "hi",
+  "Idaho": "id",
+  "Illinois": "il",
+  "Indiana": "in",
+  "Iowa": "ia",
+  "Kansas": "ks",
+  "Kentucky": "ky",
+  "Louisiana": "la",
+  "Maine": "me",
+  "Maryland": "md",
+  "Massachusetts": "ma",
+  "Michigan": "mi",
+  "Minnesota": "mn",
+  "Mississippi": "ms",
+  "Missouri": "mo",
+  "Montana": "mt",
+  "Nebraska": "ne",
+  "Nevada": "nv",
+  "New Hampshire": "nh",
+  "New Jersey": "nj",
+  "New Mexico": "nm",
+  "New York": "ny",
+  "North Carolina": "nc",
+  "North Dakota": "nd",
+  "Ohio": "oh",
+  "Oklahoma": "ok",
+  "Oregon": "or",
+  "Pennsylvania": "pa",
+  "Puerto Rico": "pr",
+  "Rhode Island": "ri",
+  "South Carolina": "sc",
+  "South Dakota": "sd",
+  "Tennessee": "tn",
+  "Texas": "tx",
+  "Utah": "ut",
+  "Vermont": "vt",
+  "Virginia": "va",
+  "Washington": "wa",
+  "West Virginia": "wv",
+  "Wisconsin": "wi",
+  "Wyoming": "wy"
+};
+var USPathManager = class _USPathManager {
+  /**z
+   * 获取国家级别的地图数据路径
+   *
+   * @param {string} _country - 国家代码或名称（应该是 "USA" 或 "840"）
+   * @returns {string} 国家地图数据相对路径
+   */
+  static getCountryPath(_country) {
+    return "countries/us-all.geo.json";
+  }
+  /**
+   * 获取省级地图数据路径（美国州级）
+   *
+   * 支持州名或州代码作为输入，自动通过 usa-state-map 映射
+   * 例如："California" -> "ca" -> "usa/states/ca.json"
+   *       "CA" -> "ca" -> "usa/states/ca.json"
+   *
+   * @param {string} region - 州名或州代码（如 "California", "CA", "New York", "NY"）
+   * @returns {string} 州级地图数据相对路径
+   */
+  static getProvincePath(region) {
+    let stateCode = "";
+    for (const [stateName, code] of Object.entries(usaStateMap_default)) {
+      if (stateName.toLowerCase() === region.toLowerCase()) {
+        stateCode = code;
+        break;
+      }
+      if (code.toLowerCase() === region.toLowerCase()) {
+        stateCode = code;
+        break;
+      }
+    }
+    stateCode = stateCode || region.toLowerCase();
+    return `usa/${stateCode}.geo.json`;
+  }
+  /**
+   * 获取城市级地图数据路径
+   *
+   * @param {string} region - 城市区域代码或名称
+   * @returns {string} 城市级地图数据相对路径
+   */
+  static getCityPath(region) {
+    const stateCode = region.slice(0, 3).split("-")[0];
+    const cityName = region.slice(3);
+    return `usa/${stateCode}/${cityName}.geo.json`;
+  }
+  /**
+   * 获取县级地图数据路径
+   *
+   * @param {string} region - 县级区域代码或名称
+   * @returns {string} 县级地图数据相对路径
+   */
+  static getCountyPath(_region) {
+    return "";
+  }
+  /**
+   * 根据地图级别获取路径
+   *
+   * @param {MapLevel} level - 地图级别
+   * @param {string} region - 区域代码或名称
+   * @returns {string} 地图数据相对路径
+   */
+  static getPathByLevel(level, region) {
+    switch (level) {
+      case import_types8.MapLevel.COUNTRY:
+        return _USPathManager.getCountryPath(region);
+      case import_types8.MapLevel.PROVINCE:
+        return _USPathManager.getProvincePath(region);
+      case import_types8.MapLevel.CITY:
+        return _USPathManager.getCityPath(region);
+      case import_types8.MapLevel.COUNTY:
+        return _USPathManager.getCountyPath(region);
+      default:
+        return "";
+    }
+  }
+};
+var countryMapFile_default = {
+  // 有数据文件的国家（按字母顺序排列）
+  "Canada": "ca-all",
+  "France": "fr-all",
+  "Germany": "de-all",
+  "India": "in-all",
+  "Japan": "jp-all",
+  "Korea": "kr-all",
+  "Russia": "ru-all",
+  "Singapore": "sg-all",
+  "United Kingdom": "uk-all",
+  "United States": "us-all",
+  // 没有数据文件的国家（按字母顺序排列）
+  "Afghanistan": null,
+  "Albania": null,
+  "Algeria": null,
+  "American Samoa": null,
+  "Andorra": null,
+  "Angola": null,
+  "Antigua and Barb.": null,
+  "Argentina": null,
+  "Armenia": null,
+  "Austria": null,
+  "Azerbaijan": null,
+  "Bahamas": null,
+  "Bahrain": null,
+  "Bangladesh": null,
+  "Barbados": null,
+  "Belarus": null,
+  "Belgium": null,
+  "Belize": null,
+  "Benin": null,
+  "Bhutan": null,
+  "Bolivia": null,
+  "Bosnia and Herz.": null,
+  "Botswana": null,
+  "Brazil": null,
+  "Brunei": null,
+  "Bulgaria": null,
+  "Burkina Faso": null,
+  "Burundi": null,
+  "Cambodia": null,
+  "Cameroon": null,
+  "Cape Verde": null,
+  "Central African Rep.": null,
+  "Chad": null,
+  "Chile": null,
+  "China": null,
+  "Colombia": null,
+  "Comoros": null,
+  "Congo": null,
+  "Costa Rica": null,
+  "Croatia": null,
+  "Cuba": null,
+  "Cyprus": null,
+  "Czech Rep.": null,
+  "C\xF4te d'Ivoire": null,
+  "Dem. Rep. Congo": null,
+  "Dem. Rep. Korea": null,
+  "Denmark": null,
+  "Djibouti": null,
+  "Dominica": null,
+  "Dominican Rep.": null,
+  "Ecuador": null,
+  "Egypt": null,
+  "El Salvador": null,
+  "Eq. Guinea": null,
+  "Eritrea": null,
+  "Estonia": null,
+  "Ethiopia": null,
+  "Faeroe Is.": null,
+  "Fiji": null,
+  "Finland": null,
+  "Gabon": null,
+  "Gambia": null,
+  "Georgia": null,
+  "Ghana": null,
+  "Greece": null,
+  "Greenland": null,
+  "Grenada": null,
+  "Guam": null,
+  "Guatemala": null,
+  "Guinea": null,
+  "Guinea-Bissau": null,
+  "Guyana": null,
+  "Haiti": null,
+  "Honduras": null,
+  "Hungary": null,
+  "Iceland": null,
+  "Indonesia": null,
+  "Iran": null,
+  "Iraq": null,
+  "Ireland": null,
+  "Israel": null,
+  "Italy": null,
+  "Jamaica": null,
+  "Jordan": null,
+  "Kazakhstan": null,
+  "Kenya": null,
+  "Kiribati": null,
+  "Kosovo": null,
+  "Kuwait": null,
+  "Kyrgyzstan": null,
+  "Lao PDR": null,
+  "Latvia": null,
+  "Lebanon": null,
+  "Lesotho": null,
+  "Liberia": null,
+  "Libya": null,
+  "Liechtenstein": null,
+  "Lithuania": null,
+  "Luxembourg": null,
+  "Macedonia": null,
+  "Madagascar": null,
+  "Malawi": null,
+  "Malaysia": null,
+  "Mali": null,
+  "Malta": null,
+  "Mauritania": null,
+  "Mauritius": null,
+  "Mexico": null,
+  "Moldova": null,
+  "Monaco": null,
+  "Mongolia": null,
+  "Montenegro": null,
+  "Morocco": null,
+  "Mozambique": null,
+  "Myanmar": null,
+  "N. Mariana Is.": null,
+  "Namibia": null,
+  "Nauru": null,
+  "Nepal": null,
+  "Netherlands": null,
+  "New Caledonia": null,
+  "New Zealand": null,
+  "Nicaragua": null,
+  "Niger": null,
+  "Nigeria": null,
+  "Norway": null,
+  "Oman": null,
+  "Pakistan": null,
+  "Palau": null,
+  "Panama": null,
+  "Papua New Guinea": null,
+  "Paraguay": null,
+  "Peru": null,
+  "Philippines": null,
+  "Poland": null,
+  "Portugal": null,
+  "Puerto Rico": null,
+  "Qatar": null,
+  "Romania": null,
+  "Rwanda": null,
+  "S. Sudan": null,
+  "Saint Lucia": null,
+  "Samoa": null,
+  "San Marino": null,
+  "Saudi Arabia": null,
+  "Senegal": null,
+  "Serbia": null,
+  "Seychelles": null,
+  "Sierra Leone": null,
+  "Sint Maarten": null,
+  "Slovakia": null,
+  "Slovenia": null,
+  "Solomon Is.": null,
+  "Somalia": null,
+  "South Africa": null,
+  "Spain": null,
+  "Sri Lanka": null,
+  "St. Kitts and Nevis": null,
+  "St. Vin. and Gren.": null,
+  "Sudan": null,
+  "Suriname": null,
+  "Swaziland": null,
+  "Sweden": null,
+  "Switzerland": null,
+  "Syria": null,
+  "S\xE3o Tom\xE9 and Principe": null,
+  "Tajikistan": null,
+  "Tanzania": null,
+  "Thailand": null,
+  "Timor-Leste": null,
+  "Togo": null,
+  "Trinidad and Tobago": null,
+  "Tunisia": null,
+  "Turkey": null,
+  "Turkmenistan": null,
+  "U.S. Virgin Is.": null,
+  "Uganda": null,
+  "Ukraine": null,
+  "United Arab Emirates": null,
+  "Uruguay": null,
+  "Uzbekistan": null,
+  "Vanuatu": null,
+  "Venezuela": null,
+  "Vietnam": null,
+  "W. Sahara": null,
+  "Yemen": null,
+  "Zambia": null,
+  "Zimbabwe": null
+};
+var PathManagerFactory = class {
+  /**
+   * 判断国家是否为中国
+   *
+   * @param {string} country - 国家代码或名称
+   * @returns {boolean} 是否为中国
+   */
+  static isChina(country) {
+    return country === "100000" || country === "China" || country === "CN";
+  }
+  /**
+   * 判断国家是否为美国
+   *
+   * @param {string} country - 国家代码或名称
+   * @returns {boolean} 是否为美国
+   */
+  static isUSA(country) {
+    return country === "840" || country === "USA" || country === "US" || country === "United States";
+  }
+  /**
+   * 获取国家地图路径
+   *
+   * @param {string} country - 国家代码或名称
+   * @returns {string} 国家地图数据相对路径
+   */
+  static getCountryPath(country) {
+    if (this.isChina(country)) {
+      return ChinaPathManager.getCountryPath(country);
+    }
+    if (this.isUSA(country)) {
+      return USPathManager.getCountryPath(country);
+    }
+    const countryFile = countryMapFile_default[country];
+    if (countryFile) {
+      return `countries/${countryFile}.geo.json`;
+    }
+    return "";
+  }
+  /**
+   * 获取省级地图路径
+   *
+   * @param {string} country - 国家代码或名称
+   * @param {string} region - 省级区域代码或名称
+   * @returns {string} 省级地图数据相对路径
+   */
+  static getProvincePath(country, region) {
+    if (this.isChina(country)) {
+      return ChinaPathManager.getProvincePath(region);
+    }
+    if (this.isUSA(country)) {
+      return USPathManager.getProvincePath(region);
+    }
+    return "";
+  }
+  /**
+   * 获取城市级地图路径
+   *
+   * @param {string} country - 国家代码或名称
+   * @param {string} region - 城市区域代码或名称
+   * @returns {string} 城市级地图数据相对路径
+   */
+  static getCityPath(country, region) {
+    if (this.isChina(country)) {
+      return ChinaPathManager.getCityPath(region);
+    }
+    if (this.isUSA(country)) {
+      return USPathManager.getCityPath(region);
+    }
+    return "";
+  }
+  /**
+   * 获取县级地图路径
+   *
+   * @param {string} country - 国家代码或名称
+   * @param {string} region - 县级区域代码或名称
+   * @returns {string} 县级地图数据相对路径
+   */
+  static getCountyPath(country, region) {
+    if (this.isChina(country)) {
+      return ChinaPathManager.getCountyPath(region);
+    }
+    if (this.isUSA(country)) {
+      return USPathManager.getCountyPath(region);
+    }
+    return "";
+  }
+  /**
+   * 检查是否为支持的国家
+   *
+   * @param {string} country - 国家代码或名称
+   * @returns {boolean} 是否为支持的国家
+   */
+  static isSupportedCountry(country) {
+    return country !== "";
+  }
+};
+var MapDataPathManager = class {
+  /**
+   * 获取地图数据的基础路径
+   * 根据运行环境返回适当的基础路径
+   *
+   * @returns {string} 基础路径字符串
+   */
+  static getBasePath() {
+    return WorldPathManager.getBasePath();
+  }
+  /**
+   * 根据参数生成数据路径
+   *
+   * @param {Object} params - 路径生成参数
+   * @param {MapLevel} params.currentLevel - 当前地图级别
+   * @param {string} params.region - 区域代码或名称
+   * @param {string} params.country - 国家代码或名称
+   * @param {MapVersion} params.mapVersion - 地图版本（仅用于世界和国家级别）
+   * @returns {string} 相对路径字符串
+   */
+  static generateDataPath(params) {
+    const {
+      currentLevel,
+      region,
+      country,
+      mapVersion = "standard"
+      /* STANDARD */
+    } = params;
+    switch (currentLevel) {
+      case import_types6.MapLevel.WORLD:
+        return WorldPathManager.getWorldMapPath(mapVersion);
+      case import_types6.MapLevel.COUNTRY:
+        if (country === "China" || country === "100000") {
+          if (mapVersion === "international") {
+            return "countries/cn-all.geo.json";
+          }
+        }
+        return PathManagerFactory.getCountryPath(country);
+      case import_types6.MapLevel.PROVINCE:
+        return PathManagerFactory.getProvincePath(country, region);
+      case import_types6.MapLevel.CITY:
+        return PathManagerFactory.getCityPath(country, region);
+      case import_types6.MapLevel.COUNTY:
+        return PathManagerFactory.getCountyPath(country, region);
+      default:
+        return "";
+    }
+  }
+  /**
+   * 获取完整的数据路径
+   *
+   * @param {string} relativePath - 相对路径
+   * @returns {string} 完整的数据访问路径
+   */
+  static getFullPath(relativePath) {
+    return WorldPathManager.getFullPath(relativePath);
+  }
+};
 var MapDataService2 = class _MapDataService {
+  /**
+   * 检查 geo JSON 文件是否存在
+   * @param path - 相对路径
+   * @returns {Promise<boolean>} 文件是否存在
+   */
+  static async checkGeoJsonExists(path) {
+    if (!path) {
+      return false;
+    }
+    try {
+      const fullPath = MapDataPathManager.getFullPath(path);
+      const response = await fetch(fullPath, { method: "HEAD" });
+      return response.ok;
+    } catch (error) {
+      console.error(`Failed to check geo JSON file exists: ${path}:`, error);
+      return false;
+    }
+  }
   /**
    * 根据路径获取地图数据
    */
@@ -3278,21 +3817,20 @@ var MapDataService2 = class _MapDataService {
     };
   }
   /**
-   * 处理中国地图特殊数据（移除9段线等）
+   * 检查是否可以为指定的参数获取 geo JSON 数据
+   * @param params - 地图数据获取参数
+   * @returns {Promise<boolean>} 数据是否存在
    */
-  static processChinaMapData(data) {
-    data.features = data.features.filter((feature) => {
-      if (!feature.properties?.name) {
-        return false;
-      }
-      if (feature.properties.name === "\u6D77\u5357\u7701") {
-        if (feature.geometry && feature.geometry.type === "MultiPolygon" && feature.geometry.coordinates && Array.isArray(feature.geometry.coordinates)) {
-          feature.geometry.coordinates = feature.geometry.coordinates.slice(0, 1);
-        }
-      }
-      return true;
+  static async checkGeoJsonExistsForParams(params) {
+    const path = MapDataPathManager.generateDataPath({
+      currentLevel: params.mapLevel,
+      country: params.country,
+      region: params.region
     });
-    return data;
+    if (!path) {
+      return false;
+    }
+    return await _MapDataService.checkGeoJsonExists(path);
   }
   /**
   * 获取地图 GeoJSON 数据（对外接口，合并了 fetchGeoJson 和 getGeoJsonData）
@@ -3312,7 +3850,7 @@ var MapDataService2 = class _MapDataService {
 var index_default = MapDataService2;
 
 // src/utils/mapLevelUtils.ts
-var import_types6 = require("@orch-map/types");
+var import_types9 = require("@orch-map/types");
 
 // src/utils/mapHelper.ts
 var isMunicipality = (postcode) => {
@@ -3329,15 +3867,15 @@ var MapLevelUtils = class {
    */
   static mapLevelMatrix(level) {
     switch (level) {
-      case import_types6.MapLevel.COUNTRY:
+      case import_types9.MapLevel.COUNTRY:
         return 1;
-      case import_types6.MapLevel.PROVINCE:
+      case import_types9.MapLevel.PROVINCE:
         return 2;
-      case import_types6.MapLevel.CITY:
+      case import_types9.MapLevel.CITY:
         return 3;
-      case import_types6.MapLevel.COUNTY:
+      case import_types9.MapLevel.COUNTY:
         return 4;
-      case import_types6.MapLevel.WORLD:
+      case import_types9.MapLevel.WORLD:
       default:
         return 0;
     }
@@ -3350,15 +3888,15 @@ var MapLevelUtils = class {
   static levelNumToLevel(level) {
     switch (level) {
       case 1:
-        return import_types6.MapLevel.COUNTRY;
+        return import_types9.MapLevel.COUNTRY;
       case 2:
-        return import_types6.MapLevel.PROVINCE;
+        return import_types9.MapLevel.PROVINCE;
       case 3:
-        return import_types6.MapLevel.CITY;
+        return import_types9.MapLevel.CITY;
       case 4:
-        return import_types6.MapLevel.COUNTY;
+        return import_types9.MapLevel.COUNTY;
       default:
-        return import_types6.MapLevel.WORLD;
+        return import_types9.MapLevel.WORLD;
     }
   }
   /**
@@ -3367,20 +3905,20 @@ var MapLevelUtils = class {
    */
   static checkMapEntryEligibility() {
     switch (MapStateManager.curLevel) {
-      case import_types6.MapLevel.WORLD: {
-        return import_types6.MapLevel.COUNTRY;
+      case import_types9.MapLevel.WORLD: {
+        return import_types9.MapLevel.COUNTRY;
       }
-      case import_types6.MapLevel.COUNTRY: {
-        return import_types6.MapLevel.PROVINCE;
+      case import_types9.MapLevel.COUNTRY: {
+        return import_types9.MapLevel.PROVINCE;
       }
-      case import_types6.MapLevel.PROVINCE:
-        return import_types6.MapLevel.CITY;
-      case import_types6.MapLevel.CITY:
+      case import_types9.MapLevel.PROVINCE:
+        return import_types9.MapLevel.CITY;
+      case import_types9.MapLevel.CITY:
         if (!isMunicipality(MapStateManager.postcode)) {
-          return import_types6.MapLevel.COUNTY;
+          return import_types9.MapLevel.COUNTY;
         }
         return void 0;
-      case import_types6.MapLevel.COUNTY:
+      case import_types9.MapLevel.COUNTY:
       default:
         return void 0;
     }
@@ -3391,7 +3929,7 @@ var MapLevelUtils = class {
    * @returns 是否支持
    */
   static isNextLevelSupported(nextLevel) {
-    if (MapStateManager.curLevel === import_types6.MapLevel.COUNTRY && nextLevel === import_types6.MapLevel.PROVINCE) {
+    if (MapStateManager.curLevel === import_types9.MapLevel.COUNTRY && nextLevel === import_types9.MapLevel.PROVINCE) {
       return MapStateManager.country === "China" || MapStateManager.country === "United States";
     }
     return true;
@@ -3399,7 +3937,7 @@ var MapLevelUtils = class {
 };
 
 // src/main.ts
-var import_utils9 = require("@orch-map/utils");
+var import_utils8 = require("@orch-map/utils");
 var OrchMap = class {
   /**
    * 构造函数
@@ -3416,7 +3954,7 @@ var OrchMap = class {
     MapStateManager.extraSvgIcons = extraSvgIcons;
     const echartsSymbols = {};
     Object.keys(extraSvgIcons).forEach((key) => {
-      echartsSymbols[key] = (0, import_utils9.svgToEChartsSymbol)(extraSvgIcons[key]);
+      echartsSymbols[key] = (0, import_utils8.svgToEChartsSymbol)(extraSvgIcons[key]);
     });
     MapStateManager.echartsSymbols = echartsSymbols;
     this._initPromise = this.initMap().then(() => {
@@ -3437,11 +3975,22 @@ var OrchMap = class {
     MapStateManager.curLevel = this.config.curLevel;
     MapStateManager.postcode = this.config.postcode ?? "";
     MapStateManager.country = this.config.country ?? "";
-    await this.getGeoData({
+    const params = {
       currentLevel: this.config.curLevel,
       country: this.config.country ?? "",
       region: this.config.postcode ?? ""
+    };
+    const exists = await index_default.checkGeoJsonExistsForParams({
+      mapLevel: params.currentLevel,
+      country: params.country,
+      region: params.region,
+      mapType: this.mapType
     });
+    if (!exists) {
+      console.warn(`Geo JSON data not found for level: ${params.currentLevel}, country: ${params.country}, region: ${params.region}`);
+      return;
+    }
+    await this.getGeoData(params);
     switch (this.config.renderType) {
       case "echarts" /* ECHARTS */:
         this.instance = new EchartsMap(
@@ -3508,7 +4057,7 @@ var OrchMap = class {
   }
   async entryNextLevel(region) {
     const nextLevel = MapLevelUtils.checkMapEntryEligibility();
-    if ((0, import_utils9.isUndef)(nextLevel)) {
+    if ((0, import_utils8.isUndef)(nextLevel)) {
       return;
     }
     if (nextLevel && !MapLevelUtils.isNextLevelSupported(nextLevel)) {
@@ -3518,11 +4067,22 @@ var OrchMap = class {
     MapStateManager.country = MapStateManager.country || region;
     MapStateManager.region = region;
     MapStateManager.curLevel = nextLevel;
-    await this.getGeoData({
+    const params = {
       currentLevel: nextLevel,
       country: MapStateManager.country,
       region: MapStateManager.country === "China" ? MapStateManager.postcode : region
+    };
+    const exists = await index_default.checkGeoJsonExistsForParams({
+      mapLevel: params.currentLevel,
+      country: params.country,
+      region: params.region,
+      mapType: this.mapType
     });
+    if (!exists) {
+      console.warn(`Geo JSON data not found for level: ${params.currentLevel}, country: ${params.country}, region: ${params.region}`);
+      return;
+    }
+    await this.getGeoData(params);
     void this.instance.setGEOData(MapStateManager.geoData);
     this.updatePointsAndLinesForCurrentLevel();
   }
@@ -3549,11 +4109,22 @@ var OrchMap = class {
     MapStateManager.country = country;
     MapStateManager.region = region;
     MapStateManager.postcode = postcode;
-    await this.getGeoData({
+    const params = {
       currentLevel: targetLevel,
       country,
       region: country === "China" ? postcode : region
+    };
+    const exists = await index_default.checkGeoJsonExistsForParams({
+      mapLevel: params.currentLevel,
+      country: params.country,
+      region: params.region,
+      mapType: this.mapType
     });
+    if (!exists) {
+      console.warn(`Geo JSON data not found for level: ${params.currentLevel}, country: ${params.country}, region: ${params.region}`);
+      return;
+    }
+    await this.getGeoData(params);
     void this.instance.setGEOData(MapStateManager.geoData);
     this.updatePointsAndLinesForCurrentLevel();
   }
@@ -3563,7 +4134,7 @@ var OrchMap = class {
    * @returns {Promise<void>} 返回操作的 Promise
    */
   async returnToWorldMap() {
-    return this.navigateToLevel(import_types7.MapLevel.WORLD);
+    return this.navigateToLevel(import_types10.MapLevel.WORLD);
   }
   async getGeoData(params) {
     const geoData = await index_default.getGeoJsonData({

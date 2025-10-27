@@ -242,6 +242,8 @@ module.exports = [
       'build/',
       'node_modules/',
       '*.js',
+      '**/*.js',
+      'packages/**/scripts/**/*.js',
       '*.d.ts',
       'coverage/',
       '.turbo/',

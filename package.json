@@ -48,7 +48,7 @@
     "eslint": "^9.37.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-vue": "^10.5.0",
-    "prettier": "^3.0.0", 
+    "prettier": "^3.0.0",
     "turbo": "^2.5.8",
     "typescript": "^5.0.0",
     "vue-eslint-parser": "^10.2.0"
@@ -60,5 +60,8 @@
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
   },
-  "packageManager": "pnpm@8.15.0"
+  "packageManager": "pnpm@8.15.0",
+  "dependencies": {
+    "proj4": "^2.19.10"
+  }
 }

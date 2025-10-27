@@ -57,11 +57,6 @@ function calculateDynamicHeight(distance: number, _baseHeight: number): number {
   // 使用反比例函数，让短距离高度高，长距离高度低
   const height = shortDistanceHeight - (shortDistanceHeight - longDistanceHeight) * normalizedDistance;
 
-  // 添加调试日志
-  if (distance > 0) {
-    // eslint-disable-next-line no-console
-    console.log(`Distance: ${distance.toFixed(0)}km, Normalized: ${normalizedDistance.toFixed(2)}, Height: ${height.toFixed(3)}`);
-  }
 
   return height;
 }

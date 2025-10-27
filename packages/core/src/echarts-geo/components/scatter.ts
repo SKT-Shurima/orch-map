@@ -167,8 +167,8 @@ export default class ScatterComponent {
 
     const mapOption = chartInstance.getOption() as EChartsOption;
     const series = mapOption.series as SeriesOption[];
-    const pointData = this.processPointsData(points);
-    const updatedSeries = this.updateScatterSeriesData(series, pointData);
+    const pointData = ScatterComponent.processPointsData(points);
+    const updatedSeries = ScatterComponent.updateScatterSeriesData(series, pointData);
 
     mapOption.series = updatedSeries;
     chartInstance.setOption(mapOption, true);
@@ -219,7 +219,7 @@ export default class ScatterComponent {
   ): void {
     if (!chartInstance) return;
 
-    this.setPointStyleInternal(chartInstance, seriesName, (dataItem: PointSeriesDataItem<unknown>) => {
+    ScatterComponent.setPointStyleInternal(chartInstance, seriesName, (dataItem: PointSeriesDataItem<unknown>) => {
       // 将点数据转换为 BaseMapPoint，给外部的 styleProcessor 处理
       const tempParam: PointParam<unknown> = {
         id: dataItem.id,
@@ -263,7 +263,7 @@ export default class ScatterComponent {
    * @returns 散点图数据数组
    */
   public static getScatterData<T>(series: SeriesOption[]): PointSeriesDataItem<T>[] | undefined {
-    const pointSeries = this.findScatterSeries(series);
+    const pointSeries = ScatterComponent.findScatterSeries(series);
     return pointSeries?.data as PointSeriesDataItem<T>[] | undefined;
   }
 
@@ -289,7 +289,7 @@ export default class ScatterComponent {
     options: Partial<SeriesOption> = {},
   ): SeriesOption {
     return {
-      ...this.defaultScatterSeries,
+      ...ScatterComponent.defaultScatterSeries,
       name,
       data,
       type: "scatter",
@@ -322,7 +322,7 @@ export default class ScatterComponent {
     } = animationConfig;
 
     return {
-      ...this.defaultScatterSeries,
+      ...ScatterComponent.defaultScatterSeries,
       name,
       data,
       type: "scatter",
@@ -344,7 +344,7 @@ export default class ScatterComponent {
   ): void {
     if (
       params.componentType === "series" &&
-      this.isScatterType(params.componentSubType) &&
+      ScatterComponent.isScatterType(params.componentSubType) &&
       onPointClick &&
       typeof params.id === "string"
     ) {

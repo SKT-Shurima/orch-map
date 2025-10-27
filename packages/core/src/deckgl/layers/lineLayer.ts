@@ -218,7 +218,7 @@ export class Line2DManager {
 
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      const curvature = this.curvatureCalculator.calculateCurvatureByCoordinates(
+      const curvature = Line2DManager.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
         line.endCoordinate,
@@ -295,15 +295,15 @@ export class Line2DManager {
     config: Line2DAnimationConfig = {},
     currentTime?: number,
   ): [PathLayer, ScatterplotLayer] {
-    const mergedConfig = { ...this.DEFAULT_CONFIG, ...config };
+    const mergedConfig = { ...Line2DManager.DEFAULT_CONFIG, ...config };
 
     // 构建常驻曲线图层
-    const baseLayer = this.buildFullCurveLayer(lines);
+    const baseLayer = Line2DManager.buildFullCurveLayer(lines);
 
     // 计算当前进度并构建移动尾迹图层
     const time = currentTime ?? 0;
     const progress = time / mergedConfig.timeLoop;
-    const dotsLayer = this.buildMovingDotsLayer(lines, progress, mergedConfig.trailOptions);
+    const dotsLayer = Line2DManager.buildMovingDotsLayer(lines, progress, mergedConfig.trailOptions);
 
     return [baseLayer, dotsLayer];
   }

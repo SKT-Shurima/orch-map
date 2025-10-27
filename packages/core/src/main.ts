@@ -2,7 +2,7 @@ import { MapRendererConfig, MapRendererType } from "./interfaces";
 import { BaseMapLine, BaseMapPoint, MapLevel } from "@orch-map/types";
 import DeckglMap from "./deckgl";
 import EchartsMap from "./echarts-geo";
-import MapDataService, { GeoDataParams } from "@orch-map/mapData";
+import MapDataService from "@orch-map/mapData";
 import MapStateManager from "./MapStateManager";
 import { GeoUtils, MapLevelUtils } from "./utils";
 import { isUndef, svgToEChartsSymbol } from "@orch-map/utils";
@@ -64,11 +64,30 @@ export default class OrchMap {
     MapStateManager.curLevel = this.config.curLevel;
     MapStateManager.postcode = this.config.postcode ?? "";
     MapStateManager.country = this.config.country ?? "";
-    await this.getGeoData({
+
+    const params = {
       currentLevel: this.config.curLevel,
       country: this.config.country ?? "",
       region: this.config.postcode ?? "",
+    };
+
+    // 检查数据是否存在
+    const exists = await MapDataService.checkGeoJsonExistsForParams({
+      mapLevel: params.currentLevel,
+      country: params.country,
+      region: params.region,
+      mapType: this.mapType,
     });
+
+    if (!exists) {
+      // 如果数据不存在，阻断执行
+      // eslint-disable-next-line no-console
+      console.warn(`Geo JSON data not found for level: ${params.currentLevel}, country: ${params.country}, region: ${params.region}`);
+      return;
+    }
+
+    await this.getGeoData(params);
+
     switch (this.config.renderType) {
       case MapRendererType.ECHARTS:
         this.instance = new EchartsMap(this.config.container, {
@@ -160,11 +179,29 @@ export default class OrchMap {
     MapStateManager.country = MapStateManager.country || region;
     MapStateManager.region = region;
     MapStateManager.curLevel = nextLevel;
-    await this.getGeoData({
+
+    const params = {
       currentLevel: nextLevel,
       country: MapStateManager.country,
       region: MapStateManager.country === "China" ? MapStateManager.postcode : region,
+    };
+
+    // 检查数据是否存在
+    const exists = await MapDataService.checkGeoJsonExistsForParams({
+      mapLevel: params.currentLevel,
+      country: params.country,
+      region: params.region,
+      mapType: this.mapType,
     });
+
+    if (!exists) {
+      // 如果数据不存在，阻断执行
+      // eslint-disable-next-line no-console
+      console.warn(`Geo JSON data not found for level: ${params.currentLevel}, country: ${params.country}, region: ${params.region}`);
+      return;
+    }
+
+    await this.getGeoData(params);
     void this.instance.setGEOData(MapStateManager.geoData);
 
     // 进入新层级后，重新过滤并更新点位和线条
@@ -201,12 +238,29 @@ export default class OrchMap {
     MapStateManager.region = region;
     MapStateManager.postcode = postcode;
 
-    // 加载指定层级的地图数据
-    await this.getGeoData({
+    const params = {
       currentLevel: targetLevel,
       country,
       region: country === "China" ? postcode : region,
+    };
+
+    // 检查数据是否存在
+    const exists = await MapDataService.checkGeoJsonExistsForParams({
+      mapLevel: params.currentLevel,
+      country: params.country,
+      region: params.region,
+      mapType: this.mapType,
     });
+
+    if (!exists) {
+      // 如果数据不存在，阻断执行
+      // eslint-disable-next-line no-console
+      console.warn(`Geo JSON data not found for level: ${params.currentLevel}, country: ${params.country}, region: ${params.region}`);
+      return;
+    }
+
+    // 加载指定层级的地图数据
+    await this.getGeoData(params);
 
     // 更新地图实例的地理数据
     void this.instance.setGEOData(MapStateManager.geoData);
@@ -225,7 +279,7 @@ export default class OrchMap {
   }
 
 
-  private async getGeoData(params: Omit<GeoDataParams, "mapType">) {
+  private async getGeoData(params: { currentLevel: MapLevel; country: string; region: string }) {
     const geoData = await MapDataService.getGeoJsonData({
       mapLevel: params.currentLevel,
       country: params.country,

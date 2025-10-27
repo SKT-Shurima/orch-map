@@ -148,7 +148,7 @@ export class IconLayer {
     );
 
     // 创建图标图层
-    return await this.createIconLayer(iconData, config);
+    return await IconLayer.createIconLayer(iconData, config);
   }
 
   /**

@@ -6,7 +6,7 @@ import { readFileSync } from "fs";
 
 export default defineConfig({
   plugins: [
-    vue(), 
+    vue(),
     vueJsx(),
     {
       name: "mapData-middleware",
@@ -14,7 +14,7 @@ export default defineConfig({
         server.middlewares.use("/mapData", (req, res, next) => {
           const url = req.url;
           if (!url) return next();
-          
+
           try {
             // 直接指向 packages/mapData/data 目录
             const mapDataDir = path.resolve(__dirname, "../packages/mapData/data");

@@ -153,13 +153,6 @@ export default class GeoLayer {
           const pick = info as { object?: { properties?: { name?: string; code?: string } } } | null;
           if (pick?.object) {
             const regionName = pick.object.properties?.name ?? "";
-            // eslint-disable-next-line no-console
-            console.log("双击地图区域信息:", {
-              区域名称: regionName,
-              区域代码: pick.object.properties?.code,
-              完整数据: pick.object.properties,
-            });
-
             // 触发双击区域事件回调
             if (events?.onAreaDoubleClick) {
               events.onAreaDoubleClick(regionName);
@@ -210,7 +203,7 @@ export default class GeoLayer {
       });
       return {
         longitude: result?.center?.[0] ?? 0,
-        latitude: result?.center?.[1] ?? 30,
+        latitude: result?.center?.[1] ?? 0,
         zoom: result?.zoom ?? 0,
         pitch: mode === "3d" ? 45 : 0,
       };
@@ -224,7 +217,7 @@ export default class GeoLayer {
     if (!result) {
       return {
         longitude: 0,
-        latitude: 30,
+        latitude: 0,
         zoom: 1,
         pitch: mode === "3d" ? 45 : 0,
       };
@@ -232,7 +225,7 @@ export default class GeoLayer {
 
     return {
       longitude: result.center?.[0] ?? 0,
-      latitude: result.center?.[1] ?? 30,
+      latitude: result.center?.[1] ?? 0,
       zoom: result.zoom ?? 1,
       pitch: mode === "3d" ? 45 : 0,
     };

@@ -111,14 +111,8 @@ export class TextLayer {
     points: BaseMapPoint[],
     config: TextLayerConfig = {},
   ): DeckTextLayer<TextPoint> {
-    const textData = this.transformToTextData(points, config);
-    // eslint-disable-next-line no-console
-    console.log("[TextLayer] create called:", {
-      pointsCount: points.length,
-      textDataCount: textData.length,
-      sampleTextData: textData.slice(0, 3),
-    });
-    return this.createLayer(textData);
+    const textData = TextLayer.transformToTextData(points, config);
+    return TextLayer.createLayer(textData);
   }
 
   /**
