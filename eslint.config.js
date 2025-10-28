@@ -208,7 +208,7 @@ module.exports = [
   },
   // 配置文件特殊配置
   {
-    files: ['*.config.js', '*.config.ts', 'vite.config.*', 'turbo.json'],
+    files: ['**/*.config.js', '**/*.config.ts', 'vite.config.*', 'turbo.json'],
     languageOptions: {
       globals: {
         console: 'readonly',
@@ -220,6 +220,9 @@ module.exports = [
         module: 'readonly',
         require: 'readonly',
         exports: 'readonly',
+      },
+      parserOptions: {
+        project: false,
       },
     },
     rules: {

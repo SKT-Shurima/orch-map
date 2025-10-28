@@ -5,7 +5,6 @@
 ## 📚 文档
 
 - 📘 **[开发说明](./docs/DEVELOPMENT.md)** - 如何安装、启动、测试和项目结构
-- 📦 **[发布文档](./docs/RELEASE.md)** - 版本发布流程和分支管理
 - 📖 **[使用说明](./docs/USAGE.md)** - 如何在自己的项目中使用
 
 ## 🚀 快速开始
@@ -41,8 +40,14 @@ pnpm dev
 ```json
 {
   "dependencies": {
-    "orch-map": "github:SKT-Shurima/orch-map#release/v1.0.0",
+    "orch-map": "github:SKT-Shurima/orch-map#master",
     "echarts": "^5.6.0"
+  },
+  "scripts": {
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.0"
   }
 }
 ```
@@ -50,6 +55,8 @@ pnpm dev
 ```bash
 pnpm install
 ```
+
+**注意**: 需要安装 `patch-package` 来应用对 `@deck.gl/layers` 的补丁。
 
 ```typescript
 import { Geo } from 'orch-map/core';
@@ -87,7 +94,6 @@ orch-map/
 │   └── core/          # 核心地图功能
 ├── docs/              # 项目文档
 │   ├── DEVELOPMENT.md # 开发说明
-│   ├── RELEASE.md     # 发布文档
 │   └── USAGE.md       # 使用说明
 ├── examples/          # 示例项目
 ├── scripts/           # 构建脚本
@@ -123,18 +129,6 @@ orch-map/
 ## 🔄 分支说明
 
 - **master**: 源代码分支，包含所有源代码和开发文件
-- **release/\***: 发布版本分支，包含构建后的 dist 和 patches
-
-用户项目应该引用 `release/*` 分支，每次发布都会打 tag。
-
-## 📝 版本管理
-
-使用语义化版本 (SemVer)：
-
-- **v1.0.0** - 首次发布
-- **v1.1.0** - 新增功能
-- **v1.1.1** - 修复 bug
-- **v2.0.0** - 重大变更
 
 ## 📖 更多文档
 

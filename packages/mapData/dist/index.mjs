@@ -1,6 +1,3 @@
-// src/pathManager.ts
-import { MapLevel as MapLevel3 } from "@orch-map/types";
-
 // src/managers/WorldPathManager.ts
 var MapVersion = /* @__PURE__ */ ((MapVersion2) => {
   MapVersion2["STANDARD"] = "standard";
@@ -48,7 +45,6 @@ var WorldPathManager = class {
 };
 
 // src/managers/ChinaPathManager.ts
-import { MapLevel } from "@orch-map/types";
 var ChinaPathManager = class _ChinaPathManager {
   /**
    * 获取国家级别的地图数据路径
@@ -116,22 +112,19 @@ var ChinaPathManager = class _ChinaPathManager {
    */
   static getPathByLevel(level, region) {
     switch (level) {
-      case MapLevel.COUNTRY:
+      case "country" /* COUNTRY */:
         return _ChinaPathManager.getCountryPath(region);
-      case MapLevel.PROVINCE:
+      case "province" /* PROVINCE */:
         return _ChinaPathManager.getProvincePath(region);
-      case MapLevel.CITY:
+      case "city" /* CITY */:
         return _ChinaPathManager.getCityPath(region);
-      case MapLevel.COUNTY:
+      case "county" /* COUNTY */:
         return _ChinaPathManager.getCountyPath(region);
       default:
         return "";
     }
   }
 };
-
-// src/managers/USPathManager.ts
-import { MapLevel as MapLevel2 } from "@orch-map/types";
 
 // src/managers/usaStateMap.ts
 var usaStateMap_default = {
@@ -254,13 +247,13 @@ var USPathManager = class _USPathManager {
    */
   static getPathByLevel(level, region) {
     switch (level) {
-      case MapLevel2.COUNTRY:
+      case "country" /* COUNTRY */:
         return _USPathManager.getCountryPath(region);
-      case MapLevel2.PROVINCE:
+      case "province" /* PROVINCE */:
         return _USPathManager.getProvincePath(region);
-      case MapLevel2.CITY:
+      case "city" /* CITY */:
         return _USPathManager.getCityPath(region);
-      case MapLevel2.COUNTY:
+      case "county" /* COUNTY */:
         return _USPathManager.getCountyPath(region);
       default:
         return "";
@@ -603,20 +596,20 @@ var MapDataPathManager = class {
   static generateDataPath(params) {
     const { currentLevel, region, country, mapVersion = "standard" /* STANDARD */ } = params;
     switch (currentLevel) {
-      case MapLevel3.WORLD:
+      case "world" /* WORLD */:
         return WorldPathManager.getWorldMapPath(mapVersion);
-      case MapLevel3.COUNTRY:
+      case "country" /* COUNTRY */:
         if (country === "China" || country === "100000") {
           if (mapVersion === "international" /* INTERNATIONAL */) {
             return "countries/cn-all.geo.json";
           }
         }
         return PathManagerFactory.getCountryPath(country);
-      case MapLevel3.PROVINCE:
+      case "province" /* PROVINCE */:
         return PathManagerFactory.getProvincePath(country, region);
-      case MapLevel3.CITY:
+      case "city" /* CITY */:
         return PathManagerFactory.getCityPath(country, region);
-      case MapLevel3.COUNTY:
+      case "county" /* COUNTY */:
         return PathManagerFactory.getCountyPath(country, region);
       default:
         return "";

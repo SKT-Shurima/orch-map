@@ -42,7 +42,6 @@
     "lint:fix": "turbo lint -- --fix",
     "test": "turbo test",
     "type-check": "turbo type-check",
-    "release": "node scripts/release.js",
     "postinstall": "patch-package || exit 0",
     "publish:types": "pnpm -r publish --filter @orch-map/types",
     "publish:utils": "pnpm -r publish --filter @orch-map/utils",

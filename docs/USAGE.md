@@ -26,8 +26,14 @@
 ```json
 {
   "dependencies": {
-    "orch-map": "github:SKT-Shurima/orch-map#release/v1.0.0",
+    "orch-map": "github:SKT-Shurima/orch-map#master",
     "echarts": "^5.6.0"
+  },
+  "scripts": {
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.0"
   }
 }
 ```
@@ -42,7 +48,10 @@ npm install
 yarn install
 ```
 
-**注意**: `echarts` 是必需的 peer dependency，需要单独安装。
+**注意**:
+
+- `echarts` 是必需的 peer dependency，需要单独安装。
+- `patch-package` 需要添加到 devDependencies 中，用于应用对 `@deck.gl/layers` 的补丁。
 
 ### 指定版本
 
@@ -51,14 +60,11 @@ yarn install
 ```json
 {
   "dependencies": {
-    // 使用特定 release 分支
-    "orch-map": "github:SKT-Shurima/orch-map#release/v1.0.0",
+    // 使用 master 分支
+    "orch-map": "github:SKT-Shurima/orch-map#master",
 
     // 使用特定 tag
-    "orch-map": "github:SKT-Shurima/orch-map#v1.0.0",
-
-    // 使用 master 分支（开发版本，不推荐生产环境）
-    "orch-map": "github:SKT-Shurima/orch-map#master"
+    "orch-map": "github:SKT-Shurima/orch-map#v1.0.0"
   }
 }
 ```
@@ -419,12 +425,12 @@ pnpm update orch-map
 
 ### Q: 如何指定特定版本？
 
-在 `package.json` 中使用特定的 tag：
+在 `package.json` 中使用 master 分支或特定 tag：
 
 ```json
 {
   "dependencies": {
-    "orch-map": "github:SKT-Shurima/orch-map#v1.0.0"
+    "orch-map": "github:SKT-Shurima/orch-map#master"
   }
 }
 ```
@@ -471,7 +477,87 @@ geo.addSeries({ type: 'scatter', data: [...], name: '数据1' });
 geo.addSeries({ type: 'effectScatter', data: [...], name: '数据2' });
 ```
 
+### Q: ArcTripsLayer 找不到怎么办？
+
+如果在构建时遇到 `export 'ArcTripsLayer' was not found in '@deck.gl/layers'` 错误，需要在项目中正确配置 patch-package：
+
+1. 确保 `package.json` 中包含：
+
+```json
+{
+  "scripts": {
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.0"
+  }
+}
+```
+
+2. 重新安装依赖：
+
+```bash
+rm -rf node_modules package-lock.json
+pnpm install
+```
+
+这会自动应用对 `@deck.gl/layers` 的补丁。
+
+## 🚨 故障排除
+
+### ArcTripsLayer 错误
+
+**错误信息**: `export 'ArcTripsLayer' was not found in '@deck.gl/layers'`
+
+**原因**: 补丁没有正确应用到 `@deck.gl/layers` 包。
+
+**解决方案**:
+
+1. 检查 `package.json` 配置：
+
+```json
+{
+  "scripts": {
+    "postinstall": "patch-package"
+  },
+  "devDependencies": {
+    "patch-package": "^8.0.0"
+  }
+}
+```
+
+2. 重新安装依赖：
+
+```bash
+# 清理
+rm -rf node_modules package-lock.json pnpm-lock.yaml
+
+# 重新安装
+pnpm install
+```
+
+3. 手动应用补丁：
+
+```bash
+npx patch-package
+```
+
+### echarts 未定义
+
+确保安装了 echarts：
+
+```bash
+pnpm install echarts
+```
+
+### 类型定义找不到
+
+确保安装完整：
+
+```bash
+pnpm install orch-map echarts
+```
+
 ## 📖 相关文档
 
 - [DEVELOPMENT.md](./DEVELOPMENT.md) - 开发说明
-- [RELEASE.md](./RELEASE.md) - 发布流程

@@ -44,7 +44,6 @@ orch-map/
 │   └── src/           # 示例代码
 ├── docs/              # 项目文档
 ├── scripts/           # 构建脚本
-│   └── release.js     # 发布脚本
 ├── patches/           # 第三方库补丁
 ├── package.json       # 根配置文件
 ├── pnpm-workspace.yaml # pnpm workspace 配置
@@ -307,4 +306,3 @@ pnpm lint:fix
 ## 📖 相关文档
 
 - [USAGE.md](./USAGE.md) - 使用说明
-- [RELEASE.md](./RELEASE.md) - 发布流程

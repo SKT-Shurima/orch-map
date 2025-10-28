@@ -31,9 +31,6 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/pathManager.ts
-var import_types3 = require("@orch-map/types");
-
 // src/managers/WorldPathManager.ts
 var MapVersion = /* @__PURE__ */ ((MapVersion2) => {
   MapVersion2["STANDARD"] = "standard";
@@ -81,7 +78,6 @@ var WorldPathManager = class {
 };
 
 // src/managers/ChinaPathManager.ts
-var import_types = require("@orch-map/types");
 var ChinaPathManager = class _ChinaPathManager {
   /**
    * 获取国家级别的地图数据路径
@@ -149,22 +145,19 @@ var ChinaPathManager = class _ChinaPathManager {
    */
   static getPathByLevel(level, region) {
     switch (level) {
-      case import_types.MapLevel.COUNTRY:
+      case "country" /* COUNTRY */:
         return _ChinaPathManager.getCountryPath(region);
-      case import_types.MapLevel.PROVINCE:
+      case "province" /* PROVINCE */:
         return _ChinaPathManager.getProvincePath(region);
-      case import_types.MapLevel.CITY:
+      case "city" /* CITY */:
         return _ChinaPathManager.getCityPath(region);
-      case import_types.MapLevel.COUNTY:
+      case "county" /* COUNTY */:
         return _ChinaPathManager.getCountyPath(region);
       default:
         return "";
     }
   }
 };
-
-// src/managers/USPathManager.ts
-var import_types2 = require("@orch-map/types");
 
 // src/managers/usaStateMap.ts
 var usaStateMap_default = {
@@ -287,13 +280,13 @@ var USPathManager = class _USPathManager {
    */
   static getPathByLevel(level, region) {
     switch (level) {
-      case import_types2.MapLevel.COUNTRY:
+      case "country" /* COUNTRY */:
         return _USPathManager.getCountryPath(region);
-      case import_types2.MapLevel.PROVINCE:
+      case "province" /* PROVINCE */:
         return _USPathManager.getProvincePath(region);
-      case import_types2.MapLevel.CITY:
+      case "city" /* CITY */:
         return _USPathManager.getCityPath(region);
-      case import_types2.MapLevel.COUNTY:
+      case "county" /* COUNTY */:
         return _USPathManager.getCountyPath(region);
       default:
         return "";
@@ -636,20 +629,20 @@ var MapDataPathManager = class {
   static generateDataPath(params) {
     const { currentLevel, region, country, mapVersion = "standard" /* STANDARD */ } = params;
     switch (currentLevel) {
-      case import_types3.MapLevel.WORLD:
+      case "world" /* WORLD */:
         return WorldPathManager.getWorldMapPath(mapVersion);
-      case import_types3.MapLevel.COUNTRY:
+      case "country" /* COUNTRY */:
         if (country === "China" || country === "100000") {
           if (mapVersion === "international" /* INTERNATIONAL */) {
             return "countries/cn-all.geo.json";
           }
         }
         return PathManagerFactory.getCountryPath(country);
-      case import_types3.MapLevel.PROVINCE:
+      case "province" /* PROVINCE */:
         return PathManagerFactory.getProvincePath(country, region);
-      case import_types3.MapLevel.CITY:
+      case "city" /* CITY */:
         return PathManagerFactory.getCityPath(country, region);
-      case import_types3.MapLevel.COUNTY:
+      case "county" /* COUNTY */:
         return PathManagerFactory.getCountyPath(country, region);
       default:
         return "";

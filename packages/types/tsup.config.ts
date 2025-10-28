@@ -8,4 +8,6 @@ export default defineConfig({
   clean: true,
   splitting: false,
   minify: false,
+  // 打包所有内部依赖
+  noExternal: [/^@orch-map\//],
 });

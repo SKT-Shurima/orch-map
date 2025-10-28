@@ -25,13 +25,13 @@
   },
   "dependencies": {
     "@deck.gl/core": "^9.2.2",
-    "@deck.gl/layers": "^9.2.2",
+    "@deck.gl/layers": "^9.2.2"
+  },
+  "devDependencies": {
     "@orch-map/mapData": "workspace:*",
     "@orch-map/types": "workspace:*",
     "@orch-map/utils": "workspace:*",
-    "echarts": "^5.6.0"
-  },
-  "devDependencies": {
+    "echarts": "^5.6.0",
     "patch-package": "^8.0.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"

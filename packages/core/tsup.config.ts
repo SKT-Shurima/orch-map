@@ -1,6 +1,6 @@
 import { defineConfig } from 'tsup';
 import { copyFileSync, mkdirSync, existsSync } from 'fs';
-import { join } from 'path';
+import { join, resolve } from 'path';
 
 export default defineConfig({
   entry: ['src/index.ts'],
@@ -10,6 +10,13 @@ export default defineConfig({
   clean: true,
   splitting: false,
   minify: false,
+  bundle: true,  // 打包所有依赖，除了 external 中指定的
+  // echarts 作为外部依赖，由使用方提供
+  external: ['echarts'],
+  // 明确指定要打包的依赖（不作为外部依赖）
+  noExternal: ['@deck.gl/core', '@deck.gl/layers', /^@orch-map\//],
+  // 使用 tsconfig 的 paths 配置
+  tsconfig: './tsconfig.json',
   onSuccess: async () => {
     // 复制 lib 文件夹到 dist 目录
     const libDir = join(__dirname, 'lib');
