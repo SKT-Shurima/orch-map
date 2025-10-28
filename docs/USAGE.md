@@ -1,28 +1,33 @@
-# 使用指南
+# 使用说明
 
-本指南说明如何在自己的项目中使用 `@orch-map` 包。
+本文档说明如何在你的项目中使用 Orch Map 组件库。
 
-## 安装
+## 📋 目录
 
-### 方式一：从 npm 安装（如果已发布）
+- [安装](#安装)
+- [快速开始](#快速开始)
+- [基本使用](#基本使用)
+- [高级功能](#高级功能)
+- [框架集成](#框架集成)
+- [API 参考](#api-参考)
+- [常见问题](#常见问题)
 
-```bash
-npm install @orch-map/core @orch-map/types @orch-map/utils @orch-map/mapdata
-# 或使用 pnpm
-pnpm add @orch-map/core @orch-map/types @orch-map/utils @orch-map/mapdata
-```
+## 📦 安装
 
-### 方式二：从 GitHub 直接引用
+### 环境要求
 
-在你的项目 `package.json` 中添加：
+- **Node.js**: >= 18.0.0
+- **pnpm**: >= 8.0.0 (推荐) 或 npm / yarn
+
+### 从 GitHub 安装
+
+在项目根目录的 `package.json` 中添加依赖：
 
 ```json
 {
   "dependencies": {
-    "@orch-map/core": "github:SKT-Shurima/orch-map#packages/core",
-    "@orch-map/types": "github:SKT-Shurima/orch-map#packages/types",
-    "@orch-map/utils": "github:SKT-Shurima/orch-map#packages/utils",
-    "@orch-map/mapdata": "github:SKT-Shurima/orch-map#packages/mapData"
+    "orch-map": "github:SKT-Shurima/orch-map#release/v1.0.0",
+    "echarts": "^5.6.0"
   }
 }
 ```
@@ -30,69 +35,168 @@ pnpm add @orch-map/core @orch-map/types @orch-map/utils @orch-map/mapdata
 然后安装：
 
 ```bash
+pnpm install
+# 或
 npm install
 # 或
-pnpm install
+yarn install
 ```
 
-### 方式三：使用 SSH URL
+**注意**: `echarts` 是必需的 peer dependency，需要单独安装。
+
+### 指定版本
+
+可以通过不同的方式指定版本：
 
 ```json
 {
   "dependencies": {
-    "@orch-map/core": "git+ssh://git@github.com:SKT-Shurima/orch-map.git#packages/core"
+    // 使用特定 release 分支
+    "orch-map": "github:SKT-Shurima/orch-map#release/v1.0.0",
+
+    // 使用特定 tag
+    "orch-map": "github:SKT-Shurima/orch-map#v1.0.0",
+
+    // 使用 master 分支（开发版本，不推荐生产环境）
+    "orch-map": "github:SKT-Shurima/orch-map#master"
   }
 }
 ```
 
----
+## 🚀 快速开始
 
-## 使用示例
-
-### 基本用法
+### 基本示例
 
 ```typescript
-import { Geo } from '@orch-map/core';
-import type { GeoConfig } from '@orch-map/types';
+import { Geo } from 'orch-map/core';
+import type { GeoConfig } from 'orch-map/types';
 
-// 创建地图配置
+// 准备容器
+const container = document.getElementById('map')!;
+
+// 配置地图
 const config: GeoConfig = {
   mapName: 'china',
   center: [105, 36],
   zoom: 1.2,
   roam: true,
-  areaColor: '#f0f0f0',
-  borderColor: '#999',
 };
 
-// 获取地图容器
-const geoContainer = document.getElementById('geo');
-
 // 创建地图实例
-const geo = new Geo(geoContainer, config);
+const geo = new Geo(container, config);
 
-// 添加散点数据
-const data = [
-  { name: '北京', value: [116.46, 39.92, 100] },
-  { name: '上海', value: [121.48, 31.22, 200] },
-  { name: '广州', value: [113.23, 23.16, 150] },
-];
-
+// 添加数据
 geo.addSeries({
   type: 'scatter',
-  data: data,
+  data: [
+    { name: '北京', value: [116.46, 39.92, 100] },
+    { name: '上海', value: [121.48, 31.22, 200] },
+    { name: '广州', value: [113.23, 23.16, 150] },
+  ],
   symbolSize: 8,
   itemStyle: { color: '#ff6b6b' },
 });
 ```
 
-### 使用工具函数
+## 📖 基本使用
+
+### 1. 导入模块
 
 ```typescript
-import { GeoUtils } from '@orch-map/core';
-import type { DataPoint } from '@orch-map/types';
+// 核心功能
+import { Geo, MapRegistry, GeoUtils } from 'orch-map/core';
 
-const data: DataPoint[] = [
+// 类型定义
+import type { GeoConfig, GeoData } from 'orch-map/types';
+
+// 工具函数
+import { hexToRgb, animate } from 'orch-map/utils';
+
+// 地图数据
+import { getChinaCities } from 'orch-map/mapData';
+```
+
+### 2. 创建地图配置
+
+```typescript
+const config: GeoConfig = {
+  mapName: 'china', // 地图名称
+  center: [105, 36], // 中心点坐标
+  zoom: 1.2, // 缩放级别
+  roam: true, // 允许缩放和平移
+  areaColor: '#f0f0f0', // 区域颜色
+  borderColor: '#999', // 边框颜色
+  borderWidth: 1, // 边框宽度
+  aspectScale: 0.75, // 宽高比
+  layoutCenter: ['50%', '50%'], // 布局中心
+  layoutSize: '80%', // 布局大小
+};
+```
+
+### 3. 初始化地图
+
+```typescript
+const container = document.getElementById('map-container')!;
+const geo = new Geo(container, config);
+```
+
+### 4. 添加数据系列
+
+#### 散点图
+
+```typescript
+geo.addSeries({
+  type: 'scatter',
+  data: [
+    { name: '北京', value: [116.46, 39.92, 100] },
+    { name: '上海', value: [121.48, 31.22, 200] },
+  ],
+  symbolSize: (val) => val[2] / 2, // 大小融合
+  itemStyle: { color: '#ff6b6b' },
+  label: {
+    show: true,
+    formatter: '{b}',
+    position: 'top',
+  },
+});
+```
+
+#### 热力图
+
+```typescript
+geo.addSeries({
+  type: 'effectScatter',
+  data: [...],
+  symbolSize: 8,
+  rippleEffect: {
+    brushType: 'stroke',
+    scale: 2.5,
+  },
+  itemStyle: { color: '#ff6b6b' },
+});
+```
+
+### 5. 事件处理
+
+```typescript
+geo.setEventHandlers({
+  onRegionClick: (params) => {
+    console.log('点击了区域:', params.name);
+  },
+  onRegionMouseOver: (params) => {
+    console.log('悬停在:', params.name);
+  },
+});
+```
+
+## 🎯 高级功能
+
+### 使用工具类
+
+```typescript
+import { GeoUtils } from 'orch-map/core';
+
+const data = [
   { name: '北京', value: [116.46, 39.92, 100] },
   { name: '上海', value: [121.48, 31.22, 200] },
 ];
@@ -101,81 +205,102 @@ const data: DataPoint[] = [
 const autoConfig = GeoUtils.autoConfigGeo(data, { width: 800, height: 600 });
 
 // 过滤数据
-const filtered = GeoUtils.filterByValue(data, 100, 300);
+const filtered = GeoUtils.filterByValue(data, 100, 200);
 
 // 排序数据
 const sorted = GeoUtils.sortByValue(data, false);
 ```
 
-### 使用地图注册表
+### 地图注册
 
 ```typescript
-import { MapRegistry } from '@orch-map/core';
-import chinaGeoJson from '@orch-map/mapdata/data/china/100000.json';
+import { MapRegistry } from 'orch-map/core';
+import chinaGeoJson from 'orch-map/mapData/data/china/100000.json';
 
-// 注册地图
-MapRegistry.registerMap('my-custom-map', chinaGeoJson);
+// 注册自定义地图
+MapRegistry.registerMap('my-china', chinaGeoJson);
 
 // 使用注册的地图
 const geo = new Geo(container, {
-  mapName: 'my-custom-map',
-  // ... other config
+  mapName: 'my-china',
+  // ...
 });
 ```
 
-### 使用地图数据
+### 地图数据
 
 ```typescript
-import { getChinaCities, getCityByName } from '@orch-map/mapdata';
+import { getChinaCities, getCityByName } from 'orch-map/mapData';
 
-// 获取中国所有城市
+// 获取所有城市
 const cities = getChinaCities();
 
-// 根据名称查找城市
+// 根据名称查找
 const beijing = getCityByName('北京');
 ```
 
-### 在 Vue 3 中使用
+### 颜色和动画工具
+
+```typescript
+import { hexToRgb, animate } from 'orch-map/utils';
+
+// 颜色转换
+const rgb = hexToRgb('#ff6b6b');
+
+// 动画
+animate(0, 100, 1000, (value) => {
+  // 更新动画值
+});
+```
+
+## 🔗 框架集成
+
+### Vue 3
 
 ```vue
 <template>
-  <div ref="geoContainer" style="width: 100%; height: 600px;"></div>
+  <div ref="containerRef" style="width: 100%; height: 600px;"></div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { Geo } from '@orch-map/core';
-import type { GeoConfig } from '@orch-map/types';
+import { ref, onMounted, onUnmounted } from 'vue';
+import { Geo } from 'orch-map/core';
+import type { GeoConfig } from 'orch-map/types';
 
-const geoContainer = ref<HTMLElement>();
+const containerRef = ref<HTMLElement>();
+let geo: Geo | null = null;
 
 onMounted(() => {
+  if (!containerRef.value) return;
+
   const config: GeoConfig = {
     mapName: 'china',
     center: [105, 36],
     zoom: 1.2,
   };
 
-  const geo = new Geo(geoContainer.value!, config);
-
-  const data = [{ name: '北京', value: [116.46, 39.92, 100] }];
+  geo = new Geo(containerRef.value, config);
 
   geo.addSeries({
     type: 'scatter',
-    data,
+    data: [{ name: '北京', value: [116.46, 39.92, 100] }],
   });
+});
+
+onUnmounted(() => {
+  geo?.dispose();
 });
 </script>
 ```
 
-### 在 React 中使用
+### React
 
 ```tsx
 import React, { useEffect, useRef } from 'react';
-import { Geo } from '@orch-map/core';
-import type { GeoConfig } from '@orch-map/types';
+import { Geo } from 'orch-map/core';
+import type { GeoConfig } from 'orch-map/types';
 
-function MapComponent() {
+const MapComponent: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -189,131 +314,164 @@ function MapComponent() {
 
     const geo = new Geo(containerRef.current, config);
 
-    const data = [{ name: '北京', value: [116.46, 39.92, 100] }];
-
     geo.addSeries({
       type: 'scatter',
-      data,
+      data: [{ name: '北京', value: [116.46, 39.92, 100] }],
     });
+
+    return () => {
+      geo.dispose();
+    };
   }, []);
 
   return <div ref={containerRef} style={{ width: '100%', height: '600px' }} />;
+};
+
+export default MapComponent;
+```
+
+## 📚 API 参考
+
+### Geo
+
+主地图类。
+
+#### 构造函数
+
+```typescript
+new Geo(container: HTMLElement, config: GeoConfig)
+```
+
+#### 方法
+
+##### addSeries(options)
+
+添加数据系列。
+
+```typescript
+geo.addSeries({
+  type: 'scatter' | 'effectScatter',
+  data: GeoData[],
+  symbolSize?: number | ((val: number[]) => number),
+  itemStyle?: object,
+  label?: object,
+  // ... 其他 ECharts 配置
+});
+```
+
+##### setEventHandlers(handlers)
+
+设置事件处理器。
+
+```typescript
+geo.setEventHandlers({
+  onRegionClick?: (params: any) => void,
+  onRegionMouseOver?: (params: any) => void,
+});
+```
+
+##### dispose()
+
+销毁地图实例。
+
+```typescript
+geo.dispose();
+```
+
+### GeoConfig
+
+地图配置接口。
+
+```typescript
+interface GeoConfig {
+  mapName: string;
+  center?: [number, number];
+  zoom?: number;
+  roam?: boolean;
+  areaColor?: string;
+  borderColor?: string;
+  exceptionalBorderColor?: string;
+  borderWidth?: number;
+  aspectScale?: number;
+  layoutCenter?: [string, string];
+  layoutSize?: string;
 }
 ```
 
----
+### GeoData
 
-## 模块说明
-
-### @orch-map/core
-
-核心功能模块，提供地图渲染、图层管理等功能。
-
-主要导出：
-
-- `Geo`: 地理坐标系组件
-- `MapRegistry`: 地图注册管理
-- `GeoUtils`: 地图工具函数
-
-### @orch-map/types
-
-TypeScript 类型定义。
-
-主要导出：
-
-- `MapConfig`: 地图配置类型
-- `DataPoint`: 数据点类型
-- `GeoData`: 地理数据类型
-
-### @orch-map/utils
-
-工具函数模块。
-
-主要导出：
-
-- 颜色处理函数
-- 坐标转换函数
-- 动画工具函数
-- 任务调度函数
-
-### @orch-map/mapdata
-
-地图数据模块。
-
-主要导出：
-
-- `getChinaCities()`: 获取中国城市列表
-- `getCityByName()`: 根据名称获取城市信息
-
-地图数据：
-
-- `@orch-map/mapdata/data/china/*`: 中国地图数据
-- `@orch-map/mapdata/data/world/*`: 世界地图数据
-- `@orch-map/mapdata/data/countries/*`: 国家地图数据
-
----
-
-## 开发提示
-
-### TypeScript 支持
-
-所有包都提供完整的 TypeScript 类型定义：
+地理数据接口。
 
 ```typescript
-import type { MapConfig, DataPoint } from '@orch-map/types';
-import type { AnimationConfig } from '@orch-map/utils';
+interface GeoData {
+  name: string;
+  value: [number, number, number?]; // [经度, 纬度, 值]
+}
 ```
 
-### 按需导入
-
-推荐按需导入需要的功能：
-
-```typescript
-// 只导入需要的功能
-import { Geo } from '@orch-map/core';
-import { hexToRgb } from '@orch-map/utils';
-```
-
-### 地图数据
-
-使用地图数据时，注意数据文件的路径：
-
-```typescript
-// 导入地图数据
-import chinaGeoJson from '@orch-map/mapdata/data/china/100000.json';
-
-// 使用数据
-MapRegistry.registerMap('china', chinaGeoJson);
-```
-
----
-
-## 常见问题
+## ❓ 常见问题
 
 ### Q: 如何更新版本？
 
-A: 如果从 GitHub 引用，可以指定分支或 tag：
+```bash
+pnpm update orch-map
+```
+
+### Q: 如何指定特定版本？
+
+在 `package.json` 中使用特定的 tag：
 
 ```json
 {
   "dependencies": {
-    "@orch-map/core": "github:yourusername/orch-map#v1.0.0"
+    "orch-map": "github:SKT-Shurima/orch-map#v1.0.0"
   }
 }
 ```
 
-### Q: 如何发布到 npm？
-
-A: 参考 [PUBLISHING.md](./PUBLISHING.md)
-
-### Q: 如何查看包的文档？
-
-A: 每个包都包含 TypeScript 类型定义，可以通过 IDE 自动补全查看。
-
 ### Q: 是否需要安装 echarts？
 
-A: `echarts` 是 peerDependency，需要在使用前单独安装：
+是的，`echarts` 是必需的 peer dependency：
 
 ```bash
-npm install echarts
+pnpm install echarts
 ```
+
+### Q: 如何自定义地图样式？
+
+在配置中设置：
+
+```typescript
+const config: GeoConfig = {
+  mapName: 'china',
+  areaColor: '#ff0000',
+  borderColor: '#00ff00',
+  borderWidth: 2,
+};
+```
+
+### Q: 如何处理地图交互？
+
+使用事件处理器：
+
+```typescript
+geo.setEventHandlers({
+  onRegionClick: (params) => {
+    // 处理点击
+  },
+});
+```
+
+### Q: 如何添加多个数据系列？
+
+多次调用 `addSeries`：
+
+```typescript
+geo.addSeries({ type: 'scatter', data: [...], name: '数据1' });
+geo.addSeries({ type: 'effectScatter', data: [...], name: '数据2' });
+```
+
+## 📖 相关文档
+
+- [DEVELOPMENT.md](./DEVELOPMENT.md) - 开发说明
+- [RELEASE.md](./RELEASE.md) - 发布流程

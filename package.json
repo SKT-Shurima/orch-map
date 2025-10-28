@@ -2,7 +2,7 @@
   "name": "orch-map",
   "version": "1.0.0",
   "description": "A monorepo project with packages and examples",
-  "private": true,
+  "private": false,
   "exports": {
     "./core": {
       "types": "./packages/core/dist/index.d.ts",
@@ -26,6 +26,10 @@
     },
     "./mapData/data/*": "./packages/mapData/data/*"
   },
+  "files": [
+    "packages",
+    "patches"
+  ],
   "workspaces": [
     "packages/*",
     "examples/*"
@@ -38,6 +42,8 @@
     "lint:fix": "turbo lint -- --fix",
     "test": "turbo test",
     "type-check": "turbo type-check",
+    "release": "node scripts/release.js",
+    "postinstall": "patch-package || exit 0",
     "publish:types": "pnpm -r publish --filter @orch-map/types",
     "publish:utils": "pnpm -r publish --filter @orch-map/utils",
     "publish:mapdata": "pnpm -r publish --filter @orch-map/mapData",
@@ -53,6 +59,7 @@
     "eslint": "^9.37.0",
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-vue": "^10.5.0",
+    "patch-package": "^8.0.0",
     "prettier": "^3.0.0",
     "turbo": "^2.5.8",
     "typescript": "^5.0.0",
@@ -61,6 +68,20 @@
   "peerDependencies": {
     "echarts": "^5.6.0"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SKT-Shurima/orch-map.git"
+  },
+  "keywords": [
+    "map",
+    "geo",
+    "echarts",
+    "deckgl",
+    "geojson",
+    "china",
+    "world",
+    "visualization"
+  ],
   "engines": {
     "node": ">=18.0.0",
     "pnpm": ">=8.0.0"
