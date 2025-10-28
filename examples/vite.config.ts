@@ -16,8 +16,8 @@ export default defineConfig({
           if (!url) return next();
 
           try {
-            // 直接指向 packages/mapData/data 目录
-            const mapDataDir = path.resolve(__dirname, "../packages/mapData/data");
+            // 指向外部项目 map-geo-json 的 data 目录
+            const mapDataDir = path.resolve(__dirname, "../../map-geo-json/data");
             // 移除 URL 前导斜杠，避免 path.resolve 将其视为绝对路径
             const cleanUrl = url.startsWith("/") ? url.slice(1) : url;
             const filePath = path.resolve(mapDataDir, cleanUrl);

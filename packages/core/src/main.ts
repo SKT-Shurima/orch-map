@@ -2,7 +2,7 @@ import { MapRendererConfig, MapRendererType } from "./interfaces";
 import { BaseMapLine, BaseMapPoint, MapLevel } from "@orch-map/types";
 import DeckglMap from "./deckgl";
 import EchartsMap from "./echarts-geo";
-import MapDataService from "@orch-map/mapData";
+import MapDataService from "@orch-map/path-adapter";
 import MapStateManager from "./MapStateManager";
 import { GeoUtils, MapLevelUtils } from "./utils";
 import { isUndef, svgToEChartsSymbol } from "@orch-map/utils";

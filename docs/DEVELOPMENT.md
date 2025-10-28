@@ -54,7 +54,7 @@ orch-map/
 
 - **@orch-map/types**: 纯 TypeScript 类型定义，不包含任何运行时代码
 - **@orch-map/utils**: 通用工具函数（颜色、坐标、动画等）
-- **@orch-map/mapData**: 地图数据管理和 GeoJSON 数据
+- **@orch-map/path-adapter**: 地图数据路径适配器（需要配合 @orch-map/geo-json 项目使用）
 - **@orch-map/core**: 核心功能，包含 ECharts Geo 和 Deck.gl 支持
 
 ## 📦 安装依赖
@@ -295,8 +295,10 @@ pnpm lint:fix
 
 ### Q: 如何添加新的地图数据？
 
-1. 在 `packages/mapData/data/` 添加 GeoJSON 文件
-2. 在 `packages/mapData/src/` 添加数据服务逻辑
+⚠️ **注意**: 地图数据已分离到独立的 @orch-map/geo-json 项目。
+
+1. 在 `@orch-map/geo-json/data/` 添加 GeoJSON 文件
+2. 在 `@orch-map/path-adapter/src/` 添加路径适配逻辑
 3. 运行 `pnpm build`
 
 ### Q: 如何添加新的类型定义？

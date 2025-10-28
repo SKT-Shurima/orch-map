@@ -103,9 +103,9 @@ importers:
         specifier: ^9.2.2
         version: 9.2.2(patch_hash=fwvpz3he42em5zk37cytl64tgm)(@deck.gl/core@9.2.2)(@loaders.gl/core@4.3.4)(@luma.gl/core@9.2.2)(@luma.gl/engine@9.2.2)
     devDependencies:
-      '@orch-map/mapData':
+      '@orch-map/path-adapter':
         specifier: workspace:*
-        version: link:../mapData
+        version: link:../path-adapter
       '@orch-map/types':
         specifier: workspace:*
         version: link:../types
@@ -125,7 +125,7 @@ importers:
         specifier: ^5.0.0
         version: 5.9.3
 
-  packages/mapData:
+  packages/path-adapter:
     dependencies:
       '@orch-map/types':
         specifier: workspace:*

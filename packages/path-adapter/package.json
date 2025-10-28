@@ -1,7 +1,7 @@
 {
-  "name": "@orch-map/core",
+  "name": "@orch-map/path-adapter",
   "version": "1.0.0",
-  "description": "Core functionality for orch-map",
+  "description": "Path adapter for orch-map to access GeoJSON map data (requires @orch-map/geo-json)",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
   "types": "./dist/index.d.ts",
@@ -20,31 +20,33 @@
     "dev": "tsup --watch",
     "clean": "rm -rf dist",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src --ext .ts",
-    "postinstall": "patch-package"
+    "lint": "eslint src --ext .ts"
   },
   "dependencies": {
-    "@deck.gl/core": "^9.2.2",
-    "@deck.gl/layers": "^9.2.2",
-    "@orch-map/path-adapter": "workspace:*"
+    "@orch-map/types": "workspace:*"
   },
   "devDependencies": {
-    "@orch-map/types": "workspace:*",
-    "@orch-map/utils": "workspace:*",
-    "echarts": "^5.6.0",
-    "patch-package": "^8.0.0",
+    "@turf/turf": "^7.2.0",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0"
-  },
-  "peerDependencies": {
-    "echarts": "^5.6.0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SKT-Shurima/orch-map.git",
-    "directory": "packages/core"
+    "directory": "packages/path-adapter"
   },
   "publishConfig": {
     "access": "public"
-  }
+  },
+  "keywords": [
+    "geojson",
+    "map",
+    "data",
+    "path-adapter",
+    "adapter",
+    "orch-map",
+    "china",
+    "world",
+    "us"
+  ]
 }

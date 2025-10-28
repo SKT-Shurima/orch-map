@@ -19,12 +19,11 @@
       "import": "./packages/utils/dist/index.mjs",
       "require": "./packages/utils/dist/index.js"
     },
-    "./mapData": {
-      "types": "./packages/mapData/dist/index.d.ts",
-      "import": "./packages/mapData/dist/index.mjs",
-      "require": "./packages/mapData/dist/index.js"
-    },
-    "./mapData/data/*": "./packages/mapData/data/*"
+    "./path-adapter": {
+      "types": "./packages/path-adapter/dist/index.d.ts",
+      "import": "./packages/path-adapter/dist/index.mjs",
+      "require": "./packages/path-adapter/dist/index.js"
+    }
   },
   "files": [
     "packages",
@@ -45,9 +44,9 @@
     "postinstall": "patch-package || exit 0",
     "publish:types": "pnpm -r publish --filter @orch-map/types",
     "publish:utils": "pnpm -r publish --filter @orch-map/utils",
-    "publish:mapdata": "pnpm -r publish --filter @orch-map/mapData",
+    "publish:path-adapter": "pnpm -r publish --filter @orch-map/path-adapter",
     "publish:core": "pnpm -r publish --filter @orch-map/core",
-    "publish:all": "pnpm publish:types && pnpm publish:utils && pnpm publish:mapData && pnpm publish:core"
+    "publish:all": "pnpm publish:types && pnpm publish:utils && pnpm publish:path-adapter && pnpm publish:core"
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",

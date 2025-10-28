@@ -1,10 +1,10 @@
-import MapDataService from "@orch-map/mapdata";
+import MapDataService from "@orch-map/path-adapter";
 import { MapLevel, GeoJSON, BaseMapPoint, BaseMapLine } from "@orch-map/types";
 
 /**
  * 特定属性变化监听器
  */
-export type PropertyChangeListener<T = any> = (newValue: T, oldValue: T) => void
+export type PropertyChangeListener<T = unknown> = (newValue: T, oldValue: T) => void
 
 /**
  * 地图状态管理器
@@ -184,7 +184,10 @@ export default class MapStateManager {
     if (!MapStateManager.propertyListeners.has(key)) {
       MapStateManager.propertyListeners.set(key, []);
     }
-    MapStateManager.propertyListeners.get(key)!.push(listener as PropertyChangeListener);
+    const listeners = MapStateManager.propertyListeners.get(key);
+    if (listeners) {
+      listeners.push(listener as PropertyChangeListener);
+    }
 
     // 返回取消监听的函数
     return () => {
@@ -216,6 +219,7 @@ export default class MapStateManager {
         try {
           listener(newValue, oldValue);
         } catch (error) {
+          // eslint-disable-next-line no-console
           console.error(`Error in property change listener for ${property}:`, error);
         }
       });

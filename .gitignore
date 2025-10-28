@@ -24,6 +24,9 @@ build/
 .DS_Store
 Thumbs.db
 
+# External data link
+mapData
+
 # Logs
 logs
 *.log

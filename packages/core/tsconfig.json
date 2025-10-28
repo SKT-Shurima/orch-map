@@ -13,7 +13,7 @@
       "@/lib": ["./lib"],
       "@orch-map/types": ["../../packages/types/src"],
       "@orch-map/utils": ["../../packages/utils/src"],
-      "@orch-map/mapdata": ["../../packages/mapData/src"]
+      "@orch-map/path-adapter": ["../../packages/path-adapter/src"]
     }
   },
   "include": ["src/**/*", "lib"],

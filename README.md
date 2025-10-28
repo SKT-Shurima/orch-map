@@ -122,9 +122,10 @@ orch-map/
 
 提供工具函数（颜色、坐标、动画等）。
 
-### @orch-map/mapData
+### @orch-map/path-adapter
 
-提供地图数据管理和 GeoJSON 数据。
+地图数据路径适配器，提供地图数据的路径管理和数据获取服务。
+⚠️ 需要配合 @orch-map/geo-json 项目使用。
 
 ## 🔄 分支说明
 
