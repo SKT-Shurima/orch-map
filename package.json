@@ -19,12 +19,12 @@
       "import": "./packages/utils/dist/index.mjs",
       "require": "./packages/utils/dist/index.js"
     },
-    "./mapdata": {
+    "./mapData": {
       "types": "./packages/mapData/dist/index.d.ts",
       "import": "./packages/mapData/dist/index.mjs",
       "require": "./packages/mapData/dist/index.js"
     },
-    "./mapdata/data/*": "./packages/mapData/data/*"
+    "./mapData/data/*": "./packages/mapData/data/*"
   },
   "workspaces": [
     "packages/*",
@@ -40,9 +40,9 @@
     "type-check": "turbo type-check",
     "publish:types": "pnpm -r publish --filter @orch-map/types",
     "publish:utils": "pnpm -r publish --filter @orch-map/utils",
-    "publish:mapdata": "pnpm -r publish --filter @orch-map/mapdata",
+    "publish:mapdata": "pnpm -r publish --filter @orch-map/mapData",
     "publish:core": "pnpm -r publish --filter @orch-map/core",
-    "publish:all": "pnpm publish:types && pnpm publish:utils && pnpm publish:mapdata && pnpm publish:core"
+    "publish:all": "pnpm publish:types && pnpm publish:utils && pnpm publish:mapData && pnpm publish:core"
   },
   "devDependencies": {
     "@eslint/js": "^9.37.0",
@@ -68,5 +68,10 @@
   "packageManager": "pnpm@8.15.0",
   "dependencies": {
     "proj4": "^2.19.10"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@deck.gl/layers@9.2.2": "patches/@deck.gl__layers@9.2.2.patch"
+    }
   }
 }

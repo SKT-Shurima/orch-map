@@ -10,14 +10,12 @@
     "tsBuildInfoFile": "./tsconfig.tsbuildinfo",
     "baseUrl": ".",
     "paths": {
-      "@/lib": ["./lib"]
+      "@/lib": ["./lib"],
+      "@orch-map/types": ["../../packages/types/src"],
+      "@orch-map/utils": ["../../packages/utils/src"],
+      "@orch-map/mapdata": ["../../packages/mapData/src"]
     }
   },
-  "include": [
-    "src/**/*",
-    "lib",
-    "../types/src/geo.interface.ts",
-    "../types/src/map.interface.ts"
-  ],
+  "include": ["src/**/*", "lib"],
   "exclude": ["dist", "node_modules"]
 }

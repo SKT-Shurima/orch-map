@@ -15,10 +15,6 @@
 import type { BaseMapLine } from "@orch-map/types";
 import { ArcTripsLayer } from "@deck.gl/layers";
 
-// 默认弧线颜色配置（回退）
-const _DEFAULT_ARC_RGBA: [number, number, number, number] = [200, 200, 200, 150];
-// 默认尾迹颜色（回退）
-const _DEFAULT_TRAIL_RGBA: [number, number, number, number] = [255, 0, 0, 255];
 
 /**
  * 计算两个经纬度点之间的距离（使用 Haversine 公式）
@@ -108,7 +104,7 @@ function generateFlightRoutes(lines: BaseMapLine[], currentTime: number, config:
     height: 2.8,
     pickable: true,
     autoHighlight: true,
-    onClick: (info: { object?: unknown; layer?: unknown; coordinate?: [number, number] }) => {
+    onClick: (info: { object?: unknown; layer?: unknown; coordinate?: number[] }) => {
       if (info.object) {
         // eslint-disable-next-line no-console
         console.log("Arc clicked:", info.object);
@@ -230,7 +226,7 @@ export interface Line3DAnimationConfig {
   /** 是否自动高亮 */
   autoHighlight?: boolean;
   /** 点击回调 */
-  onClick?: (info: { object?: unknown; layer?: unknown; coordinate?: [number, number] }) => void;
+  onClick?: (info: { object?: unknown; layer?: unknown; coordinate?: number[] }) => void;
   /** 是否启用双向流线 */
   enableBidirectional?: boolean;
   /** 基础弧线颜色 */
@@ -260,7 +256,7 @@ export class Line3DManager {
     height: 0.6,
     pickable: true,
     autoHighlight: true,
-    onClick: (info: { object?: unknown; layer?: unknown; coordinate?: [number, number] }) => {
+    onClick: (info: { object?: unknown; layer?: unknown; coordinate?: number[] }) => {
       if (info.object) {
         // eslint-disable-next-line no-console
         console.log("Arc clicked:", info.object);

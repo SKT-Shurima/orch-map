@@ -1,5 +1,5 @@
 {
-  "name": "@orch-map/mapdata",
+  "name": "@orch-map/mapData",
   "version": "1.0.0",
   "description": "GeoJSON map data and data service for orch-map",
   "main": "./dist/index.js",

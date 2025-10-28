@@ -19,8 +19,10 @@
     "isolatedModules": true,
     "baseUrl": ".",
     "paths": {
+      "@orch-map/types": ["./packages/types/src"],
       "@orch-map/utils": ["./packages/utils/src"],
-      "@orch-map/core": ["./packages/core/src"]
+      "@orch-map/core": ["./packages/core/src"],
+      "@orch-map/mapdata": ["./packages/mapData/src"]
     }
   },
   "include": ["packages/*/src/**/*", "examples/src/**/*", "packages/core/lib"],
