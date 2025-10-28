@@ -29,7 +29,7 @@ var WorldPathManager = class {
     if (typeof window !== "undefined") {
       return "/mapData";
     } else {
-      return "./data";
+      return "./mapData";
     }
   }
   /**

@@ -18,15 +18,23 @@ interface GetGeoJsonParams {
 }
 
 /**
- * 世界地图路径管理器
- * 负责处理世界级别的 GeoJSON 数据路径
+ * @fileoverview World Map Path Adapter
+ *
+ * 负责处理世界级别的 GeoJSON 数据路径，提供基础路径配置。
+ *
+ * ⚠️ 重要提示：
+ * - 数据路径指向 @orch-map/geo-json 项目
+ * - 浏览器环境：从 /mapData 路径获取
+ * - Node.js 环境：从 ./mapData 相对路径获取
  */
 declare enum MapVersion {
     STANDARD = "standard",
     INTERNATIONAL = "international"
 }
 /**
- * 世界地图路径管理器
+ * World Map Path Adapter
+ *
+ * 提供世界地图的路径适配功能，将数据请求转换为指向 @orch-map/geo-json 的路径。
  */
 declare class WorldPathManager {
     /**
@@ -223,13 +231,30 @@ declare class PathManagerFactory {
 }
 
 /**
- * 地图数据路径管理器（协调器）
+ * @fileoverview Map Data Path Adapter
+ *
+ * 此文件提供路径管理功能，将不同国家/地区的地图数据请求
+ * 转换为对应的文件路径。
+ *
+ * ⚠️ 重要提示：
+ * - 此包是路径适配器，不包含实际的地图数据
+ * - 必须配合 @orch-map/geo-json 项目使用
+ * - 实际的地图数据存储在 @orch-map/geo-json 项目中
+ */
+
+/**
+ * Map Data Path Adapter (Coordinator)
+ *
  * 使用策略模式委托给具体的路径管理器
  *
  * 架构说明：
  * - WorldPathManager: 处理世界级别的地图路径（静态类）
  * - PathManagerFactory: 根据国家路由到对应的路径管理器（静态类）
  * - 各个国家的专用管理器（ChinaPathManager, USPathManager 等）都是静态类
+ *
+ * ⚠️ 数据来源：
+ * - 返回的路径指向 @orch-map/geo-json 项目中的数据文件
+ * - 必须确保 @orch-map/geo-json 项目正确配置
  */
 declare class MapDataPathManager {
     /**
@@ -265,8 +290,25 @@ declare class MapDataPathManager {
 }
 
 /**
- * 地图数据服务类
+ * @fileoverview Map Data Service
+ *
+ * 提供地图数据的获取和验证功能。
+ *
+ * ⚠️ 重要提示：
+ * - 此服务从 @orch-map/geo-json 项目加载实际的地图数据
+ * - 必须确保 @orch-map/geo-json 项目正确配置
+ */
+
+/**
+ * Map Data Service Class
+ *
  * 负责获取和处理地图数据
+ *
+ * ⚠️ 数据来源：
+ * - 从 @orch-map/geo-json 项目中加载 GeoJSON 数据文件
+ * - 浏览器环境通过 fetch API 请求数据
+ * - 需要确保数据路径正确配置
+ * - 必须与 map-geo-json 项目一起使用
  */
 declare class MapDataService {
     /**
@@ -290,5 +332,22 @@ declare class MapDataService {
    */
     static getGeoJsonData(params: GetGeoJsonParams): Promise<GeoJSON>;
 }
+
+/**
+ * @fileoverview @orch-map/path-adapter - Map Data Path Adapter
+ *
+ * 地图数据路径适配器
+ *
+ * ⚠️ 重要说明：
+ * - 此包负责提供地图数据的路径管理和数据获取服务
+ * - 必须与 @orch-map/geo-json 项目配合使用才能正常工作
+ * - 实际的地图 GeoJSON 数据文件存储在 @orch-map/geo-json 项目中
+ *
+ * 依赖关系：
+ * - 此包提供路径适配逻辑和数据获取接口
+ * - @orch-map/geo-json 提供实际的静态 GeoJSON 数据文件
+ *
+ * @see https://github.com/SKT-Shurima/map-geo-json
+ */
 
 export { ChinaPathManager, CountryCode, type GeoDataParams, type GetGeoJsonParams, type MapDataCache, MapDataPathManager, MapVersion, PathManagerFactory, USPathManager, WorldPathManager, MapDataService as default };
