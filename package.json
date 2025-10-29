@@ -25,6 +25,22 @@
       "require": "./packages/path-adapter/dist/index.js"
     }
   },
+  "typesVersions": {
+    "*": {
+      "core": [
+        "./packages/core/dist/index.d.ts"
+      ],
+      "types": [
+        "./packages/types/dist/index.d.ts"
+      ],
+      "utils": [
+        "./packages/utils/dist/index.d.ts"
+      ],
+      "path-adapter": [
+        "./packages/path-adapter/dist/index.d.ts"
+      ]
+    }
+  },
   "files": [
     "packages",
     "patches"
