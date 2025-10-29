@@ -15696,7 +15696,7 @@ __export(index_exports, {
 });
 module.exports = __toCommonJS(index_exports);
 
-// src/interfaces/index.ts
+// ../types/src/map.interface.ts
 var MapRendererType = /* @__PURE__ */ ((MapRendererType2) => {
   MapRendererType2["ECHARTS"] = "echarts";
   MapRendererType2["DECKGL"] = "deckgl";

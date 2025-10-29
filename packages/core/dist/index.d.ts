@@ -1,5 +1,5 @@
-import { GeoJSON, FeatureCollection } from 'geojson';
 import { GeoJSONSourceInput } from 'echarts/types/src/coord/geo/geoTypes.js';
+import { GeoJSON, FeatureCollection } from 'geojson';
 import { LinesSeriesOption } from 'echarts';
 import * as echarts from 'echarts/core';
 
@@ -13,11 +13,9 @@ declare enum MapLevel {
     CITY = "city",
     COUNTY = "county"
 }
-declare enum MapRendererType$1 {
+declare enum MapRendererType {
     ECHARTS = "echarts",
-    DECKGL = "deckgl",
-    LEAFLET = "leaflet",
-    MAPBOX = "mapbox"
+    DECKGL = "deckgl"
 }
 interface BaseMapPoint {
     id: string;
@@ -83,7 +81,7 @@ interface MapRendererConfig {
     /** 地图版本，所应用的场景：标准版/国际版，不同的版本的geojson数据不同 */
     mapVersion: "standard" | "international";
     /** 渲染器类型 */
-    renderType: MapRendererType$1;
+    renderType: MapRendererType;
     /** 当前地图层级 */
     curLevel: MapLevel;
     /** 行政区划代码 */
@@ -155,11 +153,6 @@ interface IMapRenderer {
      * 销毁渲染器
      */
     destroy(): void;
-}
-
-declare enum MapRendererType {
-    ECHARTS = "echarts",
-    DECKGL = "deckgl"
 }
 
 /**

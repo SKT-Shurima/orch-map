@@ -1,5 +1,5 @@
 import OrchMap from "./main";
-import { MapRendererType } from "./interfaces";
+import { MapRendererType } from "@orch-map/types";
 import LinesComponent from "./echarts-geo/components/lines";
 /**
  * 导出 MapRendererType 枚举

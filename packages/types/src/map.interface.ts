@@ -18,9 +18,7 @@ export enum MapLevel {
 // 地图渲染器类型
 export enum MapRendererType {
   ECHARTS = "echarts",
-  DECKGL = "deckgl",
-  LEAFLET = "leaflet",
-  MAPBOX = "mapbox"
+  DECKGL = "deckgl"
 }
 
 // 基础地图点接口

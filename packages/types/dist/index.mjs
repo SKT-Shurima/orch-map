@@ -10,8 +10,6 @@ var MapLevel = /* @__PURE__ */ ((MapLevel2) => {
 var MapRendererType = /* @__PURE__ */ ((MapRendererType2) => {
   MapRendererType2["ECHARTS"] = "echarts";
   MapRendererType2["DECKGL"] = "deckgl";
-  MapRendererType2["LEAFLET"] = "leaflet";
-  MapRendererType2["MAPBOX"] = "mapbox";
   return MapRendererType2;
 })(MapRendererType || {});
 export {

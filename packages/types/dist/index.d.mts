@@ -48,9 +48,7 @@ declare enum MapLevel {
 }
 declare enum MapRendererType {
     ECHARTS = "echarts",
-    DECKGL = "deckgl",
-    LEAFLET = "leaflet",
-    MAPBOX = "mapbox"
+    DECKGL = "deckgl"
 }
 interface BaseMapPoint {
     id: string;

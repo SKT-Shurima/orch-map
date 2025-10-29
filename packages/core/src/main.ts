@@ -1,5 +1,5 @@
-import { MapRendererConfig, MapRendererType } from "./interfaces";
-import { BaseMapLine, BaseMapPoint, MapLevel } from "@orch-map/types";
+import { MapRendererConfig } from "./interfaces";
+import { BaseMapLine, BaseMapPoint, MapLevel, MapRendererType } from "@orch-map/types";
 import DeckglMap from "./deckgl";
 import EchartsMap from "./echarts-geo";
 import MapDataService from "@orch-map/path-adapter";
