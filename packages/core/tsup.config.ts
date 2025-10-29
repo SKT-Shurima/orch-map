@@ -22,18 +22,28 @@ export default defineConfig({
   banner: {
     js: `
       // Polyfill for Node.js modules in browser environment
-      if (typeof globalThis.worker_threads === 'undefined') {
-        globalThis.worker_threads = {};
-      }
-      if (typeof globalThis.fs === 'undefined') {
-        globalThis.fs = {};
-      }
-      if (typeof globalThis.path === 'undefined') {
-        globalThis.path = {};
-      }
-      if (typeof globalThis.os === 'undefined') {
-        globalThis.os = {};
-      }
+      // 预先定义所有可能用到的 worker_threads 相关变量，避免初始化顺序问题
+      (function() {
+        if (typeof globalThis.worker_threads === 'undefined') {
+          globalThis.worker_threads = {};
+        }
+        
+        // 预定义所有可能的 worker_threads 变量，避免 "Cannot access before initialization" 错误
+        if (typeof window !== 'undefined') {
+          window.worker_threads_star = {};
+          window.WorkerThreads = {};
+        }
+        
+        if (typeof globalThis.fs === 'undefined') {
+          globalThis.fs = {};
+        }
+        if (typeof globalThis.path === 'undefined') {
+          globalThis.path = {};
+        }
+        if (typeof globalThis.os === 'undefined') {
+          globalThis.os = {};
+        }
+      })();
     `,
   },
   onSuccess: async () => {
@@ -79,6 +89,35 @@ export default defineConfig({
         /import\s+{[\s\S]*?}\s+from\s+["']worker_threads["'];?/g,
         '// Removed: import from worker_threads;'
       );
+      
+      // 修复变量初始化顺序问题：先声明所有变量
+      // 策略：1) 在 worker_threads_exports 后立即声明所有需要的变量  2) 注释掉原有的 const 声明
+      
+      // 找到所有需要声明的变量
+      const allVars: string[] = [];
+      const constVarPattern = /const\s+(worker_threads_\w+|WorkerThreads)\s*=\s*\{}.*?Removed:.*?import.*?worker_threads.*?;/gm;
+      let match;
+      while ((match = constVarPattern.exec(content)) !== null) {
+        allVars.push(match[1]);
+      }
+      
+      // 在 worker_threads_exports 声明之后立即声明所有变量
+      if (allVars.length > 0) {
+        const declarations = allVars
+          .map(varName => `var ${varName} = window.${varName} || {};`)
+          .join('\n');
+        
+        content = content.replace(
+          /var worker_threads_exports = \{\};\n__export\(worker_threads_exports/,
+          `var worker_threads_exports = {};\n${declarations}\n__export(worker_threads_exports`
+        );
+      }
+      
+      // 注释掉原来的 const 声明
+      const constVarPattern2 = /const\s+(worker_threads_\w+|WorkerThreads)\s*=\s*\{}.*?Removed:.*?import.*?worker_threads.*?;/gm;
+      content = content.replace(constVarPattern2, (match, varName) => {
+        return `// const ${varName} = {}; /* Removed: duplicate declaration (already declared above) */`;
+      });
       
       writeFileSync(distFile, content, 'utf-8');
       console.log('✅ Fixed worker_threads imports in dist/index.js');

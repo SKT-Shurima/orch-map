@@ -1,17 +1,27 @@
 
       // Polyfill for Node.js modules in browser environment
-      if (typeof globalThis.worker_threads === 'undefined') {
-        globalThis.worker_threads = {};
-      }
-      if (typeof globalThis.fs === 'undefined') {
-        globalThis.fs = {};
-      }
-      if (typeof globalThis.path === 'undefined') {
-        globalThis.path = {};
-      }
-      if (typeof globalThis.os === 'undefined') {
-        globalThis.os = {};
-      }
+      // 预先定义所有可能用到的 worker_threads 相关变量，避免初始化顺序问题
+      (function() {
+        if (typeof globalThis.worker_threads === 'undefined') {
+          globalThis.worker_threads = {};
+        }
+        
+        // 预定义所有可能的 worker_threads 变量，避免 "Cannot access before initialization" 错误
+        if (typeof window !== 'undefined') {
+          window.worker_threads_star = {};
+          window.WorkerThreads = {};
+        }
+        
+        if (typeof globalThis.fs === 'undefined') {
+          globalThis.fs = {};
+        }
+        if (typeof globalThis.path === 'undefined') {
+          globalThis.path = {};
+        }
+        if (typeof globalThis.os === 'undefined') {
+          globalThis.os = {};
+        }
+      })();
     
 var __create = Object.create;
 var __defProp = Object.defineProperty;
@@ -15907,13 +15917,15 @@ var WorkerJob = class {
 
 // ../../node_modules/.pnpm/@loaders.gl+worker-utils@4.3.4_@loaders.gl+core@4.3.4/node_modules/@loaders.gl/worker-utils/dist/lib/node/worker_threads.js
 var worker_threads_exports = {};
+var WorkerThreads = window.WorkerThreads || {};
+var worker_threads_star = window.worker_threads_star || {};
 __export(worker_threads_exports, {
   NodeWorker: () => NodeWorker,
   parentPort: () => parentPort
 });
 __reExport(worker_threads_exports, worker_threads_star);
-const WorkerThreads = {}; /* Removed: import * as WorkerThreads from "worker_threads"; */
-const worker_threads_star = {}; /* Removed: import * as worker_threads_star from "worker_threads"; */
+// const WorkerThreads = {}; /* Removed: duplicate declaration (already declared above) */ */
+// const worker_threads_star = {}; /* Removed: duplicate declaration (already declared above) */ */
 var parentPort = WorkerThreads == null ? void 0 : WorkerThreads.parentPort;
 var NodeWorker = WorkerThreads.Worker;
 
