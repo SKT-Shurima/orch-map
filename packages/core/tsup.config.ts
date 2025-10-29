@@ -1,5 +1,5 @@
 import { defineConfig } from 'tsup';
-import { copyFileSync, mkdirSync, existsSync } from 'fs';
+import { copyFileSync, mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs';
 import { join, resolve } from 'path';
 
 export default defineConfig({
@@ -13,7 +13,7 @@ export default defineConfig({
   bundle: true,  // 打包所有依赖，除了 external 中指定的
   target: 'es2018', // 确保浏览器兼容性
   // echarts 作为外部依赖，由使用方提供
-  external: ['echarts', 'worker_threads', 'fs', 'path', 'os'],
+  external: ['echarts'],
   // 明确指定要打包的依赖（不作为外部依赖）
   noExternal: ['@deck.gl/core', '@deck.gl/layers', /^@orch-map\//],
   // 使用 tsconfig 的 paths 配置
@@ -61,6 +61,27 @@ export default defineConfig({
         copyFileSync(layersSrc, layersDest);
         console.log('✅ Copied layers.min.js to dist/lib/');
       }
+    }
+    
+    // 修复打包后的文件，替换 worker_threads 导入
+    const distFile = join(__dirname, 'dist', 'index.js');
+    if (existsSync(distFile)) {
+      let content = readFileSync(distFile, 'utf-8');
+      
+      // 替换 import * as WorkerThreads from "worker_threads" 为注释并定义变量
+      content = content.replace(
+        /import\s+\*\s+as\s+(\w+)\s+from\s+["']worker_threads["'];?/g,
+        'const $1 = {}; /* Removed: import * as $1 from "worker_threads"; */'
+      );
+      
+      // 替换 import { ... } from "worker_threads" 为注释
+      content = content.replace(
+        /import\s+{[\s\S]*?}\s+from\s+["']worker_threads["'];?/g,
+        '// Removed: import from worker_threads;'
+      );
+      
+      writeFileSync(distFile, content, 'utf-8');
+      console.log('✅ Fixed worker_threads imports in dist/index.js');
     }
   },
 });

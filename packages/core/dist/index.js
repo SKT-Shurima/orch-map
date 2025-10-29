@@ -15912,8 +15912,8 @@ __export(worker_threads_exports, {
   parentPort: () => parentPort
 });
 __reExport(worker_threads_exports, worker_threads_star);
-import * as WorkerThreads from "worker_threads";
-import * as worker_threads_star from "worker_threads";
+const WorkerThreads = {}; /* Removed: import * as WorkerThreads from "worker_threads"; */
+const worker_threads_star = {}; /* Removed: import * as worker_threads_star from "worker_threads"; */
 var parentPort = WorkerThreads == null ? void 0 : WorkerThreads.parentPort;
 var NodeWorker = WorkerThreads.Worker;
 
