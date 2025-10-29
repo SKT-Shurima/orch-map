@@ -1,6 +1,6 @@
 # 使用说明
 
-本文档说明如何在你的项目中使用 Orch Map 组件库。
+本文档说明如何在你的项目中使用 Orch Map 地图可视化组件库。
 
 ## 📋 目录
 
@@ -18,8 +18,22 @@
 
 - **Node.js**: >= 18.0.0
 - **pnpm**: >= 8.0.0 (推荐) 或 npm / yarn
+- **浏览器**: 支持 ES2018+ 的现代浏览器
 
-### 从 GitHub 安装
+### 方式一：NPM 安装（推荐）
+
+```bash
+# 使用 pnpm（推荐）
+pnpm add orch-map echarts
+
+# 或使用 npm
+npm install orch-map echarts
+
+# 或使用 yarn
+yarn add orch-map echarts
+```
+
+### 方式二：从 GitHub 安装
 
 在项目根目录的 `package.json` 中添加依赖：
 

@@ -1,13 +1,12 @@
 {
   "name": "orch-map",
   "version": "1.0.0",
-  "description": "A monorepo project with packages and examples",
+  "description": "A powerful map visualization library based on ECharts and DeckGL for web applications",
   "private": false,
   "exports": {
     "./core": {
       "types": "./packages/core/dist/index.d.ts",
-      "import": "./packages/core/dist/index.mjs",
-      "require": "./packages/core/dist/index.js"
+      "import": "./packages/core/dist/index.js"
     },
     "./types": {
       "types": "./packages/types/dist/index.d.ts",
@@ -82,6 +81,11 @@
   "peerDependencies": {
     "echarts": "^5.6.0"
   },
+  "peerDependenciesMeta": {
+    "echarts": {
+      "optional": false
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/SKT-Shurima/orch-map.git"
@@ -94,7 +98,13 @@
     "geojson",
     "china",
     "world",
-    "visualization"
+    "visualization",
+    "typescript",
+    "web",
+    "browser",
+    "react",
+    "vue",
+    "angular"
   ],
   "engines": {
     "node": ">=18.0.0",

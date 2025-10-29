@@ -1,4 +1,18 @@
-"use strict";
+
+      // Polyfill for Node.js modules in browser environment
+      if (typeof globalThis.worker_threads === 'undefined') {
+        globalThis.worker_threads = {};
+      }
+      if (typeof globalThis.fs === 'undefined') {
+        globalThis.fs = {};
+      }
+      if (typeof globalThis.path === 'undefined') {
+        globalThis.path = {};
+      }
+      if (typeof globalThis.os === 'undefined') {
+        globalThis.os = {};
+      }
+    
 var __create = Object.create;
 var __defProp = Object.defineProperty;
 var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
@@ -33,7 +47,6 @@ var __toESM = (mod2, isNodeMode, target2) => (target2 = mod2 != null ? __create(
   isNodeMode || !mod2 || !mod2.__esModule ? __defProp(target2, "default", { value: mod2, enumerable: true }) : target2,
   mod2
 ));
-var __toCommonJS = (mod2) => __copyProps(__defProp({}, "__esModule", { value: true }), mod2);
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
 // ../../node_modules/.pnpm/@probe.gl+env@4.1.0/node_modules/@probe.gl/env/dist/lib/globals.js
@@ -51,10 +64,11 @@ var init_globals = __esm({
 
 // ../../node_modules/.pnpm/@probe.gl+env@4.1.0/node_modules/@probe.gl/env/dist/lib/is-electron.js
 function isElectron(mockUserAgent) {
-  if (typeof window !== "undefined" && window.process?.type === "renderer") {
+  var _a2, _b;
+  if (typeof window !== "undefined" && ((_a2 = window.process) == null ? void 0 : _a2.type) === "renderer") {
     return true;
   }
-  if (typeof process !== "undefined" && Boolean(process.versions?.["electron"])) {
+  if (typeof process !== "undefined" && Boolean((_b = process.versions) == null ? void 0 : _b["electron"])) {
     return true;
   }
   const realUserAgent = typeof navigator !== "undefined" && navigator.userAgent;
@@ -71,7 +85,7 @@ var init_is_electron = __esm({
 function isBrowser2() {
   const isNode = (
     // @ts-expect-error
-    typeof process === "object" && String(process) === "[object process]" && !process?.browser
+    typeof process === "object" && String(process) === "[object process]" && !(process == null ? void 0 : process.browser)
   );
   return !isNode || isElectron();
 }
@@ -279,11 +293,12 @@ var init_assert = __esm({
 
 // ../../node_modules/.pnpm/@probe.gl+log@4.1.0/node_modules/@probe.gl/log/dist/utils/hi-res-timestamp.js
 function getHiResTimestamp() {
+  var _a2, _b, _c, _d, _e2;
   let timestamp;
   if (isBrowser2() && window_2.performance) {
-    timestamp = window_2?.performance?.now?.();
+    timestamp = (_c = (_b = (_a2 = window_2) == null ? void 0 : _a2.performance) == null ? void 0 : _b.now) == null ? void 0 : _c.call(_b);
   } else if ("hrtime" in process_) {
-    const timeParts = process_?.hrtime?.();
+    const timeParts = (_e2 = (_d = process_) == null ? void 0 : _d.hrtime) == null ? void 0 : _e2.call(_d);
     timestamp = timeParts[0] * 1e3 + timeParts[1] / 1e6;
   } else {
     timestamp = Date.now();
@@ -1475,6 +1490,7 @@ function getTextureFormatInfo(format) {
   return formatInfo;
 }
 function getTextureFormatInfoUsingTable(format) {
+  var _a2, _b, _c, _d, _e2, _f, _g, _h;
   const info = getTextureFormatDefinition(format);
   const bytesPerPixel = info.bytesPerPixel || 1;
   const bitsPerChannel = info.bitsPerChannel || [8, 8, 8, 8];
@@ -1490,17 +1506,17 @@ function getTextureFormatInfoUsingTable(format) {
     format,
     attachment: info.attachment || "color",
     channels: info.channels || "r",
-    components: info.components || info.channels?.length || 1,
+    components: info.components || ((_a2 = info.channels) == null ? void 0 : _a2.length) || 1,
     bytesPerPixel,
     bitsPerChannel,
     dataType: info.dataType || "uint8",
-    srgb: info.srgb ?? false,
-    packed: info.packed ?? false,
-    webgl: info.webgl ?? false,
-    integer: info.integer ?? false,
-    signed: info.signed ?? false,
-    normalized: info.normalized ?? false,
-    compressed: info.compressed ?? false
+    srgb: (_b = info.srgb) != null ? _b : false,
+    packed: (_c = info.packed) != null ? _c : false,
+    webgl: (_d = info.webgl) != null ? _d : false,
+    integer: (_e2 = info.integer) != null ? _e2 : false,
+    signed: (_f = info.signed) != null ? _f : false,
+    normalized: (_g = info.normalized) != null ? _g : false,
+    compressed: (_h = info.compressed) != null ? _h : false
   };
   return formatInfo;
 }
@@ -1557,20 +1573,21 @@ var init_texture_format_decoder = __esm({
        * @note Needs to be checked against current device
        */
       getCapabilities(format) {
+        var _a2, _b, _c, _d, _e2;
         const info = getTextureFormatDefinition(format);
         const formatCapabilities = {
           format,
-          create: info.f ?? true,
-          render: info.render ?? true,
-          filter: info.filter ?? true,
-          blend: info.blend ?? true,
-          store: info.store ?? true
+          create: (_a2 = info.f) != null ? _a2 : true,
+          render: (_b = info.render) != null ? _b : true,
+          filter: (_c = info.filter) != null ? _c : true,
+          blend: (_d = info.blend) != null ? _d : true,
+          store: (_e2 = info.store) != null ? _e2 : true
         };
         const formatInfo = getTextureFormatInfo(format);
         const isDepthStencil = format.startsWith("depth") || format.startsWith("stencil");
-        const isSigned = formatInfo?.signed;
-        const isInteger = formatInfo?.integer;
-        const isWebGLSpecific = formatInfo?.webgl;
+        const isSigned = formatInfo == null ? void 0 : formatInfo.signed;
+        const isInteger = formatInfo == null ? void 0 : formatInfo.integer;
+        const isWebGLSpecific = formatInfo == null ? void 0 : formatInfo.webgl;
         formatCapabilities.render && (formatCapabilities.render = !isSigned);
         formatCapabilities.filter && (formatCapabilities.filter = !isDepthStencil && !isSigned && !isInteger && !isWebGLSpecific);
         return formatCapabilities;
@@ -1630,7 +1647,8 @@ var init_device = __esm({
         yield* this.features;
       }
       has(feature) {
-        return !this.disabledFeatures?.[feature] && this.features.has(feature);
+        var _a2;
+        return !((_a2 = this.disabledFeatures) == null ? void 0 : _a2[feature]) && this.features.has(feature);
       }
     };
     _Device = class _Device {
@@ -1713,10 +1731,12 @@ var init_device = __esm({
         this.commandEncoder.pushDebugGroup(groupLabel);
       }
       popDebugGroup() {
-        this.commandEncoder?.popDebugGroup();
+        var _a2;
+        (_a2 = this.commandEncoder) == null ? void 0 : _a2.popDebugGroup();
       }
       insertDebugMarker(markerLabel) {
-        this.commandEncoder?.insertDebugMarker(markerLabel);
+        var _a2;
+        (_a2 = this.commandEncoder) == null ? void 0 : _a2.insertDebugMarker(markerLabel);
       }
       /**
        * Trigger device loss.
@@ -1822,7 +1842,10 @@ or create a device with the 'debug: true' prop.`;
       }
       _getDeviceTextureFormatCapabilities(format) {
         const genericCapabilities = textureFormatDecoder.getCapabilities(format);
-        const checkFeature = (feature) => (typeof feature === "string" ? this.features.has(feature) : feature) ?? true;
+        const checkFeature = (feature) => {
+          var _a2;
+          return (_a2 = typeof feature === "string" ? this.features.has(feature) : feature) != null ? _a2 : true;
+        };
         const supported = checkFeature(genericCapabilities.create);
         return {
           format,
@@ -1963,12 +1986,13 @@ var init_luma = __esm({
        * @param handle Externally created WebGL context or WebGPU device
        */
       async attachDevice(handle, props) {
+        var _a2;
         const type = this._getTypeFromHandle(handle, props.adapters);
         const adapter = type && this.selectAdapter(type, props.adapters);
         if (!adapter) {
           throw new Error(ERROR_MESSAGE);
         }
-        return await adapter?.attach?.(handle, props);
+        return await ((_a2 = adapter == null ? void 0 : adapter.attach) == null ? void 0 : _a2.call(adapter, handle, props));
       }
       /**
        * Global adapter registration.
@@ -1982,14 +2006,18 @@ var init_luma = __esm({
       /** Get type strings for supported Devices */
       getSupportedAdapters(adapters = []) {
         const adapterMap = this._getAdapterMap(adapters);
-        return Array.from(adapterMap).map(([, adapter]) => adapter).filter((adapter) => adapter.isSupported?.()).map((adapter) => adapter.type);
+        return Array.from(adapterMap).map(([, adapter]) => adapter).filter((adapter) => {
+          var _a2;
+          return (_a2 = adapter.isSupported) == null ? void 0 : _a2.call(adapter);
+        }).map((adapter) => adapter.type);
       }
       /** Get type strings for best available Device */
       getBestAvailableAdapterType(adapters = []) {
+        var _a2, _b;
         const KNOWN_ADAPTERS = ["webgpu", "webgl", "null"];
         const adapterMap = this._getAdapterMap(adapters);
         for (const type of KNOWN_ADAPTERS) {
-          if (adapterMap.get(type)?.isSupported?.()) {
+          if ((_b = (_a2 = adapterMap.get(type)) == null ? void 0 : _a2.isSupported) == null ? void 0 : _b.call(_a2)) {
             return type;
           }
         }
@@ -2009,12 +2037,13 @@ var init_luma = __esm({
        * Useful when attaching luma to a context from an external library does not support creating WebGL2 contexts.
        */
       enforceWebGL2(enforce = true, adapters = []) {
+        var _a2;
         const adapterMap = this._getAdapterMap(adapters);
         const webgl2Adapter2 = adapterMap.get("webgl");
         if (!webgl2Adapter2) {
           log2.warn("enforceWebGL2: webgl adapter not found")();
         }
-        webgl2Adapter2?.enforceWebGL2?.(enforce);
+        (_a2 = webgl2Adapter2 == null ? void 0 : webgl2Adapter2.enforceWebGL2) == null ? void 0 : _a2.call(webgl2Adapter2, enforce);
       }
       // DEPRECATED
       /** @deprecated */
@@ -2038,7 +2067,7 @@ var init_luma = __esm({
         if (typeof GPUDevice !== "undefined" && handle instanceof GPUDevice) {
           return "webgpu";
         }
-        if (handle?.queue) {
+        if (handle == null ? void 0 : handle.queue) {
           return "webgpu";
         }
         if (handle === null) {
@@ -2142,10 +2171,10 @@ function createCanvasElement(props) {
   newCanvas.height = height || 1;
   newCanvas.style.width = Number.isFinite(width) ? `${width}px` : "100%";
   newCanvas.style.height = Number.isFinite(height) ? `${height}px` : "100%";
-  if (!props?.visible) {
+  if (!(props == null ? void 0 : props.visible)) {
     newCanvas.style.visibility = "hidden";
   }
-  const container = getContainer(props?.container || null);
+  const container = getContainer((props == null ? void 0 : props.container) || null);
   container.insertBefore(newCanvas, container.firstChild);
   return newCanvas;
 }
@@ -2220,6 +2249,7 @@ var init_canvas_context = __esm({
         __publicField(this, "_intersectionObserver");
         __publicField(this, "_position");
         __publicField(this, "destroyed", false);
+        var _a2, _b;
         this.props = { ..._CanvasContext.defaultProps, ...props };
         props = this.props;
         this.initialized = this._initializedResolvers.promise;
@@ -2244,8 +2274,8 @@ var init_canvas_context = __esm({
           this.id = props.id || "node-canvas-context";
           this.type = "node";
         }
-        this.cssWidth = this.htmlCanvas?.clientWidth || this.canvas.width;
-        this.cssHeight = this.htmlCanvas?.clientHeight || this.canvas.height;
+        this.cssWidth = ((_a2 = this.htmlCanvas) == null ? void 0 : _a2.clientWidth) || this.canvas.width;
+        this.cssHeight = ((_b = this.htmlCanvas) == null ? void 0 : _b.clientHeight) || this.canvas.height;
         this.devicePixelWidth = this.canvas.width;
         this.devicePixelHeight = this.canvas.height;
         this.drawingBufferWidth = this.canvas.width;
@@ -2258,7 +2288,7 @@ var init_canvas_context = __esm({
           this._resizeObserver = new ResizeObserver((entries) => this._handleResize(entries));
           try {
             this._resizeObserver.observe(this.canvas, { box: "device-pixel-content-box" });
-          } catch {
+          } catch (e2) {
             this._resizeObserver.observe(this.canvas, { box: "content-box" });
           }
           setTimeout(() => this._observeDevicePixelRatio(), 0);
@@ -2355,7 +2385,7 @@ var init_canvas_context = __esm({
           const [drawingBufferWidth] = this.getDrawingBufferSize();
           const [cssWidth] = this.getCSSSize();
           return cssWidth ? drawingBufferWidth / cssWidth : 1;
-        } catch {
+        } catch (e2) {
           return 1;
         }
       }
@@ -2369,7 +2399,8 @@ var init_canvas_context = __esm({
        * This can really help when debugging DOM in apps that create multiple devices
        */
       _setAutoCreatedCanvasId(id) {
-        if (this.htmlCanvas?.id === "lumagl-auto-created-canvas") {
+        var _a2;
+        if (((_a2 = this.htmlCanvas) == null ? void 0 : _a2.id) === "lumagl-auto-created-canvas") {
           this.htmlCanvas.id = id;
         }
       }
@@ -2391,6 +2422,7 @@ var init_canvas_context = __esm({
        * @see https://webgpufundamentals.org/webgpu/lessons/webgpu-resizing-the-canvas.html
        */
       _handleResize(entries) {
+        var _a2, _b;
         const entry = entries.find((entry_) => entry_.target === this.canvas);
         if (!entry) {
           return;
@@ -2398,8 +2430,8 @@ var init_canvas_context = __esm({
         this.cssWidth = entry.contentBoxSize[0].inlineSize;
         this.cssHeight = entry.contentBoxSize[0].blockSize;
         const oldPixelSize = this.getDevicePixelSize();
-        const devicePixelWidth = entry.devicePixelContentBoxSize?.[0].inlineSize || entry.contentBoxSize[0].inlineSize * devicePixelRatio;
-        const devicePixelHeight = entry.devicePixelContentBoxSize?.[0].blockSize || entry.contentBoxSize[0].blockSize * devicePixelRatio;
+        const devicePixelWidth = ((_a2 = entry.devicePixelContentBoxSize) == null ? void 0 : _a2[0].inlineSize) || entry.contentBoxSize[0].inlineSize * devicePixelRatio;
+        const devicePixelHeight = ((_b = entry.devicePixelContentBoxSize) == null ? void 0 : _b[0].blockSize) || entry.contentBoxSize[0].blockSize * devicePixelRatio;
         const [maxDevicePixelWidth, maxDevicePixelHeight] = this.getMaxDrawingBufferSize();
         this.devicePixelWidth = Math.max(1, Math.min(devicePixelWidth, maxDevicePixelWidth));
         this.devicePixelHeight = Math.max(1, Math.min(devicePixelHeight, maxDevicePixelHeight));
@@ -2446,15 +2478,16 @@ var init_canvas_context = __esm({
        * if called before browser has finished a reflow. Should not be the case here.
        */
       updatePosition() {
-        const newRect = this.htmlCanvas?.getBoundingClientRect();
+        var _a2, _b, _c, _d;
+        const newRect = (_a2 = this.htmlCanvas) == null ? void 0 : _a2.getBoundingClientRect();
         if (newRect) {
           const position = [newRect.left, newRect.top];
-          this._position ?? (this._position = position);
+          (_b = this._position) != null ? _b : this._position = position;
           const positionChanged = position[0] !== this._position[0] || position[1] !== this._position[1];
           if (positionChanged) {
             const oldPosition = this._position;
             this._position = position;
-            this.device.props.onPositionChange?.(this, { oldPosition });
+            (_d = (_c = this.device.props).onPositionChange) == null ? void 0 : _d.call(_c, this, { oldPosition });
           }
         }
       }
@@ -2560,8 +2593,8 @@ var init_texture = __esm({
         if (this.props.width === void 0 || this.props.height === void 0) {
           if (device.isExternalImage(props.data)) {
             const size = device.getExternalImageSize(props.data);
-            this.width = size?.width || 1;
-            this.height = size?.height || 1;
+            this.width = (size == null ? void 0 : size.width) || 1;
+            this.height = (size == null ? void 0 : size.height) || 1;
           } else {
             this.width = 1;
             this.height = 1;
@@ -2749,7 +2782,7 @@ function formatCompilerLog(shaderLog, source3, options) {
   let formattedLog = "";
   const lines = source3.split(/\r?\n/);
   const log3 = shaderLog.slice().sort((a2, b2) => a2.lineNum - b2.lineNum);
-  switch (options?.showSourceCode || "no") {
+  switch ((options == null ? void 0 : options.showSourceCode) || "no") {
     case "all":
       let currentMessage = 0;
       for (let lineNum = 1; lineNum <= lines.length; lineNum++) {
@@ -2774,14 +2807,14 @@ function formatCompilerLog(shaderLog, source3, options) {
     case "no":
       for (const message2 of shaderLog) {
         formattedLog += formatCompilerMessage(message2, lines, message2.lineNum, {
-          inlineSource: options?.showSourceCode !== "no"
+          inlineSource: (options == null ? void 0 : options.showSourceCode) !== "no"
         });
       }
       return formattedLog;
   }
 }
 function formatCompilerMessage(message2, lines, lineNum, options) {
-  if (options?.inlineSource) {
+  if (options == null ? void 0 : options.inlineSource) {
     const numberedLines = getNumberedLines(lines, lineNum);
     const positionIndicator = message2.linePos > 0 ? `${" ".repeat(message2.linePos + 5)}^^^
 ` : "";
@@ -2791,7 +2824,7 @@ ${numberedLines}${positionIndicator}${message2.type.toUpperCase()}: ${message2.m
 `;
   }
   const color = message2.type === "error" ? "red" : "#8B4000";
-  return options?.html ? `<div class='luma-compiler-log-error' style="color:${color};"><b> ${message2.type.toUpperCase()}: ${message2.message}</b></div>` : `${message2.type.toUpperCase()}: ${message2.message}`;
+  return (options == null ? void 0 : options.html) ? `<div class='luma-compiler-log-error' style="color:${color};"><b> ${message2.type.toUpperCase()}: ${message2.message}</b></div>` : `${message2.type.toUpperCase()}: ${message2.message}`;
 }
 function getNumberedLines(lines, lineNum, options) {
   let numberedLines = "";
@@ -2804,8 +2837,8 @@ function getNumberedLines(lines, lineNum, options) {
   return numberedLines;
 }
 function getNumberedLine(line, lineNum, options) {
-  const escapedLine = options?.html ? escapeHTML(line) : line;
-  return `${padLeft(String(lineNum), 4)}: ${escapedLine}${options?.html ? "<br/>" : "\n"}`;
+  const escapedLine = (options == null ? void 0 : options.html) ? escapeHTML(line) : line;
+  return `${padLeft(String(lineNum), 4)}: ${escapedLine}${(options == null ? void 0 : options.html) ? "<br/>" : "\n"}`;
 }
 function padLeft(string, paddedLength) {
   let result = "";
@@ -2881,7 +2914,7 @@ var init_shader = __esm({
             break;
         }
         const messages = await this.getCompilationInfo();
-        if (trigger === "warnings" && messages?.length === 0) {
+        if (trigger === "warnings" && (messages == null ? void 0 : messages.length) === 0) {
           return;
         }
         this._displayShaderLog(messages, this.id);
@@ -2892,7 +2925,8 @@ var init_shader = __esm({
        * TODO - this HTML formatting code should not be in Device, should be pluggable
        */
       _displayShaderLog(messages, shaderId) {
-        if (typeof document === "undefined" || !document?.createElement) {
+        var _a2;
+        if (typeof document === "undefined" || !(document == null ? void 0 : document.createElement)) {
           return;
         }
         const shaderName = shaderId;
@@ -2916,7 +2950,7 @@ ${htmlLog}
         button.style.textAlign = "left";
         document.body.appendChild(button);
         const errors = document.getElementsByClassName("luma-compiler-log-error");
-        errors[0]?.scrollIntoView();
+        (_a2 = errors[0]) == null ? void 0 : _a2.scrollIntoView();
         button.onclick = () => {
           const dataURI = `data:text/plain,${encodeURIComponent(this.source)}`;
           navigator.clipboard.writeText(dataURI);
@@ -3426,11 +3460,11 @@ function getAttributeInfoFromLayouts(shaderLayout, bufferLayout, name2) {
   }
   const attributeTypeInfo = getAttributeShaderTypeInfo(shaderDeclaration.type);
   const defaultVertexFormat = getCompatibleVertexFormat(attributeTypeInfo);
-  const vertexFormat = bufferMapping?.vertexFormat || defaultVertexFormat;
+  const vertexFormat = (bufferMapping == null ? void 0 : bufferMapping.vertexFormat) || defaultVertexFormat;
   const vertexFormatInfo = getVertexFormatInfo(vertexFormat);
   return {
-    attributeName: bufferMapping?.attributeName || shaderDeclaration.name,
-    bufferName: bufferMapping?.bufferName || shaderDeclaration.name,
+    attributeName: (bufferMapping == null ? void 0 : bufferMapping.attributeName) || shaderDeclaration.name,
+    bufferName: (bufferMapping == null ? void 0 : bufferMapping.bufferName) || shaderDeclaration.name,
     location: shaderDeclaration.location,
     shaderType: shaderDeclaration.type,
     primitiveType: attributeTypeInfo.primitiveType,
@@ -3442,9 +3476,9 @@ function getAttributeInfoFromLayouts(shaderLayout, bufferLayout, name2) {
     normalized: vertexFormatInfo.normalized,
     // integer is a property of the shader declaration
     integer: attributeTypeInfo.integer,
-    stepMode: bufferMapping?.stepMode || shaderDeclaration.stepMode || "vertex",
-    byteOffset: bufferMapping?.byteOffset || 0,
-    byteStride: bufferMapping?.byteStride || 0
+    stepMode: (bufferMapping == null ? void 0 : bufferMapping.stepMode) || shaderDeclaration.stepMode || "vertex",
+    byteOffset: (bufferMapping == null ? void 0 : bufferMapping.byteOffset) || 0,
+    byteStride: (bufferMapping == null ? void 0 : bufferMapping.byteStride) || 0
   };
 }
 function getAttributeFromShaderLayout(shaderLayout, name2) {
@@ -3491,6 +3525,7 @@ function getAttributeFromShortHand(bufferLayouts, name2) {
   return null;
 }
 function getAttributeFromAttributesList(bufferLayouts, name2) {
+  var _a2;
   for (const bufferLayout of bufferLayouts) {
     let byteStride = bufferLayout.byteStride;
     if (typeof bufferLayout.byteStride !== "number") {
@@ -3499,7 +3534,7 @@ function getAttributeFromAttributesList(bufferLayouts, name2) {
         byteStride += info.byteLength;
       }
     }
-    const attributeMapping = bufferLayout.attributes?.find((mapping) => mapping.attribute === name2);
+    const attributeMapping = (_a2 = bufferLayout.attributes) == null ? void 0 : _a2.find((mapping) => mapping.attribute === name2);
     if (attributeMapping) {
       return {
         attributeName: attributeMapping.attribute,
@@ -3660,11 +3695,12 @@ var init_uniform_buffer_layout = __esm({
         __publicField(this, "layout", {});
         /** number of bytes needed for buffer allocation */
         __publicField(this, "byteLength");
+        var _a2;
         let size = 0;
         for (const [key, uniformType] of Object.entries(uniformTypes)) {
           const typeAndComponents = getVariableShaderTypeInfo(uniformType);
           const { type, components } = typeAndComponents;
-          const count2 = components * (uniformSizes?.[key] ?? 1);
+          const count2 = components * ((_a2 = uniformSizes == null ? void 0 : uniformSizes[key]) != null ? _a2 : 1);
           size = alignTo(size, count2);
           const offset = size;
           size += count2;
@@ -3767,11 +3803,12 @@ var init_uniform_block = __esm({
         __publicField(this, "modified", true);
         __publicField(this, "bindingLayout", {});
         __publicField(this, "needsRedraw", "initialized");
-        this.name = props?.name || "unnamed";
-        if (props?.name && props?.shaderLayout) {
-          const binding = props?.shaderLayout.bindings?.find((binding_) => binding_.type === "uniform" && binding_.name === props?.name);
+        var _a2;
+        this.name = (props == null ? void 0 : props.name) || "unnamed";
+        if ((props == null ? void 0 : props.name) && (props == null ? void 0 : props.shaderLayout)) {
+          const binding = (_a2 = props == null ? void 0 : props.shaderLayout.bindings) == null ? void 0 : _a2.find((binding_) => binding_.type === "uniform" && binding_.name === (props == null ? void 0 : props.name));
           if (!binding) {
-            throw new Error(props?.name);
+            throw new Error(props == null ? void 0 : props.name);
           }
           const uniformBlock12 = binding;
           for (const uniform of uniformBlock12.uniforms || []) {
@@ -3831,9 +3868,10 @@ var init_uniform_store = __esm({
         __publicField(this, "uniformBufferLayouts", /* @__PURE__ */ new Map());
         /** Actual buffer for the blocks */
         __publicField(this, "uniformBuffers", /* @__PURE__ */ new Map());
+        var _a2, _b;
         for (const [bufferName, block] of Object.entries(blocks)) {
           const uniformBufferName = bufferName;
-          const uniformBufferLayout = new UniformBufferLayout(block.uniformTypes ?? {}, block.uniformSizes ?? {});
+          const uniformBufferLayout = new UniformBufferLayout((_a2 = block.uniformTypes) != null ? _a2 : {}, (_b = block.uniformSizes) != null ? _b : {});
           this.uniformBufferLayouts.set(uniformBufferName, uniformBufferLayout);
           const uniformBlock12 = new UniformBlock({ name: bufferName });
           uniformBlock12.setUniforms(block.defaultUniforms || {});
@@ -3851,19 +3889,22 @@ var init_uniform_store = __esm({
        * Makes all properties partial
        */
       setUniforms(uniforms) {
+        var _a2;
         for (const [blockName, uniformValues] of Object.entries(uniforms)) {
-          this.uniformBlocks.get(blockName)?.setUniforms(uniformValues);
+          (_a2 = this.uniformBlocks.get(blockName)) == null ? void 0 : _a2.setUniforms(uniformValues);
         }
         this.updateUniformBuffers();
       }
       /** Get the required minimum length of the uniform buffer */
       getUniformBufferByteLength(uniformBufferName) {
-        return this.uniformBufferLayouts.get(uniformBufferName)?.byteLength || 0;
+        var _a2;
+        return ((_a2 = this.uniformBufferLayouts.get(uniformBufferName)) == null ? void 0 : _a2.byteLength) || 0;
       }
       /** Get formatted binary memory that can be uploaded to a buffer */
       getUniformBufferData(uniformBufferName) {
-        const uniformValues = this.uniformBlocks.get(uniformBufferName)?.getAllUniforms() || {};
-        return this.uniformBufferLayouts.get(uniformBufferName)?.getData(uniformValues);
+        var _a2, _b;
+        const uniformValues = ((_a2 = this.uniformBlocks.get(uniformBufferName)) == null ? void 0 : _a2.getAllUniforms()) || {};
+        return (_b = this.uniformBufferLayouts.get(uniformBufferName)) == null ? void 0 : _b.getData(uniformValues);
       }
       /**
        * Creates an unmanaged uniform buffer (umnanaged means that application is responsible for destroying it)
@@ -3908,15 +3949,16 @@ var init_uniform_store = __esm({
       }
       /** Update one uniform buffer. Only updates if values have changed */
       updateUniformBuffer(uniformBufferName) {
+        var _a2;
         const uniformBlock12 = this.uniformBlocks.get(uniformBufferName);
         let uniformBuffer = this.uniformBuffers.get(uniformBufferName);
         let reason = false;
-        if (uniformBuffer && uniformBlock12?.needsRedraw) {
+        if (uniformBuffer && (uniformBlock12 == null ? void 0 : uniformBlock12.needsRedraw)) {
           reason || (reason = uniformBlock12.needsRedraw);
           const uniformBufferData = this.getUniformBufferData(uniformBufferName);
           uniformBuffer = this.uniformBuffers.get(uniformBufferName);
-          uniformBuffer?.write(uniformBufferData);
-          const uniformValues = this.uniformBlocks.get(uniformBufferName)?.getAllUniforms();
+          uniformBuffer == null ? void 0 : uniformBuffer.write(uniformBufferData);
+          const uniformValues = (_a2 = this.uniformBlocks.get(uniformBufferName)) == null ? void 0 : _a2.getAllUniforms();
           log2.log(4, `Writing to uniform buffer ${String(uniformBufferName)}`, uniformBufferData, uniformValues)();
         }
         return reason;
@@ -4665,7 +4707,7 @@ function polyfillWebGL1Extensions(gl) {
   const originalGetSupportedExtensions = gl.getSupportedExtensions;
   gl.getSupportedExtensions = function() {
     const extensions = originalGetSupportedExtensions.apply(gl) || [];
-    return extensions?.concat(Object.keys(boundExtensions));
+    return extensions == null ? void 0 : extensions.concat(Object.keys(boundExtensions));
   };
 }
 var WEBGL1_STATIC_EXTENSIONS, getWEBGL_draw_buffers, getOES_vertex_array_object, getANGLE_instanced_arrays;
@@ -4767,11 +4809,12 @@ async function loadSpectorJS(props) {
   }
 }
 function initializeSpectorJS(props) {
+  var _a2;
   props = { ...DEFAULT_SPECTOR_PROPS, ...props };
   if (!props.debugSpectorJS) {
     return null;
   }
-  if (!spector && globalThis.SPECTOR && !globalThis.luma?.spector) {
+  if (!spector && globalThis.SPECTOR && !((_a2 = globalThis.luma) == null ? void 0 : _a2.spector)) {
     log2.probe(LOG_LEVEL, "SPECTOR found and initialized. Start with `luma.spector.displayUI()`")();
     const { Spector: SpectorJS } = globalThis.SPECTOR;
     spector = new SpectorJS();
@@ -4785,22 +4828,22 @@ function initializeSpectorJS(props) {
   if (!initialized) {
     initialized = true;
     spector.spyCanvases();
-    spector?.onCaptureStarted.add((capture) => log2.info("Spector capture started:", capture)());
-    spector?.onCapture.add((capture) => {
+    spector == null ? void 0 : spector.onCaptureStarted.add((capture) => log2.info("Spector capture started:", capture)());
+    spector == null ? void 0 : spector.onCapture.add((capture) => {
       log2.info("Spector capture complete:", capture)();
-      spector?.getResultUI();
-      spector?.resultView.display();
-      spector?.resultView.addCapture(capture);
+      spector == null ? void 0 : spector.getResultUI();
+      spector == null ? void 0 : spector.resultView.display();
+      spector == null ? void 0 : spector.resultView.addCapture(capture);
     });
   }
   if (props.gl) {
     const gl = props.gl;
     const device = gl.device;
-    spector?.startCapture(props.gl, 500);
+    spector == null ? void 0 : spector.startCapture(props.gl, 500);
     gl.device = device;
     new Promise((resolve2) => setTimeout(resolve2, 2e3)).then((_2) => {
       log2.info("Spector capture stopped after 2 seconds")();
-      spector?.stopCapture();
+      spector == null ? void 0 : spector.stopCapture();
     });
   }
   return spector;
@@ -5042,7 +5085,10 @@ var init_webgl_parameter_tables = __esm({
       [35723]: hint,
       [35725]: (gl, value) => gl.useProgram(value),
       [36007]: (gl, value) => gl.bindRenderbuffer(36161, value),
-      [36389]: (gl, value) => gl.bindTransformFeedback?.(36386, value),
+      [36389]: (gl, value) => {
+        var _a2;
+        return (_a2 = gl.bindTransformFeedback) == null ? void 0 : _a2.call(gl, 36386, value);
+      },
       [34229]: (gl, value) => gl.bindVertexArray(value),
       // NOTE: FRAMEBUFFER_BINDING and DRAW_FRAMEBUFFER_BINDING(WebGL2) refer same state.
       [36006]: bindFramebuffer,
@@ -5126,7 +5172,7 @@ var init_webgl_parameter_tables = __esm({
         gl.blendEquationSeparate(...separateModes);
       },
       blendFunc: (gl, args) => {
-        const separateFuncs = args?.length === 2 ? [...args, ...args] : args;
+        const separateFuncs = (args == null ? void 0 : args.length) === 2 ? [...args, ...args] : args;
         gl.blendFuncSeparate(...separateFuncs);
       },
       clearColor: (gl, value) => gl.clearColor(...value),
@@ -5534,7 +5580,7 @@ var init_webgl_state_tracker = __esm({
         __publicField(this, "log");
         __publicField(this, "initialized", false);
         this.gl = gl;
-        this.log = props?.log || (() => {
+        this.log = (props == null ? void 0 : props.log) || (() => {
         });
         this._updateCache = this._updateCache.bind(this);
         Object.seal(this);
@@ -5559,7 +5605,7 @@ var init_webgl_state_tracker = __esm({
        * temporarily modifying, and then restoring state.
        */
       trackState(gl, options) {
-        this.cache = options?.copyState ? getGLParameters(gl) : Object.assign({}, GL_PARAMETER_DEFAULTS);
+        this.cache = (options == null ? void 0 : options.copyState) ? getGLParameters(gl) : Object.assign({}, GL_PARAMETER_DEFAULTS);
         if (this.initialized) {
           throw new Error("WebGLStateTracker");
         }
@@ -5784,10 +5830,10 @@ function checkTextureFeature(gl, feature, extensions) {
 function getTextureFormatCapabilitiesWebGL(gl, formatSupport, extensions) {
   let supported = formatSupport.create;
   const webglFormatInfo = WEBGL_TEXTURE_FORMATS[formatSupport.format];
-  if (webglFormatInfo?.gl === void 0) {
+  if ((webglFormatInfo == null ? void 0 : webglFormatInfo.gl) === void 0) {
     supported = false;
   }
-  if (webglFormatInfo?.x) {
+  if (webglFormatInfo == null ? void 0 : webglFormatInfo.x) {
     supported = supported && Boolean(getWebGLExtension(gl, webglFormatInfo.x, extensions));
   }
   return {
@@ -5805,6 +5851,7 @@ function getTextureFormatCapabilitiesWebGL(gl, formatSupport, extensions) {
   };
 }
 function getTextureFormatWebGL(format) {
+  var _a2;
   const formatData = WEBGL_TEXTURE_FORMATS[format];
   const webglFormat = convertTextureFormatToGL(format);
   const decoded = textureFormatDecoder.getInfo(format);
@@ -5813,9 +5860,9 @@ function getTextureFormatWebGL(format) {
   }
   return {
     internalFormat: webglFormat,
-    format: formatData?.dataFormat || getWebGLPixelDataFormat(decoded.channels, decoded.integer, decoded.normalized, webglFormat),
+    format: (formatData == null ? void 0 : formatData.dataFormat) || getWebGLPixelDataFormat(decoded.channels, decoded.integer, decoded.normalized, webglFormat),
     // depth formats don't have a type
-    type: decoded.dataType ? getGLFromVertexType(decoded.dataType) : formatData?.types?.[0] || 5121,
+    type: decoded.dataType ? getGLFromVertexType(decoded.dataType) : ((_a2 = formatData == null ? void 0 : formatData.types) == null ? void 0 : _a2[0]) || 5121,
     compressed: decoded.compressed || false
   };
 }
@@ -5853,7 +5900,7 @@ function getWebGLPixelDataFormat(channels, integer, normalized, format) {
 }
 function convertTextureFormatToGL(format) {
   const formatInfo = WEBGL_TEXTURE_FORMATS[format];
-  const webglFormat = formatInfo?.gl;
+  const webglFormat = formatInfo == null ? void 0 : formatInfo.gl;
   if (webglFormat === void 0) {
     throw new Error(`Unsupported texture format ${format}`);
   }
@@ -6096,7 +6143,8 @@ var init_webgl_device_features = __esm({
         return [];
       }
       has(feature) {
-        if (this.disabledFeatures?.[feature]) {
+        var _a2;
+        if ((_a2 = this.disabledFeatures) == null ? void 0 : _a2[feature]) {
           return false;
         }
         if (!this.testedFeatures.has(feature)) {
@@ -6540,7 +6588,7 @@ var init_webgl_buffer = __esm({
         return await callback(data.buffer, "copied");
       }
       readSyncWebGL(byteOffset = 0, byteLength) {
-        byteLength = byteLength ?? this.byteLength - byteOffset;
+        byteLength = byteLength != null ? byteLength : this.byteLength - byteOffset;
         const data = new Uint8Array(byteLength);
         const dstOffset = 0;
         this.gl.bindBuffer(36662, this.handle);
@@ -6653,7 +6701,7 @@ var init_webgl_shader = __esm({
       getTranslatedSource() {
         const extensions = this.device.getExtension("WEBGL_debug_shaders");
         const ext = extensions.WEBGL_debug_shaders;
-        return ext?.getTranslatedShaderSource(this.handle) || null;
+        return (ext == null ? void 0 : ext.getTranslatedShaderSource(this.handle)) || null;
       }
       // PRIVATE METHODS
       /** Compile a shader and get compilation status */
@@ -6766,7 +6814,7 @@ function setDeviceParameters(device, parameters) {
         first: 36429,
         last: 36430
       });
-      ext?.provokingVertexWEBGL(vertex2);
+      ext == null ? void 0 : ext.provokingVertexWEBGL(vertex2);
     }
   }
   if (parameters.polygonMode || parameters.polygonOffsetLine) {
@@ -6778,8 +6826,8 @@ function setDeviceParameters(device, parameters) {
           fill: 6914,
           line: 6913
         });
-        ext?.polygonModeWEBGL(1028, mode);
-        ext?.polygonModeWEBGL(1029, mode);
+        ext == null ? void 0 : ext.polygonModeWEBGL(1028, mode);
+        ext == null ? void 0 : ext.polygonModeWEBGL(1029, mode);
       }
       if (parameters.polygonOffsetLine) {
         gl.enable(10754);
@@ -7313,7 +7361,7 @@ var init_webgl_texture = __esm({
         const isFilterableAndRenderable = this.device.isTextureFormatRenderable(this.props.format) && this.device.isTextureFormatFilterable(this.props.format);
         if (!isFilterableAndRenderable) {
           log2.warn(`${this} is not renderable or filterable, may not be able to generate mipmaps`)();
-          if (!options?.force) {
+          if (!(options == null ? void 0 : options.force)) {
             return;
           }
         }
@@ -7517,7 +7565,7 @@ function getShaderLayoutFromGLSL(gl, program) {
     shaderLayout.uniforms = uniforms;
   }
   const varyings = readVaryings(gl, program);
-  if (varyings?.length) {
+  if (varyings == null ? void 0 : varyings.length) {
     shaderLayout.varyings = varyings;
   }
   return shaderLayout;
@@ -7809,7 +7857,7 @@ function mergeShaderLayout(baseLayout, overrideLayout) {
     ...baseLayout,
     attributes: baseLayout.attributes.map((attribute) => ({ ...attribute }))
   };
-  for (const attribute of overrideLayout?.attributes || []) {
+  for (const attribute of (overrideLayout == null ? void 0 : overrideLayout.attributes) || []) {
     const baseAttribute = mergedLayout.attributes.find((attr) => attr.name === attribute.name);
     if (!baseAttribute) {
       log2.warn(`shader layout attribute ${attribute.name} not present in shader`);
@@ -7893,7 +7941,7 @@ var init_webgl_render_pipeline = __esm({
           const binding = this.shaderLayout.bindings.find((binding_) => binding_.name === name2) || this.shaderLayout.bindings.find((binding_) => binding_.name === `${name2}Uniforms`);
           if (!binding) {
             const validBindings = this.shaderLayout.bindings.map((binding_) => `"${binding_.name}"`).join(", ");
-            if (!options?.disableWarnings) {
+            if (!(options == null ? void 0 : options.disableWarnings)) {
               log2.warn(`No binding "${name2}" in render pipeline "${this.id}", expected one of ${validBindings}`, value)();
             }
             continue;
@@ -7926,6 +7974,7 @@ var init_webgl_render_pipeline = __esm({
        * This function unifies those ways into a single call using common parameters with sane defaults
        */
       draw(options) {
+        var _a2;
         const {
           renderPass,
           parameters = this.props.parameters,
@@ -7943,7 +7992,7 @@ var init_webgl_render_pipeline = __esm({
         } = options;
         const glDrawMode = getGLDrawMode(topology);
         const isIndexed = Boolean(vertexArray.indexBuffer);
-        const glIndexType = vertexArray.indexBuffer?.glIndexType;
+        const glIndexType = (_a2 = vertexArray.indexBuffer) == null ? void 0 : _a2.glIndexType;
         if (this.linkStatus !== "success") {
           log2.info(2, `RenderPipeline:${this.id}.draw() aborted - waiting for shader linking`)();
           return false;
@@ -8009,6 +8058,7 @@ var init_webgl_render_pipeline = __esm({
       }
       /** Report link status. First, check for shader compilation failures if linking fails */
       async _reportLinkStatus(status) {
+        var _a2;
         switch (status) {
           case "success":
             return;
@@ -8025,7 +8075,7 @@ var init_webgl_render_pipeline = __esm({
               case "success":
                 break;
             }
-            switch (this.fs?.compilationStatus) {
+            switch ((_a2 = this.fs) == null ? void 0 : _a2.compilationStatus) {
               case "error":
                 this.fs.debugShader();
                 throw new Error(`${this} ${errorType} during compilation of ${this.fs}`);
@@ -8164,9 +8214,10 @@ var init_webgl_render_pipeline = __esm({
        * (though caching will avoid redundant WebGL calls)
        */
       _applyUniforms() {
+        var _a2;
         for (const uniformLayout of this.shaderLayout.uniforms || []) {
           const { name: name2, location, type, textureUnit } = uniformLayout;
-          const value = this.uniforms[name2] ?? textureUnit;
+          const value = (_a2 = this.uniforms[name2]) != null ? _a2 : textureUnit;
           if (value !== void 0) {
             setUniform(this.device.gl, location, type, value);
           }
@@ -8178,11 +8229,12 @@ var init_webgl_render_pipeline = __esm({
 
 // ../../node_modules/.pnpm/@luma.gl+webgl@9.2.2_@luma.gl+core@9.2.2/node_modules/@luma.gl/webgl/dist/adapter/resources/webgl-command-buffer.js
 function _copyBufferToBuffer(device, options) {
+  var _a2, _b;
   const source3 = options.sourceBuffer;
   const destination = options.destinationBuffer;
   device.gl.bindBuffer(36662, source3.handle);
   device.gl.bindBuffer(36663, destination.handle);
-  device.gl.copyBufferSubData(36662, 36663, options.sourceOffset ?? 0, options.destinationOffset ?? 0, options.size);
+  device.gl.copyBufferSubData(36662, 36663, (_a2 = options.sourceOffset) != null ? _a2 : 0, (_b = options.destinationOffset) != null ? _b : 0, options.size);
   device.gl.bindBuffer(36662, null);
   device.gl.bindBuffer(36663, null);
 }
@@ -8374,6 +8426,7 @@ var init_webgl_render_pass = __esm({
     COLOR_CHANNELS = [1, 2, 4, 8];
     WEBGLRenderPass = class extends RenderPass {
       constructor(device, props) {
+        var _a2;
         super(device, props);
         __publicField(this, "device");
         __publicField(this, "handle", null);
@@ -8381,8 +8434,8 @@ var init_webgl_render_pass = __esm({
         __publicField(this, "glParameters", {});
         this.device = device;
         let viewport;
-        if (!props?.parameters?.viewport) {
-          if (props?.framebuffer) {
+        if (!((_a2 = props == null ? void 0 : props.parameters) == null ? void 0 : _a2.viewport)) {
+          if (props == null ? void 0 : props.framebuffer) {
             const { width, height } = props.framebuffer;
             viewport = [0, 0, width, height];
           } else {
@@ -8393,7 +8446,7 @@ var init_webgl_render_pass = __esm({
         this.device.pushState();
         this.setParameters({ viewport, ...this.props.parameters });
         const webglFramebuffer = this.props.framebuffer;
-        if (this.props.framebuffer && webglFramebuffer?.handle) {
+        if (this.props.framebuffer && (webglFramebuffer == null ? void 0 : webglFramebuffer.handle)) {
           const drawBuffers = this.props.framebuffer.colorAttachments.map((_2, i2) => 36064 + i2);
           this.device.gl.drawBuffers(drawBuffers);
         } else {
@@ -8454,11 +8507,11 @@ var init_webgl_render_pass = __esm({
       }
       beginOcclusionQuery(queryIndex) {
         const webglQuerySet = this.props.occlusionQuerySet;
-        webglQuerySet?.beginOcclusionQuery();
+        webglQuerySet == null ? void 0 : webglQuerySet.beginOcclusionQuery();
       }
       endOcclusionQuery() {
         const webglQuerySet = this.props.occlusionQuerySet;
-        webglQuerySet?.endOcclusionQuery();
+        webglQuerySet == null ? void 0 : webglQuerySet.endOcclusionQuery();
       }
       // PRIVATE
       /**
@@ -8648,9 +8701,10 @@ var init_webgl_vertex_array = __esm({
         return getBrowser() === "Chrome";
       }
       destroy() {
+        var _a2;
         super.destroy();
         if (this.buffer) {
-          this.buffer?.destroy();
+          (_a2 = this.buffer) == null ? void 0 : _a2.destroy();
         }
         if (this.handle) {
           this.device.gl.deleteVertexArray(this.handle);
@@ -9010,7 +9064,7 @@ var init_webgl_query_set = __esm({
       }
       // Shortcut for occlusion queries
       beginOcclusionQuery(options) {
-        return this._begin(options?.conservative ? 36202 : 35887);
+        return this._begin((options == null ? void 0 : options.conservative) ? 36202 : 35887);
       }
       endOcclusionQuery() {
         this._end();
@@ -9182,6 +9236,7 @@ var init_shader_formats = __esm({
 
 // ../../node_modules/.pnpm/@luma.gl+webgl@9.2.2_@luma.gl+core@9.2.2/node_modules/@luma.gl/webgl/dist/adapter/helpers/webgl-texture-utils.js
 function readPixelsToArray(source3, options) {
+  var _a2;
   const {
     sourceX = 0,
     sourceY = 0,
@@ -9201,13 +9256,13 @@ function readPixelsToArray(source3, options) {
   const { gl, handle } = framebuffer;
   sourceWidth || (sourceWidth = framebuffer.width);
   sourceHeight || (sourceHeight = framebuffer.height);
-  const texture = framebuffer.colorAttachments[sourceAttachment]?.texture;
+  const texture = (_a2 = framebuffer.colorAttachments[sourceAttachment]) == null ? void 0 : _a2.texture;
   if (!texture) {
     throw new Error(`Invalid framebuffer attachment ${sourceAttachment}`);
   }
-  sourceDepth = texture?.depth || 1;
-  sourceFormat || (sourceFormat = texture?.glFormat || 6408);
-  sourceType || (sourceType = texture?.glType || 5121);
+  sourceDepth = (texture == null ? void 0 : texture.depth) || 1;
+  sourceFormat || (sourceFormat = (texture == null ? void 0 : texture.glFormat) || 6408);
+  sourceType || (sourceType = (texture == null ? void 0 : texture.glType) || 5121);
   target2 = getPixelArray(target2, sourceType, sourceFormat, sourceWidth, sourceHeight, sourceDepth);
   const signedType = getDataType(target2);
   sourceType = sourceType || convertDataTypeToGLDataType(signedType);
@@ -9358,6 +9413,7 @@ var init_webgl_device = __esm({
     init_webgl_extensions();
     WebGLDevice = class extends Device {
       constructor(props) {
+        var _a2, _b;
         super({ ...props, id: props.id || uid3("webgl-device") });
         // Public `Device` API
         /** type of this device */
@@ -9388,7 +9444,7 @@ var init_webgl_device = __esm({
         if (!canvasContextProps) {
           throw new Error("WebGLDevice requires props.createCanvasContext to be set");
         }
-        let device = canvasContextProps.canvas?.gl?.device;
+        let device = (_b = (_a2 = canvasContextProps.canvas) == null ? void 0 : _a2.gl) == null ? void 0 : _b.device;
         if (device) {
           throw new Error(`WebGL context already attached to device ${device.id}`);
         }
@@ -9405,10 +9461,13 @@ var init_webgl_device = __esm({
         }
         const externalGLContext = this.props._handle;
         const gl = externalGLContext || createBrowserContext(this.canvasContext.canvas, {
-          onContextLost: (event) => this._resolveContextLost?.({
-            reason: "destroyed",
-            message: "Entered sleep mode, or too many apps or browser tabs are using the GPU."
-          }),
+          onContextLost: (event) => {
+            var _a3;
+            return (_a3 = this._resolveContextLost) == null ? void 0 : _a3.call(this, {
+              reason: "destroyed",
+              message: "Entered sleep mode, or too many apps or browser tabs are using the GPU."
+            });
+          },
           // eslint-disable-next-line no-console
           onContextRestored: (event) => console.log("WebGL context restored")
         }, webglContextAttributes);
@@ -9577,6 +9636,7 @@ var init_webgl_device = __esm({
        * @note primarily intended for testing how application reacts to device loss
        */
       loseDevice() {
+        var _a2;
         let deviceLossTriggered = false;
         const extensions = this.getExtension("WEBGL_lose_context");
         const ext = extensions.WEBGL_lose_context;
@@ -9584,7 +9644,7 @@ var init_webgl_device = __esm({
           deviceLossTriggered = true;
           ext.loseContext();
         }
-        this._resolveContextLost?.({
+        (_a2 = this._resolveContextLost) == null ? void 0 : _a2.call(this, {
           reason: "destroyed",
           message: "Application triggered context loss"
         });
@@ -9612,7 +9672,7 @@ var init_webgl_device = __esm({
             return `GL.${key}`;
           }
         }
-        return options?.emptyIfUnknown ? "" : String(value);
+        return (options == null ? void 0 : options.emptyIfUnknown) ? "" : String(value);
       }
       /**
        * Returns a map with any GL.<KEY> constants mapped to strings, both for keys and values
@@ -9723,7 +9783,7 @@ var init_webgl_adapter = __esm({
         if (gl instanceof WebGLDevice2) {
           return gl;
         }
-        if (gl?.device instanceof WebGLDevice2) {
+        if ((gl == null ? void 0 : gl.device) instanceof WebGLDevice2) {
           return gl.device;
         }
         if (!isWebGL(gl)) {
@@ -9779,10 +9839,10 @@ var init_dist6 = __esm({
 
 // ../../node_modules/.pnpm/earcut@2.2.4/node_modules/earcut/src/earcut.js
 var require_earcut = __commonJS({
-  "../../node_modules/.pnpm/earcut@2.2.4/node_modules/earcut/src/earcut.js"(exports2, module2) {
+  "../../node_modules/.pnpm/earcut@2.2.4/node_modules/earcut/src/earcut.js"(exports, module) {
     "use strict";
-    module2.exports = earcut3;
-    module2.exports.default = earcut3;
+    module.exports = earcut3;
+    module.exports.default = earcut3;
     function earcut3(data, holeIndices, dim) {
       dim = dim || 2;
       var hasHoles = holeIndices && holeIndices.length, outerLen = hasHoles ? holeIndices[0] * dim : data.length, outerNode = linkedList(data, 0, outerLen, dim, true), triangles = [];
@@ -10208,7 +10268,7 @@ var require_earcut = __commonJS({
 
 // ../../node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/lodash.js
 var require_lodash = __commonJS({
-  "../../node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/lodash.js"(exports2, module2) {
+  "../../node_modules/.pnpm/lodash@4.17.21/node_modules/lodash/lodash.js"(exports, module) {
     "use strict";
     (function() {
       var undefined2;
@@ -10537,8 +10597,8 @@ var require_lodash = __commonJS({
       var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
       var freeSelf = typeof self == "object" && self && self.Object === Object && self;
       var root = freeGlobal || freeSelf || Function("return this")();
-      var freeExports = typeof exports2 == "object" && exports2 && !exports2.nodeType && exports2;
-      var freeModule = freeExports && typeof module2 == "object" && module2 && !module2.nodeType && module2;
+      var freeExports = typeof exports == "object" && exports && !exports.nodeType && exports;
+      var freeModule = freeExports && typeof module == "object" && module && !module.nodeType && module;
       var moduleExports = freeModule && freeModule.exports === freeExports;
       var freeProcess = moduleExports && freeGlobal.process;
       var nodeUtil = (function() {
@@ -15683,18 +15743,9 @@ var require_lodash = __commonJS({
       } else {
         root._ = _2;
       }
-    }).call(exports2);
+    }).call(exports);
   }
 });
-
-// src/index.ts
-var index_exports = {};
-__export(index_exports, {
-  EChartsGeoUtils: () => LinesComponent,
-  MapRendererType: () => MapRendererType,
-  default: () => index_default
-});
-module.exports = __toCommonJS(index_exports);
 
 // ../types/src/map.interface.ts
 var MapRendererType = /* @__PURE__ */ ((MapRendererType2) => {
@@ -15765,7 +15816,8 @@ function mergeOptionsRecursively(baseOptions, newOptions, level = 0) {
 // ../../node_modules/.pnpm/@loaders.gl+worker-utils@4.3.4_@loaders.gl+core@4.3.4/node_modules/@loaders.gl/worker-utils/dist/lib/env-utils/version.js
 var NPM_TAG = "latest";
 function getVersion() {
-  if (!globalThis._loadersgl_?.version) {
+  var _a2;
+  if (!((_a2 = globalThis._loadersgl_) == null ? void 0 : _a2.version)) {
     globalThis._loadersgl_ = globalThis._loadersgl_ || {};
     if (false) {
       console.warn("loaders.gl: The __VERSION__ variable is not injected using babel plugin. Latest unstable workers would be fetched from the CDN.");
@@ -15859,9 +15911,10 @@ __export(worker_threads_exports, {
   NodeWorker: () => NodeWorker,
   parentPort: () => parentPort
 });
-var WorkerThreads = __toESM(require("worker_threads"), 1);
-__reExport(worker_threads_exports, require("worker_threads"));
-var parentPort = WorkerThreads?.parentPort;
+__reExport(worker_threads_exports, worker_threads_star);
+import * as WorkerThreads from "worker_threads";
+import * as worker_threads_star from "worker_threads";
+var parentPort = WorkerThreads == null ? void 0 : WorkerThreads.parentPort;
 var NodeWorker = WorkerThreads.Worker;
 
 // ../../node_modules/.pnpm/@loaders.gl+worker-utils@4.3.4_@loaders.gl+core@4.3.4/node_modules/@loaders.gl/worker-utils/dist/lib/worker-utils/get-loadable-worker-url.js
@@ -16316,10 +16369,10 @@ function canParseWithWorker(loader, options) {
   if (!WorkerFarm.isSupported()) {
     return false;
   }
-  if (!isBrowser3 && !options?._nodeWorkers) {
+  if (!isBrowser3 && !(options == null ? void 0 : options._nodeWorkers)) {
     return false;
   }
-  return loader.worker && options?.worker;
+  return loader.worker && (options == null ? void 0 : options.worker);
 }
 async function parseWithWorker(loader, data, options, context, parseOnMainThread) {
   const name2 = loader.id;
@@ -16469,11 +16522,12 @@ __export(path_exports, {
 
 // ../../node_modules/.pnpm/@loaders.gl+loader-utils@4.3.4_@loaders.gl+core@4.3.4/node_modules/@loaders.gl/loader-utils/dist/lib/path-utils/get-cwd.js
 function getCWD() {
+  var _a2;
   if (typeof process !== "undefined" && typeof process.cwd !== "undefined") {
     return process.cwd();
   }
-  const pathname = window.location?.pathname;
-  return pathname?.slice(0, pathname.lastIndexOf("/") + 1) || "";
+  const pathname = (_a2 = window.location) == null ? void 0 : _a2.pathname;
+  return (pathname == null ? void 0 : pathname.slice(0, pathname.lastIndexOf("/") + 1)) || "";
 }
 
 // ../../node_modules/.pnpm/@loaders.gl+loader-utils@4.3.4_@loaders.gl+core@4.3.4/node_modules/@loaders.gl/loader-utils/dist/lib/path-utils/path.js
@@ -16768,7 +16822,7 @@ async function getResponseError(response) {
   };
   try {
     const contentType = response.headers.get("Content-Type");
-    info.reason = !response.bodyUsed && contentType?.includes("application/json") ? await response.json() : await response.text();
+    info.reason = !response.bodyUsed && (contentType == null ? void 0 : contentType.includes("application/json")) ? await response.json() : await response.text();
   } catch (error) {
   }
   return new FetchError(message2, info);
@@ -16782,7 +16836,10 @@ async function getInitialDataUrl(resource) {
     const blobSlice = resource.slice(0, 5);
     return await new Promise((resolve2) => {
       const reader = new FileReader();
-      reader.onload = (event) => resolve2(event?.target?.result);
+      reader.onload = (event) => {
+        var _a2;
+        return resolve2((_a2 = event == null ? void 0 : event.target) == null ? void 0 : _a2.result);
+      };
       reader.readAsDataURL(blobSlice);
     });
   }
@@ -16813,11 +16870,12 @@ function isDataURL(url) {
   return url.startsWith("data:");
 }
 async function fetchFile(urlOrData, fetchOptions) {
+  var _a2, _b;
   if (typeof urlOrData === "string") {
     const url = resolvePath(urlOrData);
     if (isNodePath(url)) {
-      if (globalThis.loaders?.fetchNode) {
-        return globalThis.loaders?.fetchNode(url, fetchOptions);
+      if ((_a2 = globalThis.loaders) == null ? void 0 : _a2.fetchNode) {
+        return (_b = globalThis.loaders) == null ? void 0 : _b.fetchNode(url, fetchOptions);
       }
     }
     return await fetch(url, fetchOptions);
@@ -17017,7 +17075,7 @@ function isLoaderObject(loader) {
   if (Array.isArray(loader)) {
     loader = loader[0];
   }
-  const hasExtensions = Array.isArray(loader?.extensions);
+  const hasExtensions = Array.isArray(loader == null ? void 0 : loader.extensions);
   return hasExtensions;
 }
 function normalizeLoader(loader) {
@@ -17032,7 +17090,7 @@ function normalizeLoader(loader) {
       options: { ...loader.options, ...options }
     };
   }
-  if (loader?.parseTextSync || loader?.parseText) {
+  if ((loader == null ? void 0 : loader.parseTextSync) || (loader == null ? void 0 : loader.parseText)) {
     loader.text = true;
   }
   if (!loader.text) {
@@ -17075,7 +17133,7 @@ async function selectLoader(data, loaders = [], options, context) {
     data = await data.slice(0, 10).arrayBuffer();
     loader = selectLoaderSync(data, loaders, options, context);
   }
-  if (!loader && !options?.nothrow) {
+  if (!loader && !(options == null ? void 0 : options.nothrow)) {
     throw new Error(getNoValidLoaderMessage(data));
   }
   return loader;
@@ -17091,12 +17149,12 @@ function selectLoaderSync(data, loaders = [], options, context) {
   if (loaders) {
     candidateLoaders = candidateLoaders.concat(loaders);
   }
-  if (!options?.ignoreRegisteredLoaders) {
+  if (!(options == null ? void 0 : options.ignoreRegisteredLoaders)) {
     candidateLoaders.push(...getRegisteredLoaders());
   }
   normalizeLoaders(candidateLoaders);
   const loader = selectLoaderInternal(data, candidateLoaders, options, context);
-  if (!loader && !options?.nothrow) {
+  if (!loader && !(options == null ? void 0 : options.nothrow)) {
     throw new Error(getNoValidLoaderMessage(data));
   }
   return loader;
@@ -17104,12 +17162,12 @@ function selectLoaderSync(data, loaders = [], options, context) {
 function selectLoaderInternal(data, loaders, options, context) {
   const url = getResourceUrl(data);
   const type = getResourceMIMEType(data);
-  const testUrl = stripQueryString(url) || context?.url;
+  const testUrl = stripQueryString(url) || (context == null ? void 0 : context.url);
   let loader = null;
   let reason = "";
-  if (options?.mimeType) {
-    loader = findLoaderByMIMEType(loaders, options?.mimeType);
-    reason = `match forced by supplied MIME type ${options?.mimeType}`;
+  if (options == null ? void 0 : options.mimeType) {
+    loader = findLoaderByMIMEType(loaders, options == null ? void 0 : options.mimeType);
+    reason = `match forced by supplied MIME type ${options == null ? void 0 : options.mimeType}`;
   }
   loader = loader || findLoaderByUrl(loaders, testUrl);
   reason = reason || (loader ? `matched url ${testUrl}` : "");
@@ -17117,12 +17175,12 @@ function selectLoaderInternal(data, loaders, options, context) {
   reason = reason || (loader ? `matched MIME type ${type}` : "");
   loader = loader || findLoaderByInitialBytes(loaders, data);
   reason = reason || (loader ? `matched initial data ${getFirstCharacters(data)}` : "");
-  if (options?.fallbackMimeType) {
-    loader = loader || findLoaderByMIMEType(loaders, options?.fallbackMimeType);
+  if (options == null ? void 0 : options.fallbackMimeType) {
+    loader = loader || findLoaderByMIMEType(loaders, options == null ? void 0 : options.fallbackMimeType);
     reason = reason || (loader ? `matched fallback MIME type ${type}` : "");
   }
   if (reason) {
-    log.log(1, `selectLoader selected ${loader?.name}: ${reason}.`);
+    log.log(1, `selectLoader selected ${loader == null ? void 0 : loader.name}: ${reason}.`);
   }
   return loader;
 }
@@ -17167,8 +17225,9 @@ function findLoaderByExtension(loaders, extension) {
   return null;
 }
 function findLoaderByMIMEType(loaders, mimeType) {
+  var _a2;
   for (const loader of loaders) {
-    if (loader.mimeTypes?.some((mimeType1) => compareMIMETypes(mimeType, mimeType1))) {
+    if ((_a2 = loader.mimeTypes) == null ? void 0 : _a2.some((mimeType1) => compareMIMETypes(mimeType, mimeType1))) {
       return loader;
     }
     if (compareMIMETypes(mimeType, `application/x.${loader.id}`)) {
@@ -17250,7 +17309,7 @@ function getMagicString(arrayBuffer2, byteOffset, length4) {
 // ../../node_modules/.pnpm/@loaders.gl+core@4.3.4/node_modules/@loaders.gl/core/dist/iterators/make-iterator/make-string-iterator.js
 var DEFAULT_CHUNK_SIZE = 256 * 1024;
 function* makeStringIterator(string, options) {
-  const chunkSize = options?.chunkSize || DEFAULT_CHUNK_SIZE;
+  const chunkSize = (options == null ? void 0 : options.chunkSize) || DEFAULT_CHUNK_SIZE;
   let offset = 0;
   const textEncoder = new TextEncoder();
   while (offset < string.length) {
@@ -17280,7 +17339,7 @@ function* makeArrayBufferIterator(arrayBuffer2, options = {}) {
 // ../../node_modules/.pnpm/@loaders.gl+core@4.3.4/node_modules/@loaders.gl/core/dist/iterators/make-iterator/make-blob-iterator.js
 var DEFAULT_CHUNK_SIZE3 = 1024 * 1024;
 async function* makeBlobIterator(blob, options) {
-  const chunkSize = options?.chunkSize || DEFAULT_CHUNK_SIZE3;
+  const chunkSize = (options == null ? void 0 : options.chunkSize) || DEFAULT_CHUNK_SIZE3;
   let offset = 0;
   while (offset < blob.size) {
     const end = offset + chunkSize;
@@ -17300,7 +17359,7 @@ async function* makeBrowserStreamIterator(stream, options) {
   try {
     while (true) {
       const currentBatchPromise = nextBatchPromise || reader.read();
-      if (options?._streamReadAhead) {
+      if (options == null ? void 0 : options._streamReadAhead) {
         nextBatchPromise = reader.read();
       }
       const { done, value } = await currentBatchPromise;
@@ -17403,8 +17462,8 @@ function getFetchFunction(options, context) {
   if (isObject(loaderOptions.fetch)) {
     return (url) => fetchFile(url, loaderOptions.fetch);
   }
-  if (context?.fetch) {
-    return context?.fetch;
+  if (context == null ? void 0 : context.fetch) {
+    return context == null ? void 0 : context.fetch;
   }
   return fetchFile;
 }
@@ -17524,7 +17583,8 @@ async function load(url, loaders, options, context) {
 var VERSION4 = true ? "4.3.3" : "latest";
 
 // ../../node_modules/.pnpm/@loaders.gl+images@4.3.4_@loaders.gl+core@4.3.4/node_modules/@loaders.gl/images/dist/lib/category-api/image-type.js
-var parseImageNode = globalThis.loaders?.parseImageNode;
+var _a;
+var parseImageNode = (_a = globalThis.loaders) == null ? void 0 : _a.parseImageNode;
 var IMAGE_SUPPORTED = typeof Image !== "undefined";
 var IMAGE_BITMAP_SUPPORTED = typeof ImageBitmap !== "undefined";
 var NODE_IMAGE_SUPPORTED = Boolean(parseImageNode);
@@ -17850,8 +17910,9 @@ function toDataView(data) {
 
 // ../../node_modules/.pnpm/@loaders.gl+images@4.3.4_@loaders.gl+core@4.3.4/node_modules/@loaders.gl/images/dist/lib/parsers/parse-to-node-image.js
 async function parseToNodeImage(arrayBuffer2, options) {
+  var _a2;
   const { mimeType } = getBinaryImageMetadata(arrayBuffer2) || {};
-  const parseImageNode2 = globalThis.loaders?.parseImageNode;
+  const parseImageNode2 = (_a2 = globalThis.loaders) == null ? void 0 : _a2.parseImageNode;
   assert(parseImageNode2);
   return await parseImageNode2(arrayBuffer2, mimeType);
 }
@@ -18275,19 +18336,19 @@ function injectShader(source3, stage, inject, injectStandardStubs = false) {
 
 // ../../node_modules/.pnpm/@luma.gl+shadertools@9.2.2_@luma.gl+core@9.2.2/node_modules/@luma.gl/shadertools/dist/lib/shader-module/shader-module.js
 function initializeShaderModules(modules) {
-  modules.map((module2) => initializeShaderModule(module2));
+  modules.map((module) => initializeShaderModule(module));
 }
-function initializeShaderModule(module2) {
-  if (module2.instance) {
+function initializeShaderModule(module) {
+  if (module.instance) {
     return;
   }
-  initializeShaderModules(module2.dependencies || []);
+  initializeShaderModules(module.dependencies || []);
   const {
     propTypes = {},
     deprecations = [],
     // defines = {},
     inject = {}
-  } = module2;
+  } = module;
   const instance = {
     normalizedInjections: normalizeInjections(inject),
     parsedDeprecations: parseDeprecationDefinitions(deprecations)
@@ -18295,22 +18356,24 @@ function initializeShaderModule(module2) {
   if (propTypes) {
     instance.propValidators = makePropValidators(propTypes);
   }
-  module2.instance = instance;
+  module.instance = instance;
   let defaultProps12 = {};
   if (propTypes) {
     defaultProps12 = Object.entries(propTypes).reduce((obj, [key, propType]) => {
-      const value = propType?.value;
+      const value = propType == null ? void 0 : propType.value;
       if (value) {
         obj[key] = value;
       }
       return obj;
     }, {});
   }
-  module2.defaultUniforms = { ...module2.defaultUniforms, ...defaultProps12 };
+  module.defaultUniforms = { ...module.defaultUniforms, ...defaultProps12 };
 }
 function checkShaderModuleDeprecations(shaderModule, shaderSource, log3) {
-  shaderModule.deprecations?.forEach((def) => {
-    if (def.regex?.test(shaderSource)) {
+  var _a2;
+  (_a2 = shaderModule.deprecations) == null ? void 0 : _a2.forEach((def) => {
+    var _a3;
+    if ((_a3 = def.regex) == null ? void 0 : _a3.test(shaderSource)) {
       if (def.deprecated) {
         log3.deprecated(def.old, def.new)();
       } else {
@@ -18347,22 +18410,22 @@ function getDependencyGraph(options) {
   if (level >= 5) {
     throw new Error("Possible loop in shader dependency graph");
   }
-  for (const module2 of modules) {
-    moduleMap[module2.name] = module2;
-    if (moduleDepth[module2.name] === void 0 || moduleDepth[module2.name] < level) {
-      moduleDepth[module2.name] = level;
+  for (const module of modules) {
+    moduleMap[module.name] = module;
+    if (moduleDepth[module.name] === void 0 || moduleDepth[module.name] < level) {
+      moduleDepth[module.name] = level;
     }
   }
-  for (const module2 of modules) {
-    if (module2.dependencies) {
-      getDependencyGraph({ modules: module2.dependencies, level: level + 1, moduleMap, moduleDepth });
+  for (const module of modules) {
+    if (module.dependencies) {
+      getDependencyGraph({ modules: module.dependencies, level: level + 1, moduleMap, moduleDepth });
     }
   }
 }
 
 // ../../node_modules/.pnpm/@luma.gl+shadertools@9.2.2_@luma.gl+core@9.2.2/node_modules/@luma.gl/shadertools/dist/lib/shader-assembly/platform-defines.js
 function getPlatformShaderDefines(platformInfo) {
-  switch (platformInfo?.gpu.toLowerCase()) {
+  switch (platformInfo == null ? void 0 : platformInfo.gpu.toLowerCase()) {
     case "apple":
       return (
         /* glsl */
@@ -18417,7 +18480,8 @@ function getPlatformShaderDefines(platformInfo) {
 
 // ../../node_modules/.pnpm/@luma.gl+shadertools@9.2.2_@luma.gl+core@9.2.2/node_modules/@luma.gl/shadertools/dist/lib/shader-transpiler/transpile-glsl-shader.js
 function transpileGLSLShader(source3, stage) {
-  const sourceGLSLVersion = Number(source3.match(/^#version[ \t]+(\d+)/m)?.[1] || 100);
+  var _a2;
+  const sourceGLSLVersion = Number(((_a2 = source3.match(/^#version[ \t]+(\d+)/m)) == null ? void 0 : _a2[1]) || 100);
   if (sourceGLSLVersion !== 300) {
     throw new Error("luma.gl v9 only supports GLSL 3.00 shader sources");
   }
@@ -18587,6 +18651,7 @@ function assembleGLSLShaderPair(options) {
   };
 }
 function assembleShaderWGSL(platformInfo, options) {
+  var _a2;
   const {
     // id,
     source: source3,
@@ -18624,13 +18689,13 @@ function assembleShaderWGSL(platformInfo, options) {
     }
   }
   const modulesToInject = modules;
-  for (const module2 of modulesToInject) {
+  for (const module of modulesToInject) {
     if (log3) {
-      checkShaderModuleDeprecations(module2, coreSource, log3);
+      checkShaderModuleDeprecations(module, coreSource, log3);
     }
-    const moduleSource = getShaderModuleSource(module2, "wgsl");
+    const moduleSource = getShaderModuleSource(module, "wgsl");
     assembledSource += moduleSource;
-    const injections = module2.injections?.[stage] || {};
+    const injections = ((_a2 = module.injections) == null ? void 0 : _a2[stage]) || {};
     for (const key in injections) {
       const match = /^(v|f)s:#([\w-]+)$/.exec(key);
       if (match) {
@@ -18652,6 +18717,7 @@ function assembleShaderWGSL(platformInfo, options) {
   return assembledSource;
 }
 function assembleShaderGLSL(platformInfo, options) {
+  var _a2;
   const { source: source3, stage, language = "glsl", modules, defines: defines2 = {}, hookFunctions = [], inject = {}, prologue = true, log: log3 } = options;
   assert4(typeof source3 === "string", "shader source must be a string");
   const sourceVersion = language === "glsl" ? getShaderInfo(source3).version : -1;
@@ -18660,8 +18726,8 @@ function assembleShaderGLSL(platformInfo, options) {
   const sourceLines = source3.split("\n");
   const coreSource = sourceLines.slice(1).join("\n");
   const allDefines = {};
-  modules.forEach((module2) => {
-    Object.assign(allDefines, module2.defines);
+  modules.forEach((module) => {
+    Object.assign(allDefines, module.defines);
   });
   Object.assign(allDefines, defines2);
   let assembledSource = "";
@@ -18708,13 +18774,13 @@ ${getApplicationDefines(allDefines)}
       mainInjections[key] = [injection];
     }
   }
-  for (const module2 of modules) {
+  for (const module of modules) {
     if (log3) {
-      checkShaderModuleDeprecations(module2, coreSource, log3);
+      checkShaderModuleDeprecations(module, coreSource, log3);
     }
-    const moduleSource = getShaderModuleSource(module2, stage);
+    const moduleSource = getShaderModuleSource(module, stage);
     assembledSource += moduleSource;
-    const injections = module2.instance?.normalizedInjections[stage] || {};
+    const injections = ((_a2 = module.instance) == null ? void 0 : _a2.normalizedInjections[stage]) || {};
     for (const key in injections) {
       const match = /^(v|f)s:#([\w-]+)$/.exec(key);
       if (match) {
@@ -18741,9 +18807,10 @@ ${getApplicationDefines(allDefines)}
 }
 function assembleGetUniforms(modules) {
   return function getUniforms4(opts) {
+    var _a2;
     const uniforms = {};
-    for (const module2 of modules) {
-      const moduleUniforms = module2.getUniforms?.(opts, uniforms);
+    for (const module of modules) {
+      const moduleUniforms = (_a2 = module.getUniforms) == null ? void 0 : _a2.call(module, opts, uniforms);
       Object.assign(uniforms, moduleUniforms);
     }
     return uniforms;
@@ -18760,26 +18827,26 @@ function getApplicationDefines(defines2 = {}) {
   }
   return sourceText;
 }
-function getShaderModuleSource(module2, stage) {
+function getShaderModuleSource(module, stage) {
   let moduleSource;
   switch (stage) {
     case "vertex":
-      moduleSource = module2.vs || "";
+      moduleSource = module.vs || "";
       break;
     case "fragment":
-      moduleSource = module2.fs || "";
+      moduleSource = module.fs || "";
       break;
     case "wgsl":
-      moduleSource = module2.source || "";
+      moduleSource = module.source || "";
       break;
     default:
       assert4(false);
   }
-  if (!module2.name) {
+  if (!module.name) {
     throw new Error("Shader module must have a name");
   }
-  const moduleName = module2.name.toUpperCase().replace(/[^0-9a-z]/gi, "_");
-  let source3 = `// ----- MODULE ${module2.name} ---------------
+  const moduleName = module.name.toUpperCase().replace(/[^0-9a-z]/gi, "_");
+  let source3 = `// ----- MODULE ${module.name} ---------------
 
 `;
   if (stage !== "wgsl") {
@@ -18795,6 +18862,7 @@ function getShaderModuleSource(module2, stage) {
 var IFDEF_REGEXP = /^\s*\#\s*ifdef\s*([a-zA-Z_]+)\s*$/;
 var ENDIF_REGEXP = /^\s*\#\s*endif\s*$/;
 function preprocess(source3, options) {
+  var _a2;
   const lines = source3.split("\n");
   const output = [];
   let conditional = true;
@@ -18804,7 +18872,7 @@ function preprocess(source3, options) {
     const matchEnd = line.match(ENDIF_REGEXP);
     if (matchIf) {
       currentDefine = matchIf[1];
-      conditional = Boolean(options?.defines?.[currentDefine]);
+      conditional = Boolean((_a2 = options == null ? void 0 : options.defines) == null ? void 0 : _a2[currentDefine]);
     } else if (matchEnd) {
       conditional = true;
     } else if (conditional) {
@@ -18833,16 +18901,16 @@ var _ShaderAssembler = class _ShaderAssembler {
   /**
    * Add a default module that does not have to be provided with every call to assembleShaders()
    */
-  addDefaultModule(module2) {
-    if (!this._defaultModules.find((m2) => m2.name === (typeof module2 === "string" ? module2 : module2.name))) {
-      this._defaultModules.push(module2);
+  addDefaultModule(module) {
+    if (!this._defaultModules.find((m2) => m2.name === (typeof module === "string" ? module : module.name))) {
+      this._defaultModules.push(module);
     }
   }
   /**
    * Remove a default module
    */
-  removeDefaultModule(module2) {
-    const moduleName = typeof module2 === "string" ? module2 : module2.name;
+  removeDefaultModule(module) {
+    const moduleName = typeof module === "string" ? module : module.name;
     this._defaultModules = this._defaultModules.filter((m2) => m2.name !== moduleName);
   }
   /**
@@ -18903,16 +18971,16 @@ var _ShaderAssembler = class _ShaderAssembler {
     const seen = {};
     let count2 = 0;
     for (let i2 = 0, len4 = this._defaultModules.length; i2 < len4; ++i2) {
-      const module2 = this._defaultModules[i2];
-      const name2 = module2.name;
-      modules[count2++] = module2;
+      const module = this._defaultModules[i2];
+      const name2 = module.name;
+      modules[count2++] = module;
       seen[name2] = true;
     }
     for (let i2 = 0, len4 = appModules.length; i2 < len4; ++i2) {
-      const module2 = appModules[i2];
-      const name2 = module2.name;
+      const module = appModules[i2];
+      const name2 = module.name;
       if (!seen[name2]) {
-        modules[count2++] = module2;
+        modules[count2++] = module;
         seen[name2] = true;
       }
     }
@@ -24332,6 +24400,7 @@ var _t = class extends at {
 
 // ../../node_modules/.pnpm/@luma.gl+shadertools@9.2.2_@luma.gl+core@9.2.2/node_modules/@luma.gl/shadertools/dist/lib/wgsl/get-shader-layout-wgsl.js
 function getShaderLayoutFromWGSL(source3) {
+  var _a2;
   const shaderLayout = { attributes: [], bindings: [] };
   let parsedWGSL;
   try {
@@ -24342,7 +24411,7 @@ function getShaderLayoutFromWGSL(source3) {
   }
   for (const uniform of parsedWGSL.uniforms) {
     const members = [];
-    for (const attribute of uniform.type?.members || []) {
+    for (const attribute of ((_a2 = uniform.type) == null ? void 0 : _a2.members) || []) {
       members.push({
         name: attribute.name,
         type: getType(attribute.type)
@@ -24374,7 +24443,7 @@ function getShaderLayoutFromWGSL(source3) {
     });
   }
   const vertex2 = parsedWGSL.entry.vertex[0];
-  const attributeCount = vertex2?.inputs.length || 0;
+  const attributeCount = (vertex2 == null ? void 0 : vertex2.inputs.length) || 0;
   for (let i2 = 0; i2 < attributeCount; i2++) {
     const wgslAttribute = vertex2.inputs[i2];
     if (wgslAttribute.locationType === "location") {
@@ -24389,7 +24458,7 @@ function getShaderLayoutFromWGSL(source3) {
   return shaderLayout;
 }
 function getType(type) {
-  return type?.format ? `${type.name}<${type.format.name}>` : type.name;
+  return (type == null ? void 0 : type.format) ? `${type.name}<${type.format.name}>` : type.name;
 }
 function parseWGSL(source3) {
   try {
@@ -24399,10 +24468,10 @@ function parseWGSL(source3) {
       throw error;
     }
     let message2 = "WGSL parse error";
-    if (typeof error === "object" && error?.message) {
+    if (typeof error === "object" && (error == null ? void 0 : error.message)) {
       message2 += `: ${error.message} `;
     }
-    if (typeof error === "object" && error?.token) {
+    if (typeof error === "object" && (error == null ? void 0 : error.token)) {
       message2 += error.token.line || "";
     }
     throw new Error(message2, { cause: error });
@@ -28974,6 +29043,7 @@ function getLightSourceUniforms({ ambientLight, pointLights = [], directionalLig
   return lightSourceUniforms;
 }
 function extractLightTypes(lights) {
+  var _a2, _b;
   const lightSources = { pointLights: [], directionalLights: [] };
   for (const light of lights || []) {
     switch (light.type) {
@@ -28981,10 +29051,10 @@ function extractLightTypes(lights) {
         lightSources.ambientLight = light;
         break;
       case "directional":
-        lightSources.directionalLights?.push(light);
+        (_a2 = lightSources.directionalLights) == null ? void 0 : _a2.push(light);
         break;
       case "point":
-        lightSources.pointLights?.push(light);
+        (_b = lightSources.pointLights) == null ? void 0 : _b.push(light);
         break;
       default:
     }
@@ -29537,10 +29607,10 @@ function computeDeltaXY(session, input) {
   let offset = session.offsetDelta;
   let prevDelta = session.prevDelta;
   const prevInput = session.prevInput;
-  if (input.eventType === InputEvent.Start || prevInput?.eventType === InputEvent.End) {
+  if (input.eventType === InputEvent.Start || (prevInput == null ? void 0 : prevInput.eventType) === InputEvent.End) {
     prevDelta = session.prevDelta = {
-      x: prevInput?.deltaX || 0,
-      y: prevInput?.deltaY || 0
+      x: (prevInput == null ? void 0 : prevInput.deltaX) || 0,
+      y: (prevInput == null ? void 0 : prevInput.deltaY) || 0
     };
     offset = session.offsetDelta = {
       x: center.x,
@@ -30975,6 +31045,7 @@ var EventManager = class {
    * Enable/disable recognizer for the given event
    */
   _toggleRecognizer(name2, enabled) {
+    var _a2, _b, _c, _d;
     const { manager } = this;
     if (!manager) {
       return;
@@ -30984,10 +31055,10 @@ var EventManager = class {
       recognizer.set({ enable: enabled });
       manager.touchAction.update();
     }
-    this.wheelInput?.enableEventType(name2, enabled);
-    this.moveInput?.enableEventType(name2, enabled);
-    this.keyInput?.enableEventType(name2, enabled);
-    this.contextmenuInput?.enableEventType(name2, enabled);
+    (_a2 = this.wheelInput) == null ? void 0 : _a2.enableEventType(name2, enabled);
+    (_b = this.moveInput) == null ? void 0 : _b.enableEventType(name2, enabled);
+    (_c = this.keyInput) == null ? void 0 : _c.enableEventType(name2, enabled);
+    (_d = this.contextmenuInput) == null ? void 0 : _d.enableEventType(name2, enabled);
   }
   /**
    * Process the event registration for a single event + handler.
@@ -31048,9 +31119,10 @@ var EventManager = class {
     }
   }
   _getRecognizerName(event) {
-    return this.manager.recognizers.find((recognizer) => {
+    var _a2;
+    return (_a2 = this.manager.recognizers.find((recognizer) => {
       return recognizer.getEventNames().includes(event);
-    })?.options.event;
+    })) == null ? void 0 : _a2.options.event;
   }
 };
 
@@ -32656,12 +32728,13 @@ var LayersPass = class extends Pass {
     this._lastRenderIndex = -1;
   }
   render(options) {
+    var _a2, _b, _c;
     const [width, height] = this.device.canvasContext.getDrawingBufferSize();
-    const clearCanvas = options.clearCanvas ?? true;
-    const clearColor = options.clearColor ?? (clearCanvas ? [0, 0, 0, 0] : false);
+    const clearCanvas = (_a2 = options.clearCanvas) != null ? _a2 : true;
+    const clearColor = (_b = options.clearColor) != null ? _b : clearCanvas ? [0, 0, 0, 0] : false;
     const clearDepth = clearCanvas ? 1 : false;
     const clearStencil = clearCanvas ? 0 : false;
-    const colorMask = options.colorMask ?? 15;
+    const colorMask = (_c = options.colorMask) != null ? _c : 15;
     const parameters = { viewport: [0, 0, width, height] };
     if (options.colorMask) {
       parameters.colorMask = colorMask;
@@ -32693,7 +32766,7 @@ var LayersPass = class extends Pass {
     const renderStats = [];
     for (const viewport of viewports) {
       const view = views && views[viewport.id];
-      onViewportActive?.(viewport);
+      onViewportActive == null ? void 0 : onViewportActive(viewport);
       const drawLayerParams = this._getDrawLayerParams(viewport, options);
       const subViewports = viewport.subViewports || [viewport];
       for (const subViewport of subViewports) {
@@ -32714,6 +32787,7 @@ var LayersPass = class extends Pass {
   // this is only done once for the parent viewport
   /* Resolve the parameters needed to draw each layer */
   _getDrawLayerParams(viewport, { layers, pass, isPicking = false, layerFilter, cullRect, effects, shaderModuleProps }, evaluateShouldDrawOnly = false) {
+    var _a2;
     const drawLayerParams = [];
     const indexResolver = layerIndexResolver(this._lastRenderIndex + 1);
     const drawContext = {
@@ -32733,7 +32807,7 @@ var LayersPass = class extends Pass {
         layerParam.layerRenderIndex = indexResolver(layer, shouldDrawLayer);
         layerParam.shaderModuleProps = this._getShaderModuleProps(layer, effects, pass, shaderModuleProps);
         layerParam.layerParameters = {
-          ...layer.context.deck?.props.parameters,
+          ...(_a2 = layer.context.deck) == null ? void 0 : _a2.props.parameters,
           ...this.getLayerParameters(layer, layerIndex, viewport)
         };
       }
@@ -32859,8 +32933,9 @@ var LayersPass = class extends Pass {
     return true;
   }
   _getShaderModuleProps(layer, effects, pass, overrides) {
+    var _a2, _b;
     const devicePixelRatio2 = this.device.canvasContext.cssToDeviceRatio();
-    const layerProps = layer.internalState?.propsInTransition || layer.props;
+    const layerProps = ((_a2 = layer.internalState) == null ? void 0 : _a2.propsInTransition) || layer.props;
     const shaderModuleProps = {
       layer: layerProps,
       picking: {
@@ -32877,7 +32952,7 @@ var LayersPass = class extends Pass {
     };
     if (effects) {
       for (const effect of effects) {
-        mergeModuleParameters(shaderModuleProps, effect.getShaderModuleProps?.(layer, shaderModuleProps));
+        mergeModuleParameters(shaderModuleProps, (_b = effect.getShaderModuleProps) == null ? void 0 : _b.call(effect, layer, shaderModuleProps));
       }
     }
     return mergeModuleParameters(shaderModuleProps, this.getShaderModuleProps(layer, effects, shaderModuleProps), overrides);
@@ -32912,8 +32987,11 @@ function layerIndexResolver(startIndex = 0, layerIndices = {}) {
   return resolveLayerIndex;
 }
 function getGLViewport(device, { shaderModuleProps, target: target2, viewport }) {
-  const pixelRatio = shaderModuleProps?.project?.devicePixelRatio ?? // @ts-expect-error TODO - assuming WebGL context
-  device.canvasContext.cssToDeviceRatio();
+  var _a2, _b;
+  const pixelRatio = (_b = (_a2 = shaderModuleProps == null ? void 0 : shaderModuleProps.project) == null ? void 0 : _a2.devicePixelRatio) != null ? _b : (
+    // @ts-expect-error TODO - assuming WebGL context
+    device.canvasContext.cssToDeviceRatio()
+  );
   const [, drawingBufferHeight] = device.canvasContext.getDrawingBufferSize();
   const height = target2 ? target2.height : drawingBufferHeight;
   const dimensions = viewport;
@@ -34048,7 +34126,8 @@ var _AnimationLoop = class _AnimationLoop {
   }
   /** Explicitly draw a frame */
   redraw() {
-    if (this.device?.isLost || this._error) {
+    var _a2;
+    if (((_a2 = this.device) == null ? void 0 : _a2.isLost) || this._error) {
       return this;
     }
     this._beginFrameTimers();
@@ -34132,12 +34211,13 @@ var _AnimationLoop = class _AnimationLoop {
   // Called on each frame, can be overridden to call onRender multiple times
   // to support e.g. stereoscopic rendering
   _renderFrame(animationProps) {
+    var _a2;
     if (this.display) {
       this.display._renderFrame(animationProps);
       return;
     }
     this.props.onRender(this._getAnimationProps());
-    this.device?.submit();
+    (_a2 = this.device) == null ? void 0 : _a2.submit();
   }
   _clearNeedsRedraw() {
     this.needsRedraw = false;
@@ -34147,11 +34227,12 @@ var _AnimationLoop = class _AnimationLoop {
   }
   // Initialize the  object that will be passed to app callbacks
   _initializeAnimationProps() {
-    const canvasContext = this.device?.getDefaultCanvasContext();
+    var _a2;
+    const canvasContext = (_a2 = this.device) == null ? void 0 : _a2.getDefaultCanvasContext();
     if (!this.device || !canvasContext) {
       throw new Error("loop");
     }
-    const canvas2 = canvasContext?.canvas;
+    const canvas2 = canvasContext == null ? void 0 : canvasContext.canvas;
     const useDevicePixels = canvasContext.props.useDevicePixels;
     this.animationProps = {
       animationLoop: this,
@@ -34237,12 +34318,13 @@ var _AnimationLoop = class _AnimationLoop {
     }
   }
   _getSizeAndAspect() {
+    var _a2, _b;
     if (!this.device) {
       return { width: 1, height: 1, aspect: 1 };
     }
-    const [width, height] = this.device?.getDefaultCanvasContext().getDevicePixelSize() || [1, 1];
+    const [width, height] = ((_a2 = this.device) == null ? void 0 : _a2.getDefaultCanvasContext().getDevicePixelSize()) || [1, 1];
     let aspect = 1;
-    const canvas2 = this.device?.getDefaultCanvasContext().canvas;
+    const canvas2 = (_b = this.device) == null ? void 0 : _b.getDefaultCanvasContext().canvas;
     if (canvas2 && canvas2.clientHeight) {
       aspect = canvas2.clientWidth / canvas2.clientHeight;
     } else if (width > 0 && height > 0) {
@@ -34341,7 +34423,8 @@ var GPUGeometry = class {
     }
   }
   destroy() {
-    this.indices?.destroy();
+    var _a2;
+    (_a2 = this.indices) == null ? void 0 : _a2.destroy();
     for (const attribute of Object.values(this.attributes)) {
       attribute.destroy();
     }
@@ -34443,13 +34526,14 @@ var _PipelineFactory = class _PipelineFactory {
   }
   /** Return a RenderPipeline matching supplied props. Reuses an equivalent pipeline if already created. */
   createRenderPipeline(props) {
+    var _a2;
     if (!this.cachingEnabled) {
       return this.device.createRenderPipeline(props);
     }
     const allProps = { ...RenderPipeline.defaultProps, ...props };
     const cache3 = this._renderPipelineCache;
     const hash = this._hashRenderPipeline(allProps);
-    let pipeline = cache3[hash]?.pipeline;
+    let pipeline = (_a2 = cache3[hash]) == null ? void 0 : _a2.pipeline;
     if (!pipeline) {
       pipeline = this.device.createRenderPipeline({
         ...allProps,
@@ -34470,13 +34554,14 @@ var _PipelineFactory = class _PipelineFactory {
   }
   /** Return a ComputePipeline matching supplied props. Reuses an equivalent pipeline if already created. */
   createComputePipeline(props) {
+    var _a2;
     if (!this.cachingEnabled) {
       return this.device.createComputePipeline(props);
     }
     const allProps = { ...ComputePipeline.defaultProps, ...props };
     const cache3 = this._computePipelineCache;
     const hash = this._hashComputePipeline(allProps);
-    let pipeline = cache3[hash]?.pipeline;
+    let pipeline = (_a2 = cache3[hash]) == null ? void 0 : _a2.pipeline;
     if (!pipeline) {
       pipeline = this.device.createComputePipeline({
         ...allProps,
@@ -34594,8 +34679,8 @@ var _ShaderFactory = class _ShaderFactory {
   }
   /** Returns the default ShaderFactory for the given {@link Device}, creating one if necessary. */
   static getDefaultShaderFactory(device) {
-    var _a;
-    (_a = device._lumaData)["defaultShaderFactory"] || (_a["defaultShaderFactory"] = new _ShaderFactory(device));
+    var _a2;
+    (_a2 = device._lumaData)["defaultShaderFactory"] || (_a2["defaultShaderFactory"] = new _ShaderFactory(device));
     return device._lumaData["defaultShaderFactory"];
   }
   get [Symbol.toStringTag]() {
@@ -34663,9 +34748,10 @@ var ShaderFactory = _ShaderFactory;
 
 // ../../node_modules/.pnpm/@luma.gl+engine@9.2.2_@luma.gl+core@9.2.2_@luma.gl+shadertools@9.2.2/node_modules/@luma.gl/engine/dist/debug/debug-shader-layout.js
 function getDebugTableForShaderLayout(layout, name2) {
+  var _a2;
   const table = {};
   const header = "Values";
-  if (layout.attributes.length === 0 && !layout.varyings?.length) {
+  if (layout.attributes.length === 0 && !((_a2 = layout.varyings) == null ? void 0 : _a2.length)) {
     return { "No attributes or varyings": { [header]: "N/A" } };
   }
   for (const attributeDeclaration of layout.attributes) {
@@ -34705,7 +34791,7 @@ function debugFramebuffer(fbo, { id, minimap, opaque, top = "0", left = "0", rgb
     canvas.style.height = "400px";
   }
   const color = fbo.device.readPixelsToArrayWebGL(fbo);
-  const imageData = ctx?.createImageData(fbo.width, fbo.height);
+  const imageData = ctx == null ? void 0 : ctx.createImageData(fbo.width, fbo.height);
   if (imageData) {
     const offset = 0;
     for (let i2 = 0; i2 < color.length; i2 += 4) {
@@ -34714,7 +34800,7 @@ function debugFramebuffer(fbo, { id, minimap, opaque, top = "0", left = "0", rgb
       imageData.data[offset + i2 + 2] = color[i2 + 2] * rgbaScale;
       imageData.data[offset + i2 + 3] = opaque ? 255 : color[i2 + 3] * rgbaScale;
     }
-    ctx?.putImageData(imageData, 0, 0);
+    ctx == null ? void 0 : ctx.putImageData(imageData, 0, 0);
   }
 }
 
@@ -34771,7 +34857,8 @@ var BufferLayoutHelper = class {
   }
   /** Get attribute names from a BufferLayout */
   getAttributeNamesForBuffer(bufferLayout) {
-    return bufferLayout.attributes ? bufferLayout.attributes?.map((layout) => layout.attribute) : [bufferLayout.name];
+    var _a2;
+    return bufferLayout.attributes ? (_a2 = bufferLayout.attributes) == null ? void 0 : _a2.map((layout) => layout.attribute) : [bufferLayout.name];
   }
   mergeBufferLayouts(bufferLayouts1, bufferLayouts2) {
     const mergedLayouts = [...bufferLayouts1];
@@ -34865,7 +34952,7 @@ var ShaderInputs = class {
     /** Stores the uniform bindings for each module  */
     __publicField(this, "moduleBindings");
     Object.assign(this.options, options);
-    const resolvedModules = getShaderModuleDependencies(Object.values(modules).filter((module2) => module2.dependencies));
+    const resolvedModules = getShaderModuleDependencies(Object.values(modules).filter((module) => module.dependencies));
     for (const resolvedModule of resolvedModules) {
       modules[resolvedModule.name] = resolvedModule;
     }
@@ -34873,10 +34960,10 @@ var ShaderInputs = class {
     this.modules = modules;
     this.moduleUniforms = {};
     this.moduleBindings = {};
-    for (const [name2, module2] of Object.entries(modules)) {
-      this._addModule(module2);
-      if (module2.name && name2 !== module2.name && !this.options.disableWarnings) {
-        log2.warn(`Module name: ${name2} vs ${module2.name}`)();
+    for (const [name2, module] of Object.entries(modules)) {
+      this._addModule(module);
+      if (module.name && name2 !== module.name && !this.options.disableWarnings) {
+        log2.warn(`Module name: ${name2} vs ${module.name}`)();
       }
     }
   }
@@ -34887,11 +34974,12 @@ var ShaderInputs = class {
    * Set module props
    */
   setProps(props) {
+    var _a2;
     for (const name2 of Object.keys(props)) {
       const moduleName = name2;
       const moduleProps = props[moduleName] || {};
-      const module2 = this.modules[moduleName];
-      if (!module2) {
+      const module = this.modules[moduleName];
+      if (!module) {
         if (!this.options.disableWarnings) {
           log2.warn(`Module ${name2} not found`)();
         }
@@ -34899,7 +34987,7 @@ var ShaderInputs = class {
       }
       const oldUniforms = this.moduleUniforms[moduleName];
       const oldBindings = this.moduleBindings[moduleName];
-      const uniformsAndBindings = module2.getUniforms?.(moduleProps, oldUniforms) || moduleProps;
+      const uniformsAndBindings = ((_a2 = module.getUniforms) == null ? void 0 : _a2.call(module, moduleProps, oldUniforms)) || moduleProps;
       const { uniforms, bindings } = splitUniformsAndBindings(uniformsAndBindings);
       this.moduleUniforms[moduleName] = { ...oldUniforms, ...uniforms };
       this.moduleBindings[moduleName] = { ...oldBindings, ...bindings };
@@ -34927,20 +35015,21 @@ var ShaderInputs = class {
   // INTERNAL
   /** Return a debug table that can be used for console.table() or log.table() */
   getDebugTable() {
+    var _a2;
     const table = {};
-    for (const [moduleName, module2] of Object.entries(this.moduleUniforms)) {
-      for (const [key, value] of Object.entries(module2)) {
+    for (const [moduleName, module] of Object.entries(this.moduleUniforms)) {
+      for (const [key, value] of Object.entries(module)) {
         table[`${moduleName}.${key}`] = {
-          type: this.modules[moduleName].uniformTypes?.[key],
+          type: (_a2 = this.modules[moduleName].uniformTypes) == null ? void 0 : _a2[key],
           value: String(value)
         };
       }
     }
     return table;
   }
-  _addModule(module2) {
-    const moduleName = module2.name;
-    this.moduleUniforms[moduleName] = module2.defaultUniforms || {};
+  _addModule(module) {
+    const moduleName = module.name;
+    this.moduleUniforms[moduleName] = module.defaultUniforms || {};
     this.moduleBindings[moduleName] = {};
   }
 };
@@ -34952,7 +35041,7 @@ init_dist4();
 var pathPrefix2 = "";
 async function loadImageBitmap(url, opts) {
   const image = new Image();
-  image.crossOrigin = opts?.crossOrigin || "anonymous";
+  image.crossOrigin = (opts == null ? void 0 : opts.crossOrigin) || "anonymous";
   image.src = url.startsWith("http") ? url : pathPrefix2 + url;
   await image.decode();
   return opts ? await createImageBitmap(image, opts) : await createImageBitmap(image);
@@ -34985,7 +35074,7 @@ var _AsyncTexture = class _AsyncTexture {
     this.props = { ..._AsyncTexture.defaultProps, id, ...props };
     this.id = this.props.id;
     props = { ...props };
-    if (typeof props?.data === "string" && props.dimension === "2d") {
+    if (typeof (props == null ? void 0 : props.data) === "string" && props.dimension === "2d") {
       props.data = loadImageBitmap(props.data);
     }
     if (props.mipmaps) {
@@ -35087,7 +35176,7 @@ var _AsyncTexture = class _AsyncTexture {
   }
   /** Check if texture data is a typed array */
   isTextureLevelData(data) {
-    const typedArray = data?.data;
+    const typedArray = data == null ? void 0 : data.data;
     return ArrayBuffer.isView(typedArray);
   }
   /** Get the size of the texture described by the provided TextureData */
@@ -35160,7 +35249,8 @@ var _AsyncTexture = class _AsyncTexture {
    * @param data
    */
   _setTexture3DData(texture, data) {
-    if (this.texture?.props.dimension !== "3d") {
+    var _a2;
+    if (((_a2 = this.texture) == null ? void 0 : _a2.props.dimension) !== "3d") {
       throw new Error(this.id);
     }
     for (let depth = 0; depth < data.length; depth++) {
@@ -35174,7 +35264,8 @@ var _AsyncTexture = class _AsyncTexture {
    * @param index
    */
   _setTextureCubeData(texture, data) {
-    if (this.texture?.props.dimension !== "cube") {
+    var _a2;
+    if (((_a2 = this.texture) == null ? void 0 : _a2.props.dimension) !== "cube") {
       throw new Error(this.id);
     }
     for (const [face, faceData] of Object.entries(data)) {
@@ -35187,7 +35278,8 @@ var _AsyncTexture = class _AsyncTexture {
    * @param data
    */
   _setTextureArrayData(texture, data) {
-    if (this.texture?.props.dimension !== "2d-array") {
+    var _a2;
+    if (((_a2 = this.texture) == null ? void 0 : _a2.props.dimension) !== "2d-array") {
       throw new Error(this.id);
     }
     for (let depth = 0; depth < data.length; depth++) {
@@ -35325,19 +35417,19 @@ var _Model = class _Model {
     __publicField(this, "_lastLogTime", 0);
     __publicField(this, "_logOpen", false);
     __publicField(this, "_drawCount", 0);
-    var _a;
+    var _a2, _b, _c, _d;
     this.props = { ..._Model.defaultProps, ...props };
     props = this.props;
     this.id = props.id || uid2("model");
     this.device = device;
     Object.assign(this.userData, props.userData);
-    const moduleMap = Object.fromEntries(this.props.modules?.map((module2) => [module2.name, module2]) || []);
+    const moduleMap = Object.fromEntries(((_a2 = this.props.modules) == null ? void 0 : _a2.map((module) => [module.name, module])) || []);
     const shaderInputs = props.shaderInputs || new ShaderInputs(moduleMap, { disableWarnings: this.props.disableWarnings });
     this.setShaderInputs(shaderInputs);
     const platformInfo = getPlatformInfo(device);
     const modules = (
       // @ts-ignore shaderInputs is assigned in setShaderInputs above.
-      (this.props.modules?.length > 0 ? this.props.modules : this.shaderInputs?.getModules()) || []
+      (((_b = this.props.modules) == null ? void 0 : _b.length) > 0 ? this.props.modules : (_c = this.shaderInputs) == null ? void 0 : _c.getModules()) || []
     );
     const isWebGPU = this.device.type === "webgpu";
     if (isWebGPU && this.props.source) {
@@ -35348,7 +35440,7 @@ var _Model = class _Model {
       });
       this.source = source3;
       this._getModuleUniforms = getUniforms4;
-      (_a = this.props).shaderLayout || (_a.shaderLayout = getShaderLayoutFromWGSL(this.source));
+      (_d = this.props).shaderLayout || (_d.shaderLayout = getShaderLayoutFromWGSL(this.source));
     } else {
       const { vs: vs7, fs: fs5, getUniforms: getUniforms4 } = this.props.shaderAssembler.assembleGLSLShaderPair({
         platformInfo,
@@ -35410,6 +35502,7 @@ var _Model = class _Model {
     return `Model(${this.id})`;
   }
   destroy() {
+    var _a2;
     if (!this._destroyed) {
       this.pipelineFactory.release(this.pipeline);
       this.shaderFactory.release(this.pipeline.vs);
@@ -35417,7 +35510,7 @@ var _Model = class _Model {
         this.shaderFactory.release(this.pipeline.fs);
       }
       this._uniformStore.destroy();
-      this._gpuGeometry?.destroy();
+      (_a2 = this._gpuGeometry) == null ? void 0 : _a2.destroy();
       this._destroyed = true;
     }
   }
@@ -35496,7 +35589,8 @@ var _Model = class _Model {
    * @note Can trigger a pipeline rebuild / pipeline cache fetch on WebGPU
    */
   setGeometry(geometry) {
-    this._gpuGeometry?.destroy();
+    var _a2;
+    (_a2 = this._gpuGeometry) == null ? void 0 : _a2.destroy();
     const gpuGeometry = geometry && makeGPUGeometry(this.device, geometry);
     if (gpuGeometry) {
       this.setTopology(gpuGeometry.topology || "triangle-list");
@@ -35570,8 +35664,8 @@ var _Model = class _Model {
   setShaderInputs(shaderInputs) {
     this.shaderInputs = shaderInputs;
     this._uniformStore = new UniformStore(this.shaderInputs.modules);
-    for (const [moduleName, module2] of Object.entries(this.shaderInputs.modules)) {
-      if (shaderModuleHasUniforms(module2)) {
+    for (const [moduleName, module] of Object.entries(this.shaderInputs.modules)) {
+      if (shaderModuleHasUniforms(module)) {
         const uniformBuffer = this._uniformStore.getManagedUniformBuffer(this.device, moduleName);
         this.bindings[`${moduleName}Uniforms`] = uniformBuffer;
       }
@@ -35611,7 +35705,8 @@ var _Model = class _Model {
    * @note Overrides any attributes previously set with the same name
    */
   setAttributes(buffers, options) {
-    const disableWarnings = options?.disableWarnings ?? this.props.disableWarnings;
+    var _a2;
+    const disableWarnings = (_a2 = options == null ? void 0 : options.disableWarnings) != null ? _a2 : this.props.disableWarnings;
     if (buffers["indices"]) {
       log2.warn(`Model:${this.id} setAttributes() - indexBuffer should be set using setIndexBuffer()`)();
     }
@@ -35650,11 +35745,12 @@ var _Model = class _Model {
    * @param constantAttributes
    */
   setConstantAttributes(attributes, options) {
+    var _a2;
     for (const [attributeName, value] of Object.entries(attributes)) {
       const attributeInfo = this._attributeInfos[attributeName];
       if (attributeInfo) {
         this.vertexArray.setConstantWebGL(attributeInfo.location, value);
-      } else if (!(options?.disableWarnings ?? this.props.disableWarnings)) {
+      } else if (!((_a2 = options == null ? void 0 : options.disableWarnings) != null ? _a2 : this.props.disableWarnings)) {
         log2.warn(`Model "${this.id}: Ignoring constant supplied for unknown attribute "${attributeName}"`)();
       }
     }
@@ -35861,8 +35957,8 @@ __publicField(_Model, "defaultProps", {
   disableWarnings: void 0
 });
 var Model = _Model;
-function shaderModuleHasUniforms(module2) {
-  return Boolean(module2.uniformTypes && !isObjectEmpty(module2.uniformTypes));
+function shaderModuleHasUniforms(module) {
+  return Boolean(module.uniformTypes && !isObjectEmpty(module.uniformTypes));
 }
 function getPlatformInfo(device) {
   return {
@@ -35908,7 +36004,8 @@ var _BufferTransform = class _BufferTransform {
     Object.seal(this);
   }
   static isSupported(device) {
-    return device?.info?.type === "webgl";
+    var _a2;
+    return ((_a2 = device == null ? void 0 : device.info) == null ? void 0 : _a2.type) === "webgl";
   }
   /** Destroy owned resources. */
   destroy() {
@@ -35922,10 +36019,10 @@ var _BufferTransform = class _BufferTransform {
   }
   /** Run one transform loop. */
   run(options) {
-    if (options?.inputBuffers) {
+    if (options == null ? void 0 : options.inputBuffers) {
       this.model.setAttributes(options.inputBuffers);
     }
-    if (options?.outputBuffers) {
+    if (options == null ? void 0 : options.outputBuffers) {
       this.transformFeedback.setBuffers(options.outputBuffers);
     }
     const renderPass = this.device.beginRenderPass(options);
@@ -36075,7 +36172,7 @@ var PickLayersPass = class extends LayersPass {
       viewports,
       onViewportActive,
       cullRect,
-      effects: effects?.filter((e2) => e2.useInPicking),
+      effects: effects == null ? void 0 : effects.filter((e2) => e2.useInPicking),
       pass,
       isPicking: true,
       shaderModuleProps,
@@ -36270,11 +36367,12 @@ var Resource2 = class {
 // ../../node_modules/.pnpm/@deck.gl+core@9.2.2/node_modules/@deck.gl/core/dist/lib/resource/resource-manager.js
 var ResourceManager = class {
   constructor(props) {
+    var _a2;
     this.protocol = props.protocol || "resource://";
     this._context = {
       device: props.device,
       // @ts-expect-error
-      gl: props.device?.gl,
+      gl: (_a2 = props.device) == null ? void 0 : _a2.gl,
       resourceManager: this
     };
     this._resources = {};
@@ -36388,6 +36486,7 @@ var LayerManager = class {
    */
   // eslint-disable-next-line
   constructor(device, props) {
+    var _a2;
     this._lastRenderedLayers = [];
     this._needsRedraw = false;
     this._needsUpdate = false;
@@ -36409,9 +36508,9 @@ var LayerManager = class {
       layerManager: this,
       device,
       // @ts-expect-error
-      gl: device?.gl,
+      gl: device == null ? void 0 : device.gl,
       deck,
-      shaderAssembler: getShaderAssembler(device?.info?.shadingLanguage || "glsl"),
+      shaderAssembler: getShaderAssembler(((_a2 = device == null ? void 0 : device.info) == null ? void 0 : _a2.shadingLanguage) || "glsl"),
       defaultShaderModules: [layerUniforms],
       renderPass: void 0,
       stats: stats || new Stats({ id: "deck.gl" }),
@@ -36501,17 +36600,17 @@ var LayerManager = class {
     this._nextLayers = null;
   }
   /** Register a default shader module */
-  addDefaultShaderModule(module2) {
+  addDefaultShaderModule(module) {
     const { defaultShaderModules } = this.context;
-    if (!defaultShaderModules.find((m2) => m2.name === module2.name)) {
-      defaultShaderModules.push(module2);
+    if (!defaultShaderModules.find((m2) => m2.name === module.name)) {
+      defaultShaderModules.push(module);
       this._defaultShaderModulesChanged = true;
     }
   }
   /** Deregister a default shader module */
-  removeDefaultShaderModule(module2) {
+  removeDefaultShaderModule(module) {
     const { defaultShaderModules } = this.context;
-    const i2 = defaultShaderModules.findIndex((m2) => m2.name === module2.name);
+    const i2 = defaultShaderModules.findIndex((m2) => m2.name === module.name);
     if (i2 >= 0) {
       defaultShaderModules.splice(i2, 1);
       this._defaultShaderModulesChanged = true;
@@ -36855,11 +36954,14 @@ var ViewManager = class {
       // Set an internal callback that calls the prop callback if provided
       onViewStateChange: this._eventCallbacks.onViewStateChange,
       onStateChange: this._eventCallbacks.onInteractionStateChange,
-      makeViewport: (viewState) => this.getView(view.id)?.makeViewport({
-        viewState,
-        width: this.width,
-        height: this.height
-      })
+      makeViewport: (viewState) => {
+        var _a2;
+        return (_a2 = this.getView(view.id)) == null ? void 0 : _a2.makeViewport({
+          viewState,
+          width: this.width,
+          height: this.height
+        });
+      }
     });
     return controller;
   }
@@ -37009,7 +37111,7 @@ var View = class {
     if (typeof viewState === "string") {
       return viewState;
     }
-    return viewState?.id || this.id;
+    return (viewState == null ? void 0 : viewState.id) || this.id;
   }
   // Allows view to override (or completely define) viewState
   filterViewState(viewState) {
@@ -37084,28 +37186,31 @@ var Transition = class {
    * @params props {object} - optional overriding props. see constructor
    */
   start(settings) {
+    var _a2, _b;
     this.cancel();
     this.settings = settings;
     this._inProgress = true;
-    this.settings.onStart?.(this);
+    (_b = (_a2 = this.settings).onStart) == null ? void 0 : _b.call(_a2, this);
   }
   /**
    * end this transition if it is in progress.
    */
   end() {
+    var _a2, _b;
     if (this._inProgress) {
       this._timeline.removeChannel(this._handle);
       this._handle = null;
       this._inProgress = false;
-      this.settings.onEnd?.(this);
+      (_b = (_a2 = this.settings).onEnd) == null ? void 0 : _b.call(_a2, this);
     }
   }
   /**
    * cancel this transition if it is in progress.
    */
   cancel() {
+    var _a2, _b;
     if (this._inProgress) {
-      this.settings.onInterrupt?.(this);
+      (_b = (_a2 = this.settings).onInterrupt) == null ? void 0 : _b.call(_a2, this);
       this._timeline.removeChannel(this._handle);
       this._handle = null;
       this._inProgress = false;
@@ -37115,6 +37220,7 @@ var Transition = class {
    * update this transition. Returns `true` if updated.
    */
   update() {
+    var _a2, _b;
     if (!this._inProgress) {
       return false;
     }
@@ -37127,7 +37233,7 @@ var Transition = class {
     }
     this.time = this._timeline.getTime(this._handle);
     this._onUpdate();
-    this.settings.onUpdate?.(this);
+    (_b = (_a2 = this.settings).onUpdate) == null ? void 0 : _b.call(_a2, this);
     if (this._timeline.isFinished(this._handle)) {
       this.end();
     }
@@ -37261,7 +37367,7 @@ var TransitionManager = class {
         isPanning: false,
         isRotating: false
       });
-      callback?.(transition);
+      callback == null ? void 0 : callback(transition);
     };
   }
 };
@@ -37457,9 +37563,10 @@ var Controller = class {
     }
   }
   finalize() {
+    var _a2;
     for (const eventName in this._events) {
       if (this._events[eventName]) {
-        this.eventManager?.off(eventName, this.handleEvent);
+        (_a2 = this.eventManager) == null ? void 0 : _a2.off(eventName, this.handleEvent);
       }
     }
     this.transitionManager.finalize();
@@ -38353,8 +38460,9 @@ var map_view_default = MapView;
 // ../../node_modules/.pnpm/@deck.gl+core@9.2.2/node_modules/@deck.gl/core/dist/lib/effect-manager.js
 var DEFAULT_LIGHTING_EFFECT = new LightingEffect();
 function compareEffects(e1, e2) {
-  const o1 = e1.order ?? Infinity;
-  const o2 = e2.order ?? Infinity;
+  var _a2, _b;
+  const o1 = (_a2 = e1.order) != null ? _a2 : Infinity;
+  const o2 = (_b = e2.order) != null ? _b : Infinity;
   return o1 - o2;
 }
 var EffectManager = class {
@@ -38643,7 +38751,7 @@ function getUniqueObjects({ pickedColors, decodePickingColor }) {
 function getEmptyPickingInfo({ pickInfo, viewports, pixelRatio, x: x2, y: y2, z: z2 }) {
   let pickedViewport = viewports[0];
   if (viewports.length > 1) {
-    pickedViewport = getViewportFromCoordinates(pickInfo?.pickedViewports || viewports, { x: x2, y: y2 });
+    pickedViewport = getViewportFromCoordinates((pickInfo == null ? void 0 : pickInfo.pickedViewports) || viewports, { x: x2, y: y2 });
   }
   let coordinate;
   if (pickedViewport) {
@@ -38806,6 +38914,7 @@ var DeckPicker = class {
   // Private
   /** Ensures that picking framebuffer exists and matches the canvas size */
   _resizeBuffer() {
+    var _a2, _b;
     if (!this.pickingFBO) {
       this.pickingFBO = this.device.createFramebuffer({
         colorAttachments: ["rgba8unorm"],
@@ -38820,8 +38929,8 @@ var DeckPicker = class {
       }
     }
     const { canvas: canvas2 } = this.device.getDefaultCanvasContext();
-    this.pickingFBO?.resize({ width: canvas2.width, height: canvas2.height });
-    this.depthFBO?.resize({ width: canvas2.width, height: canvas2.height });
+    (_a2 = this.pickingFBO) == null ? void 0 : _a2.resize({ width: canvas2.width, height: canvas2.height });
+    (_b = this.depthFBO) == null ? void 0 : _b.resize({ width: canvas2.width, height: canvas2.height });
   }
   /** Preliminary filtering of the layers list. Skid picking pass if no layer is pickable. */
   _getPickable(layers) {
@@ -39063,6 +39172,7 @@ var DeckPicker = class {
    */
   // eslint-disable-next-line max-statements
   async _pickVisibleObjectsAsync({ layers, views, viewports, x: x2, y: y2, width = 1, height = 1, mode = "query", maxObjects = null, onViewportActive, effects }) {
+    var _a2;
     const pickableLayers = this._getPickable(layers);
     if (!pickableLayers || viewports.length === 0) {
       return [];
@@ -39116,7 +39226,7 @@ var DeckPicker = class {
         uniquePickedObjects.set(pickedLayerId, /* @__PURE__ */ new Set());
       }
       const uniqueObjectsInLayer = uniquePickedObjects.get(pickedLayerId);
-      const pickedObjectKey = info.object ?? info.index;
+      const pickedObjectKey = (_a2 = info.object) != null ? _a2 : info.index;
       if (!uniqueObjectsInLayer.has(pickedObjectKey)) {
         uniqueObjectsInLayer.add(pickedObjectKey);
         uniqueInfos.push(info);
@@ -39130,6 +39240,7 @@ var DeckPicker = class {
    */
   // eslint-disable-next-line max-statements
   _pickVisibleObjects({ layers, views, viewports, x: x2, y: y2, width = 1, height = 1, mode = "query", maxObjects = null, onViewportActive, effects }) {
+    var _a2;
     const pickableLayers = this._getPickable(layers);
     if (!pickableLayers || viewports.length === 0) {
       return [];
@@ -39183,7 +39294,7 @@ var DeckPicker = class {
         uniquePickedObjects.set(pickedLayerId, /* @__PURE__ */ new Set());
       }
       const uniqueObjectsInLayer = uniquePickedObjects.get(pickedLayerId);
-      const pickedObjectKey = info.object ?? info.index;
+      const pickedObjectKey = (_a2 = info.object) != null ? _a2 : info.index;
       if (!uniqueObjectsInLayer.has(pickedObjectKey)) {
         uniqueObjectsInLayer.add(pickedObjectKey);
         uniqueInfos.push(info);
@@ -39295,7 +39406,7 @@ var WidgetManager = class {
     this.containers = {};
     this.lastViewports = {};
     this.deck = deck;
-    parentElement?.classList.add("deck-widget-container");
+    parentElement == null ? void 0 : parentElement.classList.add("deck-widget-container");
     this.parentElement = parentElement;
   }
   getWidgets() {
@@ -39327,6 +39438,7 @@ var WidgetManager = class {
     }
   }
   onRedraw({ viewports, layers }) {
+    var _a2, _b;
     const viewportsById = viewports.reduce((acc, v2) => {
       acc[v2.id] = v2;
       return acc;
@@ -39339,7 +39451,7 @@ var WidgetManager = class {
           if (widget.onViewportChange) {
             widget.onViewportChange(viewport);
           }
-          widget.onRedraw?.({ viewports: [viewport], layers });
+          (_a2 = widget.onRedraw) == null ? void 0 : _a2.call(widget, { viewports: [viewport], layers });
         }
       } else {
         if (widget.onViewportChange) {
@@ -39347,29 +39459,31 @@ var WidgetManager = class {
             widget.onViewportChange(viewport);
           }
         }
-        widget.onRedraw?.({ viewports, layers });
+        (_b = widget.onRedraw) == null ? void 0 : _b.call(widget, { viewports, layers });
       }
     }
     this.lastViewports = viewportsById;
     this._updateContainers();
   }
   onHover(info, event) {
+    var _a2, _b;
     for (const widget of this.getWidgets()) {
       const { viewId } = widget;
-      if (!viewId || viewId === info.viewport?.id) {
-        widget.onHover?.(info, event);
+      if (!viewId || viewId === ((_a2 = info.viewport) == null ? void 0 : _a2.id)) {
+        (_b = widget.onHover) == null ? void 0 : _b.call(widget, info, event);
       }
     }
   }
   onEvent(info, event) {
+    var _a2, _b;
     const eventHandlerProp = EVENT_HANDLERS[event.type];
     if (!eventHandlerProp) {
       return;
     }
     for (const widget of this.getWidgets()) {
       const { viewId } = widget;
-      if (!viewId || viewId === info.viewport?.id) {
-        widget[eventHandlerProp]?.(info, event);
+      if (!viewId || viewId === ((_a2 = info.viewport) == null ? void 0 : _a2.id)) {
+        (_b = widget[eventHandlerProp]) == null ? void 0 : _b.call(widget, info, event);
       }
     }
   }
@@ -39427,7 +39541,8 @@ var WidgetManager = class {
   }
   /** Destroy an old widget */
   _removeWidget(widget) {
-    widget.onRemove?.();
+    var _a2;
+    (_a2 = widget.onRemove) == null ? void 0 : _a2.call(widget);
     if (widget.rootElement) {
       widget.rootElement.remove();
     }
@@ -39437,6 +39552,7 @@ var WidgetManager = class {
   }
   /** Get a container element based on view and placement */
   _getContainer(viewId, placement) {
+    var _a2;
     const containerId = viewId || ROOT_CONTAINER_ID;
     let viewContainer = this.containers[containerId];
     if (!viewContainer) {
@@ -39444,7 +39560,7 @@ var WidgetManager = class {
       viewContainer.style.pointerEvents = "none";
       viewContainer.style.position = "absolute";
       viewContainer.style.overflow = "hidden";
-      this.parentElement?.append(viewContainer);
+      (_a2 = this.parentElement) == null ? void 0 : _a2.append(viewContainer);
       this.containers[containerId] = viewContainer;
     }
     let container = viewContainer.querySelector(`.${placement}`);
@@ -39557,7 +39673,8 @@ var Widget = class {
   }
   /** Internal API called by Deck when the widget is first added to a Deck instance */
   _onAdd(params) {
-    return this.onAdd(params) ?? this.onCreateRootElement();
+    var _a2;
+    return (_a2 = this.onAdd(params)) != null ? _a2 : this.onCreateRootElement();
   }
   /** Overridable by subclass - called when the widget is first added to a Deck instance
    * @returns an optional UI element that should be appended to the Deck container
@@ -39627,7 +39744,8 @@ var TooltipWidget = class extends Widget {
   onRenderHTML(rootElement) {
   }
   onViewportChange(viewport) {
-    if (this.isVisible && viewport.id === this.lastViewport?.id && viewport !== this.lastViewport) {
+    var _a2;
+    if (this.isVisible && viewport.id === ((_a2 = this.lastViewport) == null ? void 0 : _a2.id) && viewport !== this.lastViewport) {
       this.setTooltip(null);
     }
   }
@@ -39821,12 +39939,13 @@ var Deck = class {
         handled = layerHandler.call(layer, info, event);
       }
       if (!handled) {
-        rootHandler?.(info, event);
+        rootHandler == null ? void 0 : rootHandler(info, event);
         this.widgetManager.onEvent(info, event);
       }
     };
     this._onPointerDown = (event) => {
-      if (this.device?.type === "webgpu") {
+      var _a2;
+      if (((_a2 = this.device) == null ? void 0 : _a2.type) === "webgpu") {
         return;
       }
       const pos = event.offsetCenter;
@@ -39865,31 +39984,33 @@ var Deck = class {
   }
   /** Stop rendering and dispose all resources */
   finalize() {
-    this.animationLoop?.stop();
-    this.animationLoop?.destroy();
+    var _a2, _b, _c, _d, _e2, _f, _g, _h, _i, _j;
+    (_a2 = this.animationLoop) == null ? void 0 : _a2.stop();
+    (_b = this.animationLoop) == null ? void 0 : _b.destroy();
     this.animationLoop = null;
     this._lastPointerDownInfo = null;
-    this.layerManager?.finalize();
+    (_c = this.layerManager) == null ? void 0 : _c.finalize();
     this.layerManager = null;
-    this.viewManager?.finalize();
+    (_d = this.viewManager) == null ? void 0 : _d.finalize();
     this.viewManager = null;
-    this.effectManager?.finalize();
+    (_e2 = this.effectManager) == null ? void 0 : _e2.finalize();
     this.effectManager = null;
-    this.deckRenderer?.finalize();
+    (_f = this.deckRenderer) == null ? void 0 : _f.finalize();
     this.deckRenderer = null;
-    this.deckPicker?.finalize();
+    (_g = this.deckPicker) == null ? void 0 : _g.finalize();
     this.deckPicker = null;
-    this.eventManager?.destroy();
+    (_h = this.eventManager) == null ? void 0 : _h.destroy();
     this.eventManager = null;
-    this.widgetManager?.finalize();
+    (_i = this.widgetManager) == null ? void 0 : _i.finalize();
     this.widgetManager = null;
     if (!this.props.canvas && !this.props.device && !this.props.gl && this.canvas) {
-      this.canvas.parentElement?.removeChild(this.canvas);
+      (_j = this.canvas.parentElement) == null ? void 0 : _j.removeChild(this.canvas);
       this.canvas = null;
     }
   }
   /** Partially update props */
   setProps(props) {
+    var _a2, _b, _c, _d, _e2, _f, _g, _h;
     this.stats.get("setProps Time").timeStart();
     if ("onLayerHover" in props) {
       log_default.removed("onLayerHover", "onHover")();
@@ -39910,19 +40031,19 @@ var Deck = class {
       height: this.height,
       viewState: this._getViewState()
     });
-    if (props.device && props.device.id !== this.device?.id) {
-      this.animationLoop?.stop();
-      if (this.canvas !== props.device.canvasContext?.canvas) {
-        this.canvas?.remove();
-        this.eventManager?.destroy();
+    if (props.device && props.device.id !== ((_a2 = this.device) == null ? void 0 : _a2.id)) {
+      (_b = this.animationLoop) == null ? void 0 : _b.stop();
+      if (this.canvas !== ((_c = props.device.canvasContext) == null ? void 0 : _c.canvas)) {
+        (_d = this.canvas) == null ? void 0 : _d.remove();
+        (_e2 = this.eventManager) == null ? void 0 : _e2.destroy();
         this.canvas = null;
       }
       log_default.log(`recreating animation loop for new device! id=${props.device.id}`)();
       this.animationLoop = this._createAnimationLoop(props.device, props);
       this.animationLoop.start();
     }
-    this.animationLoop?.setProps(resolvedProps);
-    if (props.useDevicePixels !== void 0 && this.device?.canvasContext?.canvas instanceof HTMLCanvasElement) {
+    (_f = this.animationLoop) == null ? void 0 : _f.setProps(resolvedProps);
+    if (props.useDevicePixels !== void 0 && ((_h = (_g = this.device) == null ? void 0 : _g.canvasContext) == null ? void 0 : _h.canvas) instanceof HTMLCanvasElement) {
       this.device.canvasContext.props.useDevicePixels = props.useDevicePixels;
       const canvas2 = this.device.canvasContext.canvas;
       const entry = {
@@ -40046,11 +40167,12 @@ var Deck = class {
   _addDefaultEffect(effect) {
     this.effectManager.addDefaultEffect(effect);
   }
-  _addDefaultShaderModule(module2) {
-    this.layerManager.addDefaultShaderModule(module2);
+  _addDefaultShaderModule(module) {
+    this.layerManager.addDefaultShaderModule(module);
   }
-  _removeDefaultShaderModule(module2) {
-    this.layerManager?.removeDefaultShaderModule(module2);
+  _removeDefaultShaderModule(module) {
+    var _a2;
+    (_a2 = this.layerManager) == null ? void 0 : _a2.removeDefaultShaderModule(module);
   }
   _pick(method, statKey, opts) {
     assert7(this.deckPicker);
@@ -40093,6 +40215,7 @@ var Deck = class {
   }
   /** Updates canvas width and/or height, if provided as props */
   _setCanvasSize(props) {
+    var _a2;
     if (!this.canvas) {
       return;
     }
@@ -40103,23 +40226,24 @@ var Deck = class {
     }
     if (height || height === 0) {
       const cssHeight = Number.isFinite(height) ? `${height}px` : height;
-      this.canvas.style.position = props.style?.position || "absolute";
+      this.canvas.style.position = ((_a2 = props.style) == null ? void 0 : _a2.position) || "absolute";
       this.canvas.style.height = cssHeight;
     }
   }
   /** If canvas size has changed, reads out the new size and update */
   _updateCanvasSize() {
+    var _a2, _b, _c, _d;
     const { canvas: canvas2 } = this;
     if (!canvas2) {
       return;
     }
-    const newWidth = canvas2.clientWidth ?? canvas2.width;
-    const newHeight = canvas2.clientHeight ?? canvas2.height;
+    const newWidth = (_a2 = canvas2.clientWidth) != null ? _a2 : canvas2.width;
+    const newHeight = (_b = canvas2.clientHeight) != null ? _b : canvas2.height;
     if (newWidth !== this.width || newHeight !== this.height) {
       this.width = newWidth;
       this.height = newHeight;
-      this.viewManager?.setProps({ width: newWidth, height: newHeight });
-      this.layerManager?.activateViewport(this.getViewports()[0]);
+      (_c = this.viewManager) == null ? void 0 : _c.setProps({ width: newWidth, height: newHeight });
+      (_d = this.layerManager) == null ? void 0 : _d.activateViewport(this.getViewports()[0]);
       this.props.onResize({ width: newWidth, height: newHeight });
     }
   }
@@ -40150,7 +40274,8 @@ var Deck = class {
   }
   // Create a device from the deviceProps, assigning required defaults
   _createDevice(props) {
-    const canvasContextUserProps = this.props.deviceProps?.createCanvasContext;
+    var _a2, _b;
+    const canvasContextUserProps = (_a2 = this.props.deviceProps) == null ? void 0 : _a2.createCanvasContext;
     const canvasContextProps = typeof canvasContextUserProps === "object" ? canvasContextUserProps : void 0;
     const deviceProps = { adapters: [], ...props.deviceProps };
     if (!deviceProps.adapters.includes(webgl2Adapter)) {
@@ -40158,7 +40283,7 @@ var Deck = class {
     }
     const defaultCanvasProps = {
       // we must use 'premultiplied' canvas for webgpu to enable transparency and match shaders
-      alphaMode: this.props.deviceProps?.type === "webgpu" ? "premultiplied" : void 0
+      alphaMode: ((_b = this.props.deviceProps) == null ? void 0 : _b.type) === "webgpu" ? "premultiplied" : void 0
     };
     return luma.createDevice({
       // luma by default throws if a device is already attached
@@ -40203,7 +40328,8 @@ var Deck = class {
   }
   /** Actually run picking */
   _pickAndCallback() {
-    if (this.device?.type === "webgpu") {
+    var _a2, _b, _c, _d;
+    if (((_a2 = this.device) == null ? void 0 : _a2.type) === "webgpu") {
       return;
     }
     const { _pickRequest } = this;
@@ -40214,10 +40340,10 @@ var Deck = class {
       let handled = false;
       for (const info of result) {
         pickedInfo = info;
-        handled = info.layer?.onHover(info, _pickRequest.event) || handled;
+        handled = ((_b = info.layer) == null ? void 0 : _b.onHover(info, _pickRequest.event)) || handled;
       }
       if (!handled) {
-        this.props.onHover?.(pickedInfo, _pickRequest.event);
+        (_d = (_c = this.props).onHover) == null ? void 0 : _d.call(_c, pickedInfo, _pickRequest.event);
         this.widgetManager.onHover(pickedInfo, _pickRequest.event);
       }
       _pickRequest.event = null;
@@ -40230,12 +40356,13 @@ var Deck = class {
     }
   }
   _setDevice(device) {
+    var _a2, _b;
     this.device = device;
     if (!this.animationLoop) {
       return;
     }
     if (!this.canvas) {
-      this.canvas = this.device.canvasContext?.canvas;
+      this.canvas = (_a2 = this.device.canvasContext) == null ? void 0 : _a2.canvas;
       if (!this.canvas.isConnected && this.props.parent) {
         this.props.parent.insertBefore(this.canvas, this.props.parent.firstChild);
       }
@@ -40259,8 +40386,9 @@ var Deck = class {
     this.eventManager = new EventManager(this.props.parent || this.canvas, {
       touchAction: this.props.touchAction,
       recognizers: Object.keys(RECOGNIZERS).map((eventName) => {
+        var _a3;
         const [RecognizerConstructor, defaultOptions2, recognizeWith, requestFailure] = RECOGNIZERS[eventName];
-        const optionsOverride = this.props.eventRecognizerOptions?.[eventName];
+        const optionsOverride = (_a3 = this.props.eventRecognizerOptions) == null ? void 0 : _a3[eventName];
         const options = { ...defaultOptions2, ...optionsOverride, event: eventName };
         return {
           recognizer: new RecognizerConstructor(options),
@@ -40302,7 +40430,7 @@ var Deck = class {
     this.deckPicker = new DeckPicker(this.device);
     this.widgetManager = new WidgetManager({
       deck: this,
-      parentElement: this.canvas?.parentElement
+      parentElement: (_b = this.canvas) == null ? void 0 : _b.parentElement
     });
     this.widgetManager.addDefault(new TooltipWidget());
     this.setProps(this.props);
@@ -40311,6 +40439,7 @@ var Deck = class {
   }
   /** Internal only: default render function (redraw all layers and views) */
   _drawLayers(redrawReason, renderOptions) {
+    var _a2;
     const { device, gl } = this.layerManager.context;
     this.props.onBeforeRender({ device, gl });
     const opts = {
@@ -40323,7 +40452,7 @@ var Deck = class {
       effects: this.effectManager.getEffects(),
       ...renderOptions
     };
-    this.deckRenderer?.renderLayers(opts);
+    (_a2 = this.deckRenderer) == null ? void 0 : _a2.renderLayers(opts);
     if (opts.pass === "screen") {
       this.widgetManager.onRedraw({
         viewports: opts.viewports,
@@ -40334,6 +40463,7 @@ var Deck = class {
   }
   // Callbacks
   _onRenderFrame() {
+    var _a2;
     this._getFrameStats();
     if (this._metricsCounter++ % 60 === 0) {
       this._getMetrics();
@@ -40346,7 +40476,7 @@ var Deck = class {
     this._updateCanvasSize();
     this._updateCursor();
     this.layerManager.updateLayers();
-    if (this.device?.type !== "webgpu") {
+    if (((_a2 = this.device) == null ? void 0 : _a2.type) !== "webgpu") {
       this._pickAndCallback();
     }
     this.redraw();
@@ -40808,12 +40938,13 @@ var DataColumn = class {
     return true;
   }
   _createBuffer(byteLength) {
+    var _a2;
     if (this._buffer) {
       this._buffer.destroy();
     }
     const { isIndexed, type } = this.settings;
     this._buffer = this.device.createBuffer({
-      ...this._buffer?.props,
+      ...(_a2 = this._buffer) == null ? void 0 : _a2.props,
       id: this.id,
       // TODO(ibgreen) - WebGPU requires COPY_DST and COPY_SRC to allow write / read
       usage: (isIndexed ? Buffer2.INDEX : Buffer2.VERTEX) | Buffer2.COPY_DST,
@@ -40990,8 +41121,8 @@ var Attribute = class extends DataColumn {
     return this.state.layoutChanged;
   }
   setAccessor(accessor) {
-    var _a;
-    (_a = this.state).layoutChanged || (_a.layoutChanged = !bufferLayoutEqual(accessor, this.getAccessor()));
+    var _a2;
+    (_a2 = this.state).layoutChanged || (_a2.layoutChanged = !bufferLayoutEqual(accessor, this.getAccessor()));
     super.setAccessor(accessor);
   }
   getUpdateTriggers() {
@@ -41181,7 +41312,7 @@ var Attribute = class extends DataColumn {
     if (stepMode === "dynamic") {
       result.stepMode = modelInfo ? modelInfo.isInstanced ? "instance" : "vertex" : "instance";
     } else {
-      result.stepMode = stepMode ?? "vertex";
+      result.stepMode = stepMode != null ? stepMode : "vertex";
     }
     if (!shaderAttributeDefs) {
       return result;
@@ -41383,20 +41514,21 @@ function cycleBuffers(buffers) {
   buffers.push(buffers.shift());
 }
 function getAttributeBufferLength(attribute, numInstances) {
+  var _a2;
   const { doublePrecision, settings, value, size } = attribute;
   const multiplier = doublePrecision && value instanceof Float64Array ? 2 : 1;
   let maxVertexOffset = 0;
   const { shaderAttributes } = attribute.settings;
   if (shaderAttributes) {
     for (const shaderAttribute of Object.values(shaderAttributes)) {
-      maxVertexOffset = Math.max(maxVertexOffset, shaderAttribute.vertexOffset ?? 0);
+      maxVertexOffset = Math.max(maxVertexOffset, (_a2 = shaderAttribute.vertexOffset) != null ? _a2 : 0);
     }
   }
   return (settings.noAlloc ? value.length : (numInstances + maxVertexOffset) * size) * multiplier;
 }
 function matchBuffer({ device, source: source3, target: target2 }) {
   if (!target2 || target2.byteLength < source3.byteLength) {
-    target2?.destroy();
+    target2 == null ? void 0 : target2.destroy();
     target2 = device.createBuffer({
       byteLength: source3.byteLength,
       usage: source3.usage
@@ -41436,7 +41568,7 @@ function padBuffer({ device, buffer, attribute, fromLength, toLength, fromStartI
     getData: getMissingData
   });
   if (!buffer || buffer.byteLength < target2.byteLength + targetByteOffset) {
-    buffer?.destroy();
+    buffer == null ? void 0 : buffer.destroy();
     buffer = device.createBuffer({
       byteLength: target2.byteLength + targetByteOffset,
       usage: 35050
@@ -42089,7 +42221,10 @@ var AttributeManager = class {
    * Computes the spatial bounds of a given set of attributes
    */
   getBounds(attributeNames) {
-    const bounds = attributeNames.map((attributeName) => this.attributes[attributeName]?.getBounds());
+    const bounds = attributeNames.map((attributeName) => {
+      var _a2;
+      return (_a2 = this.attributes[attributeName]) == null ? void 0 : _a2.getBounds();
+    });
     return this.mergeBoundsMemoized(bounds);
   }
   /**
@@ -42516,8 +42651,8 @@ function mergeShaders(target2, source3) {
   }
   if ("modules" in source3) {
     result.modules = (target2.modules || []).concat(source3.modules);
-    if (source3.modules.some((module2) => module2.name === "project64")) {
-      const index = result.modules.findIndex((module2) => module2.name === "project32");
+    if (source3.modules.some((module) => module.name === "project64")) {
+      const index = result.modules.findIndex((module) => module.name === "project32");
       if (index >= 0) {
         result.modules.splice(index, 1);
       }
@@ -42684,7 +42819,7 @@ function parsePropTypes(propDefs) {
   const defaultProps12 = {};
   const deprecatedProps = {};
   for (const [propName, propDef] of Object.entries(propDefs)) {
-    const deprecated = propDef?.deprecatedFor;
+    const deprecated = propDef == null ? void 0 : propDef.deprecatedFor;
     if (deprecated) {
       deprecatedProps[propName] = Array.isArray(deprecated) ? deprecated : [deprecated];
     } else {
@@ -42785,8 +42920,8 @@ function createPropsPrototypeAndTypes(componentClass, extensions) {
   const componentDefaultProps = getOwnProperty(componentClass, "defaultProps") || {};
   const componentPropDefs = parsePropTypes(componentDefaultProps);
   const defaultProps12 = Object.assign(/* @__PURE__ */ Object.create(null), parentDefaultProps, componentPropDefs.defaultProps);
-  const propTypes = Object.assign(/* @__PURE__ */ Object.create(null), parentDefaultProps?.[PROP_TYPES_SYMBOL], componentPropDefs.propTypes);
-  const deprecatedProps = Object.assign(/* @__PURE__ */ Object.create(null), parentDefaultProps?.[DEPRECATED_PROPS_SYMBOL], componentPropDefs.deprecatedProps);
+  const propTypes = Object.assign(/* @__PURE__ */ Object.create(null), parentDefaultProps == null ? void 0 : parentDefaultProps[PROP_TYPES_SYMBOL], componentPropDefs.propTypes);
+  const deprecatedProps = Object.assign(/* @__PURE__ */ Object.create(null), parentDefaultProps == null ? void 0 : parentDefaultProps[DEPRECATED_PROPS_SYMBOL], componentPropDefs.deprecatedProps);
   for (const extension of extensions) {
     const extensionDefaultProps = getPropsPrototype(extension.constructor);
     if (extensionDefaultProps) {
@@ -43156,7 +43291,7 @@ var LayerState = class extends ComponentState {
   /* Override base Component methods with Layer-specific handling */
   _fetch(propName, url) {
     const layer = this.layer;
-    const fetch2 = layer?.props.fetch;
+    const fetch2 = layer == null ? void 0 : layer.props.fetch;
     if (fetch2) {
       return fetch2(url, { propName, layer });
     }
@@ -43214,7 +43349,7 @@ var defaultProps2 = {
         loadOptions = {
           ...loadOptions,
           fetch: {
-            ...loadOptions?.fetch,
+            ...loadOptions == null ? void 0 : loadOptions.fetch,
             signal
           }
         };
@@ -43227,7 +43362,10 @@ var defaultProps2 = {
       if (inResourceManager) {
         return resourceManager.subscribe({
           resourceId: url,
-          onChange: (data) => layer.internalState?.reloadAsyncProp(propName, data),
+          onChange: (data) => {
+            var _a2;
+            return (_a2 = layer.internalState) == null ? void 0 : _a2.reloadAsyncProp(propName, data);
+          },
           consumerId: layer.id,
           requestId: propName
         });
@@ -43456,7 +43594,8 @@ var Layer = class extends component_default {
   }
   // Default implementation
   getBounds() {
-    return this.getAttributeManager()?.getBounds(["positions", "instancePositions"]);
+    var _a2;
+    return (_a2 = this.getAttributeManager()) == null ? void 0 : _a2.getBounds(["positions", "instancePositions"]);
   }
   getShaders(shaders) {
     shaders = mergeShaders(shaders, {
@@ -43545,11 +43684,12 @@ var Layer = class extends component_default {
   // / INTERNAL METHODS - called by LayerManager, DeckRenderer and DeckPicker
   /** (Internal) Propagate an error event through the system */
   raiseError(error, message2) {
+    var _a2, _b, _c, _d;
     if (message2) {
       error = new Error(`${message2}: ${error.message}`, { cause: error });
     }
-    if (!this.props.onError?.(error)) {
-      this.context?.onError?.(error, this);
+    if (!((_b = (_a2 = this.props).onError) == null ? void 0 : _b.call(_a2, error))) {
+      (_d = (_c = this.context) == null ? void 0 : _c.onError) == null ? void 0 : _d.call(_c, error, this);
     }
   }
   /** (Internal) Checks if this layer needs redraw */
@@ -43565,7 +43705,8 @@ var Layer = class extends component_default {
   }
   /** Checks if this layer has ongoing uniform transition */
   hasUniformTransition() {
-    return this.internalState?.uniformTransitions.active || false;
+    var _a2;
+    return ((_a2 = this.internalState) == null ? void 0 : _a2.uniformTransitions.active) || false;
   }
   /** Called when this layer is rendered into the given viewport */
   activateViewport(viewport) {
@@ -43681,6 +43822,7 @@ var Layer = class extends component_default {
   }
   /** Apply changed attributes to model */
   _setModelAttributes(model, changedAttributes, bufferLayoutChanged = false) {
+    var _a2;
     if (!Object.keys(changedAttributes).length) {
       return;
     }
@@ -43689,7 +43831,7 @@ var Layer = class extends component_default {
       model.setBufferLayout(attributeManager.getBufferLayouts(model));
       changedAttributes = attributeManager.getAttributes();
     }
-    const excludeAttributes = model.userData?.excludeAttributes || {};
+    const excludeAttributes = ((_a2 = model.userData) == null ? void 0 : _a2.excludeAttributes) || {};
     const attributeBuffers = {};
     const constantAttributes = {};
     for (const name2 in changedAttributes) {
@@ -43916,7 +44058,8 @@ var Layer = class extends component_default {
   // Helper methods
   /** Returns the current change flags */
   getChangeFlags() {
-    return this.internalState?.changeFlags;
+    var _a2;
+    return (_a2 = this.internalState) == null ? void 0 : _a2.changeFlags;
   }
   /* eslint-disable complexity */
   /** Dirty some change flags, will be handled by updateLayer */
@@ -43969,6 +44112,7 @@ var Layer = class extends component_default {
       and extracts change flags that describe what has change so that state
       can be update correctly with minimal effort */
   _diffProps(newProps, oldProps) {
+    var _a2;
     const changeFlags = diffProps(newProps, oldProps);
     if (changeFlags.updateTriggersChanged) {
       for (const key in changeFlags.updateTriggersChanged) {
@@ -43979,7 +44123,7 @@ var Layer = class extends component_default {
     }
     if (changeFlags.transitionsChanged) {
       for (const key in changeFlags.transitionsChanged) {
-        this.internalState.uniformTransitions.add(key, oldProps[key], newProps[key], newProps.transitions?.[key]);
+        this.internalState.uniformTransitions.add(key, oldProps[key], newProps[key], (_a2 = newProps.transitions) == null ? void 0 : _a2[key]);
       }
     }
     return this.setChangeFlags(changeFlags);
@@ -44024,7 +44168,7 @@ var Layer = class extends component_default {
   _postUpdate(updateParams, forceUpdate) {
     const { props, oldProps } = updateParams;
     const model = this.state.model;
-    if (model?.isInstanced) {
+    if (model == null ? void 0 : model.isInstanced) {
       model.setInstanceCount(this.getNumInstances());
     }
     const { autoHighlight, highlightedObjectIndex, highlightColor } = props;
@@ -44168,6 +44312,7 @@ var CompositeLayer = class extends layer_default {
   /** Returns sub layer props for a specific sublayer */
   // eslint-disable-next-line complexity
   getSubLayerProps(sublayerProps = {}) {
+    var _a2;
     const { opacity, pickable, visible, parameters, getPolygonOffset, highlightedObjectIndex, autoHighlight, highlightColor, coordinateSystem, coordinateOrigin, wrapLongitude, positionFormat, modelMatrix, extensions, fetch: fetch2, operation, _subLayerProps: overridingProps } = this.props;
     const newProps = {
       id: "",
@@ -44210,7 +44355,7 @@ var CompositeLayer = class extends layer_default {
     );
     newProps.id = `${this.props.id}-${sublayerId}`;
     newProps.updateTriggers = {
-      all: this.props.updateTriggers?.all,
+      all: (_a2 = this.props.updateTriggers) == null ? void 0 : _a2.all,
       ...sublayerProps.updateTriggers,
       ...overridingSublayerTriggers
     };
@@ -44769,7 +44914,8 @@ var defaultProps3 = {
 };
 var ArcTripsLayer = class extends layer_default {
   getBounds() {
-    return this.getAttributeManager()?.getBounds([
+    var _a2;
+    return (_a2 = this.getAttributeManager()) == null ? void 0 : _a2.getBounds([
       "instanceSourcePositions",
       "instanceTargetPositions"
     ]);
@@ -44848,9 +44994,10 @@ var ArcTripsLayer = class extends layer_default {
     });
   }
   updateState(params) {
+    var _a2;
     super.updateState(params);
     if (params.changeFlags.extensionsChanged) {
-      this.state.model?.destroy();
+      (_a2 = this.state.model) == null ? void 0 : _a2.destroy();
       this.state.model = this._getModel();
       this.getAttributeManager().invalidateAll();
     }
@@ -45158,7 +45305,8 @@ var IconManager = class {
     this.onError = onError;
   }
   finalize() {
-    this._texture?.delete();
+    var _a2;
+    (_a2 = this._texture) == null ? void 0 : _a2.delete();
   }
   getTexture() {
     return this._texture || this._externalTexture;
@@ -45168,6 +45316,7 @@ var IconManager = class {
     return this._mapping[id] || MISSING_ICON;
   }
   setProps({ loadOptions, autoPacking, iconAtlas, iconMapping, textureParameters }) {
+    var _a2;
     if (loadOptions) {
       this._loadOptions = loadOptions;
     }
@@ -45178,7 +45327,7 @@ var IconManager = class {
       this._mapping = iconMapping;
     }
     if (iconAtlas) {
-      this._texture?.delete();
+      (_a2 = this._texture) == null ? void 0 : _a2.delete();
       this._texture = null;
       this._externalTexture = iconAtlas;
     }
@@ -45190,6 +45339,7 @@ var IconManager = class {
     return this._pendingCount === 0;
   }
   packIcons(data, getIcon) {
+    var _a2;
     if (!this._autoPacking || typeof document === "undefined") {
       return;
     }
@@ -45225,7 +45375,7 @@ var IconManager = class {
       this.onUpdate();
       this._canvas = this._canvas || document.createElement("canvas");
       this._loadIcons(icons);
-      this._texture?.generateMipmapsWebGL();
+      (_a2 = this._texture) == null ? void 0 : _a2.generateMipmapsWebGL();
     }
   }
   _loadIcons(icons) {
@@ -45235,11 +45385,12 @@ var IconManager = class {
     for (const icon of icons) {
       this._pendingCount++;
       load(icon.url, this._loadOptions).then((imageData) => {
+        var _a2, _b;
         const id = getIconId(icon);
         const iconDef = this._mapping[id];
         const { x: x2, y: y2, width: maxWidth, height: maxHeight } = iconDef;
         const { image, width, height } = resizeImage(ctx2, imageData, maxWidth, maxHeight);
-        this._texture?.copyExternalImage({
+        (_a2 = this._texture) == null ? void 0 : _a2.copyExternalImage({
           image,
           x: x2 + (maxWidth - width) / 2,
           y: y2 + (maxHeight - height) / 2,
@@ -45248,7 +45399,7 @@ var IconManager = class {
         });
         iconDef.width = width;
         iconDef.height = height;
-        this._texture?.generateMipmapsWebGL();
+        (_b = this._texture) == null ? void 0 : _b.generateMipmapsWebGL();
         this.onUpdate();
       }).catch((error) => {
         this.onError({
@@ -45354,6 +45505,7 @@ var IconLayer = class extends layer_default {
   }
   /* eslint-disable max-statements, complexity */
   updateState(params) {
+    var _a2;
     super.updateState(params);
     const { props, oldProps, changeFlags } = params;
     const attributeManager = this.getAttributeManager();
@@ -45378,7 +45530,7 @@ var IconLayer = class extends layer_default {
       iconManager.packIcons(data, getIcon);
     }
     if (changeFlags.extensionsChanged) {
-      this.state.model?.destroy();
+      (_a2 = this.state.model) == null ? void 0 : _a2.destroy();
       this.state.model = this._getModel();
       attributeManager.invalidateAll();
     }
@@ -45436,7 +45588,8 @@ var IconLayer = class extends layer_default {
     this.setNeedsRedraw();
   }
   _onError(evt) {
-    const onIconError = this.getCurrentLayer()?.props.onIconError;
+    var _a2;
+    const onIconError = (_a2 = this.getCurrentLayer()) == null ? void 0 : _a2.props.onIconError;
     if (onIconError) {
       onIconError(evt);
     } else {
@@ -45868,9 +46021,10 @@ var ScatterplotLayer = class extends layer_default {
     });
   }
   updateState(params) {
+    var _a2;
     super.updateState(params);
     if (params.changeFlags.extensionsChanged) {
-      this.state.model?.destroy();
+      (_a2 = this.state.model) == null ? void 0 : _a2.destroy();
       this.state.model = this._getModel();
       this.getAttributeManager().invalidateAll();
     }
@@ -46269,7 +46423,7 @@ function cutPolygonByMercatorBounds(positions, holeIndices = null, options) {
       newPositions[targetIndex++] = positions[i2];
     }
     wrapLongitudesForShortestPath(newPositions, size, targetStartIndex, targetIndex);
-    insertPoleVertices(newPositions, size, targetStartIndex, targetIndex, options?.maxLatitude);
+    insertPoleVertices(newPositions, size, targetStartIndex, targetIndex, options == null ? void 0 : options.maxLatitude);
     srcStartIndex = srcEndIndex;
     newHoleIndices[ringIndex] = targetIndex;
   }
@@ -46731,7 +46885,8 @@ var PathLayer = class extends layer_default {
     return false;
   }
   getBounds() {
-    return this.getAttributeManager()?.getBounds(["vertexPositions"]);
+    var _a2;
+    return (_a2 = this.getAttributeManager()) == null ? void 0 : _a2.getBounds(["vertexPositions"]);
   }
   initializeState() {
     const noAlloc = true;
@@ -46796,6 +46951,7 @@ var PathLayer = class extends layer_default {
     });
   }
   updateState(params) {
+    var _a2;
     super.updateState(params);
     const { props, changeFlags } = params;
     const attributeManager = this.getAttributeManager();
@@ -46825,7 +46981,7 @@ var PathLayer = class extends layer_default {
       }
     }
     if (changeFlags.extensionsChanged) {
-      this.state.model?.destroy();
+      (_a2 = this.state.model) == null ? void 0 : _a2.destroy();
       this.state.model = this._getModel();
       attributeManager.invalidateAll();
     }
@@ -47433,7 +47589,8 @@ var SolidPolygonLayer = class extends layer_default {
     return false;
   }
   getBounds() {
-    return this.getAttributeManager()?.getBounds(["vertexPositions"]);
+    var _a2;
+    return (_a2 = this.getAttributeManager()) == null ? void 0 : _a2.getBounds(["vertexPositions"]);
   }
   initializeState() {
     const { viewport } = this.context;
@@ -47571,13 +47728,14 @@ var SolidPolygonLayer = class extends layer_default {
     }
   }
   updateState(updateParams) {
+    var _a2;
     super.updateState(updateParams);
     this.updateGeometry(updateParams);
     const { props, oldProps, changeFlags } = updateParams;
     const attributeManager = this.getAttributeManager();
     const regenerateModels = changeFlags.extensionsChanged || props.filled !== oldProps.filled || props.extruded !== oldProps.extruded;
     if (regenerateModels) {
-      this.state.models?.forEach((model) => model.destroy());
+      (_a2 = this.state.models) == null ? void 0 : _a2.forEach((model) => model.destroy());
       this.setState(this._getModels());
       attributeManager.invalidateAll();
     }
@@ -48059,10 +48217,11 @@ function buildMapping2({ characterSet, getFontWidth, fontHeight, buffer, maxCanv
   };
 }
 function getTextWidth(text, startIndex, endIndex, mapping) {
+  var _a2;
   let width = 0;
   for (let i2 = startIndex; i2 < endIndex; i2++) {
     const character = text[i2];
-    width += mapping[character]?.layoutWidth || 0;
+    width += ((_a2 = mapping[character]) == null ? void 0 : _a2.layoutWidth) || 0;
   }
   return width;
 }
@@ -48146,6 +48305,7 @@ function transformRow(line, startIndex, endIndex, iconMapping, leftOffsets, rowS
   rowSize[1] = rowHeight;
 }
 function transformParagraph(paragraph, lineHeight, wordBreak, maxWidth, iconMapping) {
+  var _a2;
   const characters = Array.from(paragraph);
   const numCharacters = characters.length;
   const x2 = new Array(numCharacters);
@@ -48170,7 +48330,7 @@ function transformParagraph(paragraph, lineHeight, wordBreak, maxWidth, iconMapp
         transformRow(characters, rowStart, rowEnd, iconMapping, x2, rowSize);
         for (let j2 = rowStart; j2 < rowEnd; j2++) {
           const char2 = characters[j2];
-          const layoutOffsetY = iconMapping[char2]?.layoutOffsetY || 0;
+          const layoutOffsetY = ((_a2 = iconMapping[char2]) == null ? void 0 : _a2.layoutOffsetY) || 0;
           y2[j2] = rowOffsetTop + rowSize[1] / 2 + layoutOffsetY;
           rowWidth[j2] = rowSize[0];
         }
@@ -48640,10 +48800,11 @@ var TextBackgroundLayer = class extends layer_default {
     });
   }
   updateState(params) {
+    var _a2;
     super.updateState(params);
     const { changeFlags } = params;
     if (changeFlags.extensionsChanged) {
-      this.state.model?.destroy();
+      (_a2 = this.state.model) == null ? void 0 : _a2.destroy();
       this.state.model = this._getModel();
       this.getAttributeManager().invalidateAll();
     }
@@ -48820,8 +48981,9 @@ var TextLayer = class extends composite_layer_default {
   // Text strings are variable width objects
   // Count characters and start offsets
   _updateText() {
+    var _a2;
     const { data, characterSet } = this.props;
-    const textBuffer = data.attributes?.getText;
+    const textBuffer = (_a2 = data.attributes) == null ? void 0 : _a2.getText;
     let { getText } = this.props;
     let startIndices = data.startIndices;
     let numInstances;
@@ -49455,10 +49617,11 @@ var GeoJsonLayer = class extends composite_layer_default {
     }
   }
   _renderPolygonLayer() {
+    var _a2;
     const { extruded, wireframe } = this.props;
     const { layerProps } = this.state;
     const id = "polygons-fill";
-    const PolygonFillLayer = this.shouldRenderSubLayer(id, layerProps.polygons?.data) && this.getSubLayerClass(id, POLYGON_LAYER.type);
+    const PolygonFillLayer = this.shouldRenderSubLayer(id, (_a2 = layerProps.polygons) == null ? void 0 : _a2.data) && this.getSubLayerClass(id, POLYGON_LAYER.type);
     if (PolygonFillLayer) {
       const forwardedProps = forwardProps(this, POLYGON_LAYER.props);
       const useLineColor = extruded && wireframe;
@@ -49474,12 +49637,13 @@ var GeoJsonLayer = class extends composite_layer_default {
     return null;
   }
   _renderLineLayers() {
+    var _a2, _b;
     const { extruded, stroked } = this.props;
     const { layerProps } = this.state;
     const polygonStrokeLayerId = "polygons-stroke";
     const lineStringsLayerId = "linestrings";
-    const PolygonStrokeLayer = !extruded && stroked && this.shouldRenderSubLayer(polygonStrokeLayerId, layerProps.polygonsOutline?.data) && this.getSubLayerClass(polygonStrokeLayerId, LINE_LAYER.type);
-    const LineStringsLayer = this.shouldRenderSubLayer(lineStringsLayerId, layerProps.lines?.data) && this.getSubLayerClass(lineStringsLayerId, LINE_LAYER.type);
+    const PolygonStrokeLayer = !extruded && stroked && this.shouldRenderSubLayer(polygonStrokeLayerId, (_a2 = layerProps.polygonsOutline) == null ? void 0 : _a2.data) && this.getSubLayerClass(polygonStrokeLayerId, LINE_LAYER.type);
+    const LineStringsLayer = this.shouldRenderSubLayer(lineStringsLayerId, (_b = layerProps.lines) == null ? void 0 : _b.data) && this.getSubLayerClass(lineStringsLayerId, LINE_LAYER.type);
     if (PolygonStrokeLayer || LineStringsLayer) {
       const forwardedProps = forwardProps(this, LINE_LAYER.props);
       return [
@@ -49496,6 +49660,7 @@ var GeoJsonLayer = class extends composite_layer_default {
     return null;
   }
   _renderPointLayers() {
+    var _a2;
     const { pointType } = this.props;
     const { layerProps, binary } = this.state;
     let { highlightedObjectIndex } = this.props;
@@ -49507,7 +49672,7 @@ var GeoJsonLayer = class extends composite_layer_default {
     for (const type of types) {
       const id = `points-${type}`;
       const PointLayerMapping = POINT_LAYER[type];
-      const PointsLayer = PointLayerMapping && this.shouldRenderSubLayer(id, layerProps.points?.data) && this.getSubLayerClass(id, PointLayerMapping.type);
+      const PointsLayer = PointLayerMapping && this.shouldRenderSubLayer(id, (_a2 = layerProps.points) == null ? void 0 : _a2.data) && this.getSubLayerClass(id, PointLayerMapping.type);
       if (PointsLayer) {
         const forwardedProps = forwardProps(this, PointLayerMapping.props);
         let pointsLayerProps = layerProps.points;
@@ -49630,33 +49795,35 @@ var AnimationManager = class {
 var Animation = class {
   constructor(config2) {
     this.startTime = null;
+    var _a2, _b, _c, _d, _e2;
     this.config = {
       ...config2,
-      enabled: config2.enabled ?? true,
-      duration: config2.duration ?? 1e3,
-      easing: config2.easing ?? "easeInOutQuad",
-      delay: config2.delay ?? 0,
-      type: config2.type ?? "fadeIn"
+      enabled: (_a2 = config2.enabled) != null ? _a2 : true,
+      duration: (_b = config2.duration) != null ? _b : 1e3,
+      easing: (_c = config2.easing) != null ? _c : "easeInOutQuad",
+      delay: (_d = config2.delay) != null ? _d : 0,
+      type: (_e2 = config2.type) != null ? _e2 : "fadeIn"
     };
   }
   /**
    * 更新动画
    */
   update(currentTime) {
-    this.startTime ?? (this.startTime = currentTime);
+    var _a2, _b, _c, _d, _e2, _f;
+    (_a2 = this.startTime) != null ? _a2 : this.startTime = currentTime;
     const elapsed = currentTime - this.startTime;
-    const duration = this.config.duration ?? 1e3;
+    const duration = (_b = this.config.duration) != null ? _b : 1e3;
     let progress = Math.min(elapsed / duration, 1);
     const easingFn = easing[this.config.easing] || easing.linear;
     progress = easingFn(progress);
     const value = this.config.from + (this.config.to - this.config.from) * progress;
-    this.config.onUpdate?.(progress, value);
+    (_d = (_c = this.config).onUpdate) == null ? void 0 : _d.call(_c, progress, value);
     if (elapsed >= duration) {
       if (this.config.loop) {
         this.startTime = currentTime;
         return false;
       } else {
-        this.config.onComplete?.();
+        (_f = (_e2 = this.config).onComplete) == null ? void 0 : _f.call(_e2);
         return true;
       }
     }
@@ -49796,7 +49963,7 @@ var GeoJsonUtils = class _GeoJsonUtils {
    * @returns 投影后的坐标 [x, y]
    */
   static lngLatToProjected(transform, lngLat) {
-    if (!transform?.default) {
+    if (!(transform == null ? void 0 : transform.default)) {
       return lngLat;
     }
     const { scale: scale5, translate: translate2 } = transform.default;
@@ -49813,7 +49980,7 @@ var GeoJsonUtils = class _GeoJsonUtils {
    * @returns 经纬度坐标 [经度, 纬度]
    */
   static projectedToLngLat(transform, projected) {
-    if (!transform?.default) {
+    if (!(transform == null ? void 0 : transform.default)) {
       return projected;
     }
     const { scale: scale5, translate: translate2 } = transform.default;
@@ -50151,6 +50318,7 @@ var GeoJsonUtils = class _GeoJsonUtils {
 
 // ../utils/src/icon.ts
 function svgToEChartsSymbol(svg, options = {}) {
+  var _a2, _b, _c, _d, _e2, _f, _g, _h, _i;
   const { preferPath = true, normalize: normalize5 = false } = options;
   const svgString = typeof svg === "string" ? svg : svg instanceof Element ? svg.outerHTML : "";
   if (!svgString) {
@@ -50182,20 +50350,20 @@ function svgToEChartsSymbol(svg, options = {}) {
         const tagName = shape.tagName.toLowerCase();
         let pathData = "";
         if (tagName === "circle") {
-          const cx = parseFloat(shape.getAttribute("cx") ?? "0");
-          const cy = parseFloat(shape.getAttribute("cy") ?? "0");
-          const r2 = parseFloat(shape.getAttribute("r") ?? "0");
+          const cx = parseFloat((_a2 = shape.getAttribute("cx")) != null ? _a2 : "0");
+          const cy = parseFloat((_b = shape.getAttribute("cy")) != null ? _b : "0");
+          const r2 = parseFloat((_c = shape.getAttribute("r")) != null ? _c : "0");
           pathData = `M${cx - r2},${cy}A${r2},${r2},0,1,1,${cx + r2},${cy}A${r2},${r2},0,1,1,${cx - r2},${cy}Z`;
         } else if (tagName === "rect") {
-          const x2 = parseFloat(shape.getAttribute("x") ?? "0");
-          const y2 = parseFloat(shape.getAttribute("y") ?? "0");
-          const width = parseFloat(shape.getAttribute("width") ?? "0");
-          const height = parseFloat(shape.getAttribute("height") ?? "0");
-          const rx = parseFloat(shape.getAttribute("rx") ?? "0");
-          const ry = parseFloat(shape.getAttribute("ry") ?? "0");
+          const x2 = parseFloat((_d = shape.getAttribute("x")) != null ? _d : "0");
+          const y2 = parseFloat((_e2 = shape.getAttribute("y")) != null ? _e2 : "0");
+          const width = parseFloat((_f = shape.getAttribute("width")) != null ? _f : "0");
+          const height = parseFloat((_g = shape.getAttribute("height")) != null ? _g : "0");
+          const rx = parseFloat((_h = shape.getAttribute("rx")) != null ? _h : "0");
+          const ry = parseFloat((_i = shape.getAttribute("ry")) != null ? _i : "0");
           if (rx > 0 || ry > 0) {
-            const _rx = rx ?? ry;
-            const _ry = ry ?? rx;
+            const _rx = rx != null ? rx : ry;
+            const _ry = ry != null ? ry : rx;
             pathData = `M${x2 + _rx},${y2} L${x2 + width - _rx},${y2} Q${x2 + width},${y2} ${x2 + width},${y2 + _ry} L${x2 + width},${y2 + height - _ry} Q${x2 + width},${y2 + height} ${x2 + width - _rx},${y2 + height} L${x2 + _rx},${y2 + height} Q${x2},${y2 + height} ${x2},${y2 + height - _ry} L${x2},${y2 + _ry} Q${x2},${y2} ${x2 + _rx},${y2} Z`;
           } else {
             pathData = `M${x2},${y2} L${x2 + width},${y2} L${x2 + width},${y2 + height} L${x2},${y2 + height} Z`;
@@ -50265,8 +50433,9 @@ function convertToColorCode(colorArray) {
   }
 }
 function hexToRgba(hex) {
-  const [r2, g2, b2, a2] = hex.match(/\w\w/g)?.map((c2) => parseInt(c2, 16)) ?? [0, 0, 0, 255];
-  return [r2, g2, b2, a2 ?? 255];
+  var _a2, _b;
+  const [r2, g2, b2, a2] = (_b = (_a2 = hex.match(/\w\w/g)) == null ? void 0 : _a2.map((c2) => parseInt(c2, 16))) != null ? _b : [0, 0, 0, 255];
+  return [r2, g2, b2, a2 != null ? a2 : 255];
 }
 
 // ../path-adapter/src/managers/WorldPathManager.ts
@@ -51197,6 +51366,7 @@ var GeoUtils = class _GeoUtils {
    * @returns title 字段值，如果没有则返回空字符串
    */
   static getGeoJsonTitle(geoJson, level) {
+    var _a2;
     if (!geoJson || typeof geoJson !== "object" || geoJson.type !== "FeatureCollection") {
       return "";
     }
@@ -51222,7 +51392,7 @@ var GeoUtils = class _GeoUtils {
         break;
     }
     if (Array.isArray(geoJson.features) && geoJson.features.length > 0 && typeof geoJson.features[0] === "object" && geoJson.features[0] !== null && "properties" in geoJson.features[0] && geoJson.features[0].properties && typeof geoJson.features[0].properties.title === "string") {
-      return geoJson.features[0].properties.title ?? defaultTitle;
+      return (_a2 = geoJson.features[0].properties.title) != null ? _a2 : defaultTitle;
     }
     return defaultTitle;
   }
@@ -51274,14 +51444,17 @@ var GeoUtils = class _GeoUtils {
     if (!Array.isArray(features)) {
       return "";
     }
-    const target2 = features.find((item) => item.properties?.name === name2);
+    const target2 = features.find((item) => {
+      var _a2;
+      return ((_a2 = item.properties) == null ? void 0 : _a2.name) === name2;
+    });
     if (!target2) {
       return "";
     }
     const currentMapIsChina = _GeoUtils.getCurrentMapIsChina();
     if (currentMapIsChina) {
       const props2 = target2.properties;
-      return props2?.adcode ? String(props2.adcode) : "";
+      return (props2 == null ? void 0 : props2.adcode) ? String(props2.adcode) : "";
     }
     const props = target2.properties;
     if (!props) {
@@ -51323,7 +51496,8 @@ var GeoUtils = class _GeoUtils {
    * @returns 边界框对象，包含 minLng、maxLng、minLat、maxLat
    */
   static calculateGeoBounds(geojsonData) {
-    if (geojsonData.type !== "FeatureCollection" || !geojsonData.features?.length) {
+    var _a2;
+    if (geojsonData.type !== "FeatureCollection" || !((_a2 = geojsonData.features) == null ? void 0 : _a2.length)) {
       return null;
     }
     let minLng = Infinity;
@@ -51454,7 +51628,7 @@ var GeoUtils = class _GeoUtils {
    * @returns 是否在区域内
    */
   static isPointInGeoJSON(lng, lat, geoData) {
-    if (geoData?.type !== "FeatureCollection" || !geoData?.features) {
+    if ((geoData == null ? void 0 : geoData.type) !== "FeatureCollection" || !(geoData == null ? void 0 : geoData.features)) {
       return false;
     }
     const point = [lng, lat];
@@ -51490,7 +51664,7 @@ var GeoUtils = class _GeoUtils {
     if (!points || points.length === 0) {
       return [];
     }
-    if (geoData?.type !== "FeatureCollection") {
+    if ((geoData == null ? void 0 : geoData.type) !== "FeatureCollection") {
       return points;
     }
     return points.filter((point) => {
@@ -51552,7 +51726,8 @@ var GeoLayer = class {
       id: "geojson-layer",
       data: geojsonData,
       getFillColor: (feature) => {
-        if (isDef(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
+        var _a2;
+        if (isDef(hoveredFeatureName) && hoveredFeatureName === ((_a2 = feature.properties) == null ? void 0 : _a2.name)) {
           return [255, 255, 255, 255];
         }
         return DEFAULT_GEO_FILL_COLOR;
@@ -51561,13 +51736,14 @@ var GeoLayer = class {
         getFillColor: hoveredFeatureName
       },
       onClick: (info) => {
+        var _a2, _b;
         const currentTime = Date.now();
         const timeSinceLastClick = currentTime - lastClickTime;
         if (timeSinceLastClick < DOUBLE_CLICK_THRESHOLD) {
           const pick2 = info;
-          if (pick2?.object) {
-            const regionName = pick2.object.properties?.name ?? "";
-            if (events?.onAreaDoubleClick) {
+          if (pick2 == null ? void 0 : pick2.object) {
+            const regionName = (_b = (_a2 = pick2.object.properties) == null ? void 0 : _a2.name) != null ? _b : "";
+            if (events == null ? void 0 : events.onAreaDoubleClick) {
               events.onAreaDoubleClick(regionName);
             }
           }
@@ -51578,11 +51754,12 @@ var GeoLayer = class {
         return true;
       },
       onHover: (info) => {
+        var _a2, _b, _c, _d;
         const hover = info;
-        if (hoveredFeatureName !== hover?.object?.properties?.name) {
+        if (hoveredFeatureName !== ((_b = (_a2 = hover == null ? void 0 : hover.object) == null ? void 0 : _a2.properties) == null ? void 0 : _b.name)) {
         }
-        if (hover?.object) {
-          hoveredFeatureName = hover.object.properties?.name ?? null;
+        if (hover == null ? void 0 : hover.object) {
+          hoveredFeatureName = (_d = (_c = hover.object.properties) == null ? void 0 : _c.name) != null ? _d : null;
         } else {
           hoveredFeatureName = null;
         }
@@ -51598,6 +51775,7 @@ var GeoLayer = class {
    * @returns 计算后的视图状态
    */
   static calculateViewState(geojsonData, containerSize, mode = "2d") {
+    var _a2, _b, _c, _d, _e2, _f, _g, _h, _i, _j;
     const curLevel = MapStateManager.curLevel;
     if (curLevel === "world" /* WORLD */) {
       const result2 = GeoUtils.getCenterAndZoom(geojsonData, {
@@ -51605,9 +51783,9 @@ var GeoLayer = class {
         containerHeight: containerSize.height
       });
       return {
-        longitude: result2?.center?.[0] ?? 0,
-        latitude: result2?.center?.[1] ?? 0,
-        zoom: result2?.zoom ?? 0,
+        longitude: (_b = (_a2 = result2 == null ? void 0 : result2.center) == null ? void 0 : _a2[0]) != null ? _b : 0,
+        latitude: (_d = (_c = result2 == null ? void 0 : result2.center) == null ? void 0 : _c[1]) != null ? _d : 0,
+        zoom: (_e2 = result2 == null ? void 0 : result2.zoom) != null ? _e2 : 0,
         pitch: mode === "3d" ? 45 : 0
       };
     }
@@ -51624,9 +51802,9 @@ var GeoLayer = class {
       };
     }
     return {
-      longitude: result.center?.[0] ?? 0,
-      latitude: result.center?.[1] ?? 0,
-      zoom: result.zoom ?? 1,
+      longitude: (_g = (_f = result.center) == null ? void 0 : _f[0]) != null ? _g : 0,
+      latitude: (_i = (_h = result.center) == null ? void 0 : _h[1]) != null ? _i : 0,
+      zoom: (_j = result.zoom) != null ? _j : 1,
       pitch: mode === "3d" ? 45 : 0
     };
   }
@@ -51722,22 +51900,24 @@ var TextLayer2 = class _TextLayer {
   static transformToTextData(points, config2 = {}) {
     const { hoveredPointId, selectedPointId } = config2;
     return points.filter((point) => {
+      var _a2, _b;
       if (!point.label) {
         return true;
       }
-      if (point.label?.show) {
+      if ((_a2 = point.label) == null ? void 0 : _a2.show) {
         return true;
       }
-      if (point.label?.hoverShow && (hoveredPointId === point.id || selectedPointId === point.id)) {
+      if (((_b = point.label) == null ? void 0 : _b.hoverShow) && (hoveredPointId === point.id || selectedPointId === point.id)) {
         return true;
       }
       return false;
     }).map((point) => {
+      var _a2;
       return {
         ...point,
         // 抬升高度，显示在图标上方，避免遮挡
         position: [point.coordinate[0], point.coordinate[1], 120],
-        size: point.size ?? 16
+        size: (_a2 = point.size) != null ? _a2 : 16
       };
     });
   }
@@ -51798,14 +51978,17 @@ var IconLayer2 = class _IconLayer {
    * @returns IconLayer 需要的数据数组
    */
   static transformToIconData(points) {
-    return points.map((point) => ({
-      ...point,
-      // 抬升少量高度，避免与地面发生深度冲突/遮挡
-      position: [point.coordinate[0], point.coordinate[1], 50],
-      icon: point.icon ?? "star",
-      size: point.size ?? 16,
-      color: point.color ?? [255, 255, 255, 255]
-    }));
+    return points.map((point) => {
+      var _a2, _b, _c;
+      return {
+        ...point,
+        // 抬升少量高度，避免与地面发生深度冲突/遮挡
+        position: [point.coordinate[0], point.coordinate[1], 50],
+        icon: (_a2 = point.icon) != null ? _a2 : "star",
+        size: (_b = point.size) != null ? _b : 16,
+        color: (_c = point.color) != null ? _c : [255, 255, 255, 255]
+      };
+    });
   }
   /**
    * 创建图标图层
@@ -51871,14 +52054,15 @@ var IconLayer2 = class _IconLayer {
    * @returns 更新后的点状态
    */
   static async handleClickPoint(info, currentState, updateCallback) {
+    var _a2, _b, _c;
     const pick2 = info;
-    const clickedId = pick2?.object?.id ?? null;
+    const clickedId = (_b = (_a2 = pick2 == null ? void 0 : pick2.object) == null ? void 0 : _a2.id) != null ? _b : null;
     const newState = {
       ...currentState,
       selectedPointId: clickedId
     };
     await _IconLayer.updateIconLayers(
-      currentState.points ?? [],
+      (_c = currentState.points) != null ? _c : [],
       newState,
       updateCallback
     );
@@ -51892,15 +52076,16 @@ var IconLayer2 = class _IconLayer {
    * @returns 更新后的点状态
    */
   static async handleHoverPoint(info, currentState, updateCallback) {
+    var _a2, _b, _c;
     const pick2 = info;
-    const hoveredId = pick2?.object?.id ?? null;
+    const hoveredId = (_b = (_a2 = pick2 == null ? void 0 : pick2.object) == null ? void 0 : _a2.id) != null ? _b : null;
     if (currentState.hoveredPointId !== hoveredId) {
       const newState = {
         ...currentState,
         hoveredPointId: hoveredId
       };
       const textLayer = TextLayer2.create(
-        currentState.points ?? [],
+        (_c = currentState.points) != null ? _c : [],
         {
           selectedPointId: newState.selectedPointId,
           hoveredPointId: newState.hoveredPointId
@@ -51967,8 +52152,9 @@ var IconLayer2 = class _IconLayer {
    * @returns 是否在点图层上
    */
   static isPointLayerClick(info) {
+    var _a2;
     const pick2 = info;
-    return !!(pick2?.object && pick2.layer?.id === _IconLayer.getLayerId());
+    return !!((pick2 == null ? void 0 : pick2.object) && ((_a2 = pick2.layer) == null ? void 0 : _a2.id) === _IconLayer.getLayerId());
   }
   /**
    * 清除选中状态
@@ -51977,13 +52163,14 @@ var IconLayer2 = class _IconLayer {
    * @returns 更新后的点状态
    */
   static async clearSelection(currentState, updateCallback) {
+    var _a2;
     if (currentState.selectedPointId) {
       const newState = {
         ...currentState,
         selectedPointId: null
       };
       await _IconLayer.updateIconLayers(
-        currentState.points ?? [],
+        (_a2 = currentState.points) != null ? _a2 : [],
         newState,
         updateCallback
       );
@@ -52022,8 +52209,8 @@ var CurvatureCalculator = class {
    * @returns 计算出的曲率值
    */
   curvature(key, min4 = 0, max4 = 1) {
-    var _a;
-    (_a = this.curvatureMap)[key] ?? (_a[key] = this.hashString(key) * (max4 - min4) + min4);
+    var _a2, _b;
+    (_b = (_a2 = this.curvatureMap)[key]) != null ? _b : _a2[key] = this.hashString(key) * (max4 - min4) + min4;
     return this.curvatureMap[key];
   }
   /**
@@ -52048,7 +52235,7 @@ var CurvatureCalculator = class {
   calculateCurvatureByCoordinates(key, startCoordinate, endCoordinate, customRange) {
     const [startLng, startLat] = startCoordinate;
     const [endLng, endLat] = endCoordinate;
-    const range = customRange ?? this.calculateCurvatureRange(startLng, startLat, endLng, endLat);
+    const range = customRange != null ? customRange : this.calculateCurvatureRange(startLng, startLat, endLng, endLat);
     if (range.min < 0 || range.max > 1 || range.min > range.max) {
       throw new Error("\u65E0\u6548\u7684\u66F2\u7387\u8303\u56F4\u3002\u5FC5\u987B\u6EE1\u8DB3: 0 <= min <= max <= 1");
     }
@@ -52114,13 +52301,14 @@ var _Line2DManager = class _Line2DManager {
   static buildFullCurveLayer(lines) {
     const fullData = [];
     lines.forEach((line) => {
+      var _a2;
       const curvature = _Line2DManager.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
         line.endCoordinate,
         { min: 0.5, max: 1 }
       );
-      const color = line.color ?? DEFAULT_LINE_RGBA;
+      const color = (_a2 = line.color) != null ? _a2 : DEFAULT_LINE_RGBA;
       const path = buildQuadraticBezierPath(line.startCoordinate, line.endCoordinate, curvature, 64);
       fullData.push({ path, color, width: 0.3 });
       const buddyPath = buildQuadraticBezierPath(line.endCoordinate, line.startCoordinate, curvature, 64);
@@ -52149,13 +52337,14 @@ var _Line2DManager = class _Line2DManager {
    * @returns ScatterplotLayer 实例（尾迹小圆点）
    */
   static buildMovingDotsLayer(lines, progress, options) {
+    var _a2, _b, _c, _d, _e2, _f, _g, _h, _i;
     const dots = [];
-    const dotsPerLine = options?.dotsPerLine ?? 12;
-    const headRadius = options?.headRadius ?? 1;
-    const tailRadius = options?.tailRadius ?? 0.5;
-    const headAlpha = options?.headAlpha ?? 255;
-    const tailAlpha = options?.tailAlpha ?? 60;
-    const trailSpan = options?.trailSpan ?? 0.01;
+    const dotsPerLine = (_a2 = options == null ? void 0 : options.dotsPerLine) != null ? _a2 : 12;
+    const headRadius = (_b = options == null ? void 0 : options.headRadius) != null ? _b : 1;
+    const tailRadius = (_c = options == null ? void 0 : options.tailRadius) != null ? _c : 0.5;
+    const headAlpha = (_d = options == null ? void 0 : options.headAlpha) != null ? _d : 255;
+    const tailAlpha = (_e2 = options == null ? void 0 : options.tailAlpha) != null ? _e2 : 60;
+    const trailSpan = (_f = options == null ? void 0 : options.trailSpan) != null ? _f : 0.01;
     const step = trailSpan / Math.max(1, dotsPerLine - 1);
     for (let i2 = 0; i2 < lines.length; i2++) {
       const line = lines[i2];
@@ -52165,9 +52354,9 @@ var _Line2DManager = class _Line2DManager {
         line.endCoordinate
       );
       const baseRgb = Array.isArray(line.color) ? [
-        line.color[0] ?? DEFAULT_DOT_RGB[0],
-        line.color[1] ?? DEFAULT_DOT_RGB[1],
-        line.color[2] ?? DEFAULT_DOT_RGB[2]
+        (_g = line.color[0]) != null ? _g : DEFAULT_DOT_RGB[0],
+        (_h = line.color[1]) != null ? _h : DEFAULT_DOT_RGB[1],
+        (_i = line.color[2]) != null ? _i : DEFAULT_DOT_RGB[2]
       ] : DEFAULT_DOT_RGB;
       const generateDots = (start, end) => {
         const sx = start[0];
@@ -52223,7 +52412,7 @@ var _Line2DManager = class _Line2DManager {
   static createLayers(lines, config2 = {}, currentTime) {
     const mergedConfig = { ..._Line2DManager.DEFAULT_CONFIG, ...config2 };
     const baseLayer = _Line2DManager.buildFullCurveLayer(lines);
-    const time = currentTime ?? 0;
+    const time = currentTime != null ? currentTime : 0;
     const progress = time / mergedConfig.timeLoop;
     const dotsLayer = _Line2DManager.buildMovingDotsLayer(lines, progress, mergedConfig.trailOptions);
     return [baseLayer, dotsLayer];
@@ -52300,6 +52489,7 @@ function generateFlightRoutes(lines, currentTime, config2 = {}) {
   const mergedConfig = { ...defaultConfig, ...config2 };
   const routes = [];
   lines.forEach((line, index) => {
+    var _a2, _b;
     const lineOffset = mergedConfig.lineOffset || 50;
     const lineDuration = mergedConfig.lineDuration || 200;
     const baseTime = index % 20 * lineOffset;
@@ -52334,7 +52524,7 @@ function generateFlightRoutes(lines, currentTime, config2 = {}) {
       targetTimestamp: baseTime + travelTime,
       sourceColor: lineColor,
       targetColor: lineColor,
-      width: line.width ?? mergedConfig.width,
+      width: (_a2 = line.width) != null ? _a2 : mergedConfig.width,
       height: dynamicHeight
     });
     if (mergedConfig.enableBidirectional) {
@@ -52357,7 +52547,7 @@ function generateFlightRoutes(lines, currentTime, config2 = {}) {
         targetTimestamp: baseTime + travelTime + travelTime / 2,
         sourceColor: lineColor,
         targetColor: lineColor,
-        width: line.width ?? mergedConfig.width,
+        width: (_b = line.width) != null ? _b : mergedConfig.width,
         height: dynamicHeight
       });
     }
@@ -52644,10 +52834,11 @@ var _DeckglMap = class _DeckglMap {
    * @param props - 附加属性
    */
   async createDeckInstance(container, initialViewState, props) {
+    var _a2, _b, _c;
     if (this.deckInstance) {
       throw new Error(`Deck instance already exists for ${this.instanceId}`);
     }
-    const mode = props?.mode ?? "2d";
+    const mode = (_a2 = props == null ? void 0 : props.mode) != null ? _a2 : "2d";
     const mapView = new map_view_default({
       repeat: MapStateManager.curLevel === "world" /* WORLD */,
       controller: {
@@ -52663,8 +52854,8 @@ var _DeckglMap = class _DeckglMap {
     });
     this.deckInstance = new deck_default({
       canvas: container,
-      width: container.parentElement?.clientWidth,
-      height: container.parentElement?.clientHeight,
+      width: (_b = container.parentElement) == null ? void 0 : _b.clientWidth,
+      height: (_c = container.parentElement) == null ? void 0 : _c.clientHeight,
       initialViewState: {
         ..._DeckglMap.DEFAULT_VIEW_STATE,
         ...mode === "3d" ? { pitch: 45 } : {},
@@ -52673,9 +52864,10 @@ var _DeckglMap = class _DeckglMap {
       views: mapView,
       ...props,
       onViewStateChange: (params) => {
+        var _a3;
         const { viewState } = params;
         const constrainedLatitude = Math.max(-66.5, Math.min(66.5, viewState.latitude));
-        const minZoom = this.initialMinZoom ?? 0;
+        const minZoom = (_a3 = this.initialMinZoom) != null ? _a3 : 0;
         const constrainedZoom = Math.max(minZoom, viewState.zoom);
         const nextViewState = {
           ...viewState,
@@ -52717,6 +52909,7 @@ var _DeckglMap = class _DeckglMap {
    * @param layerOrProps - 图层实例或图层属性
    */
   updateLayerById(id, layerOrProps) {
+    var _a2, _b;
     const isLayerInstance = (candidate) => !!candidate && typeof candidate === "object" && "constructor" in candidate && typeof candidate.constructor === "function";
     if (!this.layerMap.has(id)) {
       if (isLayerInstance(layerOrProps)) {
@@ -52727,7 +52920,7 @@ var _DeckglMap = class _DeckglMap {
     const oldLayer = this.layerMap.get(id);
     if (isLayerInstance(layerOrProps)) {
       const incomingLayer = layerOrProps;
-      const incomingProps = incomingLayer.props ?? {};
+      const incomingProps = (_a2 = incomingLayer.props) != null ? _a2 : {};
       const incomingId = incomingProps["id"];
       if (typeof incomingId === "string" && incomingId !== id) {
         const Ctor = incomingLayer.constructor;
@@ -52743,7 +52936,7 @@ var _DeckglMap = class _DeckglMap {
     }
     const OldCtor = oldLayer.constructor;
     const newLayer = new OldCtor({
-      ...oldLayer.props ?? {},
+      ...(_b = oldLayer.props) != null ? _b : {},
       ...layerOrProps,
       id
     });
@@ -52779,9 +52972,10 @@ var _DeckglMap = class _DeckglMap {
    * 将当前图层刷新到 Deck 实例
    */
   updateLayer() {
+    var _a2;
     const layers = this.getLayers();
     const validLayers = layers.filter((layer) => layer !== void 0);
-    this.currentDeckInstance?.setProps({
+    (_a2 = this.currentDeckInstance) == null ? void 0 : _a2.setProps({
       layers: validLayers
     });
   }
@@ -52792,7 +52986,7 @@ var _DeckglMap = class _DeckglMap {
    * @param event - 事件对象
    */
   async handleClickMapView(info, event) {
-    const nativeEvent = event?.srcEvent;
+    const nativeEvent = event == null ? void 0 : event.srcEvent;
     if (nativeEvent && "detail" in nativeEvent && nativeEvent.detail === 2) {
       return;
     }
@@ -52816,18 +53010,19 @@ var _DeckglMap = class _DeckglMap {
    * @param event - 事件对象
    */
   async handleDoubleClickMapView(info, event) {
+    var _a2, _b, _c, _d;
     if (this.clickTimer) {
       clearTimeout(this.clickTimer);
       this.clickTimer = null;
     }
     const pick2 = info;
-    if (event?.srcEvent) {
+    if (event == null ? void 0 : event.srcEvent) {
       event.srcEvent.stopPropagation();
       event.srcEvent.preventDefault();
     }
-    if (pick2?.object && pick2.layer?.id === GeoLayer.getLayerId()) {
-      const regionName = pick2.object.properties?.name ?? "";
-      if (this.events?.onAreaDoubleClick) {
+    if ((pick2 == null ? void 0 : pick2.object) && ((_a2 = pick2.layer) == null ? void 0 : _a2.id) === GeoLayer.getLayerId()) {
+      const regionName = (_c = (_b = pick2.object.properties) == null ? void 0 : _b.name) != null ? _c : "";
+      if ((_d = this.events) == null ? void 0 : _d.onAreaDoubleClick) {
         this.events.onAreaDoubleClick(regionName);
       }
     }
@@ -52870,15 +53065,16 @@ var _DeckglMap = class _DeckglMap {
    * @param geojsonData - GeoJSON 数据
    */
   fitBoundsToGeoData(geojsonData) {
+    var _a2, _b, _c, _d, _e2;
     const canvasElement = this.container;
-    const containerWidth = canvasElement?.parentElement?.clientWidth ?? 1e3;
-    const containerHeight = canvasElement?.parentElement?.clientHeight ?? 800;
+    const containerWidth = (_b = (_a2 = canvasElement == null ? void 0 : canvasElement.parentElement) == null ? void 0 : _a2.clientWidth) != null ? _b : 1e3;
+    const containerHeight = (_d = (_c = canvasElement == null ? void 0 : canvasElement.parentElement) == null ? void 0 : _c.clientHeight) != null ? _d : 800;
     const viewState = GeoLayer.calculateViewState(
       geojsonData,
       { width: containerWidth, height: containerHeight },
       this.mode
     );
-    this.initialMinZoom ?? (this.initialMinZoom = this.calculateInitialMinZoom(containerWidth, containerHeight));
+    (_e2 = this.initialMinZoom) != null ? _e2 : this.initialMinZoom = this.calculateInitialMinZoom(containerWidth, containerHeight);
     this.updateViewState([viewState.longitude, viewState.latitude], viewState.zoom);
   }
   /**
@@ -52902,6 +53098,7 @@ var _DeckglMap = class _DeckglMap {
    * @param zoom - 缩放级别
    */
   updateViewState(center, zoom) {
+    var _a2;
     const newViewState = {
       longitude: center[0],
       latitude: center[1],
@@ -52911,7 +53108,7 @@ var _DeckglMap = class _DeckglMap {
       // 500ms 动画过渡
       transitionInterpolator: new FlyToInterpolator()
     };
-    this.currentDeckInstance?.setProps({
+    (_a2 = this.currentDeckInstance) == null ? void 0 : _a2.setProps({
       initialViewState: newViewState
     });
   }
@@ -53004,13 +53201,13 @@ var DeckglMap = _DeckglMap;
 var deckgl_default = DeckglMap;
 
 // src/echarts-geo/index.ts
-var import_charts = require("echarts/charts");
-var echarts2 = __toESM(require("echarts/core"));
-var import_renderers = require("echarts/renderers");
-var import_components = require("echarts/components");
+import { ScatterChart, LinesChart } from "echarts/charts";
+import * as echarts2 from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import { GeoComponent as GeoComponent2, TooltipComponent, TitleComponent } from "echarts/components";
 
 // src/echarts-geo/components/geo.ts
-var echarts = __toESM(require("echarts/core"));
+import * as echarts from "echarts/core";
 
 // src/utils/echartGeoUtils.ts
 function getZoomLevelFromWorldWidth(worldWidth) {
@@ -53024,15 +53221,17 @@ var EchartGeoUtils = class _EchartGeoUtils {
    * @returns 所有坐标数组
    */
   static getAllCoordinates(geoJson) {
+    var _a2;
     const coordinates = [];
     if (geoJson.type === "FeatureCollection") {
       geoJson.features.forEach((feature) => {
-        if (feature.geometry?.coordinates) {
+        var _a3;
+        if ((_a3 = feature.geometry) == null ? void 0 : _a3.coordinates) {
           coordinates.push(feature.geometry.coordinates);
         }
       });
     } else if (geoJson.type === "Feature") {
-      if (geoJson.geometry?.coordinates) {
+      if ((_a2 = geoJson.geometry) == null ? void 0 : _a2.coordinates) {
         coordinates.push(geoJson.geometry.coordinates);
       }
     } else if (geoJson.coordinates) {
@@ -53121,12 +53320,13 @@ var _GeoComponent = class _GeoComponent {
     }
   }
   static calculateScaleAndCenter(container) {
+    var _a2;
     const center = null;
     let scale5 = 1;
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
     const geoJson = MapStateManager.geoData;
-    const result = EchartGeoUtils.getCenterAndZoom(geoJson, { containerWidth, containerHeight }) ?? { center, zoom: scale5 };
+    const result = (_a2 = EchartGeoUtils.getCenterAndZoom(geoJson, { containerWidth, containerHeight })) != null ? _a2 : { center, zoom: scale5 };
     scale5 = result.zoom;
     return { scale: scale5, center: result.center };
   }
@@ -53142,7 +53342,7 @@ var _GeoComponent = class _GeoComponent {
     const geo = options.geo;
     if (geo && geo.length > 0) {
       geo[0].map = _GeoComponent.generateMapName();
-      geo[0].center = center ?? geo[0].center;
+      geo[0].center = center != null ? center : geo[0].center;
       geo[0].zoom = scale5;
       geo[0].itemStyle = {
         ...geo[0].itemStyle
@@ -53190,7 +53390,10 @@ var _GeoComponent = class _GeoComponent {
     if (!Array.isArray(features)) {
       return pointsInRegion;
     }
-    const hoverFeature = features.find((item) => item.properties?.name === params.name);
+    const hoverFeature = features.find((item) => {
+      var _a2;
+      return ((_a2 = item.properties) == null ? void 0 : _a2.name) === params.name;
+    });
     if (!hoverFeature) {
       return pointsInRegion;
     }
@@ -53278,7 +53481,8 @@ var _ScatterComponent = class _ScatterComponent {
         color: "#fff",
         position: "bottom",
         formatter: (formatterParams) => {
-          return formatterParams.data.name ?? "";
+          var _a2;
+          return (_a2 = formatterParams.data.name) != null ? _a2 : "";
         }
       },
       itemStyle: {
@@ -53311,13 +53515,14 @@ var _ScatterComponent = class _ScatterComponent {
   static processPointsData(points) {
     const symbolMap = MapStateManager.echartsSymbols;
     return points.map((point) => {
+      var _a2, _b, _c;
       const processedPoint = _ScatterComponent.processPoint(point);
       processedPoint.name = point.name;
       processedPoint.symbol = point.icon ? symbolMap[point.icon] : DEFAULT_POINT_CONFIG.symbol;
-      processedPoint.symbolSize = point.size ?? DEFAULT_POINT_CONFIG.symbolSize;
+      processedPoint.symbolSize = (_a2 = point.size) != null ? _a2 : DEFAULT_POINT_CONFIG.symbolSize;
       processedPoint.itemStyle = {
-        color: convertToColorCode(point.color) ?? DEFAULT_POINT_CONFIG.itemStyle.color,
-        opacity: point.opacity ?? DEFAULT_POINT_CONFIG.itemStyle.opacity
+        color: (_b = convertToColorCode(point.color)) != null ? _b : DEFAULT_POINT_CONFIG.itemStyle.color,
+        opacity: (_c = point.opacity) != null ? _c : DEFAULT_POINT_CONFIG.itemStyle.opacity
       };
       return processedPoint;
     });
@@ -53360,7 +53565,7 @@ var _ScatterComponent = class _ScatterComponent {
    * @param processFn - 处理函数，用于修改点数据项
    */
   static setPointStyleInternal(chartInstance, targetSeriesName, processFn) {
-    const currentOption = chartInstance?.getOption();
+    const currentOption = chartInstance == null ? void 0 : chartInstance.getOption();
     if (!currentOption || !Array.isArray(currentOption.series)) {
       return;
     }
@@ -53384,9 +53589,10 @@ var _ScatterComponent = class _ScatterComponent {
   static setPointStyle(chartInstance, seriesName, styleProcessor) {
     if (!chartInstance) return;
     _ScatterComponent.setPointStyleInternal(chartInstance, seriesName, (dataItem) => {
+      var _a2;
       const tempParam = {
         id: dataItem.id,
-        name: dataItem.name ?? "",
+        name: (_a2 = dataItem.name) != null ? _a2 : "",
         componentType: "series",
         componentSubType: "scatter",
         seriesName,
@@ -53425,7 +53631,7 @@ var _ScatterComponent = class _ScatterComponent {
    */
   static getScatterData(series) {
     const pointSeries = _ScatterComponent.findScatterSeries(series);
-    return pointSeries?.data;
+    return pointSeries == null ? void 0 : pointSeries.data;
   }
   /**
    * 检查是否为散点图组件类型
@@ -53531,7 +53737,8 @@ _ScatterComponent.countSuffix = (count2) => {
 * @returns 处理后的点配置
 */
 _ScatterComponent.processPoint = (pointItem) => {
-  const siblingPointId = pointItem.siblingPointId ?? [];
+  var _a2, _b;
+  const siblingPointId = (_a2 = pointItem.siblingPointId) != null ? _a2 : [];
   const siblingCount = _ScatterComponent.countSuffix(siblingPointId.length);
   const dataOption = _ScatterComponent.getPointDefaultOption(pointItem);
   if (pointItem.name) {
@@ -53540,7 +53747,7 @@ _ScatterComponent.processPoint = (pointItem) => {
   if (dataOption.label) {
     dataOption.label.show = pointItem.label.show;
   }
-  if (dataOption.emphasis?.label) {
+  if ((_b = dataOption.emphasis) == null ? void 0 : _b.label) {
     dataOption.emphasis.label.show = pointItem.label.hoverShow;
   }
   return dataOption;
@@ -53557,6 +53764,7 @@ var _LinesComponent = class _LinesComponent {
   static convertLinesToSeries(lines) {
     const defaultLineSeries = _LinesComponent.defaultLinesSeries;
     const lineData = lines.map((line) => {
+      var _a2, _b, _c, _d, _e2;
       const curvature = _LinesComponent.curvatureCalculator.calculateCurvatureByCoordinates(
         line.id,
         line.startCoordinate,
@@ -53568,13 +53776,13 @@ var _LinesComponent = class _LinesComponent {
         coords: [line.startCoordinate, line.endCoordinate],
         effect: {
           ...defaultLineSeries.effect,
-          color: convertToColorCode(line.color) ?? defaultLineSeries.effect?.color
+          color: (_b = convertToColorCode(line.color)) != null ? _b : (_a2 = defaultLineSeries.effect) == null ? void 0 : _a2.color
         },
         lineStyle: {
           ...defaultLineStyle,
-          color: convertToColorCode(line.color) ?? defaultLineStyle?.color,
-          width: line.width ?? defaultLineStyle?.width,
-          opacity: line.opacity ?? defaultLineStyle?.opacity,
+          color: (_c = convertToColorCode(line.color)) != null ? _c : defaultLineStyle == null ? void 0 : defaultLineStyle.color,
+          width: (_d = line.width) != null ? _d : defaultLineStyle == null ? void 0 : defaultLineStyle.width,
+          opacity: (_e2 = line.opacity) != null ? _e2 : defaultLineStyle == null ? void 0 : defaultLineStyle.opacity,
           curveness: curvature
         }
       };
@@ -53646,11 +53854,12 @@ var _LinesComponent = class _LinesComponent {
    * @returns 线条配置
    */
   static getLineDefaultOption(lineItem, config2) {
+    var _a2, _b;
     const [startLng, startLat] = lineItem.startCoordinate;
     const [endLng, endLat] = lineItem.endCoordinate;
     const { min: defaultMin, max: defaultMax } = _LinesComponent.calculateCurvatureRange(startLng, startLat, endLng, endLat);
-    const curvatureMin = config2?.curvatureMin ?? defaultMin;
-    const curvatureMax = config2?.curvatureMax ?? defaultMax;
+    const curvatureMin = (_a2 = config2 == null ? void 0 : config2.curvatureMin) != null ? _a2 : defaultMin;
+    const curvatureMax = (_b = config2 == null ? void 0 : config2.curvatureMax) != null ? _b : defaultMax;
     if (curvatureMin < 0 || curvatureMax > 1 || curvatureMin > curvatureMax) {
       throw new Error("\u65E0\u6548\u7684\u66F2\u7387\u8303\u56F4\u3002\u5FC5\u987B\u6EE1\u8DB3: 0 <= min <= max <= 1");
     }
@@ -53739,14 +53948,15 @@ _LinesComponent.calculateCurvatureRange = (startLng, startLat, endLng, endLat) =
 _LinesComponent.getBuddyLineSeries = (originLineSeries) => {
   const sourceData = Array.isArray(originLineSeries.data) ? originLineSeries.data : [];
   const connectivitySeriesData = sourceData.map((item) => {
-    const [start, end] = item.coords ?? [];
+    var _a2, _b, _c;
+    const [start, end] = (_a2 = item.coords) != null ? _a2 : [];
     return {
       ...item,
       coords: [end, start],
       lineStyle: {
         ...item.lineStyle,
         // 但是在显示上为了表示为同一条线，这里需要将曲线的弯曲度取反，这样就可以在地图上展示一条线
-        curveness: item.lineStyle?.curveness ?? _LinesComponent.hashString(JSON.stringify(item.coords))
+        curveness: (_c = (_b = item.lineStyle) == null ? void 0 : _b.curveness) != null ? _c : _LinesComponent.hashString(JSON.stringify(item.coords))
       }
     };
   });
@@ -53760,7 +53970,7 @@ _LinesComponent.getBuddyLineSeries = (originLineSeries) => {
 var LinesComponent = _LinesComponent;
 
 // src/echarts-geo/index.ts
-echarts2.use([import_renderers.CanvasRenderer, import_components.GeoComponent, import_components.TooltipComponent, import_components.TitleComponent, import_charts.ScatterChart, import_charts.LinesChart]);
+echarts2.use([CanvasRenderer, GeoComponent2, TooltipComponent, TitleComponent, ScatterChart, LinesChart]);
 var EchartsMap = class {
   // 曲率计算器已移至 LinesComponent 静态类
   /**
@@ -53782,12 +53992,13 @@ var EchartsMap = class {
      * @private
      */
     this.dbClickHandler = (params) => {
-      if (!params?.event?.event || !params.componentType) {
+      var _a2, _b, _c;
+      if (!((_a2 = params == null ? void 0 : params.event) == null ? void 0 : _a2.event) || !params.componentType) {
         return;
       }
       params.event.event.stopPropagation();
       if (params.componentType === "geo") {
-        this.config.events?.onAreaDoubleClick?.(params.name || "");
+        (_c = (_b = this.config.events) == null ? void 0 : _b.onAreaDoubleClick) == null ? void 0 : _c.call(_b, params.name || "");
       }
     };
     /**
@@ -53810,6 +54021,7 @@ var EchartsMap = class {
      * @private
      */
     this.redrawMap = () => {
+      var _a2;
       const chartInstance = this.chartInstance;
       if (!chartInstance) {
         return;
@@ -53828,7 +54040,7 @@ var EchartsMap = class {
         center: geoComponent.center,
         zoom: geoComponent.zoom
       });
-      if (this.config.events?.onZoom && typeof geoComponent.zoom === "number") {
+      if (((_a2 = this.config.events) == null ? void 0 : _a2.onZoom) && typeof geoComponent.zoom === "number") {
         this.config.events.onZoom(geoComponent.zoom);
       }
     };
@@ -53837,7 +54049,8 @@ var EchartsMap = class {
      * @public
      */
     this.resizeMap = () => {
-      this.chartInstance?.resize();
+      var _a2;
+      (_a2 = this.chartInstance) == null ? void 0 : _a2.resize();
     };
     /**
      * 地图系列数据更新方法（防抖，300ms 延迟）
@@ -53868,6 +54081,7 @@ var EchartsMap = class {
    * @private
    */
   async initChart(geoJson) {
+    var _a2;
     if (!this.container) {
       return;
     }
@@ -53894,7 +54108,7 @@ var EchartsMap = class {
     const zoom = GeoComponent.calculateScaleAndCenter(this.container).scale;
     geoOption.zoom = zoom;
     baseOption.geo = geoOption;
-    this.chartInstance?.setOption(baseOption, true);
+    (_a2 = this.chartInstance) == null ? void 0 : _a2.setOption(baseOption, true);
     instance.on("dblclick", this.dbClickHandler);
     instance.on("georoam", this.redrawMap);
   }
@@ -53931,7 +54145,7 @@ var EchartsMap = class {
     const geojson = MapStateManager.geoData;
     GeoComponent.registerMap(geojson);
     this.updateGeoOption();
-    if (boundary?.type !== "FeatureCollection" || !Array.isArray(boundary?.features)) {
+    if ((boundary == null ? void 0 : boundary.type) !== "FeatureCollection" || !Array.isArray(boundary == null ? void 0 : boundary.features)) {
       this.boundaryLoading = false;
       return;
     }
@@ -53973,11 +54187,12 @@ var EchartsMap = class {
    * @public
    */
   updateMapLevel(curLevel) {
+    var _a2, _b;
     MapStateManager.curLevel = curLevel;
-    const currentOption = this.chartInstance?.getOption();
+    const currentOption = (_a2 = this.chartInstance) == null ? void 0 : _a2.getOption();
     if (!currentOption) return;
     const geo = currentOption.geo || [];
-    const hasInitializedGeo = Array.isArray(geo) && geo[0]?.map;
+    const hasInitializedGeo = Array.isArray(geo) && ((_b = geo[0]) == null ? void 0 : _b.map);
     if (!hasInitializedGeo) {
       return;
     }
@@ -53988,11 +54203,12 @@ var EchartsMap = class {
    * @public
    */
   destroy() {
+    var _a2, _b;
     if (this.detailMap) {
-      this.chartInstance?.clear();
+      (_a2 = this.chartInstance) == null ? void 0 : _a2.clear();
     }
     window.removeEventListener("resize", this.resizeMap);
-    this.chartInstance?.dispose();
+    (_b = this.chartInstance) == null ? void 0 : _b.dispose();
     if (this.unsubscribeState) {
       this.unsubscribeState();
       this.unsubscribeState = null;
@@ -54175,13 +54391,14 @@ var OrchMap = class {
    * @returns {Promise<void>} 初始化 Promise
    */
   async initMap() {
+    var _a2, _b, _c, _d, _e2;
     MapStateManager.curLevel = this.config.curLevel;
-    MapStateManager.postcode = this.config.postcode ?? "";
-    MapStateManager.country = this.config.country ?? "";
+    MapStateManager.postcode = (_a2 = this.config.postcode) != null ? _a2 : "";
+    MapStateManager.country = (_b = this.config.country) != null ? _b : "";
     const params = {
       currentLevel: this.config.curLevel,
-      country: this.config.country ?? "",
-      region: this.config.postcode ?? ""
+      country: (_c = this.config.country) != null ? _c : "",
+      region: (_d = this.config.postcode) != null ? _d : ""
     };
     const exists = await src_default.checkGeoJsonExistsForParams({
       mapLevel: params.currentLevel,
@@ -54203,7 +54420,8 @@ var OrchMap = class {
             events: {
               ...this.config.events,
               onAreaDoubleClick: async (region) => {
-                this.config.events?.onAreaDoubleClick?.(region);
+                var _a3, _b2;
+                (_b2 = (_a3 = this.config.events) == null ? void 0 : _a3.onAreaDoubleClick) == null ? void 0 : _b2.call(_a3, region);
                 void await this.entryNextLevel(region);
               }
             }
@@ -54214,14 +54432,15 @@ var OrchMap = class {
       case "deckgl" /* DECKGL */:
         this.instance = new deckgl_default(
           this.config.container,
-          this.config.mode ?? "2d",
+          (_e2 = this.config.mode) != null ? _e2 : "2d",
           () => {
             console.log("DeckGL initialized");
           },
           {
             ...this.config.events,
             onAreaDoubleClick: async (region) => {
-              this.config.events?.onAreaDoubleClick?.(region);
+              var _a3, _b2;
+              (_b2 = (_a3 = this.config.events) == null ? void 0 : _a3.onAreaDoubleClick) == null ? void 0 : _b2.call(_a3, region);
               void await this.entryNextLevel(region);
             }
           }
@@ -54430,11 +54649,12 @@ var OrchMap = class {
    * @returns {MapRendererType} 推荐的渲染器类型
    */
   static getRecommendedType(config2) {
-    if (config2?.mode === "3d") {
+    var _a2;
+    if ((config2 == null ? void 0 : config2.mode) === "3d") {
       return "deckgl" /* DECKGL */;
     }
     const canvas2 = document.createElement("canvas");
-    const gl = canvas2.getContext("webgl") ?? canvas2.getContext("experimental-webgl");
+    const gl = (_a2 = canvas2.getContext("webgl")) != null ? _a2 : canvas2.getContext("experimental-webgl");
     if (gl) {
       return "deckgl" /* DECKGL */;
     }
@@ -54444,11 +54664,11 @@ var OrchMap = class {
 
 // src/index.ts
 var index_default = OrchMap;
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
-  EChartsGeoUtils,
-  MapRendererType
-});
+export {
+  LinesComponent as EChartsGeoUtils,
+  MapRendererType,
+  index_default as default
+};
 /*! Bundled license information:
 
 lodash/lodash.js:

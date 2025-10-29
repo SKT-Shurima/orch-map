@@ -214,33 +214,35 @@ var AnimationManager = class {
 var Animation = class {
   constructor(config) {
     this.startTime = null;
+    var _a, _b, _c, _d, _e;
     this.config = {
       ...config,
-      enabled: config.enabled ?? true,
-      duration: config.duration ?? 1e3,
-      easing: config.easing ?? "easeInOutQuad",
-      delay: config.delay ?? 0,
-      type: config.type ?? "fadeIn"
+      enabled: (_a = config.enabled) != null ? _a : true,
+      duration: (_b = config.duration) != null ? _b : 1e3,
+      easing: (_c = config.easing) != null ? _c : "easeInOutQuad",
+      delay: (_d = config.delay) != null ? _d : 0,
+      type: (_e = config.type) != null ? _e : "fadeIn"
     };
   }
   /**
    * 更新动画
    */
   update(currentTime) {
-    this.startTime ?? (this.startTime = currentTime);
+    var _a, _b, _c, _d, _e, _f;
+    (_a = this.startTime) != null ? _a : this.startTime = currentTime;
     const elapsed = currentTime - this.startTime;
-    const duration = this.config.duration ?? 1e3;
+    const duration = (_b = this.config.duration) != null ? _b : 1e3;
     let progress = Math.min(elapsed / duration, 1);
     const easingFn = easing[this.config.easing] || easing.linear;
     progress = easingFn(progress);
     const value = this.config.from + (this.config.to - this.config.from) * progress;
-    this.config.onUpdate?.(progress, value);
+    (_d = (_c = this.config).onUpdate) == null ? void 0 : _d.call(_c, progress, value);
     if (elapsed >= duration) {
       if (this.config.loop) {
         this.startTime = currentTime;
         return false;
       } else {
-        this.config.onComplete?.();
+        (_f = (_e = this.config).onComplete) == null ? void 0 : _f.call(_e);
         return true;
       }
     }
@@ -447,7 +449,7 @@ var GeoJsonUtils = class _GeoJsonUtils {
    * @returns 投影后的坐标 [x, y]
    */
   static lngLatToProjected(transform, lngLat) {
-    if (!transform?.default) {
+    if (!(transform == null ? void 0 : transform.default)) {
       return lngLat;
     }
     const { scale, translate } = transform.default;
@@ -464,7 +466,7 @@ var GeoJsonUtils = class _GeoJsonUtils {
    * @returns 经纬度坐标 [经度, 纬度]
    */
   static projectedToLngLat(transform, projected) {
-    if (!transform?.default) {
+    if (!(transform == null ? void 0 : transform.default)) {
       return projected;
     }
     const { scale, translate } = transform.default;
@@ -802,6 +804,7 @@ var GeoJsonUtils = class _GeoJsonUtils {
 
 // src/icon.ts
 function svgToEChartsSymbol(svg, options = {}) {
+  var _a, _b, _c, _d, _e, _f, _g, _h, _i;
   const { preferPath = true, normalize = false } = options;
   const svgString = typeof svg === "string" ? svg : svg instanceof Element ? svg.outerHTML : "";
   if (!svgString) {
@@ -833,20 +836,20 @@ function svgToEChartsSymbol(svg, options = {}) {
         const tagName = shape.tagName.toLowerCase();
         let pathData = "";
         if (tagName === "circle") {
-          const cx = parseFloat(shape.getAttribute("cx") ?? "0");
-          const cy = parseFloat(shape.getAttribute("cy") ?? "0");
-          const r = parseFloat(shape.getAttribute("r") ?? "0");
+          const cx = parseFloat((_a = shape.getAttribute("cx")) != null ? _a : "0");
+          const cy = parseFloat((_b = shape.getAttribute("cy")) != null ? _b : "0");
+          const r = parseFloat((_c = shape.getAttribute("r")) != null ? _c : "0");
           pathData = `M${cx - r},${cy}A${r},${r},0,1,1,${cx + r},${cy}A${r},${r},0,1,1,${cx - r},${cy}Z`;
         } else if (tagName === "rect") {
-          const x = parseFloat(shape.getAttribute("x") ?? "0");
-          const y = parseFloat(shape.getAttribute("y") ?? "0");
-          const width = parseFloat(shape.getAttribute("width") ?? "0");
-          const height = parseFloat(shape.getAttribute("height") ?? "0");
-          const rx = parseFloat(shape.getAttribute("rx") ?? "0");
-          const ry = parseFloat(shape.getAttribute("ry") ?? "0");
+          const x = parseFloat((_d = shape.getAttribute("x")) != null ? _d : "0");
+          const y = parseFloat((_e = shape.getAttribute("y")) != null ? _e : "0");
+          const width = parseFloat((_f = shape.getAttribute("width")) != null ? _f : "0");
+          const height = parseFloat((_g = shape.getAttribute("height")) != null ? _g : "0");
+          const rx = parseFloat((_h = shape.getAttribute("rx")) != null ? _h : "0");
+          const ry = parseFloat((_i = shape.getAttribute("ry")) != null ? _i : "0");
           if (rx > 0 || ry > 0) {
-            const _rx = rx ?? ry;
-            const _ry = ry ?? rx;
+            const _rx = rx != null ? rx : ry;
+            const _ry = ry != null ? ry : rx;
             pathData = `M${x + _rx},${y} L${x + width - _rx},${y} Q${x + width},${y} ${x + width},${y + _ry} L${x + width},${y + height - _ry} Q${x + width},${y + height} ${x + width - _rx},${y + height} L${x + _rx},${y + height} Q${x},${y + height} ${x},${y + height - _ry} L${x},${y + _ry} Q${x},${y} ${x + _rx},${y} Z`;
           } else {
             pathData = `M${x},${y} L${x + width},${y} L${x + width},${y + height} L${x},${y + height} Z`;
@@ -916,8 +919,9 @@ function convertToColorCode(colorArray) {
   }
 }
 function hexToRgba(hex) {
-  const [r, g, b, a] = hex.match(/\w\w/g)?.map((c) => parseInt(c, 16)) ?? [0, 0, 0, 255];
-  return [r, g, b, a ?? 255];
+  var _a, _b;
+  const [r, g, b, a] = (_b = (_a = hex.match(/\w\w/g)) == null ? void 0 : _a.map((c) => parseInt(c, 16))) != null ? _b : [0, 0, 0, 255];
+  return [r, g, b, a != null ? a : 255];
 }
 export {
   Animation,

@@ -1,6 +1,17 @@
 # Orch Map
 
-一个基于 ECharts 的地理坐标系组件库 monorepo 项目，提供对 ECharts Geo 组件的二次封装。
+一个强大的基于 ECharts 和 DeckGL 的地图可视化组件库，专为现代 Web 应用设计。支持世界地图、中国地图和美国地图的多层级展示，提供丰富的交互功能和数据可视化能力。
+
+## ✨ 特性
+
+- 🗺️ **多层级地图支持** - 世界地图、国家地图、省份/州地图无缝切换
+- 🎨 **双渲染引擎** - 支持 ECharts 和 DeckGL 两种渲染方式
+- 📊 **丰富的数据可视化** - 散点图、线条图、热力图等
+- 🌍 **全球地图数据** - 内置世界、中国、美国地图数据
+- 📱 **响应式设计** - 适配各种屏幕尺寸
+- 🔧 **TypeScript 支持** - 完整的类型定义
+- 🚀 **现代化构建** - 支持 ES Module、CommonJS 和 UMD 格式
+- 🎯 **框架无关** - 支持 React、Vue、Angular 等现代框架
 
 ## 📚 文档
 
@@ -11,31 +22,20 @@
 
 ### 安装
 
-```bash
-# 克隆仓库
-git clone https://github.com/SKT-Shurima/orch-map.git
-cd orch-map
-
-# 安装依赖
-pnpm install
-```
-
-### 开发
+#### 方式一：NPM 安装（推荐）
 
 ```bash
-# 构建所有包
-pnpm build
+# 使用 pnpm（推荐）
+pnpm add orch-map echarts
 
-# 监听模式构建
-pnpm -r --filter='!examples/*' build --watch
+# 或使用 npm
+npm install orch-map echarts
 
-# 运行示例
-pnpm dev
+# 或使用 yarn
+yarn add orch-map echarts
 ```
 
-### 使用
-
-在你的项目 `package.json` 中添加：
+#### 方式二：从 GitHub 安装
 
 ```json
 {
@@ -52,35 +52,64 @@ pnpm dev
 }
 ```
 
+### 开发
+
 ```bash
-pnpm install
+# 构建所有包
+pnpm build
+
+# 监听模式构建
+pnpm -r --filter='!examples/*' build --watch
+
+# 运行示例
+pnpm dev
 ```
 
-**注意**: 需要安装 `patch-package` 来应用对 `@deck.gl/layers` 的补丁。
+### 基本使用
+
+#### ES Module 方式
 
 ```typescript
-import { Geo } from 'orch-map/core';
-import type { GeoConfig } from 'orch-map/types';
+import OrchMap, { MapRendererType } from 'orch-map/core';
+import { MapLevel } from 'orch-map/types';
 
-const config: GeoConfig = {
-  mapName: 'china',
-  center: [105, 36],
-  zoom: 1.2,
-  roam: true,
-};
-
-const container = document.getElementById('map')!;
-const geo = new Geo(container, config);
-
-geo.addSeries({
-  type: 'scatter',
-  data: [
-    { name: '北京', value: [116.46, 39.92, 100] },
-    { name: '上海', value: [121.48, 31.22, 200] },
-  ],
-  symbolSize: 8,
-  itemStyle: { color: '#ff6b6b' },
+// 创建地图实例
+const mapInstance = new OrchMap({
+  renderType: MapRendererType.DECKGL,
+  mapVersion: 'standard',
+  mode: '3d',
+  container: document.getElementById('map-container')!,
+  curLevel: MapLevel.WORLD,
+  country: '',
+  postcode: '',
+  events: {
+    onMapClick: (event) => {
+      console.log('地图点击:', event);
+    },
+  },
 });
+
+// 设置点位数据
+mapInstance.setPoints([
+  {
+    id: 'beijing',
+    name: '北京',
+    coordinate: [116.46, 39.92],
+    icon: 'star',
+    size: 16,
+  },
+]);
+
+// 设置线条数据
+mapInstance.setLines([
+  {
+    id: 'line1',
+    name: '连接线',
+    startCoordinate: [116.46, 39.92],
+    endCoordinate: [121.48, 31.22],
+    color: '#ff6b6b',
+  },
+]);
 ```
 
 ## 📁 项目结构
@@ -104,9 +133,10 @@ orch-map/
 
 - **包管理**: pnpm + workspace
 - **语言**: TypeScript
-- **构建工具**: tsup (packages) + Vite (examples)
+- **构建工具**: tsup (支持 ES Module、CommonJS、UMD)
 - **地图引擎**: ECharts 5.6
-- **3D 渲染**: Deck.gl 9.2
+- **3D 渲染**: DeckGL 9.2
+- **浏览器支持**: ES2018+ (现代浏览器)
 
 ## 📦 Packages
 
