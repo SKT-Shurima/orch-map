@@ -12,6 +12,7 @@
 import type { BaseMapLine } from "@orch-map/types";
 import CurvatureCalculator from "../../utils/curvatureCalculator";
 import { PathLayer, ScatterplotLayer } from "@deck.gl/layers";
+import { LayerId } from "./types";
 
 // 默认连接线颜色（回退）
 const DEFAULT_LINE_RGBA: [number, number, number, number] = [170, 170, 170, 90];
@@ -173,7 +174,7 @@ export class Line2DManager {
     });
 
     return new PathLayer({
-      id: "line-layer",
+      id: LayerId.LINE_LAYER,
       data: fullData,
       pickable: false,
       widthScale: 1,
@@ -268,7 +269,7 @@ export class Line2DManager {
     }
 
     return new ScatterplotLayer({
-      id: "line-trail-layer",
+      id: LayerId.LINE_TRAIL_LAYER,
       data: dots,
       pickable: false,
       radiusUnits: "pixels",
@@ -314,7 +315,7 @@ export class Line2DManager {
    * @returns 图层 ID 数组
    */
   public static getLayerIdsToRemove(): string[] {
-    return ["line-layer", "line-trail-layer"];
+    return [LayerId.LINE_LAYER, LayerId.LINE_TRAIL_LAYER];
   }
 }
 

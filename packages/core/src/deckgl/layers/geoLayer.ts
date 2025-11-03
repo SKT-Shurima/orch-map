@@ -10,6 +10,7 @@ import { MapLevel } from "@orch-map/types";
 import MapStateManager from "../../MapStateManager";
 import GeoUtils from "../../utils/geoUtils";
 import type { MapRendererEvents } from "../../interfaces/IMapRenderer";
+import { LayerId } from "./types";
 
 /**
  * GeoJSON 图层属性配置接口
@@ -110,12 +111,17 @@ export interface ContainerSize {
 
 export default class GeoLayer {
   /**
+   * 当前悬停的要素名称
+   */
+  private static hoveredFeatureName: string | null = null;
+
+  /**
    * 创建一个空数据的 GeoJsonLayer
    */
   public static create() {
     return new GeoJsonLayer({
       ...DEFAULT_GEO_LAYER_PROPS,
-      id: "geojson-layer",
+      id: LayerId.GEOJSON_LAYER,
       data: [],
     });
   }
@@ -127,22 +133,22 @@ export default class GeoLayer {
    * @returns 配置好的 GeoJsonLayer 实例
    */
   public static createWithData(geojsonData: GeoJSON, events?: MapRendererEvents) {
-    let hoveredFeatureName: string | null = null;
     let lastClickTime = 0;
     const DOUBLE_CLICK_THRESHOLD = 300; // 毫秒
 
     return new GeoJsonLayer({
       ...DEFAULT_GEO_LAYER_PROPS,
-      id: "geojson-layer",
+      id: LayerId.GEOJSON_LAYER,
       data: geojsonData,
       getFillColor: (feature: Feature) => {
-        if (isDef(hoveredFeatureName) && hoveredFeatureName === feature.properties?.name) {
-          return [255, 255, 255, 255];
+        if (isDef(GeoLayer.hoveredFeatureName) && GeoLayer.hoveredFeatureName === feature.properties?.name) {
+          return DEFAULT_GEO_HIGHLIGHT_COLOR;
         }
         return DEFAULT_GEO_FILL_COLOR;
       },
       updateTriggers: {
-        getFillColor: hoveredFeatureName,
+        getFillColor: GeoLayer.hoveredFeatureName,
+        onHover: GeoLayer.hoveredFeatureName,
       },
       onClick: (info: unknown) => {
         const currentTime = Date.now();
@@ -167,16 +173,14 @@ export default class GeoLayer {
       },
       onHover: (info: unknown) => {
         const hover = info as { object?: { properties?: { name?: string } } } | null;
-        if (hoveredFeatureName !== hover?.object?.properties?.name) {
+        const newHoveredName = hover?.object?.properties?.name ?? null;
+        if (GeoLayer.hoveredFeatureName !== newHoveredName) {
           // 需要重绘时，这里应该触发重绘，但静态方法无法直接访问 deck 实例
           // 这个逻辑需要在调用方处理
+          GeoLayer.setHoveredFeatureName(newHoveredName);
         }
-        if (hover?.object) {
-          hoveredFeatureName = hover.object.properties?.name ?? null;
-        } else {
-          hoveredFeatureName = null;
-        }
-        return true;
+        return newHoveredName ? true : false;
+
       },
     });
   }
@@ -185,14 +189,14 @@ export default class GeoLayer {
    * 根据地理数据计算适合的视图状态
    * @param geojsonData - GeoJSON 数据
    * @param containerSize - 容器尺寸
-   * @param mode - 地图模式（2D/3D）
+   * @param mode - 地图模式（2D/2.5D/3D）
    * @param center - 可选的中心点配置 { lat, lng }，如果提供则优先使用
    * @returns 计算后的视图状态
    */
   public static calculateViewState(
     geojsonData: GeoJSON,
     containerSize: ContainerSize,
-    mode: "2d" | "3d" = "2d",
+    mode: "2d" | "2.5d" | "3d" = "2d",
     center?: { lat: number; lng: number },
   ): ViewState {
     // 如果提供了 center 配置，直接使用
@@ -205,7 +209,7 @@ export default class GeoLayer {
         longitude: center.lng,
         latitude: center.lat,
         zoom: result?.zoom ?? 1,
-        pitch: mode === "3d" ? 45 : 0,
+        pitch: mode === "2.5d" || mode === "3d" ? 45 : 0,
       };
     }
 
@@ -221,7 +225,7 @@ export default class GeoLayer {
         longitude: result?.center?.[0] ?? 0,
         latitude: result?.center?.[1] ?? 0,
         zoom: result?.zoom ?? 0,
-        pitch: mode === "3d" ? 45 : 0,
+        pitch: mode === "2.5d" || mode === "3d" ? 45 : 0,
       };
     }
 
@@ -235,7 +239,7 @@ export default class GeoLayer {
         longitude: 0,
         latitude: 0,
         zoom: 1,
-        pitch: mode === "3d" ? 45 : 0,
+        pitch: mode === "2.5d" || mode === "3d" ? 45 : 0,
       };
     }
 
@@ -243,7 +247,7 @@ export default class GeoLayer {
       longitude: result.center?.[0] ?? 0,
       latitude: result.center?.[1] ?? 0,
       zoom: result.zoom ?? 1,
-      pitch: mode === "3d" ? 45 : 0,
+      pitch: mode === "2.5d" || mode === "3d" ? 45 : 0,
     };
   }
 
@@ -268,7 +272,23 @@ export default class GeoLayer {
    * @returns 图层 ID
    */
   public static getLayerId(): string {
-    return "geojson-layer";
+    return LayerId.GEOJSON_LAYER;
+  }
+
+  /**
+   * 设置当前悬停的要素名称
+   * @param name - 要素名称，为 null 时清除悬停状态
+   */
+  public static setHoveredFeatureName(name: string | null): void {
+    GeoLayer.hoveredFeatureName = name;
+  }
+
+  /**
+   * 获取当前悬停的要素名称
+   * @returns 当前悬停的要素名称，如果没有则为 null
+   */
+  public static getHoveredFeatureName(): string | null {
+    return GeoLayer.hoveredFeatureName;
   }
 }
 

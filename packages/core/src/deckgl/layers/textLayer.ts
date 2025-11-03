@@ -10,6 +10,7 @@ import { type BaseMapPoint } from "@orch-map/types";
 import { TextLayer as DeckTextLayer } from "@deck.gl/layers";
 import { hexToRgba } from "@orch-map/utils";
 import { POINT_DEFAULT_STYLE } from "../../constants";
+import { LayerId } from "./types";
 
 /**
  * 文本标签数据结构
@@ -79,7 +80,7 @@ export class TextLayer {
   public static createLayer(textData: TextPoint[]): DeckTextLayer<TextPoint> {
     const color = hexToRgba(POINT_DEFAULT_STYLE.color);
     return new DeckTextLayer<TextPoint>({
-      id: "label-layer",
+      id: LayerId.LABEL_LAYER,
       data: textData,
       characterSet: "auto",
       fontSettings: {
@@ -120,7 +121,7 @@ export class TextLayer {
    * @returns 图层ID
    */
   public static getLayerId(): string {
-    return "label-layer";
+    return LayerId.LABEL_LAYER;
   }
 }
 

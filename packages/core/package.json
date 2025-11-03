@@ -26,6 +26,7 @@
   "dependencies": {
     "@deck.gl/core": "^9.2.2",
     "@deck.gl/layers": "^9.2.2",
+    "@deck.gl/mesh-layers": "^9.2.2",
     "@orch-map/path-adapter": "workspace:*"
   },
   "devDependencies": {

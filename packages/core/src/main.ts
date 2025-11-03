@@ -436,18 +436,24 @@ export default class OrchMap {
 
   /**
    * 设置渲染模式
-   * @description 动态切换地图渲染模式（2D ↔ 3D）
+   * @description 动态切换地图渲染模式（2D/2.5D/3D）
    * 注意：模式切换仅在 DeckGL 渲染器下有效，ECharts 渲染器不支持模式切换
-   * @param {"2d" | "3d"} mode - 新的渲染模式
+   * - 2D: 平面图
+   * - 2.5D: 倾斜45度
+   * - 3D: Globe 模式
+   * @param {"2d" | "2.5d" | "3d"} mode - 新的渲染模式
    * @returns {Promise<void>} 切换操作的 Promise
    * @example
-   * // 切换到 3D 模式（仅在 DeckGL 下有效）
+   * // 切换到 3D Globe 模式（仅在 DeckGL 下有效）
    * await mapInstance.setMode("3d");
    *
-   * // 切换到 2D 模式
+   * // 切换到 2.5D 倾斜模式
+   * await mapInstance.setMode("2.5d");
+   *
+   * // 切换到 2D 平面模式
    * await mapInstance.setMode("2d");
    */
-  public async setMode(mode: "2d" | "3d"): Promise<void> {
+  public async setMode(mode: "2d" | "2.5d" | "3d"): Promise<void> {
     // 如果模式相同，无需切换
     if (this.config.mode === mode) {
       return;
@@ -510,8 +516,8 @@ export default class OrchMap {
    * @returns {MapRendererType} 推荐的渲染器类型
    */
   public static getRecommendedType(config?: Partial<MapRendererConfig>): MapRendererType {
-    // 如果指定了 3D 模式，推荐使用 DeckGL
-    if (config?.mode === "3d") {
+    // 如果指定了 3D 或 2.5D 模式，推荐使用 DeckGL
+    if (config?.mode === "3d" || config?.mode === "2.5d") {
       return MapRendererType.DECKGL;
     }
 

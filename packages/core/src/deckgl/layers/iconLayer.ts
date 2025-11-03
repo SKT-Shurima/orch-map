@@ -13,6 +13,7 @@ import { IconLayer as DeckIconLayer } from "@deck.gl/layers";
 import IconAtlas from "./iconAtlas";
 import MapStateManager from "../../MapStateManager";
 import { TextLayer } from "./textLayer";
+import { LayerId } from "./types";
 
 /**
  * 图标点数据结构
@@ -114,7 +115,7 @@ export class IconLayer {
     const iconAtlasResult = await IconAtlas.buildIconAtlas(registeredIcons);
 
     const iconLayer = new DeckIconLayer<IconPoint>({
-      id: "point-layer",
+      id: LayerId.POINT_LAYER,
       data: iconData,
       iconAtlas: iconAtlasResult.iconAtlas,
       iconMapping: iconAtlasResult.iconMapping,
@@ -156,7 +157,7 @@ export class IconLayer {
    * @returns 图层ID
    */
   public static getLayerId(): string {
-    return "point-layer";
+    return LayerId.POINT_LAYER;
   }
 
   /**

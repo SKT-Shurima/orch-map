@@ -14,6 +14,7 @@
  */
 import type { BaseMapLine } from "@orch-map/types";
 import { ArcTripsLayer } from "@deck.gl/layers";
+import { LayerId } from "./types";
 
 
 /**
@@ -288,7 +289,7 @@ export class Line3DManager {
 
     // 基础弧线层（使用 line 颜色，透明度 0.3，显示完整弧线）
     const baseLayer = new ArcTripsLayer({
-      id: "arc-base-layer",
+      id: LayerId.ARC_BASE_LAYER,
       data: routes,
       getSourcePosition: (d: ArcTripsDataItem) => d.sourcePosition,
       getTargetPosition: (d: ArcTripsDataItem) => d.targetPosition,
@@ -316,7 +317,7 @@ export class Line3DManager {
 
     // 尾迹层（使用 line 颜色，透明度 1，带动画效果）
     const trailLayer = new ArcTripsLayer({
-      id: "arc-trail-layer",
+      id: LayerId.ARC_TRAIL_LAYER,
       data: routes,
       getSourcePosition: (d: ArcTripsDataItem) => d.sourcePosition,
       getTargetPosition: (d: ArcTripsDataItem) => d.targetPosition,
@@ -354,6 +355,6 @@ export class Line3DManager {
    * @returns 图层 ID 数组
    */
   public static getLayerIdsToRemove(): string[] {
-    return ["arc-base-layer", "arc-trail-layer"];
+    return [LayerId.ARC_BASE_LAYER, LayerId.ARC_TRAIL_LAYER];
   }
 }

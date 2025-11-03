@@ -50,7 +50,7 @@ export interface MapRendererConfig {
   /** 中心国家 */
   centralCountry?: string
   /** 渲染模式 */
-  mode?: "2d" | "3d"
+  mode?: "2d" | "2.5d" | "3d"
   /** 事件处理器 */
   events?: MapRendererEvents
   /** 地图中心点 */

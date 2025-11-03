@@ -5,6 +5,7 @@
 
 // 通用类型
 export type { LayerUpdateCallback, LayerRemoveCallback } from "./types";
+export { LayerId } from "./types";
 
 // 地理图层
 export { default as GeoLayer } from "./geoLayer";
