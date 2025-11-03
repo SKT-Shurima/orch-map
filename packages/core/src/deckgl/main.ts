@@ -66,6 +66,12 @@ export default class DeckglMap {
   /** 第一次加载时计算的最小缩放比例 */
   private initialMinZoom: number | null = null;
 
+  /** 当前设置的中心点（仅用于初始化） */
+  private configuredCenter?: { lat: number; lng: number };
+
+  /** 是否已经初始化完成（用于判断是否使用初始 center） */
+  private _hasInitialized: boolean = false;
+
   //===== 事件配置 =====
 
   /** 事件处理器配置 */
@@ -92,16 +98,19 @@ export default class DeckglMap {
    * @param mode - 地图模式（2D/3D）
    * @param callback - 初始化完成回调函数
    * @param events - 事件处理器配置（可选）
+   * @param center - 可选的中心点配置 { lat, lng }
    */
   public constructor(
     container: HTMLCanvasElement,
     mode: "2d" | "3d",
     callback: () => void,
     events?: MapRendererEvents,
+    center?: { lat: number; lng: number },
   ) {
     this.mode = mode;
     this.events = events;
     this.container = container;
+    this.configuredCenter = center;
     void this.initializeMap(container, callback);
   }
 
@@ -504,25 +513,39 @@ export default class DeckglMap {
     this.addLayer(GeoLayer.getLayerId(), geojsonLayer);
     this.updateLayer();
 
-    // 更新视图以适应新的地理数据
-    this.fitBoundsToGeoData(geojsonData);
+    // 使用 requestAnimationFrame 确保 DOM 更新后再计算视图
+    // 这样可以确保容器尺寸已更新，计算出的视图状态更准确
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          // 只在第一次初始化时使用 center 配置，后续更新使用自动计算
+          const isInitialSetup = !this._hasInitialized;
+          this.fitBoundsToGeoData(geojsonData, isInitialSetup);
+          this._hasInitialized = true;
+          resolve();
+        });
+      });
+    });
   }
 
   /**
    * 根据地理数据调整视图，使其居中并适应缩放
    * @param geojsonData - GeoJSON 数据
+   * @param useInitialCenter - 是否使用初始 center 配置（仅在初始化时使用）
    */
-  private fitBoundsToGeoData(geojsonData: GeoJSON): void {
+  private fitBoundsToGeoData(geojsonData: GeoJSON, useInitialCenter: boolean = false): void {
     // 获取容器尺寸
     const canvasElement = this.container;
     const containerWidth = canvasElement?.parentElement?.clientWidth ?? 1000;
     const containerHeight = canvasElement?.parentElement?.clientHeight ?? 800;
 
     // 使用 GeoLayer 静态方法计算视图状态
+    // 只在初始化时使用 configuredCenter，后续更新使用自动计算
     const viewState = GeoLayer.calculateViewState(
       geojsonData,
       { width: containerWidth, height: containerHeight },
       this.mode,
+      useInitialCenter ? this.configuredCenter : undefined,
     );
 
     // 如果是第一次加载，计算并存储最小缩放比例
@@ -597,7 +620,6 @@ export default class DeckglMap {
   public setLines(lines: BaseMapLine[]) {
     this.lines = lines;
   }
-
 
   //===== 动画控制 =====
 

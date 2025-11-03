@@ -1,16 +1,16 @@
-import type { GeoJSON } from "@orch-map/types";
+import { MapLevel, type GeoJSON } from "@orch-map/types";
+import MapStateManager from "../MapStateManager";
 
 /**
- * 根据世界地图宽度(像素)计算对应的缩放级别
- * @param {number} worldWidth - 世界地图宽度，单位是像素
- * @returns {number} 对应的缩放级别(zoom level)
+ * GeoJSON 边界信息
  */
-function getZoomLevelFromWorldWidth(worldWidth: number): number {
-  // 基本公式: worldWidth = 256 * 2^zoomLevel
-  // 因此: zoomLevel = log2(worldWidth / 256)
-
-  const zoomLevel = Math.log2(worldWidth / 256);
-  return zoomLevel;
+interface GeoBounds {
+  left: number; // 最小经度
+  right: number; // 最大经度
+  top: number; // 最大纬度
+  bottom: number; // 南纬度
+  width: number; // 经度范围
+  height: number; // 纬度范围
 }
 
 /**
@@ -68,8 +68,60 @@ export default class EchartGeoUtils {
   }
 
   /**
-   * 通过坐标列表计算地图的中心点和缩放比例
-   * @param coordinateList 扁平化后的坐标列表
+   * 从 GeoJSON 获取边界信息
+   * @param geoJson GeoJSON 数据
+   * @returns 边界信息，如果无法计算则返回 null
+   */
+  private static getBoundsFromGeoJSON(geoJson: GeoJSON): GeoBounds | null {
+    if (!geoJson?.type || geoJson.type !== "FeatureCollection" || !geoJson.features?.length) {
+      return null;
+    }
+
+    const coordinateList = this.getAllCoordinates(geoJson);
+    if (coordinateList.length === 0) {
+      return null;
+    }
+
+    const flattenedCoords = EchartGeoUtils.flattenCoordinate(coordinateList);
+    if (flattenedCoords.length === 0) {
+      return null;
+    }
+
+    const lngList = flattenedCoords.map(item => item[0]);
+    const latList = flattenedCoords.map(item => item[1]);
+
+    const left = Math.min(...lngList);
+    const right = Math.max(...lngList);
+    const bottom = Math.min(...latList);
+    const top = Math.max(...latList);
+
+    return {
+      left,
+      right,
+      top,
+      bottom,
+      width: right - left,
+      height: top - bottom,
+    };
+  }
+
+  /**
+   * 计算地图的中心点和缩放比例
+   * - 对于世界地图：根据边界计算能够铺满整个可视区域的缩放比例
+   * - 对于其他地图：zoom 置为 1，地图中心不需要处理
+   *
+   * 新的计算算法：
+   * ECharts geo 组件的 zoom 参数是相对于基准大小的缩放倍数。
+   * 在 zoom=1 时，ECharts 会根据 layoutSize (90%) 自动计算地图大小。
+   *
+   * 算法思路：
+   * 1. 计算在 zoom=1 时，地图边界对应的像素尺寸
+   * 2. 根据可用容器大小和地图像素尺寸的比值计算 zoom
+   *
+   * @param geoJson GeoJSON 数据
+   * @param containerWidth 容器宽度（像素）
+   * @param containerHeight 容器高度（像素）
+   * @param center 可选的中心点配置 { lat, lng }，如果提供则优先使用
    * @returns 中心点和缩放比例
    */
   public static getCenterAndZoom(
@@ -81,40 +133,104 @@ export default class EchartGeoUtils {
       containerWidth: number;
       containerHeight: number;
     },
+    center?: { lat: number; lng: number },
   ): { center: [number, number] | null; zoom: number } {
-    const coordinateList = this.getAllCoordinates(geoJson);
-    // 处理空数组情况
-    if (coordinateList.length === 0) {
+    // 判断是否为世界地图
+    const isWorldMap = MapStateManager.curLevel === MapLevel.WORLD;
+
+    // 计算边界信息（无论是否提供了 center，都需要用于计算 zoom）
+    const mapBounds = EchartGeoUtils.getBoundsFromGeoJSON(geoJson);
+
+    // 如果提供了 center 配置，优先使用（无论是世界地图还是其他地图）
+    if (center) {
+      // 仍然计算合适的 zoom 级别
+      let zoom = 1;
+      if (isWorldMap && mapBounds) {
+        // 世界地图需要计算合适的缩放比例
+        const layoutSizeRatio = 0.9;
+        const padding = 0.95;
+        const availableWidth = containerWidth * layoutSizeRatio * padding;
+        const availableHeight = containerHeight * layoutSizeRatio * padding;
+        const baseZoomCoefficient = 0.5;
+        const geoAspectRatio = mapBounds.width / mapBounds.height;
+        const containerAspectRatio = availableWidth / availableHeight;
+
+        if (geoAspectRatio > containerAspectRatio) {
+          const pixelsAtZoom1 = containerWidth * layoutSizeRatio * baseZoomCoefficient * (mapBounds.width / 360);
+          zoom = availableWidth / pixelsAtZoom1;
+        } else {
+          const pixelsAtZoom1 = containerHeight * layoutSizeRatio * baseZoomCoefficient * (mapBounds.height / 180);
+          zoom = availableHeight / pixelsAtZoom1;
+        }
+      }
+      return {
+        center: [center.lng, center.lat],
+        zoom,
+      };
+    }
+
+    if (!isWorldMap) {
+      // 非世界地图：zoom 置为 1，地图中心不需要处理（使用自动计算）
       return {
         center: null,
         zoom: 1,
       };
     }
 
-    // 提取所有经纬度值
-    const lngList = EchartGeoUtils.flattenCoordinate(coordinateList).map(item => item[0]);
-    const latList = EchartGeoUtils.flattenCoordinate(coordinateList).map(item => item[1]);
+    // 世界地图：计算能够铺满整个可视区域的缩放比例
+    if (!mapBounds) {
+      return {
+        center: null,
+        zoom: 1,
+      };
+    }
 
-    // 计算边界
-    const minLng = Math.min(...lngList);
-    const maxLng = Math.max(...lngList);
-    const minLat = Math.min(...latList);
-    const maxLat = Math.max(...latList);
+    // layoutSize = "90%"，实际可用空间为容器的 90%
+    const layoutSizeRatio = 0.9;
+    // 留出一些边距（约 5%）
+    const padding = 0.95;
+    const availableWidth = containerWidth * layoutSizeRatio * padding;
+    const availableHeight = containerHeight * layoutSizeRatio * padding;
 
-    const lngDelta = Math.abs(maxLng - minLng) || 1; // 避免除以零
-    const latDelta = Math.abs(maxLat - minLat) || 1; // 避免除以零
+    // ECharts geo 在 zoom=1 时的基准映射关系
+    // 当 zoom=1 且 layoutSize="90%" 时：
+    // - 整个世界地图（360度经度）会映射到 layoutSize * 容器宽度 * 某个系数
+    // - 这个系数表示在 zoom=1 时，世界地图相对于 layoutSize 的尺寸比例
+    //
+    // 根据实际观察和测试，zoom=1 时，360度经度约对应 layoutSize * 容器宽度 * 0.5
+    const baseZoomCoefficient = 0.5;
 
-    // 计算像素与经纬度的比例关系
-    // const ratio = containerWidth / lngDelta;
-    const ratio = getZoomLevelFromWorldWidth(containerWidth);
-    const latScale = containerHeight / (latDelta * ratio);
-    const lngScale = containerWidth / (lngDelta * ratio);
+    // 计算地图宽高比和容器宽高比
+    const geoAspectRatio = mapBounds.width / mapBounds.height;
+    const containerAspectRatio = availableWidth / availableHeight;
 
-    // 确保缩放比例不小于 1
-    const zoom = Math.min(lngScale, latScale);
+    let zoom: number;
+
+    if (geoAspectRatio > containerAspectRatio) {
+      // 地图更宽，以宽度为准
+      // 在 zoom=1 时，mapBounds.width 度经度对应的像素：
+      // pixelsAtZoom1 = containerWidth * layoutSizeRatio * baseZoomCoefficient * (mapBounds.width / 360)
+      //
+      // 我们需要的像素：availableWidth
+      // 所以：zoom = availableWidth / pixelsAtZoom1
+      const pixelsAtZoom1 = containerWidth * layoutSizeRatio * baseZoomCoefficient * (mapBounds.width / 360);
+      zoom = availableWidth / pixelsAtZoom1;
+    } else {
+      // 地图更高，以高度为准
+      // 在 zoom=1 时，mapBounds.height 度纬度对应的像素：
+      // pixelsAtZoom1 = containerHeight * layoutSizeRatio * baseZoomCoefficient * (mapBounds.height / 180)
+      const pixelsAtZoom1 = containerHeight * layoutSizeRatio * baseZoomCoefficient * (mapBounds.height / 180);
+      zoom = availableHeight / pixelsAtZoom1;
+    }
+
+    // 计算中心点（使用边界中心）
+    const centerPoint: [number, number] = [
+      (mapBounds.left + mapBounds.right) / 2,
+      (mapBounds.top + mapBounds.bottom) / 2,
+    ];
 
     return {
-      center: [(minLng + maxLng) / 2, (minLat + maxLat) / 2],
+      center: centerPoint,
       zoom,
     };
   }

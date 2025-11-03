@@ -118,6 +118,7 @@ export default class OrchMap {
               void await this.entryNextLevel(region);
             },
           },
+          this.config.center,
         );
         break;
     }
@@ -202,7 +203,7 @@ export default class OrchMap {
     }
 
     await this.getGeoData(params);
-    void this.instance.setGEOData(MapStateManager.geoData);
+    await this.instance.setGEOData(MapStateManager.geoData);
 
     // 进入新层级后，重新过滤并更新点位和线条
     this.updatePointsAndLinesForCurrentLevel();
@@ -262,8 +263,8 @@ export default class OrchMap {
     // 加载指定层级的地图数据
     await this.getGeoData(params);
 
-    // 更新地图实例的地理数据
-    void this.instance.setGEOData(MapStateManager.geoData);
+    // 更新地图实例的地理数据，等待完成以确保视图正确更新
+    await this.instance.setGEOData(MapStateManager.geoData);
 
     // 重新过滤并更新点位和线条
     this.updatePointsAndLinesForCurrentLevel();
@@ -389,6 +390,119 @@ export default class OrchMap {
     return this._initPromise;
   }
 
+  /**
+   * 设置渲染器类型
+   * @description 动态切换地图渲染器类型（ECharts ↔ DeckGL）
+   * @param {MapRendererType} renderType - 新的渲染器类型
+   * @returns {Promise<void>} 切换操作的 Promise
+   * @example
+   * // 切换到 DeckGL 渲染器
+   * await mapInstance.setRenderType(MapRendererType.DECKGL);
+   *
+   * // 切换到 ECharts 渲染器
+   * await mapInstance.setRenderType(MapRendererType.ECHARTS);
+   */
+  public async setRenderType(renderType: MapRendererType): Promise<void> {
+    // 如果类型相同，无需切换
+    if (this.config.renderType === renderType) {
+      return;
+    }
+
+    // 等待初始化完成
+    await this.waitForInitialization();
+
+    // 销毁旧实例
+    if (this.instance) {
+      this.instance.destroy();
+    }
+
+    // 更新配置
+    this.config.renderType = renderType;
+
+    // 重新初始化地图
+    this._initialized = false;
+    this._initPromise = this.initMap().then(() => {
+      this._initialized = true;
+      // 初始化完成后调用所有回调
+      this._initCallbacks.forEach(callback => callback());
+      this._initCallbacks = [];
+    });
+
+    await this._initPromise;
+
+    // 重新设置点位和线条数据
+    this.updatePointsAndLinesForCurrentLevel();
+  }
+
+  /**
+   * 设置渲染模式
+   * @description 动态切换地图渲染模式（2D ↔ 3D）
+   * 注意：模式切换仅在 DeckGL 渲染器下有效，ECharts 渲染器不支持模式切换
+   * @param {"2d" | "3d"} mode - 新的渲染模式
+   * @returns {Promise<void>} 切换操作的 Promise
+   * @example
+   * // 切换到 3D 模式（仅在 DeckGL 下有效）
+   * await mapInstance.setMode("3d");
+   *
+   * // 切换到 2D 模式
+   * await mapInstance.setMode("2d");
+   */
+  public async setMode(mode: "2d" | "3d"): Promise<void> {
+    // 如果模式相同，无需切换
+    if (this.config.mode === mode) {
+      return;
+    }
+
+    // 等待初始化完成
+    await this.waitForInitialization();
+
+    // 如果当前是 ECharts 渲染器，给出警告
+    if (this.config.renderType === MapRendererType.ECHARTS) {
+      // eslint-disable-next-line no-console
+      console.warn("Mode switching is only supported for DeckGL renderer. ECharts renderer does not support 2D/3D mode switching.");
+      // 仍然更新配置，但不执行切换
+      this.config.mode = mode;
+      return;
+    }
+
+    // 如果是 DeckGL 渲染器，需要重新创建实例（因为模式在构造函数中设置）
+    if (this.config.renderType === MapRendererType.DECKGL) {
+      // 销毁旧实例
+      if (this.instance) {
+        this.instance.destroy();
+      }
+
+      // 更新配置
+      this.config.mode = mode;
+
+      // 重新创建 DeckGL 实例，等待初始化完成
+      await new Promise<void>((resolve) => {
+        this.instance = new DeckglMap(
+          this.config.container as HTMLCanvasElement,
+          mode,
+          () => {
+            // eslint-disable-next-line no-console
+            console.log("DeckGL mode switched");
+            resolve();
+          },
+          {
+            ...this.config.events,
+            onAreaDoubleClick: async (region: string) => {
+              this.config.events?.onAreaDoubleClick?.(region);
+              void await this.entryNextLevel(region);
+            },
+          },
+          this.config.center,
+        );
+      });
+
+      // 重新加载地理数据
+      await this.instance.setGEOData(MapStateManager.geoData);
+
+      // 重新设置点位和线条数据
+      this.updatePointsAndLinesForCurrentLevel();
+    }
+  }
 
   /**
    * 根据环境自动选择最佳渲染器

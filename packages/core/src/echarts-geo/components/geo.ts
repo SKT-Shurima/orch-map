@@ -4,8 +4,8 @@ import * as echarts from "echarts/core";
 import { GeoJsonUtils } from "@orch-map/utils";
 import MapStateManager from "../../MapStateManager";
 import type { GEOParam, PointSeriesDataItem } from "../types";
-import EchartGeoUtils from "../../utils/echartGeoUtils";
 import { US_AD_CODE_JUST_FOR_FE } from "../../constants";
+import EchartGeoUtils from "../../utils/echartGeoUtils";
 
 
 /**
@@ -25,7 +25,7 @@ export default class GeoComponent {
       max: 10,
     },
     layoutCenter: ["50%", "50%"],
-    layoutSize: "80%",
+    layoutSize: "90%",
     zlevel: 0,
     itemStyle: {
       areaColor: "#094777",
@@ -73,38 +73,56 @@ export default class GeoComponent {
     }
   }
 
-  public static calculateScaleAndCenter(container: HTMLElement): { scale: number, center: [number, number] | null } {
-    const center: [number, number] | null = null;
-    let scale = 1;
+  /**
+   * 计算缩放比例和中心点
+   * - 对于世界地图：根据边界计算能够铺满整个可视区域的缩放比例
+   * - 对于其他地图：zoom 置为 1，地图中心不需要处理
+   * @param container - 容器元素，用于获取可视区域大小
+   * @param center - 可选的中心点配置 { lat, lng }，如果提供则优先使用
+   * @returns 包含缩放比例和中心点的对象
+   */
+  public static calculateScaleAndCenter(
+    container: HTMLElement,
+    center?: { lat: number; lng: number },
+  ): { scale: number, center: [number, number] | null } {
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
     const geoJson = MapStateManager.geoData;
-    const result = EchartGeoUtils.getCenterAndZoom(geoJson, { containerWidth, containerHeight }) ?? { center, zoom: scale };
-    scale = result.zoom;
-    return { scale, center: result.center };
-
+    // 使用 EchartGeoUtils 计算缩放比例和中心点
+    const result = EchartGeoUtils.getCenterAndZoom(geoJson, { containerWidth, containerHeight }, center);
+    return {
+      scale: result.zoom,
+      center: result.center,
+    };
   }
 
   /**
    * 更新地理组件选项
+   * 根据当前可视区域大小和 GeoJSON 数据，重新计算缩放比例和中心点，以适配当前可视区域
    * @param chartInstance - ECharts 实例
-   * @param centralCountry - 中心国家代码
+   * @param container - 容器元素，用于获取可视区域大小
+   * @param center - 可选的中心点配置 { lat, lng }，如果提供则优先使用
    */
-  public static updateGeoOption(chartInstance: echarts.ECharts, container: HTMLElement): void {
+  public static updateGeoOption(
+    chartInstance: echarts.ECharts,
+    container: HTMLElement,
+    center?: { lat: number; lng: number },
+  ): void {
     if (!chartInstance) return;
-    const { scale, center } = GeoComponent.calculateScaleAndCenter(container);
+    // 根据当前容器大小和 GeoJSON 数据计算合适的缩放比例和中心点
+    const { scale, center: calculatedCenter } = GeoComponent.calculateScaleAndCenter(container, center);
     const options = chartInstance.getOption();
     const geo = options.geo as GeoComponentOption[] | undefined;
     if (geo && geo.length > 0) {
       geo[0].map = GeoComponent.generateMapName();
-      geo[0].center = center ?? geo[0].center;
+      geo[0].center = calculatedCenter ?? geo[0].center;
       geo[0].zoom = scale;
       geo[0].itemStyle = {
         ...geo[0].itemStyle,
       };
       options.geo = geo;
       chartInstance.setOption(options, true);
-      chartInstance.resize();
+      // chartInstance.resize();
 
     }
   }

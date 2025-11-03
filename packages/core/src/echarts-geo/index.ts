@@ -77,6 +77,12 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
   /** 状态管理器取消订阅函数 */
   private unsubscribeState: (() => void) | null = null;
 
+  /** 标志位：是否正在通过 setGEOData 手动更新，用于避免监听器重复更新 */
+  private _updatingFromSetGEOData = false;
+
+  /** 当前设置的中心点（用于覆盖自动计算的中心点） */
+  private configuredCenter?: { lat: number; lng: number };
+
   // 曲率计算器已移至 LinesComponent 静态类
 
   /**
@@ -103,6 +109,11 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
 
     // 初始化配置
     this.config = options as MapRendererConfig;
+
+    // 如果配置中提供了 center，则保存它
+    if (this.config.center) {
+      this.configuredCenter = this.config.center;
+    }
 
     // 初始化图表和事件
     void this.initChart(geoJson).catch(error => {
@@ -142,8 +153,9 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
         },
       ],
     };
-    const zoom = GeoComponentUtils.calculateScaleAndCenter(this.container).scale;
-    geoOption.zoom = zoom;
+    const { scale, center } = GeoComponentUtils.calculateScaleAndCenter(this.container, this.configuredCenter);
+    geoOption.zoom = scale;
+    geoOption.center = center ?? geoOption.center;
     baseOption.geo = geoOption;
     this.chartInstance?.setOption(baseOption, true);
 
@@ -161,9 +173,19 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
 
     // 订阅状态管理器的变化
     this.unsubscribeState = MapStateManager.onPropertyChange("geoData", () => {
-      // 状态变化时的处理逻辑
+      // 如果正在通过 setGEOData 手动更新，跳过监听器的自动更新，避免重复更新
+      if (this._updatingFromSetGEOData) {
+        return;
+      }
+      // 状态变化时的处理逻辑：当 geo json 变化时，重新计算缩放比例并更新地图
       if (this.chartInstance) {
-        this.redrawMap();
+        // 重新注册地图数据
+        const geoData = MapStateManager.geoData;
+        if (geoData?.type === "FeatureCollection") {
+          GeoComponentUtils.registerMap(geoData);
+        }
+        // 更新 geo 选项，包括重新计算缩放比例和中心点（不再使用初始 center 配置）
+        this.updateGeoOption();
       }
     });
   }
@@ -179,8 +201,9 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
     this.chartInstance.setOption(option);
   }
 
-  private updateGeoOption(): void {
-    GeoComponentUtils.updateGeoOption(this.chartInstance, this.container);
+  private updateGeoOption(center?: { lat: number; lng: number }): void {
+    // 如果传入 center 参数（仅初始化时），使用它；否则使用自动计算
+    GeoComponentUtils.updateGeoOption(this.chartInstance, this.container, center);
   }
 
   /**
@@ -188,18 +211,41 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
    * @param boundary - 边界地理数据
    * @public
    */
-  public setGEOData(boundary: GeoJSON): void {
-    // 注册地图并设置选项
-    const geojson = MapStateManager.geoData;
-    GeoComponentUtils.registerMap(geojson);
-    this.updateGeoOption();
+  public async setGEOData(boundary: GeoJSON): Promise<void> {
+    // 设置标志位，防止 MapStateManager 监听器重复更新
+    this._updatingFromSetGEOData = true;
 
-    if (boundary?.type !== "FeatureCollection" || !Array.isArray(boundary?.features)) {
+    try {
+      // 注册地图并设置选项
+      const geojson = MapStateManager.geoData;
+      GeoComponentUtils.registerMap(geojson);
+
+      // 使用 requestAnimationFrame 确保 DOM 更新后再计算视图
+      // 这样可以确保容器尺寸已更新，计算出的中心和缩放比例更准确
+      await new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            // setGEOData 时不再使用初始 center 配置，使用自动计算
+            this.updateGeoOption();
+            // 等待 ECharts 渲染完成后再 resolve
+            // 使用 setTimeout 确保 setOption 后的渲染周期完成
+            setTimeout(() => {
+              resolve();
+            }, 0);
+          });
+        });
+      });
+
+      if (boundary?.type !== "FeatureCollection" || !Array.isArray(boundary?.features)) {
+        this.boundaryLoading = false;
+        return;
+      }
+
       this.boundaryLoading = false;
-      return;
+    } finally {
+      // 恢复标志位
+      this._updatingFromSetGEOData = false;
     }
-
-    this.boundaryLoading = false;
   }
 
 
@@ -305,10 +351,16 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
 
   /**
    * 调整地图大小
+   * 当窗口大小变化时，重新计算缩放比例以适应新的容器大小
    * @public
    */
   public resizeMap = (): void => {
-    this.chartInstance?.resize();
+    if (this.chartInstance) {
+      // 先调用 resize 以更新容器尺寸
+      this.chartInstance.resize();
+      // 然后重新计算缩放比例以适应新的容器大小（不再使用初始 center 配置）
+      this.updateGeoOption();
+    }
   };
 
 
@@ -329,6 +381,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
       return;
     }
 
+    // 更新地图层级时不再使用初始 center 配置
     this.updateGeoOption();
   }
 

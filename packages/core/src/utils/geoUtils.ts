@@ -235,31 +235,75 @@ export default class GeoUtils {
    * @param bounds - 边界框对象
    * @param containerWidth - 容器宽度（默认 1000）
    * @param containerHeight - 容器高度（默认 800）
-   * @param padding - 内边距比例（默认 0.8）
+   * @param padding - 内边距比例（默认 0.9，表示上下左右各留5%边距）
    * @returns 缩放级别
    */
   private static calculateZoomForBounds(
     bounds: GeoBounds,
     containerWidth = 1000,
     containerHeight = 800,
-    padding = 0.8,
+    padding = 0.85,
   ): number {
     const lngDiff = Math.abs(bounds.maxLng - bounds.minLng);
     const latDiff = Math.abs(bounds.maxLat - bounds.minLat);
 
-    // 基于经度差计算缩放级别
-    const zoomLng = Math.log2((containerWidth * padding * 360) / (256 * lngDiff));
+    // 防止除零
+    if (lngDiff === 0 && latDiff === 0) {
+      return 10; // 单个点，返回一个较大的缩放级别
+    }
 
-    // 基于纬度差计算缩放级别，考虑纬度的投影变形
+    // 计算中心纬度，用于墨卡托投影修正
     const centerLat = (bounds.minLat + bounds.maxLat) / 2;
-    const latScale = 1 / Math.cos((centerLat * Math.PI) / 180);
-    const zoomLat = Math.log2((containerHeight * padding * 180) / (256 * latDiff * latScale));
 
-    // 取较小的缩放级别，确保所有内容都可见
-    const zoom = Math.min(zoomLng, zoomLat);
+    // DeckGL 使用 Web Mercator 投影
+    // 在 zoom 级别 z 下：整个世界宽度 = 256 * 2^z 像素
+    // 目标：让图形尽可能撑满可视区域，但不超出
+
+    // 计算基于宽度的缩放：需要将 lngDiff 度适应到 containerWidth
+    let zoomLng = 0;
+    if (lngDiff > 0) {
+      // 每度经度的像素数 = (256 * 2^z) / 360
+      // lngDiff 度需要的像素 = (256 * 2^z * lngDiff) / 360
+      // 目标：让这个值尽可能接近 containerWidth * padding，但不超出
+      // (256 * 2^z * lngDiff) / 360 = containerWidth * padding
+      // 2^z = (containerWidth * padding * 360) / (256 * lngDiff)
+      const worldPixels = (containerWidth * padding * 360) / lngDiff;
+      zoomLng = Math.log2(worldPixels / 256);
+    }
+
+    // 计算基于高度的缩放：考虑墨卡托投影在不同纬度的缩放
+    let zoomLat = 0;
+    if (latDiff > 0) {
+      // 墨卡托投影：在纬度 lat 处，纬度线之间的距离被放大了 1/cos(lat) 倍
+      const latRad = Math.max(-85 * Math.PI / 180, Math.min(85 * Math.PI / 180, (centerLat * Math.PI) / 180));
+      const cosLat = Math.cos(latRad);
+
+      // 在 zoom 级别 z 下，在中心纬度处：
+      // 每度纬度对应的像素数 = (256 * 2^z) / (360 * cosLat)
+      // latDiff 度需要的像素 = (256 * 2^z * latDiff) / (360 * cosLat)
+      // 目标：让这个值尽可能接近 containerHeight * padding，但不超出
+      // (256 * 2^z * latDiff) / (360 * cosLat) = containerHeight * padding
+      // 2^z = (containerHeight * padding * 360 * cosLat) / (256 * latDiff)
+      const worldPixels = (containerHeight * padding * 360 * cosLat) / latDiff;
+      zoomLat = Math.log2(worldPixels / 256);
+    }
+
+    // 选择较小的缩放级别，确保图形不超出可视区域
+    // 这样图形会尽可能撑满可视区域，同时保证不超出边界
+    let zoom = 0;
+    if (lngDiff === 0) {
+      zoom = zoomLat;
+    } else if (latDiff === 0) {
+      zoom = zoomLng;
+    } else {
+      // 取较小值，这样可以确保图形不超出可视区域
+      // 如果宽度限制更紧（zoomLng 更小），则以宽度为准
+      // 如果高度限制更紧（zoomLat 更小），则以高度为准
+      zoom = Math.min(zoomLng, zoomLat);
+    }
 
     // 限制缩放级别在合理范围内
-    return Math.max(0, Math.min(12, zoom));
+    return Math.max(0, Math.min(12, zoom * 0.9));
   }
 
   /**

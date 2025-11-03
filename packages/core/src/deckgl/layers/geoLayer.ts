@@ -186,13 +186,29 @@ export default class GeoLayer {
    * @param geojsonData - GeoJSON 数据
    * @param containerSize - 容器尺寸
    * @param mode - 地图模式（2D/3D）
+   * @param center - 可选的中心点配置 { lat, lng }，如果提供则优先使用
    * @returns 计算后的视图状态
    */
   public static calculateViewState(
     geojsonData: GeoJSON,
     containerSize: ContainerSize,
     mode: "2d" | "3d" = "2d",
+    center?: { lat: number; lng: number },
   ): ViewState {
+    // 如果提供了 center 配置，直接使用
+    if (center) {
+      const result = GeoUtils.getCenterAndZoom(geojsonData, {
+        containerWidth: containerSize.width,
+        containerHeight: containerSize.height,
+      });
+      return {
+        longitude: center.lng,
+        latitude: center.lat,
+        zoom: result?.zoom ?? 1,
+        pitch: mode === "3d" ? 45 : 0,
+      };
+    }
+
     const curLevel = MapStateManager.curLevel;
 
     if (curLevel === MapLevel.WORLD) {
