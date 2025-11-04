@@ -881,8 +881,8 @@ var init_uid = __esm({
 });
 
 // ../../node_modules/.pnpm/@luma.gl+core@9.2.2/node_modules/@luma.gl/core/dist/adapter/resources/resource.js
-function selectivelyMerge(props, defaultProps12) {
-  const mergedProps = { ...defaultProps12 };
+function selectivelyMerge(props, defaultProps13) {
+  const mergedProps = { ...defaultProps13 };
   for (const key in props) {
     if (props[key] !== void 0) {
       mergedProps[key] = props[key];
@@ -899,7 +899,7 @@ var init_resource = __esm({
       /**
        * Create a new Resource. Called from Subclass
        */
-      constructor(device, props, defaultProps12) {
+      constructor(device, props, defaultProps13) {
         /** props.id, for debugging. */
         __publicField(this, "id");
         __publicField(this, "props");
@@ -915,7 +915,7 @@ var init_resource = __esm({
           throw new Error("no device");
         }
         this._device = device;
-        this.props = selectivelyMerge(props, defaultProps12);
+        this.props = selectivelyMerge(props, defaultProps13);
         const id = this.props.id !== "undefined" ? this.props.id : uid(this[Symbol.toStringTag]);
         this.props.id = id;
         this.id = id;
@@ -3820,8 +3820,8 @@ var init_uniform_block = __esm({
           if (!binding) {
             throw new Error(props == null ? void 0 : props.name);
           }
-          const uniformBlock12 = binding;
-          for (const uniform of uniformBlock12.uniforms || []) {
+          const uniformBlock13 = binding;
+          for (const uniform of uniformBlock13.uniforms || []) {
             this.bindingLayout[uniform.name] = uniform;
           }
         }
@@ -3883,9 +3883,9 @@ var init_uniform_store = __esm({
           const uniformBufferName = bufferName;
           const uniformBufferLayout = new UniformBufferLayout((_a2 = block.uniformTypes) != null ? _a2 : {}, (_b = block.uniformSizes) != null ? _b : {});
           this.uniformBufferLayouts.set(uniformBufferName, uniformBufferLayout);
-          const uniformBlock12 = new UniformBlock({ name: bufferName });
-          uniformBlock12.setUniforms(block.defaultUniforms || {});
-          this.uniformBlocks.set(uniformBufferName, uniformBlock12);
+          const uniformBlock13 = new UniformBlock({ name: bufferName });
+          uniformBlock13.setUniforms(block.defaultUniforms || {});
+          this.uniformBlocks.set(uniformBufferName, uniformBlock13);
         }
       }
       /** Destroy any managed uniform buffers */
@@ -3960,11 +3960,11 @@ var init_uniform_store = __esm({
       /** Update one uniform buffer. Only updates if values have changed */
       updateUniformBuffer(uniformBufferName) {
         var _a2;
-        const uniformBlock12 = this.uniformBlocks.get(uniformBufferName);
+        const uniformBlock13 = this.uniformBlocks.get(uniformBufferName);
         let uniformBuffer = this.uniformBuffers.get(uniformBufferName);
         let reason = false;
-        if (uniformBuffer && (uniformBlock12 == null ? void 0 : uniformBlock12.needsRedraw)) {
-          reason || (reason = uniformBlock12.needsRedraw);
+        if (uniformBuffer && (uniformBlock13 == null ? void 0 : uniformBlock13.needsRedraw)) {
+          reason || (reason = uniformBlock13.needsRedraw);
           const uniformBufferData = this.getUniformBufferData(uniformBufferName);
           uniformBuffer = this.uniformBuffers.get(uniformBufferName);
           uniformBuffer == null ? void 0 : uniformBuffer.write(uniformBufferData);
@@ -7536,8 +7536,8 @@ function getShaderLayoutFromGLSL(gl, program) {
   };
   shaderLayout.attributes = readAttributeDeclarations(gl, program);
   const uniformBlocks = readUniformBlocks(gl, program);
-  for (const uniformBlock12 of uniformBlocks) {
-    const uniforms2 = uniformBlock12.uniforms.map((uniform) => ({
+  for (const uniformBlock13 of uniformBlocks) {
+    const uniforms2 = uniformBlock13.uniforms.map((uniform) => ({
       name: uniform.name,
       format: uniform.format,
       byteOffset: uniform.byteOffset,
@@ -7546,11 +7546,11 @@ function getShaderLayoutFromGLSL(gl, program) {
     }));
     shaderLayout.bindings.push({
       type: "uniform",
-      name: uniformBlock12.name,
+      name: uniformBlock13.name,
       group: 0,
-      location: uniformBlock12.location,
-      visibility: (uniformBlock12.vertex ? 1 : 0) & (uniformBlock12.fragment ? 2 : 0),
-      minBindingSize: uniformBlock12.byteLength,
+      location: uniformBlock13.location,
+      visibility: (uniformBlock13.vertex ? 1 : 0) & (uniformBlock13.fragment ? 2 : 0),
+      minBindingSize: uniformBlock13.byteLength,
       uniforms: uniforms2
     });
   }
@@ -17568,6 +17568,33 @@ async function parseWithLoader(loader, data, options, context) {
   throw new Error(`${loader.id} loader - no parser found and worker is disabled`);
 }
 
+// ../../node_modules/.pnpm/@loaders.gl+schema@4.3.4_@loaders.gl+core@4.3.4/node_modules/@loaders.gl/schema/dist/lib/mesh/mesh-utils.js
+function getMeshBoundingBox(attributes) {
+  let minX = Infinity;
+  let minY = Infinity;
+  let minZ = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+  let maxZ = -Infinity;
+  const positions = attributes.POSITION ? attributes.POSITION.value : [];
+  const len4 = positions && positions.length;
+  for (let i2 = 0; i2 < len4; i2 += 3) {
+    const x2 = positions[i2];
+    const y2 = positions[i2 + 1];
+    const z2 = positions[i2 + 2];
+    minX = x2 < minX ? x2 : minX;
+    minY = y2 < minY ? y2 : minY;
+    minZ = z2 < minZ ? z2 : minZ;
+    maxX = x2 > maxX ? x2 : maxX;
+    maxY = y2 > maxY ? y2 : maxY;
+    maxZ = z2 > maxZ ? z2 : maxZ;
+  }
+  return [
+    [minX, minY, minZ],
+    [maxX, maxY, maxZ]
+  ];
+}
+
 // ../../node_modules/.pnpm/@loaders.gl+core@4.3.4/node_modules/@loaders.gl/core/dist/lib/api/load.js
 async function load(url, loaders, options, context) {
   let resolvedLoaders;
@@ -18369,9 +18396,9 @@ function initializeShaderModule(module) {
     instance.propValidators = makePropValidators(propTypes);
   }
   module.instance = instance;
-  let defaultProps12 = {};
+  let defaultProps13 = {};
   if (propTypes) {
-    defaultProps12 = Object.entries(propTypes).reduce((obj, [key, propType]) => {
+    defaultProps13 = Object.entries(propTypes).reduce((obj, [key, propType]) => {
       const value = propType == null ? void 0 : propType.value;
       if (value) {
         obj[key] = value;
@@ -18379,7 +18406,7 @@ function initializeShaderModule(module) {
       return obj;
     }, {});
   }
-  module.defaultUniforms = { ...module.defaultUniforms, ...defaultProps12 };
+  module.defaultUniforms = { ...module.defaultUniforms, ...defaultProps13 };
 }
 function checkShaderModuleDeprecations(shaderModule, shaderSource, log3) {
   var _a2;
@@ -29265,6 +29292,38 @@ var gouraudMaterial = {
   }
 };
 
+// ../../node_modules/.pnpm/@luma.gl+shadertools@9.2.2_@luma.gl+core@9.2.2/node_modules/@luma.gl/shadertools/dist/modules/lighting/phong-material/phong-material.js
+var phongMaterial = {
+  name: "phongMaterial",
+  dependencies: [lighting],
+  // Note these are switched between phong and gouraud
+  source: PHONG_WGSL,
+  vs: PHONG_VS,
+  fs: PHONG_FS,
+  defines: {
+    LIGHTING_FRAGMENT: true
+  },
+  uniformTypes: {
+    ambient: "f32",
+    diffuse: "f32",
+    shininess: "f32",
+    specularColor: "vec3<f32>"
+  },
+  defaultUniforms: {
+    ambient: 0.35,
+    diffuse: 0.6,
+    shininess: 32,
+    specularColor: [0.15, 0.15, 0.15]
+  },
+  getUniforms(props) {
+    const uniforms = { ...props };
+    if (uniforms.specularColor) {
+      uniforms.specularColor = uniforms.specularColor.map((x2) => x2 / 255);
+    }
+    return { ...phongMaterial.defaultUniforms, ...uniforms };
+  }
+};
+
 // ../../node_modules/.pnpm/@deck.gl+core@9.2.2/node_modules/@deck.gl/core/dist/shaderlib/misc/layer-uniforms.js
 var uniformBlock = `uniform layerUniforms {
   uniform float opacity;
@@ -31334,7 +31393,7 @@ function calculateMatrixAndOffset(viewport, coordinateSystem, coordinateOrigin) 
 function getUniformsFromViewport({
   viewport,
   devicePixelRatio: devicePixelRatio2 = 1,
-  modelMatrix = null,
+  modelMatrix: modelMatrix2 = null,
   // Match Layer.defaultProps
   coordinateSystem = COORDINATE_SYSTEM.DEFAULT,
   coordinateOrigin = DEFAULT_COORDINATE_ORIGIN,
@@ -31350,7 +31409,7 @@ function getUniformsFromViewport({
     coordinateOrigin
   });
   uniforms.wrapLongitude = autoWrapLongitude;
-  uniforms.modelMatrix = modelMatrix || IDENTITY_MATRIX2;
+  uniforms.modelMatrix = modelMatrix2 || IDENTITY_MATRIX2;
   return uniforms;
 }
 function calculateViewportUniforms({ viewport, devicePixelRatio: devicePixelRatio2, coordinateSystem, coordinateOrigin }) {
@@ -33611,10 +33670,10 @@ var Viewport = class _Viewport {
     }
     const scale5 = Math.pow(2, this.zoom);
     this.scale = scale5;
-    const { position, modelMatrix } = opts;
+    const { position, modelMatrix: modelMatrix2 } = opts;
     let meterOffset = ZERO_VECTOR2;
     if (position) {
-      meterOffset = modelMatrix ? new Matrix4(modelMatrix).transformAsVector(position, []) : position;
+      meterOffset = modelMatrix2 ? new Matrix4(modelMatrix2).transformAsVector(position, []) : position;
     }
     if (this.isGeospatial) {
       const center = this.projectPosition([longitude, latitude, 0]);
@@ -33863,7 +33922,7 @@ function lngLatZToWorldPosition(lngLatZ, viewport, offsetMode = false) {
   return p2;
 }
 function normalizeParameters(opts) {
-  const { viewport, modelMatrix, coordinateOrigin } = opts;
+  const { viewport, modelMatrix: modelMatrix2, coordinateOrigin } = opts;
   let { coordinateSystem, fromCoordinateSystem, fromCoordinateOrigin } = opts;
   if (coordinateSystem === COORDINATE_SYSTEM.DEFAULT) {
     coordinateSystem = viewport.isGeospatial ? COORDINATE_SYSTEM.LNGLAT : COORDINATE_SYSTEM.CARTESIAN;
@@ -33878,15 +33937,15 @@ function normalizeParameters(opts) {
     viewport,
     coordinateSystem,
     coordinateOrigin,
-    modelMatrix,
+    modelMatrix: modelMatrix2,
     fromCoordinateSystem,
     fromCoordinateOrigin
   };
 }
-function getWorldPosition(position, { viewport, modelMatrix, coordinateSystem, coordinateOrigin, offsetMode }) {
+function getWorldPosition(position, { viewport, modelMatrix: modelMatrix2, coordinateSystem, coordinateOrigin, offsetMode }) {
   let [x2, y2, z2 = 0] = position;
-  if (modelMatrix) {
-    [x2, y2, z2] = vec4_exports.transformMat4([], [x2, y2, z2, 1], modelMatrix);
+  if (modelMatrix2) {
+    [x2, y2, z2] = vec4_exports.transformMat4([], [x2, y2, z2, 1], modelMatrix2);
   }
   switch (coordinateSystem) {
     case COORDINATE_SYSTEM.LNGLAT:
@@ -33901,12 +33960,12 @@ function getWorldPosition(position, { viewport, modelMatrix, coordinateSystem, c
   }
 }
 function projectPosition(position, params) {
-  const { viewport, coordinateSystem, coordinateOrigin, modelMatrix, fromCoordinateSystem, fromCoordinateOrigin } = normalizeParameters(params);
+  const { viewport, coordinateSystem, coordinateOrigin, modelMatrix: modelMatrix2, fromCoordinateSystem, fromCoordinateOrigin } = normalizeParameters(params);
   const { autoOffset = true } = params;
   const { geospatialOrigin = DEFAULT_COORDINATE_ORIGIN2, shaderCoordinateOrigin = DEFAULT_COORDINATE_ORIGIN2, offsetMode = false } = autoOffset ? getOffsetOrigin(viewport, coordinateSystem, coordinateOrigin) : {};
   const worldPosition = getWorldPosition(position, {
     viewport,
-    modelMatrix,
+    modelMatrix: modelMatrix2,
     coordinateSystem: fromCoordinateSystem,
     coordinateOrigin: fromCoordinateOrigin,
     offsetMode
@@ -42929,7 +42988,7 @@ var TYPE_DEFINITIONS = {
 };
 function parsePropTypes(propDefs) {
   const propTypes = {};
-  const defaultProps12 = {};
+  const defaultProps13 = {};
   const deprecatedProps = {};
   for (const [propName, propDef] of Object.entries(propDefs)) {
     const deprecated = propDef == null ? void 0 : propDef.deprecatedFor;
@@ -42938,10 +42997,10 @@ function parsePropTypes(propDefs) {
     } else {
       const propType = parsePropType(propName, propDef);
       propTypes[propName] = propType;
-      defaultProps12[propName] = propType.value;
+      defaultProps13[propName] = propType.value;
     }
   }
-  return { propTypes, defaultProps: defaultProps12, deprecatedProps };
+  return { propTypes, defaultProps: defaultProps13, deprecatedProps };
 }
 function parsePropType(name2, propDef) {
   switch (getTypeOf2(propDef)) {
@@ -43017,11 +43076,11 @@ function getPropsPrototype(componentClass, extensions) {
       }
     }
   }
-  const defaultProps12 = getOwnProperty(componentClass, cacheKey);
-  if (!defaultProps12) {
+  const defaultProps13 = getOwnProperty(componentClass, cacheKey);
+  if (!defaultProps13) {
     return componentClass[cacheKey] = createPropsPrototypeAndTypes(componentClass, extensions || []);
   }
-  return defaultProps12;
+  return defaultProps13;
 }
 function createPropsPrototypeAndTypes(componentClass, extensions) {
   const parent = componentClass.prototype;
@@ -43032,30 +43091,30 @@ function createPropsPrototypeAndTypes(componentClass, extensions) {
   const parentDefaultProps = getPropsPrototype(parentClass);
   const componentDefaultProps = getOwnProperty(componentClass, "defaultProps") || {};
   const componentPropDefs = parsePropTypes(componentDefaultProps);
-  const defaultProps12 = Object.assign(/* @__PURE__ */ Object.create(null), parentDefaultProps, componentPropDefs.defaultProps);
+  const defaultProps13 = Object.assign(/* @__PURE__ */ Object.create(null), parentDefaultProps, componentPropDefs.defaultProps);
   const propTypes = Object.assign(/* @__PURE__ */ Object.create(null), parentDefaultProps == null ? void 0 : parentDefaultProps[PROP_TYPES_SYMBOL], componentPropDefs.propTypes);
   const deprecatedProps = Object.assign(/* @__PURE__ */ Object.create(null), parentDefaultProps == null ? void 0 : parentDefaultProps[DEPRECATED_PROPS_SYMBOL], componentPropDefs.deprecatedProps);
   for (const extension of extensions) {
     const extensionDefaultProps = getPropsPrototype(extension.constructor);
     if (extensionDefaultProps) {
-      Object.assign(defaultProps12, extensionDefaultProps);
+      Object.assign(defaultProps13, extensionDefaultProps);
       Object.assign(propTypes, extensionDefaultProps[PROP_TYPES_SYMBOL]);
       Object.assign(deprecatedProps, extensionDefaultProps[DEPRECATED_PROPS_SYMBOL]);
     }
   }
-  createPropsPrototype(defaultProps12, componentClass);
-  addAsyncPropsToPropPrototype(defaultProps12, propTypes);
-  addDeprecatedPropsToPropPrototype(defaultProps12, deprecatedProps);
-  defaultProps12[PROP_TYPES_SYMBOL] = propTypes;
-  defaultProps12[DEPRECATED_PROPS_SYMBOL] = deprecatedProps;
+  createPropsPrototype(defaultProps13, componentClass);
+  addAsyncPropsToPropPrototype(defaultProps13, propTypes);
+  addDeprecatedPropsToPropPrototype(defaultProps13, deprecatedProps);
+  defaultProps13[PROP_TYPES_SYMBOL] = propTypes;
+  defaultProps13[DEPRECATED_PROPS_SYMBOL] = deprecatedProps;
   if (extensions.length === 0 && !hasOwnProperty(componentClass, "_propTypes")) {
     componentClass._propTypes = propTypes;
   }
-  return defaultProps12;
+  return defaultProps13;
 }
-function createPropsPrototype(defaultProps12, componentClass) {
+function createPropsPrototype(defaultProps13, componentClass) {
   const id = getComponentName(componentClass);
-  Object.defineProperties(defaultProps12, {
+  Object.defineProperties(defaultProps13, {
     // `id` is treated specially because layer might need to override it
     id: {
       writable: true,
@@ -43063,9 +43122,9 @@ function createPropsPrototype(defaultProps12, componentClass) {
     }
   });
 }
-function addDeprecatedPropsToPropPrototype(defaultProps12, deprecatedProps) {
+function addDeprecatedPropsToPropPrototype(defaultProps13, deprecatedProps) {
   for (const propName in deprecatedProps) {
-    Object.defineProperty(defaultProps12, propName, {
+    Object.defineProperty(defaultProps13, propName, {
       enumerable: false,
       set(newValue) {
         const nameStr = `${this.id}: ${propName}`;
@@ -43079,7 +43138,7 @@ function addDeprecatedPropsToPropPrototype(defaultProps12, deprecatedProps) {
     });
   }
 }
-function addAsyncPropsToPropPrototype(defaultProps12, propTypes) {
+function addAsyncPropsToPropPrototype(defaultProps13, propTypes) {
   const defaultValues = {};
   const descriptors = {};
   for (const propName in propTypes) {
@@ -43090,9 +43149,9 @@ function addAsyncPropsToPropPrototype(defaultProps12, propTypes) {
       descriptors[name2] = getDescriptorForAsyncProp(name2);
     }
   }
-  defaultProps12[ASYNC_DEFAULTS_SYMBOL] = defaultValues;
-  defaultProps12[ASYNC_ORIGINAL_SYMBOL] = {};
-  Object.defineProperties(defaultProps12, descriptors);
+  defaultProps13[ASYNC_DEFAULTS_SYMBOL] = defaultValues;
+  defaultProps13[ASYNC_ORIGINAL_SYMBOL] = {};
+  Object.defineProperties(defaultProps13, descriptors);
 }
 function getDescriptorForAsyncProp(name2) {
   return {
@@ -44426,7 +44485,7 @@ var CompositeLayer = class extends layer_default {
   // eslint-disable-next-line complexity
   getSubLayerProps(sublayerProps = {}) {
     var _a2;
-    const { opacity, pickable, visible, parameters, getPolygonOffset, highlightedObjectIndex, autoHighlight, highlightColor, coordinateSystem, coordinateOrigin, wrapLongitude, positionFormat, modelMatrix, extensions, fetch: fetch2, operation, _subLayerProps: overridingProps } = this.props;
+    const { opacity, pickable, visible, parameters, getPolygonOffset, highlightedObjectIndex, autoHighlight, highlightColor, coordinateSystem, coordinateOrigin, wrapLongitude, positionFormat, modelMatrix: modelMatrix2, extensions, fetch: fetch2, operation, _subLayerProps: overridingProps } = this.props;
     const newProps = {
       id: "",
       updateTriggers: {},
@@ -44442,7 +44501,7 @@ var CompositeLayer = class extends layer_default {
       coordinateOrigin,
       wrapLongitude,
       positionFormat,
-      modelMatrix,
+      modelMatrix: modelMatrix2,
       extensions,
       fetch: fetch2,
       operation
@@ -44764,9 +44823,9 @@ var Tesselator = class {
   /* Public methods */
   updateGeometry(opts) {
     Object.assign(this.opts, opts);
-    const { data, buffers = {}, getGeometry, geometryBuffer, positionFormat, dataChanged, normalize: normalize5 = true } = this.opts;
+    const { data, buffers = {}, getGeometry: getGeometry2, geometryBuffer, positionFormat, dataChanged, normalize: normalize5 = true } = this.opts;
     this.data = data;
-    this.getGeometry = getGeometry;
+    this.getGeometry = getGeometry2;
     this.positionSize = // @ts-ignore (2339) when geometryBuffer is a luma Buffer, size falls back to positionFormat
     geometryBuffer && geometryBuffer.size || (positionFormat === "XY" ? 2 : 3);
     this.buffers = buffers;
@@ -44821,11 +44880,11 @@ var Tesselator = class {
    * `data` is expected to be an iterable consistent with the base Layer expectation
    */
   _forEachGeometry(visitor, startRow, endRow) {
-    const { data, getGeometry } = this;
+    const { data, getGeometry: getGeometry2 } = this;
     const { iterable, objectInfo } = createIterable(data, startRow, endRow);
     for (const object of iterable) {
       objectInfo.index++;
-      const geometry = getGeometry ? getGeometry(object, objectInfo) : null;
+      const geometry = getGeometry2 ? getGeometry2(object, objectInfo) : null;
       visitor(geometry, objectInfo.index);
     }
   }
@@ -53711,8 +53770,433 @@ var DeckglMap2_5D = class extends DeckglMapFlat {
   }
 };
 
-// src/deckgl/DeckglMap3D.ts
-import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
+// ../../node_modules/.pnpm/@deck.gl+mesh-layers@9.2.2_@deck.gl+core@9.2.2_@loaders.gl+core@4.3.4_@luma.gl+core@9.2.2_@lu_xr5u2rng5gdiozef2uxxnsj66e/node_modules/@deck.gl/mesh-layers/dist/simple-mesh-layer/simple-mesh-layer.js
+init_dist4();
+
+// ../../node_modules/.pnpm/@deck.gl+mesh-layers@9.2.2_@deck.gl+core@9.2.2_@loaders.gl+core@4.3.4_@luma.gl+core@9.2.2_@lu_xr5u2rng5gdiozef2uxxnsj66e/node_modules/@deck.gl/mesh-layers/dist/utils/matrix.js
+var RADIAN_PER_DEGREE = Math.PI / 180;
+var modelMatrix = new Float32Array(16);
+var valueArray = new Float32Array(12);
+function calculateTransformMatrix(targetMatrix, orientation, scale5) {
+  const pitch = orientation[0] * RADIAN_PER_DEGREE;
+  const yaw = orientation[1] * RADIAN_PER_DEGREE;
+  const roll = orientation[2] * RADIAN_PER_DEGREE;
+  const sr = Math.sin(roll);
+  const sp = Math.sin(pitch);
+  const sw = Math.sin(yaw);
+  const cr = Math.cos(roll);
+  const cp = Math.cos(pitch);
+  const cw = Math.cos(yaw);
+  const scx = scale5[0];
+  const scy = scale5[1];
+  const scz = scale5[2];
+  targetMatrix[0] = scx * cw * cp;
+  targetMatrix[1] = scx * sw * cp;
+  targetMatrix[2] = scx * -sp;
+  targetMatrix[3] = scy * (-sw * cr + cw * sp * sr);
+  targetMatrix[4] = scy * (cw * cr + sw * sp * sr);
+  targetMatrix[5] = scy * cp * sr;
+  targetMatrix[6] = scz * (sw * sr + cw * sp * cr);
+  targetMatrix[7] = scz * (-cw * sr + sw * sp * cr);
+  targetMatrix[8] = scz * cp * cr;
+}
+function getExtendedMat3FromMat4(mat4) {
+  mat4[0] = mat4[0];
+  mat4[1] = mat4[1];
+  mat4[2] = mat4[2];
+  mat4[3] = mat4[4];
+  mat4[4] = mat4[5];
+  mat4[5] = mat4[6];
+  mat4[6] = mat4[8];
+  mat4[7] = mat4[9];
+  mat4[8] = mat4[10];
+  mat4[9] = mat4[12];
+  mat4[10] = mat4[13];
+  mat4[11] = mat4[14];
+  return mat4.subarray(0, 12);
+}
+var MATRIX_ATTRIBUTES = {
+  size: 12,
+  accessor: ["getOrientation", "getScale", "getTranslation", "getTransformMatrix"],
+  shaderAttributes: {
+    instanceModelMatrixCol0: {
+      size: 3,
+      elementOffset: 0
+    },
+    instanceModelMatrixCol1: {
+      size: 3,
+      elementOffset: 3
+    },
+    instanceModelMatrixCol2: {
+      size: 3,
+      elementOffset: 6
+    },
+    instanceTranslation: {
+      size: 3,
+      elementOffset: 9
+    }
+  },
+  update(attribute, { startRow, endRow }) {
+    const { data, getOrientation, getScale: getScale2, getTranslation: getTranslation2, getTransformMatrix } = this.props;
+    const arrayMatrix = Array.isArray(getTransformMatrix);
+    const constantMatrix = arrayMatrix && getTransformMatrix.length === 16;
+    const constantScale = Array.isArray(getScale2);
+    const constantOrientation = Array.isArray(getOrientation);
+    const constantTranslation = Array.isArray(getTranslation2);
+    const hasMatrix = constantMatrix || !arrayMatrix && Boolean(getTransformMatrix(data[0]));
+    if (hasMatrix) {
+      attribute.constant = constantMatrix;
+    } else {
+      attribute.constant = constantOrientation && constantScale && constantTranslation;
+    }
+    const instanceModelMatrixData = attribute.value;
+    if (attribute.constant) {
+      let matrix;
+      if (hasMatrix) {
+        modelMatrix.set(getTransformMatrix);
+        matrix = getExtendedMat3FromMat4(modelMatrix);
+      } else {
+        matrix = valueArray;
+        const orientation = getOrientation;
+        const scale5 = getScale2;
+        calculateTransformMatrix(matrix, orientation, scale5);
+        matrix.set(getTranslation2, 9);
+      }
+      attribute.value = new Float32Array(matrix);
+    } else {
+      let i2 = startRow * attribute.size;
+      const { iterable, objectInfo } = createIterable(data, startRow, endRow);
+      for (const object of iterable) {
+        objectInfo.index++;
+        let matrix;
+        if (hasMatrix) {
+          modelMatrix.set(constantMatrix ? getTransformMatrix : getTransformMatrix(object, objectInfo));
+          matrix = getExtendedMat3FromMat4(modelMatrix);
+        } else {
+          matrix = valueArray;
+          const orientation = constantOrientation ? getOrientation : getOrientation(object, objectInfo);
+          const scale5 = constantScale ? getScale2 : getScale2(object, objectInfo);
+          calculateTransformMatrix(matrix, orientation, scale5);
+          matrix.set(constantTranslation ? getTranslation2 : getTranslation2(object, objectInfo), 9);
+        }
+        instanceModelMatrixData[i2++] = matrix[0];
+        instanceModelMatrixData[i2++] = matrix[1];
+        instanceModelMatrixData[i2++] = matrix[2];
+        instanceModelMatrixData[i2++] = matrix[3];
+        instanceModelMatrixData[i2++] = matrix[4];
+        instanceModelMatrixData[i2++] = matrix[5];
+        instanceModelMatrixData[i2++] = matrix[6];
+        instanceModelMatrixData[i2++] = matrix[7];
+        instanceModelMatrixData[i2++] = matrix[8];
+        instanceModelMatrixData[i2++] = matrix[9];
+        instanceModelMatrixData[i2++] = matrix[10];
+        instanceModelMatrixData[i2++] = matrix[11];
+      }
+    }
+  }
+};
+function shouldComposeModelMatrix(viewport, coordinateSystem) {
+  return coordinateSystem === COORDINATE_SYSTEM.CARTESIAN || coordinateSystem === COORDINATE_SYSTEM.METER_OFFSETS || coordinateSystem === COORDINATE_SYSTEM.DEFAULT && !viewport.isGeospatial;
+}
+
+// ../../node_modules/.pnpm/@deck.gl+mesh-layers@9.2.2_@deck.gl+core@9.2.2_@loaders.gl+core@4.3.4_@luma.gl+core@9.2.2_@lu_xr5u2rng5gdiozef2uxxnsj66e/node_modules/@deck.gl/mesh-layers/dist/simple-mesh-layer/simple-mesh-layer-uniforms.js
+var uniformBlock12 = `uniform simpleMeshUniforms {
+  float sizeScale;
+  bool composeModelMatrix;
+  bool hasTexture;
+  bool flatShading;
+} simpleMesh;
+`;
+var simpleMeshUniforms = {
+  name: "simpleMesh",
+  vs: uniformBlock12,
+  fs: uniformBlock12,
+  uniformTypes: {
+    sizeScale: "f32",
+    composeModelMatrix: "f32",
+    hasTexture: "f32",
+    flatShading: "f32"
+  }
+};
+
+// ../../node_modules/.pnpm/@deck.gl+mesh-layers@9.2.2_@deck.gl+core@9.2.2_@loaders.gl+core@4.3.4_@luma.gl+core@9.2.2_@lu_xr5u2rng5gdiozef2uxxnsj66e/node_modules/@deck.gl/mesh-layers/dist/simple-mesh-layer/simple-mesh-layer-vertex.glsl.js
+var simple_mesh_layer_vertex_glsl_default = `#version 300 es
+#define SHADER_NAME simple-mesh-layer-vs
+in vec3 positions;
+in vec3 normals;
+in vec3 colors;
+in vec2 texCoords;
+in vec3 instancePositions;
+in vec3 instancePositions64Low;
+in vec4 instanceColors;
+in vec3 instancePickingColors;
+in vec3 instanceModelMatrixCol0;
+in vec3 instanceModelMatrixCol1;
+in vec3 instanceModelMatrixCol2;
+in vec3 instanceTranslation;
+out vec2 vTexCoord;
+out vec3 cameraPosition;
+out vec3 normals_commonspace;
+out vec4 position_commonspace;
+out vec4 vColor;
+void main(void) {
+geometry.worldPosition = instancePositions;
+geometry.uv = texCoords;
+geometry.pickingColor = instancePickingColors;
+vTexCoord = texCoords;
+cameraPosition = project.cameraPosition;
+vColor = vec4(colors * instanceColors.rgb, instanceColors.a);
+mat3 instanceModelMatrix = mat3(instanceModelMatrixCol0, instanceModelMatrixCol1, instanceModelMatrixCol2);
+vec3 pos = (instanceModelMatrix * positions) * simpleMesh.sizeScale + instanceTranslation;
+if (simpleMesh.composeModelMatrix) {
+DECKGL_FILTER_SIZE(pos, geometry);
+normals_commonspace = project_normal(instanceModelMatrix * normals);
+geometry.worldPosition += pos;
+gl_Position = project_position_to_clipspace(pos + instancePositions, instancePositions64Low, vec3(0.0), position_commonspace);
+geometry.position = position_commonspace;
+}
+else {
+pos = project_size(pos);
+DECKGL_FILTER_SIZE(pos, geometry);
+gl_Position = project_position_to_clipspace(instancePositions, instancePositions64Low, pos, position_commonspace);
+geometry.position = position_commonspace;
+normals_commonspace = project_normal(instanceModelMatrix * normals);
+}
+geometry.normal = normals_commonspace;
+DECKGL_FILTER_GL_POSITION(gl_Position, geometry);
+DECKGL_FILTER_COLOR(vColor, geometry);
+}
+`;
+
+// ../../node_modules/.pnpm/@deck.gl+mesh-layers@9.2.2_@deck.gl+core@9.2.2_@loaders.gl+core@4.3.4_@luma.gl+core@9.2.2_@lu_xr5u2rng5gdiozef2uxxnsj66e/node_modules/@deck.gl/mesh-layers/dist/simple-mesh-layer/simple-mesh-layer-fragment.glsl.js
+var simple_mesh_layer_fragment_glsl_default = `#version 300 es
+#define SHADER_NAME simple-mesh-layer-fs
+precision highp float;
+uniform sampler2D sampler;
+in vec2 vTexCoord;
+in vec3 cameraPosition;
+in vec3 normals_commonspace;
+in vec4 position_commonspace;
+in vec4 vColor;
+out vec4 fragColor;
+void main(void) {
+geometry.uv = vTexCoord;
+vec3 normal;
+if (simpleMesh.flatShading) {
+normal = normalize(cross(dFdx(position_commonspace.xyz), dFdy(position_commonspace.xyz)));
+} else {
+normal = normals_commonspace;
+}
+vec4 color = simpleMesh.hasTexture ? texture(sampler, vTexCoord) : vColor;
+DECKGL_FILTER_COLOR(color, geometry);
+vec3 lightColor = lighting_getLightColor(color.rgb, cameraPosition, position_commonspace.xyz, normal);
+fragColor = vec4(lightColor, color.a * layer.opacity);
+}
+`;
+
+// ../../node_modules/.pnpm/@deck.gl+mesh-layers@9.2.2_@deck.gl+core@9.2.2_@loaders.gl+core@4.3.4_@luma.gl+core@9.2.2_@lu_xr5u2rng5gdiozef2uxxnsj66e/node_modules/@deck.gl/mesh-layers/dist/simple-mesh-layer/simple-mesh-layer.js
+function normalizeGeometryAttributes(attributes) {
+  const positionAttribute = attributes.positions || attributes.POSITION;
+  log_default.assert(positionAttribute, 'no "postions" or "POSITION" attribute in mesh');
+  const vertexCount = positionAttribute.value.length / positionAttribute.size;
+  let colorAttribute = attributes.COLOR_0 || attributes.colors;
+  if (!colorAttribute) {
+    colorAttribute = { size: 3, value: new Float32Array(vertexCount * 3).fill(1) };
+  }
+  let normalAttribute = attributes.NORMAL || attributes.normals;
+  if (!normalAttribute) {
+    normalAttribute = { size: 3, value: new Float32Array(vertexCount * 3).fill(0) };
+  }
+  let texCoordAttribute = attributes.TEXCOORD_0 || attributes.texCoords;
+  if (!texCoordAttribute) {
+    texCoordAttribute = { size: 2, value: new Float32Array(vertexCount * 2).fill(0) };
+  }
+  return {
+    positions: positionAttribute,
+    colors: colorAttribute,
+    normals: normalAttribute,
+    texCoords: texCoordAttribute
+  };
+}
+function getGeometry(data) {
+  if (data instanceof Geometry) {
+    data.attributes = normalizeGeometryAttributes(data.attributes);
+    return data;
+  } else if (data.attributes) {
+    return new Geometry({
+      ...data,
+      topology: "triangle-list",
+      attributes: normalizeGeometryAttributes(data.attributes)
+    });
+  } else {
+    return new Geometry({
+      topology: "triangle-list",
+      attributes: normalizeGeometryAttributes(data)
+    });
+  }
+}
+var DEFAULT_COLOR7 = [0, 0, 0, 255];
+var defaultProps12 = {
+  mesh: { type: "object", value: null, async: true },
+  texture: { type: "image", value: null, async: true },
+  sizeScale: { type: "number", value: 1, min: 0 },
+  // _instanced is a hack to use world position instead of meter offsets in mesh
+  // TODO - formalize API
+  _instanced: true,
+  // NOTE(Tarek): Quick and dirty wireframe. Just draws
+  // the same mesh with LINE_STRIPS. Won't follow edges
+  // of the original mesh.
+  wireframe: false,
+  // Optional material for 'lighting' shader module
+  material: true,
+  getPosition: { type: "accessor", value: (x2) => x2.position },
+  getColor: { type: "accessor", value: DEFAULT_COLOR7 },
+  // yaw, pitch and roll are in degrees
+  // https://en.wikipedia.org/wiki/Euler_angles
+  // [pitch, yaw, roll]
+  getOrientation: { type: "accessor", value: [0, 0, 0] },
+  getScale: { type: "accessor", value: [1, 1, 1] },
+  getTranslation: { type: "accessor", value: [0, 0, 0] },
+  // 4x4 matrix
+  getTransformMatrix: { type: "accessor", value: [] },
+  textureParameters: { type: "object", ignore: true, value: null }
+};
+var SimpleMeshLayer = class extends layer_default {
+  getShaders() {
+    return super.getShaders({
+      vs: simple_mesh_layer_vertex_glsl_default,
+      fs: simple_mesh_layer_fragment_glsl_default,
+      modules: [project32_default, phongMaterial, picking_default, simpleMeshUniforms]
+    });
+  }
+  getBounds() {
+    var _a2;
+    if (this.props._instanced) {
+      return super.getBounds();
+    }
+    let result = this.state.positionBounds;
+    if (result) {
+      return result;
+    }
+    const { mesh } = this.props;
+    if (!mesh) {
+      return null;
+    }
+    result = (_a2 = mesh.header) == null ? void 0 : _a2.boundingBox;
+    if (!result) {
+      const { attributes } = getGeometry(mesh);
+      attributes.POSITION = attributes.POSITION || attributes.positions;
+      result = getMeshBoundingBox(attributes);
+    }
+    this.state.positionBounds = result;
+    return result;
+  }
+  initializeState() {
+    const attributeManager = this.getAttributeManager();
+    attributeManager.addInstanced({
+      instancePositions: {
+        transition: true,
+        type: "float64",
+        fp64: this.use64bitPositions(),
+        size: 3,
+        accessor: "getPosition"
+      },
+      instanceColors: {
+        type: "unorm8",
+        transition: true,
+        size: this.props.colorFormat.length,
+        accessor: "getColor",
+        defaultValue: [0, 0, 0, 255]
+      },
+      instanceModelMatrix: MATRIX_ATTRIBUTES
+    });
+    this.setState({
+      // Avoid luma.gl's missing uniform warning
+      // TODO - add feature to luma.gl to specify ignored uniforms?
+      emptyTexture: this.context.device.createTexture({
+        data: new Uint8Array(4),
+        width: 1,
+        height: 1
+      })
+    });
+  }
+  updateState(params) {
+    var _a2;
+    super.updateState(params);
+    const { props, oldProps, changeFlags } = params;
+    if (props.mesh !== oldProps.mesh || changeFlags.extensionsChanged) {
+      this.state.positionBounds = null;
+      (_a2 = this.state.model) == null ? void 0 : _a2.destroy();
+      if (props.mesh) {
+        this.state.model = this.getModel(props.mesh);
+        const attributes = props.mesh.attributes || props.mesh;
+        this.setState({
+          hasNormals: Boolean(attributes.NORMAL || attributes.normals)
+        });
+      }
+      this.getAttributeManager().invalidateAll();
+    }
+    if (props.texture !== oldProps.texture && props.texture instanceof Texture) {
+      this.setTexture(props.texture);
+    }
+    if (this.state.model) {
+      this.state.model.setTopology(this.props.wireframe ? "line-strip" : "triangle-list");
+    }
+  }
+  finalizeState(context) {
+    super.finalizeState(context);
+    this.state.emptyTexture.delete();
+  }
+  draw({ uniforms }) {
+    const { model } = this.state;
+    if (!model) {
+      return;
+    }
+    const { viewport, renderPass } = this.context;
+    const { sizeScale, coordinateSystem, _instanced } = this.props;
+    const simpleMeshProps = {
+      sizeScale,
+      composeModelMatrix: !_instanced || shouldComposeModelMatrix(viewport, coordinateSystem),
+      flatShading: !this.state.hasNormals
+    };
+    model.shaderInputs.setProps({ simpleMesh: simpleMeshProps });
+    model.draw(renderPass);
+  }
+  get isLoaded() {
+    var _a2;
+    return Boolean(((_a2 = this.state) == null ? void 0 : _a2.model) && super.isLoaded);
+  }
+  getModel(mesh) {
+    const model = new Model(this.context.device, {
+      ...this.getShaders(),
+      id: this.props.id,
+      bufferLayout: this.getAttributeManager().getBufferLayouts(),
+      geometry: getGeometry(mesh),
+      isInstanced: true
+    });
+    const { texture } = this.props;
+    const { emptyTexture } = this.state;
+    const simpleMeshProps = {
+      sampler: texture || emptyTexture,
+      hasTexture: Boolean(texture)
+    };
+    model.shaderInputs.setProps({ simpleMesh: simpleMeshProps });
+    return model;
+  }
+  setTexture(texture) {
+    const { emptyTexture, model } = this.state;
+    if (model) {
+      const simpleMeshProps = {
+        sampler: texture || emptyTexture,
+        hasTexture: Boolean(texture)
+      };
+      model.shaderInputs.setProps({ simpleMesh: simpleMeshProps });
+    }
+  }
+};
+SimpleMeshLayer.defaultProps = defaultProps12;
+SimpleMeshLayer.layerName = "SimpleMeshLayer";
+var simple_mesh_layer_default = SimpleMeshLayer;
 
 // src/deckgl/utils/sphereGeometry.ts
 function createSphereGeometry(radius, nlat = 18, nlong = 36) {
@@ -53914,7 +54398,7 @@ var DeckglMap3D = class extends BaseDeckglMap {
       onLoad: () => {
       }
     });
-    const earthSphereLayer = new SimpleMeshLayer({
+    const earthSphereLayer = new simple_mesh_layer_default({
       id: "earth-sphere",
       data: [0],
       mesh: this.sphereGeometry,
