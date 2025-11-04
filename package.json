@@ -94,17 +94,7 @@
     "map",
     "geo",
     "echarts",
-    "deckgl",
-    "geojson",
-    "china",
-    "world",
-    "visualization",
-    "typescript",
-    "web",
-    "browser",
-    "react",
-    "vue",
-    "angular"
+    "deckgl"
   ],
   "engines": {
     "node": ">=18.0.0",

@@ -15,7 +15,7 @@ export default defineConfig({
   // echarts 作为外部依赖，由使用方提供
   external: ['echarts'],
   // 明确指定要打包的依赖（不作为外部依赖）
-  noExternal: ['@deck.gl/core', '@deck.gl/layers', /^@orch-map\//],
+  noExternal: ['@deck.gl/core', '@deck.gl/layers', '@deck.gl/mesh-layers', /^@orch-map\//],
   // 使用 tsconfig 的 paths 配置
   tsconfig: './tsconfig.json',
   // 添加banner来处理Node.js模块问题
