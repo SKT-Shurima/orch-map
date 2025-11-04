@@ -91,7 +91,7 @@ interface MapRendererConfig {
     /** 中心国家 */
     centralCountry?: string;
     /** 渲染模式 */
-    mode?: "2d" | "3d";
+    mode?: "2d" | "2.5d" | "3d";
     /** 事件处理器 */
     events?: MapRendererEvents;
     /** 地图中心点 */
@@ -156,161 +156,51 @@ interface IMapRenderer {
 }
 
 /**
- * DeckGL 地图主类
- * 说明：负责 DeckGL 实例的管理、图层管理与业务图层（Geo、点、弧线）装配与更新
+ * 模块：DeckGL 主模块
+ * 说明：DeckGL 地图主类，作为工厂类根据模式实例化对应的实现类
+ */
+
+/**
+ * DeckGL 地图主类（工厂类）
+ * 说明：根据模式（2D/2.5D/3D）实例化对应的实现类
+ * - 2D: 平面图
+ * - 2.5D: 倾斜45度
+ * - 3D: Globe 模式
  */
 declare class DeckglMap {
-    /** 默认视图状态 */
-    private static readonly DEFAULT_VIEW_STATE;
-    /** 实例唯一标识 */
-    private instanceId;
-    /** DeckGL 实例 */
-    private deckInstance;
+    /** 内部实现实例 */
+    private instance;
+    /** 容器元素 */
     private container;
-    /** 图层存储：layerId -> layer 实例 */
-    private layerMap;
-    /** 折线数据源 */
-    private lines;
-    /** 点数据源 */
-    private points;
-    /** 点状态管理 */
-    private pointState;
-    /** 2D/3D 模式 */
+    /** 地图模式（2D/2.5D/3D） */
     private mode;
-    /** 第一次加载时计算的最小缩放比例 */
-    private initialMinZoom;
+    /** 初始化完成回调函数 */
+    private callback;
     /** 事件处理器配置 */
     private events?;
-    /** 单击延迟计时器 */
-    private clickTimer;
-    /** 点击延迟时间（毫秒） */
-    private readonly CLICK_DELAY;
-    /** 当前动画时间（单位：秒的逻辑刻度） */
-    private currentTime;
+    /** 中心点配置 */
+    private center?;
     /**
      * 构造函数
      * @param container - 容器元素
-     * @param mode - 地图模式（2D/3D）
+     * @param mode - 地图模式（2D/2.5D/3D）
      * @param callback - 初始化完成回调函数
      * @param events - 事件处理器配置（可选）
+     * @param center - 可选的中心点配置 { lat, lng }
      */
-    constructor(container: HTMLCanvasElement, mode: "2d" | "3d", callback: () => void, events?: MapRendererEvents);
-    /**
-     * 初始化地图
-     * @param container - 容器元素
-     * @param callback - 初始化完成回调函数
-     */
-    private initializeMap;
-    /**
-     * 初始化 Deck 实例与图标图集
-     * @param canvas - Canvas 元素
-     * @param callback - 初始化完成回调函数
-     */
-    private initDeck;
-    /**
-     * 初始化默认图层
-     */
-    private initializeDefaultLayers;
-    private get lineLayerManager();
-    /**
-     * 图层更新回调方法
-     */
-    private get layerUpdateCallback();
+    constructor(container: HTMLCanvasElement, mode: "2d" | "2.5d" | "3d", callback: () => void, events?: MapRendererEvents, center?: {
+        lat: number;
+        lng: number;
+    });
     /**
      * 销毁内部资源
      */
     destroy(): void;
     /**
-     * 创建 Canvas 元素
-     * @param container - 容器元素
-     * @returns Canvas 元素
-     */
-    private createCanvas;
-    /**
-     * 创建并初始化 Deck 实例
-     * @param container - Canvas 容器
-     * @param initialViewState - 初始视图状态
-     * @param props - 附加属性
-     */
-    private createDeckInstance;
-    /**
-     * 获取当前 Deck 实例
-     * @returns 当前的 Deck 实例
-     * @throws 如果实例未初始化则抛出错误
-     */
-    private get currentDeckInstance();
-    /**
-     * 新增图层（若已存在则委托为 update）
-     * @param id - 图层 ID
-     * @param layer - 图层实例
-     */
-    private addLayer;
-    /**
-     * 更新图层
-     * @param id - 图层 ID
-     * @param layerOrProps - 图层实例或图层属性
-     */
-    private updateLayerById;
-    /**
-     * 移除图层
-     * @param id - 图层 ID
-     */
-    private removeLayer;
-    /**
-     * 以固定顺序返回所有图层实例
-     * @returns 图层数组
-     */
-    private getLayers;
-    /**
-     * 将当前图层刷新到 Deck 实例
-     */
-    private updateLayer;
-    /**
-     * 地图空白处点击处理（取消点选中）
-     * @param info - 点击信息
-     * @param event - 事件对象
-     */
-    private handleClickMapView;
-    /**
-     * 地图双击处理（获取区域信息）
-     * @param info - 双击信息
-     * @param event - 事件对象
-     */
-    private handleDoubleClickMapView;
-    /**
-     * 点对象点击处理
-     * @param info - 点击信息
-     */
-    private handleClickPoint;
-    /**
-     * 点对象悬停处理
-     * @param info - 悬停信息
-     */
-    private handleHoverPoint;
-    /**
      * 设置国家/省份 GeoJSON 数据并注册基础底图图层
      * @param geojsonData - GeoJSON 数据
      */
     setGEOData(geojsonData: GeoJSON): Promise<void>;
-    /**
-     * 根据地理数据调整视图，使其居中并适应缩放
-     * @param geojsonData - GeoJSON 数据
-     */
-    private fitBoundsToGeoData;
-    /**
-     * 计算初始最小缩放比例
-     * 基于容器尺寸计算能够显示整个世界地图的最小缩放级别
-     * @param containerWidth - 容器宽度
-     * @param containerHeight - 容器高度
-     * @returns 最小缩放级别
-     */
-    private calculateInitialMinZoom;
-    /**
-     * 更新视图状态
-     * @param center - 中心点 [lng, lat]
-     * @param zoom - 缩放级别
-     */
-    private updateViewState;
     /**
      * 设置点数据
      * @param points - 点数据数组
@@ -321,40 +211,6 @@ declare class DeckglMap {
      * @param lines - 折线数据数组
      */
     setLines(lines: BaseMapLine[]): void;
-    /** RAF 动画 ID */
-    private rafId;
-    /** 动画开始时间 */
-    private animationStartTime;
-    /** 动画是否正在运行 */
-    private isAnimating;
-    /**
-     * 获取当前动画时间
-     */
-    getCurrentTime(): number;
-    /**
-     * 设置当前动画时间
-     */
-    setCurrentTime(time: number): void;
-    /**
-     * 重置动画时间
-     */
-    resetTime(): void;
-    /**
-     * 启动动画定时器（使用 requestAnimationFrame）
-     */
-    private startArcAnimation;
-    /**
-     * 停止动画
-     */
-    private stopArcAnimation;
-    /**
-     * RAF 动画循环
-     */
-    private animate;
-    /**
-     * 更新动画
-     */
-    private updateArcAnimation;
 }
 
 /**
@@ -471,6 +327,10 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
     private config;
     /** 状态管理器取消订阅函数 */
     private unsubscribeState;
+    /** 标志位：是否正在通过 setGEOData 手动更新，用于避免监听器重复更新 */
+    private _updatingFromSetGEOData;
+    /** 当前设置的中心点（用于覆盖自动计算的中心点） */
+    private configuredCenter?;
     /**
      * 构造函数
      * @param container - 地图容器，可以是 DOM 元素或元素 ID 字符串
@@ -500,7 +360,7 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
      * @param boundary - 边界地理数据
      * @public
      */
-    setGEOData(boundary: GeoJSON): void;
+    setGEOData(boundary: GeoJSON): Promise<void>;
     /**
      * 双击事件处理器（用于地图层级切换）
      * @param params - 事件参数，包含组件类型和区域信息
@@ -534,6 +394,7 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
     private redrawMap;
     /**
      * 调整地图大小
+     * 当窗口大小变化时，重新计算缩放比例以适应新的容器大小
      * @public
      */
     resizeMap: () => void;
@@ -694,6 +555,39 @@ declare class OrchMap {
      * @returns {Promise<void>} 初始化完成的 Promise
      */
     waitForInitialization(): Promise<void>;
+    /**
+     * 设置渲染器类型
+     * @description 动态切换地图渲染器类型（ECharts ↔ DeckGL）
+     * @param {MapRendererType} renderType - 新的渲染器类型
+     * @returns {Promise<void>} 切换操作的 Promise
+     * @example
+     * // 切换到 DeckGL 渲染器
+     * await mapInstance.setRenderType(MapRendererType.DECKGL);
+     *
+     * // 切换到 ECharts 渲染器
+     * await mapInstance.setRenderType(MapRendererType.ECHARTS);
+     */
+    setRenderType(renderType: MapRendererType): Promise<void>;
+    /**
+     * 设置渲染模式
+     * @description 动态切换地图渲染模式（2D/2.5D/3D）
+     * 注意：模式切换仅在 DeckGL 渲染器下有效，ECharts 渲染器不支持模式切换
+     * - 2D: 平面图
+     * - 2.5D: 倾斜45度
+     * - 3D: Globe 模式
+     * @param {"2d" | "2.5d" | "3d"} mode - 新的渲染模式
+     * @returns {Promise<void>} 切换操作的 Promise
+     * @example
+     * // 切换到 3D Globe 模式（仅在 DeckGL 下有效）
+     * await mapInstance.setMode("3d");
+     *
+     * // 切换到 2.5D 倾斜模式
+     * await mapInstance.setMode("2.5d");
+     *
+     * // 切换到 2D 平面模式
+     * await mapInstance.setMode("2d");
+     */
+    setMode(mode: "2d" | "2.5d" | "3d"): Promise<void>;
     /**
      * 根据环境自动选择最佳渲染器
      * @param {Partial<MapRendererConfig>} [config] - 渲染器配置

@@ -33,8 +33,8 @@ var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { en
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
-var __commonJS = (cb, mod2) => function __require() {
-  return mod2 || (0, cb[__getOwnPropNames(cb)[0]])((mod2 = { exports: {} }).exports, mod2), mod2.exports;
+var __commonJS = (cb, mod3) => function __require() {
+  return mod3 || (0, cb[__getOwnPropNames(cb)[0]])((mod3 = { exports: {} }).exports, mod3), mod3.exports;
 };
 var __export = (target2, all) => {
   for (var name2 in all)
@@ -48,14 +48,14 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
-var __reExport = (target2, mod2, secondTarget) => (__copyProps(target2, mod2, "default"), secondTarget && __copyProps(secondTarget, mod2, "default"));
-var __toESM = (mod2, isNodeMode, target2) => (target2 = mod2 != null ? __create(__getProtoOf(mod2)) : {}, __copyProps(
+var __reExport = (target2, mod3, secondTarget) => (__copyProps(target2, mod3, "default"), secondTarget && __copyProps(secondTarget, mod3, "default"));
+var __toESM = (mod3, isNodeMode, target2) => (target2 = mod3 != null ? __create(__getProtoOf(mod3)) : {}, __copyProps(
   // If the importer is in node compatibility mode or this is not an ESM
   // file that has been converted to a CommonJS file using a Babel-
   // compatible transform (i.e. "__esModule" has not been set), then set
   // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod2 || !mod2.__esModule ? __defProp(target2, "default", { value: mod2, enumerable: true }) : target2,
-  mod2
+  isNodeMode || !mod3 || !mod3.__esModule ? __defProp(target2, "default", { value: mod3, enumerable: true }) : target2,
+  mod3
 ));
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 
@@ -158,7 +158,7 @@ function getStorage(type) {
     storage.setItem(x2, x2);
     storage.removeItem(x2);
     return storage;
-  } catch (e2) {
+  } catch (e3) {
     return null;
   }
 }
@@ -2298,7 +2298,7 @@ var init_canvas_context = __esm({
           this._resizeObserver = new ResizeObserver((entries) => this._handleResize(entries));
           try {
             this._resizeObserver.observe(this.canvas, { box: "device-pixel-content-box" });
-          } catch (e2) {
+          } catch (e3) {
             this._resizeObserver.observe(this.canvas, { box: "content-box" });
           }
           setTimeout(() => this._observeDevicePixelRatio(), 0);
@@ -2395,7 +2395,7 @@ var init_canvas_context = __esm({
           const [drawingBufferWidth] = this.getDrawingBufferSize();
           const [cssWidth] = this.getCSSSize();
           return cssWidth ? drawingBufferWidth / cssWidth : 1;
-        } catch (e2) {
+        } catch (e3) {
           return 1;
         }
       }
@@ -10076,7 +10076,7 @@ var require_earcut = __commonJS({
       sortLinked(p2);
     }
     function sortLinked(list) {
-      var i2, p2, q2, e2, tail, numMerges, pSize, qSize, inSize = 1;
+      var i2, p2, q2, e3, tail, numMerges, pSize, qSize, inSize = 1;
       do {
         p2 = list;
         list = null;
@@ -10094,18 +10094,18 @@ var require_earcut = __commonJS({
           qSize = inSize;
           while (pSize > 0 || qSize > 0 && q2) {
             if (pSize !== 0 && (qSize === 0 || !q2 || p2.z <= q2.z)) {
-              e2 = p2;
+              e3 = p2;
               p2 = p2.nextZ;
               pSize--;
             } else {
-              e2 = q2;
+              e3 = q2;
               q2 = q2.nextZ;
               qSize--;
             }
-            if (tail) tail.nextZ = e2;
-            else list = e2;
-            e2.prevZ = tail;
-            tail = e2;
+            if (tail) tail.nextZ = e3;
+            else list = e3;
+            e3.prevZ = tail;
+            tail = e3;
           }
           p2 = q2;
         }
@@ -10618,7 +10618,7 @@ var require_lodash = __commonJS({
             return types;
           }
           return freeProcess && freeProcess.binding && freeProcess.binding("util");
-        } catch (e2) {
+        } catch (e3) {
         }
       })();
       var nodeIsArrayBuffer = nodeUtil && nodeUtil.isArrayBuffer, nodeIsDate = nodeUtil && nodeUtil.isDate, nodeIsMap = nodeUtil && nodeUtil.isMap, nodeIsRegExp = nodeUtil && nodeUtil.isRegExp, nodeIsSet = nodeUtil && nodeUtil.isSet, nodeIsTypedArray = nodeUtil && nodeUtil.isTypedArray;
@@ -10990,7 +10990,7 @@ var require_lodash = __commonJS({
             var func = getNative(Object2, "defineProperty");
             func({}, "", {});
             return func;
-          } catch (e2) {
+          } catch (e3) {
           }
         })();
         var ctxClearTimeout = context.clearTimeout !== root.clearTimeout && context.clearTimeout, ctxNow = Date2 && Date2.now !== root.Date.now && Date2.now, ctxSetTimeout = context.setTimeout !== root.setTimeout && context.setTimeout;
@@ -13022,7 +13022,7 @@ var require_lodash = __commonJS({
           try {
             value[symToStringTag] = undefined2;
             var unmasked = true;
-          } catch (e2) {
+          } catch (e3) {
           }
           var result2 = nativeObjectToString.call(value);
           if (unmasked) {
@@ -13379,11 +13379,11 @@ var require_lodash = __commonJS({
           if (func != null) {
             try {
               return funcToString.call(func);
-            } catch (e2) {
+            } catch (e3) {
             }
             try {
               return func + "";
-            } catch (e2) {
+            } catch (e3) {
             }
           }
           return "";
@@ -15070,8 +15070,8 @@ var require_lodash = __commonJS({
         var attempt = baseRest(function(func, args) {
           try {
             return apply(func, undefined2, args);
-          } catch (e2) {
-            return isError(e2) ? e2 : new Error2(e2);
+          } catch (e3) {
+            return isError(e3) ? e3 : new Error2(e3);
           }
         });
         var bindAll = flatRest(function(object, methodNames) {
@@ -19066,8 +19066,8 @@ init_dist4();
 
 // ../../node_modules/.pnpm/wgsl_reflect@1.2.3/node_modules/wgsl_reflect/wgsl_reflect.module.js
 var e = class {
-  constructor(e2, t2) {
-    this.name = e2, this.attributes = t2, this.size = 0;
+  constructor(e3, t2) {
+    this.name = e3, this.attributes = t2, this.size = 0;
   }
   get isArray() {
     return false;
@@ -19086,8 +19086,8 @@ var e = class {
   }
 };
 var t = class {
-  constructor(e2, t2, n2) {
-    this.name = e2, this.type = t2, this.attributes = n2, this.offset = 0, this.size = 0;
+  constructor(e3, t2, n2) {
+    this.name = e3, this.type = t2, this.attributes = n2, this.offset = 0, this.size = 0;
   }
   get isArray() {
     return this.type.isArray;
@@ -19115,16 +19115,16 @@ var t = class {
   }
 };
 var n = class extends e {
-  constructor(e2, t2) {
-    super(e2, t2), this.members = [], this.align = 0, this.startLine = -1, this.endLine = -1, this.inUse = false;
+  constructor(e3, t2) {
+    super(e3, t2), this.members = [], this.align = 0, this.startLine = -1, this.endLine = -1, this.inUse = false;
   }
   get isStruct() {
     return true;
   }
 };
 var s = class extends e {
-  constructor(e2, t2) {
-    super(e2, t2), this.count = 0, this.stride = 0;
+  constructor(e3, t2) {
+    super(e3, t2), this.count = 0, this.stride = 0;
   }
   get isArray() {
     return true;
@@ -19134,8 +19134,8 @@ var s = class extends e {
   }
 };
 var r = class extends e {
-  constructor(e2, t2, n2) {
-    super(e2, n2), this.format = t2;
+  constructor(e3, t2, n2) {
+    super(e3, n2), this.format = t2;
   }
   get isPointer() {
     return true;
@@ -19145,34 +19145,34 @@ var r = class extends e {
   }
 };
 var a = class extends e {
-  constructor(e2, t2, n2, s2) {
-    super(e2, n2), this.format = t2, this.access = s2;
+  constructor(e3, t2, n2, s2) {
+    super(e3, n2), this.format = t2, this.access = s2;
   }
   get isTemplate() {
     return true;
   }
   getTypeName() {
-    let e2 = this.name;
+    let e3 = this.name;
     if (null !== this.format) {
-      if ("vec2" === e2 || "vec3" === e2 || "vec4" === e2 || "mat2x2" === e2 || "mat2x3" === e2 || "mat2x4" === e2 || "mat3x2" === e2 || "mat3x3" === e2 || "mat3x4" === e2 || "mat4x2" === e2 || "mat4x3" === e2 || "mat4x4" === e2) {
-        if ("f32" === this.format.name) return e2 += "f", e2;
-        if ("i32" === this.format.name) return e2 += "i", e2;
-        if ("u32" === this.format.name) return e2 += "u", e2;
-        if ("bool" === this.format.name) return e2 += "b", e2;
-        if ("f16" === this.format.name) return e2 += "h", e2;
+      if ("vec2" === e3 || "vec3" === e3 || "vec4" === e3 || "mat2x2" === e3 || "mat2x3" === e3 || "mat2x4" === e3 || "mat3x2" === e3 || "mat3x3" === e3 || "mat3x4" === e3 || "mat4x2" === e3 || "mat4x3" === e3 || "mat4x4" === e3) {
+        if ("f32" === this.format.name) return e3 += "f", e3;
+        if ("i32" === this.format.name) return e3 += "i", e3;
+        if ("u32" === this.format.name) return e3 += "u", e3;
+        if ("bool" === this.format.name) return e3 += "b", e3;
+        if ("f16" === this.format.name) return e3 += "h", e3;
       }
-      e2 += `<${this.format.name}>`;
-    } else if ("vec2" === e2 || "vec3" === e2 || "vec4" === e2) return e2;
-    return e2;
+      e3 += `<${this.format.name}>`;
+    } else if ("vec2" === e3 || "vec3" === e3 || "vec4" === e3) return e3;
+    return e3;
   }
 };
 var i;
-((e2) => {
-  e2[e2.Uniform = 0] = "Uniform", e2[e2.Storage = 1] = "Storage", e2[e2.Texture = 2] = "Texture", e2[e2.Sampler = 3] = "Sampler", e2[e2.StorageTexture = 4] = "StorageTexture";
+((e3) => {
+  e3[e3.Uniform = 0] = "Uniform", e3[e3.Storage = 1] = "Storage", e3[e3.Texture = 2] = "Texture", e3[e3.Sampler = 3] = "Sampler", e3[e3.StorageTexture = 4] = "StorageTexture";
 })(i || (i = {}));
 var o = class {
-  constructor(e2, t2, n2, s2, r2, a2, i2) {
-    this.name = e2, this.type = t2, this.group = n2, this.binding = s2, this.attributes = r2, this.resourceType = a2, this.access = i2;
+  constructor(e3, t2, n2, s2, r2, a2, i2) {
+    this.name = e3, this.type = t2, this.group = n2, this.binding = s2, this.attributes = r2, this.resourceType = a2, this.access = i2;
   }
   get isArray() {
     return this.type.isArray;
@@ -19203,33 +19203,33 @@ var o = class {
   }
 };
 var c = class {
-  constructor(e2, t2) {
-    this.name = e2, this.type = t2;
+  constructor(e3, t2) {
+    this.name = e3, this.type = t2;
   }
 };
 var l = class {
-  constructor(e2, t2, n2, s2) {
-    this.name = e2, this.type = t2, this.locationType = n2, this.location = s2, this.interpolation = null;
+  constructor(e3, t2, n2, s2) {
+    this.name = e3, this.type = t2, this.locationType = n2, this.location = s2, this.interpolation = null;
   }
 };
 var u = class {
-  constructor(e2, t2, n2, s2) {
-    this.name = e2, this.type = t2, this.locationType = n2, this.location = s2;
+  constructor(e3, t2, n2, s2) {
+    this.name = e3, this.type = t2, this.locationType = n2, this.location = s2;
   }
 };
 var h = class {
-  constructor(e2, t2, n2, s2) {
-    this.name = e2, this.type = t2, this.attributes = n2, this.id = s2;
+  constructor(e3, t2, n2, s2) {
+    this.name = e3, this.type = t2, this.attributes = n2, this.id = s2;
   }
 };
 var f = class {
-  constructor(e2, t2, n2) {
-    this.name = e2, this.type = t2, this.attributes = n2;
+  constructor(e3, t2, n2) {
+    this.name = e3, this.type = t2, this.attributes = n2;
   }
 };
 var p = class {
-  constructor(e2, t2 = null, n2) {
-    this.stage = null, this.inputs = [], this.outputs = [], this.arguments = [], this.returnType = null, this.resources = [], this.overrides = [], this.startLine = -1, this.endLine = -1, this.inUse = false, this.calls = /* @__PURE__ */ new Set(), this.name = e2, this.stage = t2, this.attributes = n2;
+  constructor(e3, t2 = null, n2) {
+    this.stage = null, this.inputs = [], this.outputs = [], this.arguments = [], this.returnType = null, this.resources = [], this.overrides = [], this.startLine = -1, this.endLine = -1, this.inUse = false, this.calls = /* @__PURE__ */ new Set(), this.name = e3, this.stage = t2, this.attributes = n2;
   }
 };
 var d = class {
@@ -19237,223 +19237,223 @@ var d = class {
     this.vertex = [], this.fragment = [], this.compute = [];
   }
 };
-function m(e2) {
-  var t2 = (32768 & e2) >> 15, n2 = (31744 & e2) >> 10, s2 = 1023 & e2;
+function m(e3) {
+  var t2 = (32768 & e3) >> 15, n2 = (31744 & e3) >> 10, s2 = 1023 & e3;
   return 0 == n2 ? (t2 ? -1 : 1) * Math.pow(2, -14) * (s2 / Math.pow(2, 10)) : 31 == n2 ? s2 ? NaN : 1 / 0 * (t2 ? -1 : 1) : (t2 ? -1 : 1) * Math.pow(2, n2 - 15) * (1 + s2 / Math.pow(2, 10));
 }
 var g = new Float32Array(1);
 var _ = new Int32Array(g.buffer);
 var x = new Uint16Array(1);
-function y(e2) {
-  g[0] = e2;
+function y(e3) {
+  g[0] = e3;
   const t2 = _[0], n2 = t2 >> 31 & 1;
   let s2 = t2 >> 23 & 255, r2 = 8388607 & t2;
   if (255 === s2) return x[0] = n2 << 15 | 31744 | (0 !== r2 ? 512 : 0), x[0];
   if (0 === s2) {
     if (0 === r2) return x[0] = n2 << 15, x[0];
     r2 |= 8388608;
-    let e3 = 113;
-    for (; !(8388608 & r2); ) r2 <<= 1, e3--;
-    return s2 = 127 - e3, r2 &= 8388607, s2 > 0 ? (r2 = (r2 >> 126 - s2) + (r2 >> 127 - s2 & 1), x[0] = n2 << 15 | s2 << 10 | r2 >> 13, x[0]) : (x[0] = n2 << 15, x[0]);
+    let e4 = 113;
+    for (; !(8388608 & r2); ) r2 <<= 1, e4--;
+    return s2 = 127 - e4, r2 &= 8388607, s2 > 0 ? (r2 = (r2 >> 126 - s2) + (r2 >> 127 - s2 & 1), x[0] = n2 << 15 | s2 << 10 | r2 >> 13, x[0]) : (x[0] = n2 << 15, x[0]);
   }
   return s2 = s2 - 127 + 15, s2 >= 31 ? (x[0] = n2 << 15 | 31744, x[0]) : s2 <= 0 ? s2 < -10 ? (x[0] = n2 << 15, x[0]) : (r2 = (8388608 | r2) >> 1 - s2, x[0] = n2 << 15 | r2 >> 13, x[0]) : (r2 >>= 13, x[0] = n2 << 15 | s2 << 10 | r2, x[0]);
 }
 var b = new Uint32Array(1);
 var v = new Float32Array(b.buffer, 0, 1);
-function w(e2) {
-  const t2 = 112 + (e2 >> 6 & 31) << 23 | (63 & e2) << 17;
+function w(e3) {
+  const t2 = 112 + (e3 >> 6 & 31) << 23 | (63 & e3) << 17;
   return b[0] = t2, v[0];
 }
-function k(e2, t2, n2, s2, r2, a2, i2, o2, c2) {
+function k(e3, t2, n2, s2, r2, a2, i2, o2, c2) {
   const l2 = s2 * (i2 >>= r2) * (a2 >>= r2) + n2 * i2 + t2 * o2;
   switch (c2) {
     case "r8unorm":
-      return [I(e2, l2, "8unorm", 1)[0]];
+      return [I(e3, l2, "8unorm", 1)[0]];
     case "r8snorm":
-      return [I(e2, l2, "8snorm", 1)[0]];
+      return [I(e3, l2, "8snorm", 1)[0]];
     case "r8uint":
-      return [I(e2, l2, "8uint", 1)[0]];
+      return [I(e3, l2, "8uint", 1)[0]];
     case "r8sint":
-      return [I(e2, l2, "8sint", 1)[0]];
+      return [I(e3, l2, "8sint", 1)[0]];
     case "rg8unorm": {
-      const t3 = I(e2, l2, "8unorm", 2);
+      const t3 = I(e3, l2, "8unorm", 2);
       return [t3[0], t3[1]];
     }
     case "rg8snorm": {
-      const t3 = I(e2, l2, "8snorm", 2);
+      const t3 = I(e3, l2, "8snorm", 2);
       return [t3[0], t3[1]];
     }
     case "rg8uint": {
-      const t3 = I(e2, l2, "8uint", 2);
+      const t3 = I(e3, l2, "8uint", 2);
       return [t3[0], t3[1]];
     }
     case "rg8sint": {
-      const t3 = I(e2, l2, "8sint", 2);
+      const t3 = I(e3, l2, "8sint", 2);
       return [t3[0], t3[1]];
     }
     case "rgba8unorm-srgb":
     case "rgba8unorm": {
-      const t3 = I(e2, l2, "8unorm", 4);
+      const t3 = I(e3, l2, "8unorm", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "rgba8snorm": {
-      const t3 = I(e2, l2, "8snorm", 4);
+      const t3 = I(e3, l2, "8snorm", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "rgba8uint": {
-      const t3 = I(e2, l2, "8uint", 4);
+      const t3 = I(e3, l2, "8uint", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "rgba8sint": {
-      const t3 = I(e2, l2, "8sint", 4);
+      const t3 = I(e3, l2, "8sint", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "bgra8unorm-srgb":
     case "bgra8unorm": {
-      const t3 = I(e2, l2, "8unorm", 4);
+      const t3 = I(e3, l2, "8unorm", 4);
       return [t3[2], t3[1], t3[0], t3[3]];
     }
     case "r16uint":
-      return [I(e2, l2, "16uint", 1)[0]];
+      return [I(e3, l2, "16uint", 1)[0]];
     case "r16sint":
-      return [I(e2, l2, "16sint", 1)[0]];
+      return [I(e3, l2, "16sint", 1)[0]];
     case "r16float":
-      return [I(e2, l2, "16float", 1)[0]];
+      return [I(e3, l2, "16float", 1)[0]];
     case "rg16uint": {
-      const t3 = I(e2, l2, "16uint", 2);
+      const t3 = I(e3, l2, "16uint", 2);
       return [t3[0], t3[1]];
     }
     case "rg16sint": {
-      const t3 = I(e2, l2, "16sint", 2);
+      const t3 = I(e3, l2, "16sint", 2);
       return [t3[0], t3[1]];
     }
     case "rg16float": {
-      const t3 = I(e2, l2, "16float", 2);
+      const t3 = I(e3, l2, "16float", 2);
       return [t3[0], t3[1]];
     }
     case "rgba16uint": {
-      const t3 = I(e2, l2, "16uint", 4);
+      const t3 = I(e3, l2, "16uint", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "rgba16sint": {
-      const t3 = I(e2, l2, "16sint", 4);
+      const t3 = I(e3, l2, "16sint", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "rgba16float": {
-      const t3 = I(e2, l2, "16float", 4);
+      const t3 = I(e3, l2, "16float", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "r32uint":
-      return [I(e2, l2, "32uint", 1)[0]];
+      return [I(e3, l2, "32uint", 1)[0]];
     case "r32sint":
-      return [I(e2, l2, "32sint", 1)[0]];
+      return [I(e3, l2, "32sint", 1)[0]];
     case "depth16unorm":
     case "depth24plus":
     case "depth24plus-stencil8":
     case "depth32float":
     case "depth32float-stencil8":
     case "r32float":
-      return [I(e2, l2, "32float", 1)[0]];
+      return [I(e3, l2, "32float", 1)[0]];
     case "rg32uint": {
-      const t3 = I(e2, l2, "32uint", 2);
+      const t3 = I(e3, l2, "32uint", 2);
       return [t3[0], t3[1]];
     }
     case "rg32sint": {
-      const t3 = I(e2, l2, "32sint", 2);
+      const t3 = I(e3, l2, "32sint", 2);
       return [t3[0], t3[1]];
     }
     case "rg32float": {
-      const t3 = I(e2, l2, "32float", 2);
+      const t3 = I(e3, l2, "32float", 2);
       return [t3[0], t3[1]];
     }
     case "rgba32uint": {
-      const t3 = I(e2, l2, "32uint", 4);
+      const t3 = I(e3, l2, "32uint", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "rgba32sint": {
-      const t3 = I(e2, l2, "32sint", 4);
+      const t3 = I(e3, l2, "32sint", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "rgba32float": {
-      const t3 = I(e2, l2, "32float", 4);
+      const t3 = I(e3, l2, "32float", 4);
       return [t3[0], t3[1], t3[2], t3[3]];
     }
     case "rg11b10ufloat": {
-      const t3 = new Uint32Array(e2.buffer, l2, 1)[0], n3 = (4192256 & t3) >> 11, s3 = (4290772992 & t3) >> 22;
-      return [w(2047 & t3), w(n3), (function(e3) {
-        const t4 = 112 + (e3 >> 5 & 31) << 23 | (31 & e3) << 18;
+      const t3 = new Uint32Array(e3.buffer, l2, 1)[0], n3 = (4192256 & t3) >> 11, s3 = (4290772992 & t3) >> 22;
+      return [w(2047 & t3), w(n3), (function(e4) {
+        const t4 = 112 + (e4 >> 5 & 31) << 23 | (31 & e4) << 18;
         return b[0] = t4, v[0];
       })(s3), 1];
     }
   }
   return null;
 }
-function I(e2, t2, n2, s2) {
+function I(e3, t2, n2, s2) {
   const r2 = [0, 0, 0, 0];
   for (let a2 = 0; a2 < s2; ++a2) switch (n2) {
     case "8unorm":
-      r2[a2] = e2[t2] / 255, t2++;
+      r2[a2] = e3[t2] / 255, t2++;
       break;
     case "8snorm":
-      r2[a2] = e2[t2] / 255 * 2 - 1, t2++;
+      r2[a2] = e3[t2] / 255 * 2 - 1, t2++;
       break;
     case "8uint":
-      r2[a2] = e2[t2], t2++;
+      r2[a2] = e3[t2], t2++;
       break;
     case "8sint":
-      r2[a2] = e2[t2] - 127, t2++;
+      r2[a2] = e3[t2] - 127, t2++;
       break;
     case "16uint":
-      r2[a2] = e2[t2] | e2[t2 + 1] << 8, t2 += 2;
+      r2[a2] = e3[t2] | e3[t2 + 1] << 8, t2 += 2;
       break;
     case "16sint":
-      r2[a2] = (e2[t2] | e2[t2 + 1] << 8) - 32768, t2 += 2;
+      r2[a2] = (e3[t2] | e3[t2 + 1] << 8) - 32768, t2 += 2;
       break;
     case "16float":
-      r2[a2] = m(e2[t2] | e2[t2 + 1] << 8), t2 += 2;
+      r2[a2] = m(e3[t2] | e3[t2 + 1] << 8), t2 += 2;
       break;
     case "32uint":
     case "32sint":
-      r2[a2] = e2[t2] | e2[t2 + 1] << 8 | e2[t2 + 2] << 16 | e2[t2 + 3] << 24, t2 += 4;
+      r2[a2] = e3[t2] | e3[t2 + 1] << 8 | e3[t2 + 2] << 16 | e3[t2 + 3] << 24, t2 += 4;
       break;
     case "32float":
-      r2[a2] = new Float32Array(e2.buffer, t2, 1)[0], t2 += 4;
+      r2[a2] = new Float32Array(e3.buffer, t2, 1)[0], t2 += 4;
   }
   return r2;
 }
-function T(e2, t2, n2, s2, r2) {
+function T(e3, t2, n2, s2, r2) {
   for (let a2 = 0; a2 < s2; ++a2) switch (n2) {
     case "8unorm":
-      e2[t2] = 255 * r2[a2], t2++;
+      e3[t2] = 255 * r2[a2], t2++;
       break;
     case "8snorm":
-      e2[t2] = 0.5 * (r2[a2] + 1) * 255, t2++;
+      e3[t2] = 0.5 * (r2[a2] + 1) * 255, t2++;
       break;
     case "8uint":
-      e2[t2] = r2[a2], t2++;
+      e3[t2] = r2[a2], t2++;
       break;
     case "8sint":
-      e2[t2] = r2[a2] + 127, t2++;
+      e3[t2] = r2[a2] + 127, t2++;
       break;
     case "16uint":
-      new Uint16Array(e2.buffer, t2, 1)[0] = r2[a2], t2 += 2;
+      new Uint16Array(e3.buffer, t2, 1)[0] = r2[a2], t2 += 2;
       break;
     case "16sint":
-      new Int16Array(e2.buffer, t2, 1)[0] = r2[a2], t2 += 2;
+      new Int16Array(e3.buffer, t2, 1)[0] = r2[a2], t2 += 2;
       break;
     case "16float": {
       const n3 = y(r2[a2]);
-      new Uint16Array(e2.buffer, t2, 1)[0] = n3, t2 += 2;
+      new Uint16Array(e3.buffer, t2, 1)[0] = n3, t2 += 2;
       break;
     }
     case "32uint":
-      new Uint32Array(e2.buffer, t2, 1)[0] = r2[a2], t2 += 4;
+      new Uint32Array(e3.buffer, t2, 1)[0] = r2[a2], t2 += 4;
       break;
     case "32sint":
-      new Int32Array(e2.buffer, t2, 1)[0] = r2[a2], t2 += 4;
+      new Int32Array(e3.buffer, t2, 1)[0] = r2[a2], t2 += 4;
       break;
     case "32float":
-      new Float32Array(e2.buffer, t2, 1)[0] = r2[a2], t2 += 4;
+      new Float32Array(e3.buffer, t2, 1)[0] = r2[a2], t2 += 4;
   }
   return r2;
 }
@@ -19468,21 +19468,21 @@ var A = class _A {
   get astNodeType() {
     return "";
   }
-  search(e2) {
-    e2(this);
+  search(e3) {
+    e3(this);
   }
-  searchBlock(e2, t2) {
-    if (e2) {
+  searchBlock(e3, t2) {
+    if (e3) {
       t2(E.instance);
-      for (const n2 of e2) n2 instanceof Array ? this.searchBlock(n2, t2) : n2.search(t2);
+      for (const n2 of e3) n2 instanceof Array ? this.searchBlock(n2, t2) : n2.search(t2);
       t2($.instance);
     }
   }
-  constEvaluate(e2, t2) {
+  constEvaluate(e3, t2) {
     throw new Error("Cannot evaluate node");
   }
-  constEvaluateString(e2) {
-    return this.constEvaluate(e2).toString();
+  constEvaluateString(e3) {
+    return this.constEvaluate(e3).toString();
   }
 };
 A._id = 0;
@@ -19499,162 +19499,162 @@ var C = class extends A {
   }
 };
 var D = class extends C {
-  constructor(e2, t2, n2, s2, r2, a2) {
-    super(), this.calls = /* @__PURE__ */ new Set(), this.name = e2, this.args = t2, this.returnType = n2, this.body = s2, this.startLine = r2, this.endLine = a2;
+  constructor(e3, t2, n2, s2, r2, a2) {
+    super(), this.calls = /* @__PURE__ */ new Set(), this.name = e3, this.args = t2, this.returnType = n2, this.body = s2, this.startLine = r2, this.endLine = a2;
   }
   get astNodeType() {
     return "function";
   }
-  search(e2) {
-    if (this.attributes) for (const t2 of this.attributes) e2(t2);
-    e2(this);
-    for (const t2 of this.args) e2(t2);
-    this.searchBlock(this.body, e2);
+  search(e3) {
+    if (this.attributes) for (const t2 of this.attributes) e3(t2);
+    e3(this);
+    for (const t2 of this.args) e3(t2);
+    this.searchBlock(this.body, e3);
   }
 };
 var N = class extends C {
-  constructor(e2) {
-    super(), this.expression = e2;
+  constructor(e3) {
+    super(), this.expression = e3;
   }
   get astNodeType() {
     return "staticAssert";
   }
-  search(e2) {
-    this.expression.search(e2);
+  search(e3) {
+    this.expression.search(e3);
   }
 };
 var V = class extends C {
-  constructor(e2, t2) {
-    super(), this.condition = e2, this.body = t2;
+  constructor(e3, t2) {
+    super(), this.condition = e3, this.body = t2;
   }
   get astNodeType() {
     return "while";
   }
-  search(e2) {
-    this.condition.search(e2), this.searchBlock(this.body, e2);
+  search(e3) {
+    this.condition.search(e3), this.searchBlock(this.body, e3);
   }
 };
 var O = class extends C {
-  constructor(e2, t2) {
-    super(), this.body = e2, this.loopId = t2;
+  constructor(e3, t2) {
+    super(), this.body = e3, this.loopId = t2;
   }
   get astNodeType() {
     return "continuing";
   }
-  search(e2) {
-    this.searchBlock(this.body, e2);
+  search(e3) {
+    this.searchBlock(this.body, e3);
   }
 };
 var B = class extends C {
-  constructor(e2, t2, n2, s2) {
-    super(), this.init = e2, this.condition = t2, this.increment = n2, this.body = s2;
+  constructor(e3, t2, n2, s2) {
+    super(), this.init = e3, this.condition = t2, this.increment = n2, this.body = s2;
   }
   get astNodeType() {
     return "for";
   }
-  search(e2) {
+  search(e3) {
     var t2, n2, s2;
-    null === (t2 = this.init) || void 0 === t2 || t2.search(e2), null === (n2 = this.condition) || void 0 === n2 || n2.search(e2), null === (s2 = this.increment) || void 0 === s2 || s2.search(e2), this.searchBlock(this.body, e2);
+    null === (t2 = this.init) || void 0 === t2 || t2.search(e3), null === (n2 = this.condition) || void 0 === n2 || n2.search(e3), null === (s2 = this.increment) || void 0 === s2 || s2.search(e3), this.searchBlock(this.body, e3);
   }
 };
 var F = class extends C {
-  constructor(e2, t2, n2, s2, r2) {
-    super(), this.attributes = null, this.name = e2, this.type = t2, this.storage = n2, this.access = s2, this.value = r2;
+  constructor(e3, t2, n2, s2, r2) {
+    super(), this.attributes = null, this.name = e3, this.type = t2, this.storage = n2, this.access = s2, this.value = r2;
   }
   get astNodeType() {
     return "var";
   }
-  search(e2) {
+  search(e3) {
     var t2;
-    e2(this), null === (t2 = this.value) || void 0 === t2 || t2.search(e2);
+    e3(this), null === (t2 = this.value) || void 0 === t2 || t2.search(e3);
   }
 };
 var M = class extends C {
-  constructor(e2, t2, n2) {
-    super(), this.attributes = null, this.name = e2, this.type = t2, this.value = n2;
+  constructor(e3, t2, n2) {
+    super(), this.attributes = null, this.name = e3, this.type = t2, this.value = n2;
   }
   get astNodeType() {
     return "override";
   }
-  search(e2) {
+  search(e3) {
     var t2;
-    null === (t2 = this.value) || void 0 === t2 || t2.search(e2);
+    null === (t2 = this.value) || void 0 === t2 || t2.search(e3);
   }
 };
 var U = class extends C {
-  constructor(e2, t2, n2, s2, r2) {
-    super(), this.attributes = null, this.name = e2, this.type = t2, this.storage = n2, this.access = s2, this.value = r2;
+  constructor(e3, t2, n2, s2, r2) {
+    super(), this.attributes = null, this.name = e3, this.type = t2, this.storage = n2, this.access = s2, this.value = r2;
   }
   get astNodeType() {
     return "let";
   }
-  search(e2) {
+  search(e3) {
     var t2;
-    e2(this), null === (t2 = this.value) || void 0 === t2 || t2.search(e2);
+    e3(this), null === (t2 = this.value) || void 0 === t2 || t2.search(e3);
   }
 };
 var P = class extends C {
-  constructor(e2, t2, n2, s2, r2) {
-    super(), this.attributes = null, this.name = e2, this.type = t2, this.storage = n2, this.access = s2, this.value = r2;
+  constructor(e3, t2, n2, s2, r2) {
+    super(), this.attributes = null, this.name = e3, this.type = t2, this.storage = n2, this.access = s2, this.value = r2;
   }
   get astNodeType() {
     return "const";
   }
-  constEvaluate(e2, t2) {
-    return this.value.constEvaluate(e2, t2);
+  constEvaluate(e3, t2) {
+    return this.value.constEvaluate(e3, t2);
   }
-  search(e2) {
+  search(e3) {
     var t2;
-    e2(this), null === (t2 = this.value) || void 0 === t2 || t2.search(e2);
+    e3(this), null === (t2 = this.value) || void 0 === t2 || t2.search(e3);
   }
 };
 var W;
 var q;
 var H;
 var z;
-((e2) => {
-  e2.increment = "++", e2.decrement = "--";
-})(W || (W = {})), ((e2) => {
-  e2.parse = function(t2) {
+((e3) => {
+  e3.increment = "++", e3.decrement = "--";
+})(W || (W = {})), ((e3) => {
+  e3.parse = function(t2) {
     const n2 = t2;
     if ("parse" == n2) throw new Error("Invalid value for IncrementOperator");
-    return e2[n2];
+    return e3[n2];
   };
 })(W || (W = {}));
 var R = class extends C {
-  constructor(e2, t2) {
-    super(), this.operator = e2, this.variable = t2;
+  constructor(e3, t2) {
+    super(), this.operator = e3, this.variable = t2;
   }
   get astNodeType() {
     return "increment";
   }
-  search(e2) {
-    this.variable.search(e2);
+  search(e3) {
+    this.variable.search(e3);
   }
 };
-((e2) => {
-  e2.assign = "=", e2.addAssign = "+=", e2.subtractAssin = "-=", e2.multiplyAssign = "*=", e2.divideAssign = "/=", e2.moduloAssign = "%=", e2.andAssign = "&=", e2.orAssign = "|=", e2.xorAssign = "^=", e2.shiftLeftAssign = "<<=", e2.shiftRightAssign = ">>=";
-})(q || (q = {})), ((e2) => {
-  e2.parse = function(e3) {
-    const t2 = e3;
+((e3) => {
+  e3.assign = "=", e3.addAssign = "+=", e3.subtractAssin = "-=", e3.multiplyAssign = "*=", e3.divideAssign = "/=", e3.moduloAssign = "%=", e3.andAssign = "&=", e3.orAssign = "|=", e3.xorAssign = "^=", e3.shiftLeftAssign = "<<=", e3.shiftRightAssign = ">>=";
+})(q || (q = {})), ((e3) => {
+  e3.parse = function(e4) {
+    const t2 = e4;
     if ("parse" == t2) throw new Error("Invalid value for AssignOperator");
     return t2;
   };
 })(q || (q = {}));
 var G = class extends C {
-  constructor(e2, t2, n2) {
-    super(), this.operator = e2, this.variable = t2, this.value = n2;
+  constructor(e3, t2, n2) {
+    super(), this.operator = e3, this.variable = t2, this.value = n2;
   }
   get astNodeType() {
     return "assign";
   }
-  search(e2) {
-    this.variable.search(e2), this.value.search(e2);
+  search(e3) {
+    this.variable.search(e3), this.value.search(e3);
   }
 };
 var X = class extends C {
-  constructor(e2, t2) {
-    super(), this.name = e2, this.args = t2;
+  constructor(e3, t2) {
+    super(), this.name = e3, this.args = t2;
   }
   get astNodeType() {
     return "call";
@@ -19662,85 +19662,85 @@ var X = class extends C {
   isBuiltin() {
     return L.has(this.name);
   }
-  search(e2) {
-    for (const t2 of this.args) t2.search(e2);
-    e2(this);
+  search(e3) {
+    for (const t2 of this.args) t2.search(e3);
+    e3(this);
   }
 };
 var j = class extends C {
-  constructor(e2, t2) {
-    super(), this.body = e2, this.continuing = t2;
+  constructor(e3, t2) {
+    super(), this.body = e3, this.continuing = t2;
   }
   get astNodeType() {
     return "loop";
   }
-  search(e2) {
+  search(e3) {
     var t2;
-    this.searchBlock(this.body, e2), null === (t2 = this.continuing) || void 0 === t2 || t2.search(e2);
+    this.searchBlock(this.body, e3), null === (t2 = this.continuing) || void 0 === t2 || t2.search(e3);
   }
 };
 var Z = class extends C {
-  constructor(e2, t2) {
-    super(), this.condition = e2, this.cases = t2;
+  constructor(e3, t2) {
+    super(), this.condition = e3, this.cases = t2;
   }
   get astNodeType() {
     return "switch";
   }
-  search(e2) {
-    e2(this);
-    for (const t2 of this.cases) t2.search(e2);
+  search(e3) {
+    e3(this);
+    for (const t2 of this.cases) t2.search(e3);
   }
 };
 var Q = class extends C {
-  constructor(e2, t2, n2, s2) {
-    super(), this.condition = e2, this.body = t2, this.elseif = n2, this.else = s2;
+  constructor(e3, t2, n2, s2) {
+    super(), this.condition = e3, this.body = t2, this.elseif = n2, this.else = s2;
   }
   get astNodeType() {
     return "if";
   }
-  search(e2) {
-    this.condition.search(e2), this.searchBlock(this.body, e2), this.searchBlock(this.elseif, e2), this.searchBlock(this.else, e2);
+  search(e3) {
+    this.condition.search(e3), this.searchBlock(this.body, e3), this.searchBlock(this.elseif, e3), this.searchBlock(this.else, e3);
   }
 };
 var Y = class extends C {
-  constructor(e2) {
-    super(), this.value = e2;
+  constructor(e3) {
+    super(), this.value = e3;
   }
   get astNodeType() {
     return "return";
   }
-  search(e2) {
+  search(e3) {
     var t2;
-    null === (t2 = this.value) || void 0 === t2 || t2.search(e2);
+    null === (t2 = this.value) || void 0 === t2 || t2.search(e3);
   }
 };
 var K = class extends C {
-  constructor(e2) {
-    super(), this.name = e2;
+  constructor(e3) {
+    super(), this.name = e3;
   }
   get astNodeType() {
     return "enable";
   }
 };
 var J = class extends C {
-  constructor(e2) {
-    super(), this.extensions = e2;
+  constructor(e3) {
+    super(), this.extensions = e3;
   }
   get astNodeType() {
     return "requires";
   }
 };
 var ee = class extends C {
-  constructor(e2, t2) {
-    super(), this.severity = e2, this.rule = t2;
+  constructor(e3, t2) {
+    super(), this.severity = e3, this.rule = t2;
   }
   get astNodeType() {
     return "diagnostic";
   }
 };
 var te = class extends C {
-  constructor(e2, t2) {
-    super(), this.name = e2, this.type = t2;
+  constructor(e3, t2) {
+    super(), this.name = e3, this.type = t2;
   }
   get astNodeType() {
     return "alias";
@@ -19771,8 +19771,8 @@ var re = class extends C {
   }
 };
 var ae = class _ae extends C {
-  constructor(e2) {
-    super(), this.attributes = null, this.name = e2;
+  constructor(e3) {
+    super(), this.attributes = null, this.name = e3;
   }
   get astNodeType() {
     return "type";
@@ -19783,12 +19783,12 @@ var ae = class _ae extends C {
   get isArray() {
     return false;
   }
-  static maxFormatType(e2) {
-    let t2 = e2[0];
+  static maxFormatType(e3) {
+    let t2 = e3[0];
     if ("f32" === t2.name) return t2;
-    for (let n2 = 1; n2 < e2.length; ++n2) {
+    for (let n2 = 1; n2 < e3.length; ++n2) {
       const s2 = _ae._priority.get(t2.name);
-      _ae._priority.get(e2[n2].name) < s2 && (t2 = e2[n2]);
+      _ae._priority.get(e3[n2].name) < s2 && (t2 = e3[n2]);
     }
     return "x32" === t2.name ? _ae.i32 : t2;
   }
@@ -19798,13 +19798,13 @@ var ae = class _ae extends C {
 };
 ae.x32 = new ae("x32"), ae.f32 = new ae("f32"), ae.i32 = new ae("i32"), ae.u32 = new ae("u32"), ae.f16 = new ae("f16"), ae.bool = new ae("bool"), ae.void = new ae("void"), ae._priority = /* @__PURE__ */ new Map([["f32", 0], ["f16", 1], ["u32", 2], ["i32", 3], ["x32", 3]]);
 var ie = class extends ae {
-  constructor(e2) {
-    super(e2);
+  constructor(e3) {
+    super(e3);
   }
 };
 var oe = class extends ae {
-  constructor(e2, t2, n2, s2) {
-    super(e2), this.members = t2, this.startLine = n2, this.endLine = s2;
+  constructor(e3, t2, n2, s2) {
+    super(e3), this.members = t2, this.startLine = n2, this.endLine = s2;
   }
   get astNodeType() {
     return "struct";
@@ -19812,48 +19812,48 @@ var oe = class extends ae {
   get isStruct() {
     return true;
   }
-  getMemberIndex(e2) {
-    for (let t2 = 0; t2 < this.members.length; t2++) if (this.members[t2].name == e2) return t2;
+  getMemberIndex(e3) {
+    for (let t2 = 0; t2 < this.members.length; t2++) if (this.members[t2].name == e3) return t2;
     return -1;
   }
-  search(e2) {
-    for (const t2 of this.members) e2(t2);
+  search(e3) {
+    for (const t2 of this.members) e3(t2);
   }
 };
 var ce = class extends ae {
-  constructor(e2, t2, n2) {
-    super(e2), this.format = t2, this.access = n2;
+  constructor(e3, t2, n2) {
+    super(e3), this.format = t2, this.access = n2;
   }
   get astNodeType() {
     return "template";
   }
   getTypeName() {
-    let e2 = this.name;
+    let e3 = this.name;
     if (null !== this.format) {
-      if ("vec2" === e2 || "vec3" === e2 || "vec4" === e2 || "mat2x2" === e2 || "mat2x3" === e2 || "mat2x4" === e2 || "mat3x2" === e2 || "mat3x3" === e2 || "mat3x4" === e2 || "mat4x2" === e2 || "mat4x3" === e2 || "mat4x4" === e2) {
-        if ("f32" === this.format.name) return e2 += "f", e2;
-        if ("i32" === this.format.name) return e2 += "i", e2;
-        if ("u32" === this.format.name) return e2 += "u", e2;
-        if ("bool" === this.format.name) return e2 += "b", e2;
-        if ("f16" === this.format.name) return e2 += "h", e2;
+      if ("vec2" === e3 || "vec3" === e3 || "vec4" === e3 || "mat2x2" === e3 || "mat2x3" === e3 || "mat2x4" === e3 || "mat3x2" === e3 || "mat3x3" === e3 || "mat3x4" === e3 || "mat4x2" === e3 || "mat4x3" === e3 || "mat4x4" === e3) {
+        if ("f32" === this.format.name) return e3 += "f", e3;
+        if ("i32" === this.format.name) return e3 += "i", e3;
+        if ("u32" === this.format.name) return e3 += "u", e3;
+        if ("bool" === this.format.name) return e3 += "b", e3;
+        if ("f16" === this.format.name) return e3 += "h", e3;
       }
-      e2 += `<${this.format.name}>`;
-    } else if ("vec2" === e2 || "vec3" === e2 || "vec4" === e2) return e2;
-    return e2;
+      e3 += `<${this.format.name}>`;
+    } else if ("vec2" === e3 || "vec3" === e3 || "vec4" === e3) return e3;
+    return e3;
   }
 };
 ce.vec2f = new ce("vec2", ae.f32, null), ce.vec3f = new ce("vec3", ae.f32, null), ce.vec4f = new ce("vec4", ae.f32, null), ce.vec2i = new ce("vec2", ae.i32, null), ce.vec3i = new ce("vec3", ae.i32, null), ce.vec4i = new ce("vec4", ae.i32, null), ce.vec2u = new ce("vec2", ae.u32, null), ce.vec3u = new ce("vec3", ae.u32, null), ce.vec4u = new ce("vec4", ae.u32, null), ce.vec2h = new ce("vec2", ae.f16, null), ce.vec3h = new ce("vec3", ae.f16, null), ce.vec4h = new ce("vec4", ae.f16, null), ce.vec2b = new ce("vec2", ae.bool, null), ce.vec3b = new ce("vec3", ae.bool, null), ce.vec4b = new ce("vec4", ae.bool, null), ce.mat2x2f = new ce("mat2x2", ae.f32, null), ce.mat2x3f = new ce("mat2x3", ae.f32, null), ce.mat2x4f = new ce("mat2x4", ae.f32, null), ce.mat3x2f = new ce("mat3x2", ae.f32, null), ce.mat3x3f = new ce("mat3x3", ae.f32, null), ce.mat3x4f = new ce("mat3x4", ae.f32, null), ce.mat4x2f = new ce("mat4x2", ae.f32, null), ce.mat4x3f = new ce("mat4x3", ae.f32, null), ce.mat4x4f = new ce("mat4x4", ae.f32, null), ce.mat2x2h = new ce("mat2x2", ae.f16, null), ce.mat2x3h = new ce("mat2x3", ae.f16, null), ce.mat2x4h = new ce("mat2x4", ae.f16, null), ce.mat3x2h = new ce("mat3x2", ae.f16, null), ce.mat3x3h = new ce("mat3x3", ae.f16, null), ce.mat3x4h = new ce("mat3x4", ae.f16, null), ce.mat4x2h = new ce("mat4x2", ae.f16, null), ce.mat4x3h = new ce("mat4x3", ae.f16, null), ce.mat4x4h = new ce("mat4x4", ae.f16, null), ce.mat2x2i = new ce("mat2x2", ae.i32, null), ce.mat2x3i = new ce("mat2x3", ae.i32, null), ce.mat2x4i = new ce("mat2x4", ae.i32, null), ce.mat3x2i = new ce("mat3x2", ae.i32, null), ce.mat3x3i = new ce("mat3x3", ae.i32, null), ce.mat3x4i = new ce("mat3x4", ae.i32, null), ce.mat4x2i = new ce("mat4x2", ae.i32, null), ce.mat4x3i = new ce("mat4x3", ae.i32, null), ce.mat4x4i = new ce("mat4x4", ae.i32, null), ce.mat2x2u = new ce("mat2x2", ae.u32, null), ce.mat2x3u = new ce("mat2x3", ae.u32, null), ce.mat2x4u = new ce("mat2x4", ae.u32, null), ce.mat3x2u = new ce("mat3x2", ae.u32, null), ce.mat3x3u = new ce("mat3x3", ae.u32, null), ce.mat3x4u = new ce("mat3x4", ae.u32, null), ce.mat4x2u = new ce("mat4x2", ae.u32, null), ce.mat4x3u = new ce("mat4x3", ae.u32, null), ce.mat4x4u = new ce("mat4x4", ae.u32, null);
 var le = class extends ae {
-  constructor(e2, t2, n2, s2) {
-    super(e2), this.storage = t2, this.type = n2, this.access = s2;
+  constructor(e3, t2, n2, s2) {
+    super(e3), this.storage = t2, this.type = n2, this.access = s2;
   }
   get astNodeType() {
     return "pointer";
   }
 };
 var ue = class extends ae {
-  constructor(e2, t2, n2, s2) {
-    super(e2), this.attributes = t2, this.format = n2, this.count = s2;
+  constructor(e3, t2, n2, s2) {
+    super(e3), this.attributes = t2, this.format = n2, this.count = s2;
   }
   get astNodeType() {
     return "array";
@@ -19863,8 +19863,8 @@ var ue = class extends ae {
   }
 };
 var he = class extends ae {
-  constructor(e2, t2, n2) {
-    super(e2), this.format = t2, this.access = n2;
+  constructor(e3, t2, n2) {
+    super(e3), this.format = t2, this.access = n2;
   }
   get astNodeType() {
     return "sampler";
@@ -19876,8 +19876,8 @@ var fe = class extends A {
   }
 };
 var pe = class extends fe {
-  constructor(e2) {
-    super(), this.value = e2;
+  constructor(e3) {
+    super(), this.value = e3;
   }
   get astNodeType() {
     return "stringExpr";
@@ -19890,80 +19890,80 @@ var pe = class extends fe {
   }
 };
 var de = class extends fe {
-  constructor(e2, t2) {
-    super(), this.type = e2, this.args = t2;
+  constructor(e3, t2) {
+    super(), this.type = e3, this.args = t2;
   }
   get astNodeType() {
     return "createExpr";
   }
-  search(e2) {
-    if (e2(this), this.args) for (const t2 of this.args) t2.search(e2);
+  search(e3) {
+    if (e3(this), this.args) for (const t2 of this.args) t2.search(e3);
   }
-  constEvaluate(e2, t2) {
-    return t2 && (t2[0] = this.type), e2.evalExpression(this, e2.context);
+  constEvaluate(e3, t2) {
+    return t2 && (t2[0] = this.type), e3.evalExpression(this, e3.context);
   }
 };
 var me = class extends fe {
-  constructor(e2, t2) {
-    super(), this.cachedReturnValue = null, this.name = e2, this.args = t2;
+  constructor(e3, t2) {
+    super(), this.cachedReturnValue = null, this.name = e3, this.args = t2;
   }
   get astNodeType() {
     return "callExpr";
   }
-  setCachedReturnValue(e2) {
-    this.cachedReturnValue = e2;
+  setCachedReturnValue(e3) {
+    this.cachedReturnValue = e3;
   }
   get isBuiltin() {
     return L.has(this.name);
   }
-  constEvaluate(e2, t2) {
-    return e2.evalExpression(this, e2.context);
+  constEvaluate(e3, t2) {
+    return e3.evalExpression(this, e3.context);
   }
-  search(e2) {
-    for (const t2 of this.args) t2.search(e2);
-    e2(this);
+  search(e3) {
+    for (const t2 of this.args) t2.search(e3);
+    e3(this);
   }
 };
 var ge = class extends fe {
-  constructor(e2) {
-    super(), this.name = e2;
+  constructor(e3) {
+    super(), this.name = e3;
   }
   get astNodeType() {
     return "varExpr";
   }
-  search(e2) {
-    e2(this), this.postfix && this.postfix.search(e2);
+  search(e3) {
+    e3(this), this.postfix && this.postfix.search(e3);
   }
-  constEvaluate(e2, t2) {
-    return e2.evalExpression(this, e2.context);
+  constEvaluate(e3, t2) {
+    return e3.evalExpression(this, e3.context);
   }
 };
 var _e = class extends fe {
-  constructor(e2, t2) {
-    super(), this.name = e2, this.initializer = t2;
+  constructor(e3, t2) {
+    super(), this.name = e3, this.initializer = t2;
   }
   get astNodeType() {
     return "constExpr";
   }
-  constEvaluate(e2, t2) {
+  constEvaluate(e3, t2) {
     if (this.initializer) {
-      const t3 = e2.evalExpression(this.initializer, e2.context);
-      return null !== t3 && this.postfix ? t3.getSubData(e2, this.postfix, e2.context) : t3;
+      const t3 = e3.evalExpression(this.initializer, e3.context);
+      return null !== t3 && this.postfix ? t3.getSubData(e3, this.postfix, e3.context) : t3;
     }
     return null;
   }
-  search(e2) {
-    this.initializer.search(e2);
+  search(e3) {
+    this.initializer.search(e3);
   }
 };
 var xe = class extends fe {
-  constructor(e2, t2) {
-    super(), this.value = e2, this.type = t2;
+  constructor(e3, t2) {
+    super(), this.value = e3, this.type = t2;
   }
   get astNodeType() {
     return "literalExpr";
   }
-  constEvaluate(e2, t2) {
+  constEvaluate(e3, t2) {
     return void 0 !== t2 && (t2[0] = this.type), this.value;
   }
   get isScalar() {
@@ -19980,22 +19980,22 @@ var xe = class extends fe {
   }
 };
 var ye = class extends fe {
-  constructor(e2, t2) {
-    super(), this.type = e2, this.value = t2;
+  constructor(e3, t2) {
+    super(), this.type = e3, this.value = t2;
   }
   get astNodeType() {
     return "bitcastExpr";
   }
-  search(e2) {
-    this.value.search(e2);
+  search(e3) {
+    this.value.search(e3);
   }
 };
 var ve = class extends fe {
-  constructor(e2) {
-    super(), this.index = e2;
+  constructor(e3) {
+    super(), this.index = e3;
   }
-  search(e2) {
-    this.index.search(e2);
+  search(e3) {
+    this.index.search(e3);
   }
 };
 var we = class extends fe {
@@ -20004,42 +20004,42 @@ var we = class extends fe {
   }
 };
 var ke = class extends we {
-  constructor(e2, t2) {
-    super(), this.operator = e2, this.right = t2;
+  constructor(e3, t2) {
+    super(), this.operator = e3, this.right = t2;
   }
   get astNodeType() {
     return "unaryOp";
   }
-  constEvaluate(e2, t2) {
-    return e2.evalExpression(this, e2.context);
+  constEvaluate(e3, t2) {
+    return e3.evalExpression(this, e3.context);
   }
-  search(e2) {
-    this.right.search(e2);
+  search(e3) {
+    this.right.search(e3);
   }
 };
 var Ie = class extends we {
-  constructor(e2, t2, n2) {
-    super(), this.operator = e2, this.left = t2, this.right = n2;
+  constructor(e3, t2, n2) {
+    super(), this.operator = e3, this.left = t2, this.right = n2;
   }
   get astNodeType() {
     return "binaryOp";
   }
-  _getPromotedType(e2, t2) {
-    return e2.name === t2.name ? e2 : "f32" === e2.name || "f32" === t2.name ? ae.f32 : "u32" === e2.name || "u32" === t2.name ? ae.u32 : ae.i32;
+  _getPromotedType(e3, t2) {
+    return e3.name === t2.name ? e3 : "f32" === e3.name || "f32" === t2.name ? ae.f32 : "u32" === e3.name || "u32" === t2.name ? ae.u32 : ae.i32;
   }
-  constEvaluate(e2, t2) {
-    return e2.evalExpression(this, e2.context);
+  constEvaluate(e3, t2) {
+    return e3.evalExpression(this, e3.context);
   }
-  search(e2) {
-    this.left.search(e2), this.right.search(e2);
+  search(e3) {
+    this.left.search(e3), this.right.search(e3);
   }
 };
 var Te = class extends A {
-  constructor(e2) {
-    super(), this.body = e2;
+  constructor(e3) {
+    super(), this.body = e3;
   }
-  search(e2) {
-    e2(this), this.searchBlock(this.body, e2);
+  search(e3) {
+    e3(this), this.searchBlock(this.body, e3);
   }
 };
 var Se = class extends fe {
@@ -20051,73 +20051,73 @@ var Se = class extends fe {
   }
 };
 var Ae = class extends Te {
-  constructor(e2, t2) {
-    super(t2), this.selectors = e2;
+  constructor(e3, t2) {
+    super(t2), this.selectors = e3;
   }
   get astNodeType() {
     return "case";
   }
-  search(e2) {
-    this.searchBlock(this.body, e2);
+  search(e3) {
+    this.searchBlock(this.body, e3);
   }
 };
 var Ee = class extends Te {
-  constructor(e2) {
-    super(e2);
+  constructor(e3) {
+    super(e3);
   }
   get astNodeType() {
     return "default";
   }
-  search(e2) {
-    this.searchBlock(this.body, e2);
+  search(e3) {
+    this.searchBlock(this.body, e3);
   }
 };
 var $e = class extends A {
-  constructor(e2, t2, n2) {
-    super(), this.name = e2, this.type = t2, this.attributes = n2;
+  constructor(e3, t2, n2) {
+    super(), this.name = e3, this.type = t2, this.attributes = n2;
   }
   get astNodeType() {
     return "argument";
   }
 };
 var Le = class extends A {
-  constructor(e2, t2) {
-    super(), this.condition = e2, this.body = t2;
+  constructor(e3, t2) {
+    super(), this.condition = e3, this.body = t2;
   }
   get astNodeType() {
     return "elseif";
   }
-  search(e2) {
-    this.condition.search(e2), this.searchBlock(this.body, e2);
+  search(e3) {
+    this.condition.search(e3), this.searchBlock(this.body, e3);
   }
 };
 var Ce = class extends A {
-  constructor(e2, t2, n2) {
-    super(), this.name = e2, this.type = t2, this.attributes = n2;
+  constructor(e3, t2, n2) {
+    super(), this.name = e3, this.type = t2, this.attributes = n2;
   }
   get astNodeType() {
     return "member";
   }
 };
 var De = class extends A {
-  constructor(e2, t2) {
-    super(), this.name = e2, this.value = t2;
+  constructor(e3, t2) {
+    super(), this.name = e3, this.value = t2;
   }
   get astNodeType() {
     return "attribute";
   }
 };
 var Ne = class _Ne {
-  constructor(e2, t2) {
-    this.parent = null, this.typeInfo = e2, this.parent = t2, this.id = _Ne._id++;
+  constructor(e3, t2) {
+    this.parent = null, this.typeInfo = e3, this.parent = t2, this.id = _Ne._id++;
   }
   clone() {
     throw `Clone: Not implemented for ${this.constructor.name}`;
   }
-  setDataValue(e2, t2, n2, s2) {
+  setDataValue(e3, t2, n2, s2) {
     console.error(`SetDataValue: Not implemented for ${this.constructor.name}`);
   }
-  getSubData(e2, t2, n2) {
+  getSubData(e3, t2, n2) {
     return console.error(`GetDataValue: Not implemented for ${this.constructor.name}`), null;
   }
   toString() {
@@ -20135,25 +20135,25 @@ var Ve = class extends Ne {
 };
 Ve.void = new Ve();
 var Oe = class extends Ne {
-  constructor(e2) {
-    super(new r("pointer", e2.typeInfo, null), null), this.reference = e2;
+  constructor(e3) {
+    super(new r("pointer", e3.typeInfo, null), null), this.reference = e3;
   }
   clone() {
     return this;
   }
-  setDataValue(e2, t2, n2, s2) {
-    this.reference.setDataValue(e2, t2, n2, s2);
+  setDataValue(e3, t2, n2, s2) {
+    this.reference.setDataValue(e3, t2, n2, s2);
   }
-  getSubData(e2, t2, n2) {
-    return t2 ? this.reference.getSubData(e2, t2, n2) : this;
+  getSubData(e3, t2, n2) {
+    return t2 ? this.reference.getSubData(e3, t2, n2) : this;
   }
   toString() {
     return `&${this.reference.toString()}`;
   }
 };
 var Be = class _Be extends Ne {
-  constructor(e2, t2, n2 = null) {
-    super(t2, n2), e2 instanceof Int32Array || e2 instanceof Uint32Array || e2 instanceof Float32Array ? this.data = e2 : "x32" === this.typeInfo.name ? e2 - Math.floor(e2) !== 0 ? this.data = new Float32Array([e2]) : this.data = e2 >= 0 ? new Uint32Array([e2]) : new Int32Array([e2]) : "i32" === this.typeInfo.name || "bool" === this.typeInfo.name ? this.data = new Int32Array([e2]) : "u32" === this.typeInfo.name ? this.data = new Uint32Array([e2]) : "f32" === this.typeInfo.name || "f16" === this.typeInfo.name ? this.data = new Float32Array([e2]) : console.error("ScalarData2: Invalid type", t2);
+  constructor(e3, t2, n2 = null) {
+    super(t2, n2), e3 instanceof Int32Array || e3 instanceof Uint32Array || e3 instanceof Float32Array ? this.data = e3 : "x32" === this.typeInfo.name ? e3 - Math.floor(e3) !== 0 ? this.data = new Float32Array([e3]) : this.data = e3 >= 0 ? new Uint32Array([e3]) : new Int32Array([e3]) : "i32" === this.typeInfo.name || "bool" === this.typeInfo.name ? this.data = new Int32Array([e3]) : "u32" === this.typeInfo.name ? this.data = new Uint32Array([e3]) : "f32" === this.typeInfo.name || "f16" === this.typeInfo.name ? this.data = new Float32Array([e3]) : console.error("ScalarData2: Invalid type", t2);
   }
   clone() {
     if (this.data instanceof Float32Array) return new _Be(new Float32Array(this.data), this.typeInfo, null);
@@ -20164,32 +20164,32 @@ var Be = class _Be extends Ne {
   get value() {
     return this.data[0];
   }
-  set value(e2) {
-    this.data[0] = e2;
+  set value(e3) {
+    this.data[0] = e3;
   }
-  setDataValue(e2, t2, n2, s2) {
+  setDataValue(e3, t2, n2, s2) {
     if (n2) return void console.error("SetDataValue: Scalar data does not support postfix", n2);
     if (!(t2 instanceof _Be)) return void console.error("SetDataValue: Invalid value", t2);
     let r2 = t2.data[0];
     "i32" === this.typeInfo.name || "u32" === this.typeInfo.name ? r2 = Math.floor(r2) : "bool" === this.typeInfo.name && (r2 = r2 ? 1 : 0), this.data[0] = r2;
   }
-  getSubData(e2, t2, n2) {
+  getSubData(e3, t2, n2) {
     return t2 ? (console.error("getSubData: Scalar data does not support postfix", t2), null) : this;
   }
   toString() {
     return `${this.value}`;
   }
 };
-function Fe(e2, t2, n2) {
+function Fe(e3, t2, n2) {
   const s2 = t2.length;
-  return 2 === s2 ? "f32" === n2 ? new Me(new Float32Array(t2), e2.getTypeInfo("vec2f")) : "i32" === n2 || "bool" === n2 ? new Me(new Int32Array(t2), e2.getTypeInfo("vec2i")) : "u32" === n2 ? new Me(new Uint32Array(t2), e2.getTypeInfo("vec2u")) : "f16" === n2 ? new Me(new Float32Array(t2), e2.getTypeInfo("vec2h")) : (console.error(`getSubData: Unknown format ${n2}`), null) : 3 === s2 ? "f32" === n2 ? new Me(new Float32Array(t2), e2.getTypeInfo("vec3f")) : "i32" === n2 || "bool" === n2 ? new Me(new Int32Array(t2), e2.getTypeInfo("vec3i")) : "u32" === n2 ? new Me(new Uint32Array(t2), e2.getTypeInfo("vec3u")) : "f16" === n2 ? new Me(new Float32Array(t2), e2.getTypeInfo("vec3h")) : (console.error(`getSubData: Unknown format ${n2}`), null) : 4 === s2 ? "f32" === n2 ? new Me(new Float32Array(t2), e2.getTypeInfo("vec4f")) : "i32" === n2 || "bool" === n2 ? new Me(new Int32Array(t2), e2.getTypeInfo("vec4i")) : "u32" === n2 ? new Me(new Uint32Array(t2), e2.getTypeInfo("vec4u")) : "f16" === n2 ? new Me(new Float32Array(t2), e2.getTypeInfo("vec4h")) : (console.error(`getSubData: Unknown format ${n2}`), null) : (console.error(`getSubData: Invalid vector size ${t2.length}`), null);
+  return 2 === s2 ? "f32" === n2 ? new Me(new Float32Array(t2), e3.getTypeInfo("vec2f")) : "i32" === n2 || "bool" === n2 ? new Me(new Int32Array(t2), e3.getTypeInfo("vec2i")) : "u32" === n2 ? new Me(new Uint32Array(t2), e3.getTypeInfo("vec2u")) : "f16" === n2 ? new Me(new Float32Array(t2), e3.getTypeInfo("vec2h")) : (console.error(`getSubData: Unknown format ${n2}`), null) : 3 === s2 ? "f32" === n2 ? new Me(new Float32Array(t2), e3.getTypeInfo("vec3f")) : "i32" === n2 || "bool" === n2 ? new Me(new Int32Array(t2), e3.getTypeInfo("vec3i")) : "u32" === n2 ? new Me(new Uint32Array(t2), e3.getTypeInfo("vec3u")) : "f16" === n2 ? new Me(new Float32Array(t2), e3.getTypeInfo("vec3h")) : (console.error(`getSubData: Unknown format ${n2}`), null) : 4 === s2 ? "f32" === n2 ? new Me(new Float32Array(t2), e3.getTypeInfo("vec4f")) : "i32" === n2 || "bool" === n2 ? new Me(new Int32Array(t2), e3.getTypeInfo("vec4i")) : "u32" === n2 ? new Me(new Uint32Array(t2), e3.getTypeInfo("vec4u")) : "f16" === n2 ? new Me(new Float32Array(t2), e3.getTypeInfo("vec4h")) : (console.error(`getSubData: Unknown format ${n2}`), null) : (console.error(`getSubData: Invalid vector size ${t2.length}`), null);
 }
 var Me = class _Me extends Ne {
-  constructor(e2, t2, n2 = null) {
-    if (super(t2, n2), e2 instanceof Float32Array || e2 instanceof Uint32Array || e2 instanceof Int32Array) this.data = e2;
+  constructor(e3, t2, n2 = null) {
+    if (super(t2, n2), e3 instanceof Float32Array || e3 instanceof Uint32Array || e3 instanceof Int32Array) this.data = e3;
     else {
       const t3 = this.typeInfo.name;
-      "vec2f" === t3 || "vec3f" === t3 || "vec4f" === t3 ? this.data = new Float32Array(e2) : "vec2i" === t3 || "vec3i" === t3 || "vec4i" === t3 ? this.data = new Int32Array(e2) : "vec2u" === t3 || "vec3u" === t3 || "vec4u" === t3 ? this.data = new Uint32Array(e2) : "vec2h" === t3 || "vec3h" === t3 || "vec4h" === t3 ? this.data = new Float32Array(e2) : "vec2b" === t3 || "vec3b" === t3 || "vec4b" === t3 ? this.data = new Int32Array(e2) : "vec2" === t3 || "vec3" === t3 || "vec4" === t3 ? this.data = new Float32Array(e2) : console.error(`VectorData: Invalid type ${t3}`);
+      "vec2f" === t3 || "vec3f" === t3 || "vec4f" === t3 ? this.data = new Float32Array(e3) : "vec2i" === t3 || "vec3i" === t3 || "vec4i" === t3 ? this.data = new Int32Array(e3) : "vec2u" === t3 || "vec3u" === t3 || "vec4u" === t3 ? this.data = new Uint32Array(e3) : "vec2h" === t3 || "vec3h" === t3 || "vec4h" === t3 ? this.data = new Float32Array(e3) : "vec2b" === t3 || "vec3b" === t3 || "vec4b" === t3 ? this.data = new Int32Array(e3) : "vec2" === t3 || "vec3" === t3 || "vec4" === t3 ? this.data = new Float32Array(e3) : console.error(`VectorData: Invalid type ${t3}`);
     }
   }
   clone() {
@@ -20198,16 +20198,16 @@ var Me = class _Me extends Ne {
     if (this.data instanceof Uint32Array) return new _Me(new Uint32Array(this.data), this.typeInfo, null);
     throw "VectorData: Invalid data type";
   }
-  setDataValue(e2, t2, n2, s2) {
+  setDataValue(e3, t2, n2, s2) {
     n2 instanceof pe ? console.error("TODO: Set vector postfix") : t2 instanceof _Me ? this.data = t2.data : console.error("SetDataValue: Invalid value", t2);
   }
-  getSubData(e2, t2, n2) {
+  getSubData(e3, t2, n2) {
     if (null === t2) return this;
-    let s2 = e2.getTypeInfo("f32");
+    let s2 = e3.getTypeInfo("f32");
     if (this.typeInfo instanceof a) s2 = this.typeInfo.format || s2;
     else {
       const t3 = this.typeInfo.name;
-      "vec2f" === t3 || "vec3f" === t3 || "vec4f" === t3 ? s2 = e2.getTypeInfo("f32") : "vec2i" === t3 || "vec3i" === t3 || "vec4i" === t3 ? s2 = e2.getTypeInfo("i32") : "vec2b" === t3 || "vec3b" === t3 || "vec4b" === t3 ? s2 = e2.getTypeInfo("bool") : "vec2u" === t3 || "vec3u" === t3 || "vec4u" === t3 ? s2 = e2.getTypeInfo("u32") : "vec2h" === t3 || "vec3h" === t3 || "vec4h" === t3 ? s2 = e2.getTypeInfo("f16") : console.error(`GetSubData: Unknown type ${t3}`);
+      "vec2f" === t3 || "vec3f" === t3 || "vec4f" === t3 ? s2 = e3.getTypeInfo("f32") : "vec2i" === t3 || "vec3i" === t3 || "vec4i" === t3 ? s2 = e3.getTypeInfo("i32") : "vec2b" === t3 || "vec3b" === t3 || "vec4b" === t3 ? s2 = e3.getTypeInfo("bool") : "vec2u" === t3 || "vec3u" === t3 || "vec4u" === t3 ? s2 = e3.getTypeInfo("u32") : "vec2h" === t3 || "vec3h" === t3 || "vec4h" === t3 ? s2 = e3.getTypeInfo("f16") : console.error(`GetSubData: Unknown type ${t3}`);
     }
     let r2 = this;
     for (; null !== t2 && null !== r2; ) {
@@ -20218,22 +20218,22 @@ var Me = class _Me extends Ne {
           if (!(a2.value instanceof Be)) return console.error(`GetSubData: Invalid array index ${a2.value}`), null;
           i2 = a2.value.value;
         } else {
-          const t3 = e2.evalExpression(a2, n2);
+          const t3 = e3.evalExpression(a2, n2);
           if (!(t3 instanceof Be)) return console.error("GetSubData: Unknown index type", a2), null;
           i2 = t3.value;
         }
         if (i2 < 0 || i2 >= r2.data.length) return console.error("GetSubData: Index out of range", i2), null;
         if (r2.data instanceof Float32Array) {
-          const e3 = new Float32Array(r2.data.buffer, r2.data.byteOffset + 4 * i2, 1);
-          return new Be(e3, s2);
+          const e4 = new Float32Array(r2.data.buffer, r2.data.byteOffset + 4 * i2, 1);
+          return new Be(e4, s2);
         }
         if (r2.data instanceof Int32Array) {
-          const e3 = new Int32Array(r2.data.buffer, r2.data.byteOffset + 4 * i2, 1);
-          return new Be(e3, s2);
+          const e4 = new Int32Array(r2.data.buffer, r2.data.byteOffset + 4 * i2, 1);
+          return new Be(e4, s2);
         }
         if (r2.data instanceof Uint32Array) {
-          const e3 = new Uint32Array(r2.data.buffer, r2.data.byteOffset + 4 * i2, 1);
-          return new Be(e3, s2);
+          const e4 = new Uint32Array(r2.data.buffer, r2.data.byteOffset + 4 * i2, 1);
+          return new Be(e4, s2);
         }
         throw "GetSubData: Invalid data type";
       }
@@ -20241,61 +20241,61 @@ var Me = class _Me extends Ne {
       {
         const n3 = t2.value.toLowerCase();
         if (1 === n3.length) {
-          let e3 = 0;
-          if ("x" === n3 || "r" === n3) e3 = 0;
-          else if ("y" === n3 || "g" === n3) e3 = 1;
-          else if ("z" === n3 || "b" === n3) e3 = 2;
+          let e4 = 0;
+          if ("x" === n3 || "r" === n3) e4 = 0;
+          else if ("y" === n3 || "g" === n3) e4 = 1;
+          else if ("z" === n3 || "b" === n3) e4 = 2;
           else {
             if ("w" !== n3 && "a" !== n3) return console.error(`GetSubData: Unknown member ${n3}`), null;
-            e3 = 3;
+            e4 = 3;
           }
           if (this.data instanceof Float32Array) {
-            let t3 = new Float32Array(this.data.buffer, this.data.byteOffset + 4 * e3, 1);
+            let t3 = new Float32Array(this.data.buffer, this.data.byteOffset + 4 * e4, 1);
             return new Be(t3, s2, this);
           }
           if (this.data instanceof Int32Array) {
-            let t3 = new Int32Array(this.data.buffer, this.data.byteOffset + 4 * e3, 1);
+            let t3 = new Int32Array(this.data.buffer, this.data.byteOffset + 4 * e4, 1);
             return new Be(t3, s2, this);
           }
           if (this.data instanceof Uint32Array) {
-            let t3 = new Uint32Array(this.data.buffer, this.data.byteOffset + 4 * e3, 1);
+            let t3 = new Uint32Array(this.data.buffer, this.data.byteOffset + 4 * e4, 1);
             return new Be(t3, s2, this);
           }
         }
         const a2 = [];
-        for (const e3 of n3) "x" === e3 || "r" === e3 ? a2.push(this.data[0]) : "y" === e3 || "g" === e3 ? a2.push(this.data[1]) : "z" === e3 || "b" === e3 ? a2.push(this.data[2]) : "w" === e3 || "a" === e3 ? a2.push(this.data[3]) : console.error(`GetDataValue: Unknown member ${e3}`);
-        r2 = Fe(e2, a2, s2.name);
+        for (const e4 of n3) "x" === e4 || "r" === e4 ? a2.push(this.data[0]) : "y" === e4 || "g" === e4 ? a2.push(this.data[1]) : "z" === e4 || "b" === e4 ? a2.push(this.data[2]) : "w" === e4 || "a" === e4 ? a2.push(this.data[3]) : console.error(`GetDataValue: Unknown member ${e4}`);
+        r2 = Fe(e3, a2, s2.name);
       }
       t2 = t2.postfix;
     }
     return r2;
   }
   toString() {
-    let e2 = `${this.data[0]}`;
-    for (let t2 = 1; t2 < this.data.length; ++t2) e2 += `, ${this.data[t2]}`;
-    return e2;
+    let e3 = `${this.data[0]}`;
+    for (let t2 = 1; t2 < this.data.length; ++t2) e3 += `, ${this.data[t2]}`;
+    return e3;
   }
 };
 var Ue = class _Ue extends Ne {
-  constructor(e2, t2, n2 = null) {
-    super(t2, n2), e2 instanceof Float32Array ? this.data = e2 : this.data = new Float32Array(e2);
+  constructor(e3, t2, n2 = null) {
+    super(t2, n2), e3 instanceof Float32Array ? this.data = e3 : this.data = new Float32Array(e3);
   }
   clone() {
     return new _Ue(new Float32Array(this.data), this.typeInfo, null);
   }
-  setDataValue(e2, t2, n2, s2) {
+  setDataValue(e3, t2, n2, s2) {
     n2 instanceof pe ? console.error("TODO: Set matrix postfix") : t2 instanceof _Ue ? this.data = t2.data : console.error("SetDataValue: Invalid value", t2);
   }
-  getSubData(e2, t2, n2) {
+  getSubData(e3, t2, n2) {
     if (null === t2) return this;
     const s2 = this.typeInfo.name;
-    if (e2.getTypeInfo("f32"), this.typeInfo instanceof a) this.typeInfo.format;
-    else if (s2.endsWith("f")) e2.getTypeInfo("f32");
-    else if (s2.endsWith("i")) e2.getTypeInfo("i32");
-    else if (s2.endsWith("u")) e2.getTypeInfo("u32");
+    if (e3.getTypeInfo("f32"), this.typeInfo instanceof a) this.typeInfo.format;
+    else if (s2.endsWith("f")) e3.getTypeInfo("f32");
+    else if (s2.endsWith("i")) e3.getTypeInfo("i32");
+    else if (s2.endsWith("u")) e3.getTypeInfo("u32");
     else {
       if (!s2.endsWith("h")) return console.error(`GetDataValue: Unknown type ${s2}`), null;
-      e2.getTypeInfo("f16");
+      e3.getTypeInfo("f16");
     }
     if (t2 instanceof ve) {
       const r2 = t2.index;
@@ -20304,49 +20304,49 @@ var Ue = class _Ue extends Ne {
         if (!(r2.value instanceof Be)) return console.error(`GetDataValue: Invalid array index ${r2.value}`), null;
         a2 = r2.value.value;
       } else {
-        const t3 = e2.evalExpression(r2, n2);
+        const t3 = e3.evalExpression(r2, n2);
         if (!(t3 instanceof Be)) return console.error("GetDataValue: Unknown index type", r2), null;
         a2 = t3.value;
       }
       if (a2 < 0 || a2 >= this.data.length) return console.error("GetDataValue: Index out of range", a2), null;
       const i2 = s2.endsWith("h") ? "h" : "f";
       let o2;
-      if ("mat2x2" === s2 || "mat2x2f" === s2 || "mat2x2h" === s2 || "mat3x2" === s2 || "mat3x2f" === s2 || "mat3x2h" === s2 || "mat4x2" === s2 || "mat4x2f" === s2 || "mat4x2h" === s2) o2 = new Me(new Float32Array(this.data.buffer, this.data.byteOffset + 2 * a2 * 4, 2), e2.getTypeInfo(`vec2${i2}`));
-      else if ("mat2x3" === s2 || "mat2x3f" === s2 || "mat2x3h" === s2 || "mat3x3" === s2 || "mat3x3f" === s2 || "mat3x3h" === s2 || "mat4x3" === s2 || "mat4x3f" === s2 || "mat4x3h" === s2) o2 = new Me(new Float32Array(this.data.buffer, this.data.byteOffset + 3 * a2 * 4, 3), e2.getTypeInfo(`vec3${i2}`));
+      if ("mat2x2" === s2 || "mat2x2f" === s2 || "mat2x2h" === s2 || "mat3x2" === s2 || "mat3x2f" === s2 || "mat3x2h" === s2 || "mat4x2" === s2 || "mat4x2f" === s2 || "mat4x2h" === s2) o2 = new Me(new Float32Array(this.data.buffer, this.data.byteOffset + 2 * a2 * 4, 2), e3.getTypeInfo(`vec2${i2}`));
+      else if ("mat2x3" === s2 || "mat2x3f" === s2 || "mat2x3h" === s2 || "mat3x3" === s2 || "mat3x3f" === s2 || "mat3x3h" === s2 || "mat4x3" === s2 || "mat4x3f" === s2 || "mat4x3h" === s2) o2 = new Me(new Float32Array(this.data.buffer, this.data.byteOffset + 3 * a2 * 4, 3), e3.getTypeInfo(`vec3${i2}`));
       else {
         if ("mat2x4" !== s2 && "mat2x4f" !== s2 && "mat2x4h" !== s2 && "mat3x4" !== s2 && "mat3x4f" !== s2 && "mat3x4h" !== s2 && "mat4x4" !== s2 && "mat4x4f" !== s2 && "mat4x4h" !== s2) return console.error(`GetDataValue: Unknown type ${s2}`), null;
-        o2 = new Me(new Float32Array(this.data.buffer, this.data.byteOffset + 4 * a2 * 4, 4), e2.getTypeInfo(`vec4${i2}`));
+        o2 = new Me(new Float32Array(this.data.buffer, this.data.byteOffset + 4 * a2 * 4, 4), e3.getTypeInfo(`vec4${i2}`));
       }
-      return t2.postfix ? o2.getSubData(e2, t2.postfix, n2) : o2;
+      return t2.postfix ? o2.getSubData(e3, t2.postfix, n2) : o2;
     }
     return console.error("GetDataValue: Invalid postfix", t2), null;
   }
   toString() {
-    let e2 = `${this.data[0]}`;
-    for (let t2 = 1; t2 < this.data.length; ++t2) e2 += `, ${this.data[t2]}`;
-    return e2;
+    let e3 = `${this.data[0]}`;
+    for (let t2 = 1; t2 < this.data.length; ++t2) e3 += `, ${this.data[t2]}`;
+    return e3;
   }
 };
 var Pe = class _Pe extends Ne {
-  constructor(e2, t2, n2 = 0, s2 = null) {
-    super(t2, s2), this.buffer = e2 instanceof ArrayBuffer ? e2 : e2.buffer, this.offset = n2;
+  constructor(e3, t2, n2 = 0, s2 = null) {
+    super(t2, s2), this.buffer = e3 instanceof ArrayBuffer ? e3 : e3.buffer, this.offset = n2;
   }
   clone() {
-    const e2 = new Uint8Array(new Uint8Array(this.buffer, this.offset, this.typeInfo.size));
-    return new _Pe(e2.buffer, this.typeInfo, 0, null);
+    const e3 = new Uint8Array(new Uint8Array(this.buffer, this.offset, this.typeInfo.size));
+    return new _Pe(e3.buffer, this.typeInfo, 0, null);
   }
   setDataValue(t2, r2, a2, i2) {
     if (null === r2) return void console.log("setDataValue: NULL data.");
     let o2 = this.offset, c2 = this.typeInfo;
     for (; a2; ) {
       if (a2 instanceof ve) if (c2 instanceof s) {
-        const e2 = a2.index;
-        if (e2 instanceof xe) {
-          if (!(e2.value instanceof Be)) return void console.error(`SetDataValue: Invalid index type ${e2.value}`);
-          o2 += e2.value.value * c2.stride;
+        const e3 = a2.index;
+        if (e3 instanceof xe) {
+          if (!(e3.value instanceof Be)) return void console.error(`SetDataValue: Invalid index type ${e3.value}`);
+          o2 += e3.value.value * c2.stride;
         } else {
-          const n2 = t2.evalExpression(e2, i2);
-          if (!(n2 instanceof Be)) return void console.error("SetDataValue: Unknown index type", e2);
+          const n2 = t2.evalExpression(e3, i2);
+          if (!(n2 instanceof Be)) return void console.error("SetDataValue: Unknown index type", e3);
           o2 += n2.value * c2.stride;
         }
         c2 = c2.format;
@@ -20356,14 +20356,14 @@ var Pe = class _Pe extends Ne {
         {
           const t3 = a2.value;
           if (c2 instanceof n) {
-            let e2 = false;
+            let e3 = false;
             for (const n2 of c2.members) if (n2.name === t3) {
-              o2 += n2.offset, c2 = n2.type, e2 = true;
+              o2 += n2.offset, c2 = n2.type, e3 = true;
               break;
             }
-            if (!e2) return void console.error(`SetDataValue: Member ${t3} not found`);
+            if (!e3) return void console.error(`SetDataValue: Member ${t3} not found`);
           } else if (c2 instanceof e) {
-            const e2 = c2.getTypeName();
+            const e3 = c2.getTypeName();
             let n2 = 0;
             if ("x" === t3 || "r" === t3) n2 = 0;
             else if ("y" === t3 || "g" === t3) n2 = 1;
@@ -20374,7 +20374,7 @@ var Pe = class _Pe extends Ne {
             }
             if (!(r2 instanceof Be)) return void console.error("SetDataValue: Invalid value", r2);
             const s2 = r2.value;
-            return "vec2f" === e2 ? void (new Float32Array(this.buffer, o2, 2)[n2] = s2) : "vec3f" === e2 ? void (new Float32Array(this.buffer, o2, 3)[n2] = s2) : "vec4f" === e2 ? void (new Float32Array(this.buffer, o2, 4)[n2] = s2) : "vec2i" === e2 ? void (new Int32Array(this.buffer, o2, 2)[n2] = s2) : "vec3i" === e2 ? void (new Int32Array(this.buffer, o2, 3)[n2] = s2) : "vec4i" === e2 ? void (new Int32Array(this.buffer, o2, 4)[n2] = s2) : "vec2u" === e2 ? void (new Uint32Array(this.buffer, o2, 2)[n2] = s2) : "vec3u" === e2 ? void (new Uint32Array(this.buffer, o2, 3)[n2] = s2) : "vec4u" === e2 ? void (new Uint32Array(this.buffer, o2, 4)[n2] = s2) : void console.error(`SetDataValue: Type ${e2} is not a struct`);
+            return "vec2f" === e3 ? void (new Float32Array(this.buffer, o2, 2)[n2] = s2) : "vec3f" === e3 ? void (new Float32Array(this.buffer, o2, 3)[n2] = s2) : "vec4f" === e3 ? void (new Float32Array(this.buffer, o2, 4)[n2] = s2) : "vec2i" === e3 ? void (new Int32Array(this.buffer, o2, 2)[n2] = s2) : "vec3i" === e3 ? void (new Int32Array(this.buffer, o2, 3)[n2] = s2) : "vec4i" === e3 ? void (new Int32Array(this.buffer, o2, 4)[n2] = s2) : "vec2u" === e3 ? void (new Uint32Array(this.buffer, o2, 2)[n2] = s2) : "vec3u" === e3 ? void (new Uint32Array(this.buffer, o2, 3)[n2] = s2) : "vec4u" === e3 ? void (new Uint32Array(this.buffer, o2, 4)[n2] = s2) : void console.error(`SetDataValue: Type ${e3} is not a struct`);
           }
         }
       }
@@ -20382,92 +20382,92 @@ var Pe = class _Pe extends Ne {
     }
     this.setData(t2, r2, c2, o2, i2);
   }
-  setData(e2, t2, n2, s2, r2) {
+  setData(e3, t2, n2, s2, r2) {
     const a2 = n2.getTypeName();
     if ("f32" !== a2 && "f16" !== a2) if ("i32" !== a2 && "atomic<i32>" !== a2 && "x32" !== a2) if ("u32" !== a2 && "atomic<u32>" !== a2) if ("bool" !== a2) {
       if ("vec2f" === a2 || "vec2h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 2);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1]) : (e3[0] = t2[0], e3[1] = t2[1]));
+        const e4 = new Float32Array(this.buffer, s2, 2);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1]) : (e4[0] = t2[0], e4[1] = t2[1]));
       }
       if ("vec3f" === a2 || "vec3h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 3);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2]));
+        const e4 = new Float32Array(this.buffer, s2, 3);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2]));
       }
       if ("vec4f" === a2 || "vec4h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 4);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3]));
+        const e4 = new Float32Array(this.buffer, s2, 4);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3]));
       }
       if ("vec2i" === a2) {
-        const e3 = new Int32Array(this.buffer, s2, 2);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1]) : (e3[0] = t2[0], e3[1] = t2[1]));
+        const e4 = new Int32Array(this.buffer, s2, 2);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1]) : (e4[0] = t2[0], e4[1] = t2[1]));
       }
       if ("vec3i" === a2) {
-        const e3 = new Int32Array(this.buffer, s2, 3);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2]));
+        const e4 = new Int32Array(this.buffer, s2, 3);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2]));
       }
       if ("vec4i" === a2) {
-        const e3 = new Int32Array(this.buffer, s2, 4);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3]));
+        const e4 = new Int32Array(this.buffer, s2, 4);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3]));
       }
       if ("vec2u" === a2) {
-        const e3 = new Uint32Array(this.buffer, s2, 2);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1]) : (e3[0] = t2[0], e3[1] = t2[1]));
+        const e4 = new Uint32Array(this.buffer, s2, 2);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1]) : (e4[0] = t2[0], e4[1] = t2[1]));
       }
       if ("vec3u" === a2) {
-        const e3 = new Uint32Array(this.buffer, s2, 3);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2]));
+        const e4 = new Uint32Array(this.buffer, s2, 3);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2]));
       }
       if ("vec4u" === a2) {
-        const e3 = new Uint32Array(this.buffer, s2, 4);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3]));
+        const e4 = new Uint32Array(this.buffer, s2, 4);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3]));
       }
       if ("vec2b" === a2) {
-        const e3 = new Uint32Array(this.buffer, s2, 2);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1]) : (e3[0] = t2[0], e3[1] = t2[1]));
+        const e4 = new Uint32Array(this.buffer, s2, 2);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1]) : (e4[0] = t2[0], e4[1] = t2[1]));
       }
       if ("vec3b" === a2) {
-        const e3 = new Uint32Array(this.buffer, s2, 3);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2]));
+        const e4 = new Uint32Array(this.buffer, s2, 3);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2]));
       }
       if ("vec4b" === a2) {
-        const e3 = new Uint32Array(this.buffer, s2, 4);
-        return void (t2 instanceof Me ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3]));
+        const e4 = new Uint32Array(this.buffer, s2, 4);
+        return void (t2 instanceof Me ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3]));
       }
       if ("mat2x2f" === a2 || "mat2x2h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 4);
-        return void (t2 instanceof Ue ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3]));
+        const e4 = new Float32Array(this.buffer, s2, 4);
+        return void (t2 instanceof Ue ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3]));
       }
       if ("mat2x3f" === a2 || "mat2x3h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 6);
-        return void (t2 instanceof Ue ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3], e3[4] = t2.data[4], e3[5] = t2.data[5]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3], e3[4] = t2[4], e3[5] = t2[5]));
+        const e4 = new Float32Array(this.buffer, s2, 6);
+        return void (t2 instanceof Ue ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3], e4[4] = t2.data[4], e4[5] = t2.data[5]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3], e4[4] = t2[4], e4[5] = t2[5]));
       }
       if ("mat2x4f" === a2 || "mat2x4h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 8);
-        return void (t2 instanceof Ue ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3], e3[4] = t2.data[4], e3[5] = t2.data[5], e3[6] = t2.data[6], e3[7] = t2.data[7]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3], e3[4] = t2[4], e3[5] = t2[5], e3[6] = t2[6], e3[7] = t2[7]));
+        const e4 = new Float32Array(this.buffer, s2, 8);
+        return void (t2 instanceof Ue ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3], e4[4] = t2.data[4], e4[5] = t2.data[5], e4[6] = t2.data[6], e4[7] = t2.data[7]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3], e4[4] = t2[4], e4[5] = t2[5], e4[6] = t2[6], e4[7] = t2[7]));
       }
       if ("mat3x2f" === a2 || "mat3x2h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 6);
-        return void (t2 instanceof Ue ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3], e3[4] = t2.data[4], e3[5] = t2.data[5]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3], e3[4] = t2[4], e3[5] = t2[5]));
+        const e4 = new Float32Array(this.buffer, s2, 6);
+        return void (t2 instanceof Ue ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3], e4[4] = t2.data[4], e4[5] = t2.data[5]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3], e4[4] = t2[4], e4[5] = t2[5]));
       }
       if ("mat3x3f" === a2 || "mat3x3h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 9);
-        return void (t2 instanceof Ue ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3], e3[4] = t2.data[4], e3[5] = t2.data[5], e3[6] = t2.data[6], e3[7] = t2.data[7], e3[8] = t2.data[8]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3], e3[4] = t2[4], e3[5] = t2[5], e3[6] = t2[6], e3[7] = t2[7], e3[8] = t2[8]));
+        const e4 = new Float32Array(this.buffer, s2, 9);
+        return void (t2 instanceof Ue ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3], e4[4] = t2.data[4], e4[5] = t2.data[5], e4[6] = t2.data[6], e4[7] = t2.data[7], e4[8] = t2.data[8]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3], e4[4] = t2[4], e4[5] = t2[5], e4[6] = t2[6], e4[7] = t2[7], e4[8] = t2[8]));
       }
       if ("mat3x4f" === a2 || "mat3x4h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 12);
-        return void (t2 instanceof Ue ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3], e3[4] = t2.data[4], e3[5] = t2.data[5], e3[6] = t2.data[6], e3[7] = t2.data[7], e3[8] = t2.data[8], e3[9] = t2.data[9], e3[10] = t2.data[10], e3[11] = t2.data[11]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3], e3[4] = t2[4], e3[5] = t2[5], e3[6] = t2[6], e3[7] = t2[7], e3[8] = t2[8], e3[9] = t2[9], e3[10] = t2[10], e3[11] = t2[11]));
+        const e4 = new Float32Array(this.buffer, s2, 12);
+        return void (t2 instanceof Ue ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3], e4[4] = t2.data[4], e4[5] = t2.data[5], e4[6] = t2.data[6], e4[7] = t2.data[7], e4[8] = t2.data[8], e4[9] = t2.data[9], e4[10] = t2.data[10], e4[11] = t2.data[11]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3], e4[4] = t2[4], e4[5] = t2[5], e4[6] = t2[6], e4[7] = t2[7], e4[8] = t2[8], e4[9] = t2[9], e4[10] = t2[10], e4[11] = t2[11]));
       }
       if ("mat4x2f" === a2 || "mat4x2h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 8);
-        return void (t2 instanceof Ue ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3], e3[4] = t2.data[4], e3[5] = t2.data[5], e3[6] = t2.data[6], e3[7] = t2.data[7]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3], e3[4] = t2[4], e3[5] = t2[5], e3[6] = t2[6], e3[7] = t2[7]));
+        const e4 = new Float32Array(this.buffer, s2, 8);
+        return void (t2 instanceof Ue ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3], e4[4] = t2.data[4], e4[5] = t2.data[5], e4[6] = t2.data[6], e4[7] = t2.data[7]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3], e4[4] = t2[4], e4[5] = t2[5], e4[6] = t2[6], e4[7] = t2[7]));
       }
       if ("mat4x3f" === a2 || "mat4x3h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 12);
-        return void (t2 instanceof Ue ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3], e3[4] = t2.data[4], e3[5] = t2.data[5], e3[6] = t2.data[6], e3[7] = t2.data[7], e3[8] = t2.data[8], e3[9] = t2.data[9], e3[10] = t2.data[10], e3[11] = t2.data[11]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3], e3[4] = t2[4], e3[5] = t2[5], e3[6] = t2[6], e3[7] = t2[7], e3[8] = t2[8], e3[9] = t2[9], e3[10] = t2[10], e3[11] = t2[11]));
+        const e4 = new Float32Array(this.buffer, s2, 12);
+        return void (t2 instanceof Ue ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3], e4[4] = t2.data[4], e4[5] = t2.data[5], e4[6] = t2.data[6], e4[7] = t2.data[7], e4[8] = t2.data[8], e4[9] = t2.data[9], e4[10] = t2.data[10], e4[11] = t2.data[11]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3], e4[4] = t2[4], e4[5] = t2[5], e4[6] = t2[6], e4[7] = t2[7], e4[8] = t2[8], e4[9] = t2[9], e4[10] = t2[10], e4[11] = t2[11]));
       }
       if ("mat4x4f" === a2 || "mat4x4h" === a2) {
-        const e3 = new Float32Array(this.buffer, s2, 16);
-        return void (t2 instanceof Ue ? (e3[0] = t2.data[0], e3[1] = t2.data[1], e3[2] = t2.data[2], e3[3] = t2.data[3], e3[4] = t2.data[4], e3[5] = t2.data[5], e3[6] = t2.data[6], e3[7] = t2.data[7], e3[8] = t2.data[8], e3[9] = t2.data[9], e3[10] = t2.data[10], e3[11] = t2.data[11], e3[12] = t2.data[12], e3[13] = t2.data[13], e3[14] = t2.data[14], e3[15] = t2.data[15]) : (e3[0] = t2[0], e3[1] = t2[1], e3[2] = t2[2], e3[3] = t2[3], e3[4] = t2[4], e3[5] = t2[5], e3[6] = t2[6], e3[7] = t2[7], e3[8] = t2[8], e3[9] = t2[9], e3[10] = t2[10], e3[11] = t2[11], e3[12] = t2[12], e3[13] = t2[13], e3[14] = t2[14], e3[15] = t2[15]));
+        const e4 = new Float32Array(this.buffer, s2, 16);
+        return void (t2 instanceof Ue ? (e4[0] = t2.data[0], e4[1] = t2.data[1], e4[2] = t2.data[2], e4[3] = t2.data[3], e4[4] = t2.data[4], e4[5] = t2.data[5], e4[6] = t2.data[6], e4[7] = t2.data[7], e4[8] = t2.data[8], e4[9] = t2.data[9], e4[10] = t2.data[10], e4[11] = t2.data[11], e4[12] = t2.data[12], e4[13] = t2.data[13], e4[14] = t2.data[14], e4[15] = t2.data[15]) : (e4[0] = t2[0], e4[1] = t2[1], e4[2] = t2[2], e4[3] = t2[3], e4[4] = t2[4], e4[5] = t2[5], e4[6] = t2[6], e4[7] = t2[7], e4[8] = t2[8], e4[9] = t2[9], e4[10] = t2[10], e4[11] = t2[11], e4[12] = t2[12], e4[13] = t2[13], e4[14] = t2[14], e4[15] = t2[15]));
       }
       if (t2 instanceof _Pe) {
         if (n2 === t2.typeInfo) {
@@ -20486,27 +20486,27 @@ var Pe = class _Pe extends Ne {
     let u2 = this.offset, h2 = this.typeInfo;
     for (; r2; ) {
       if (r2 instanceof ve) {
-        const e2 = r2.index, n2 = e2 instanceof fe ? t2.evalExpression(e2, i2) : e2;
+        const e3 = r2.index, n2 = e3 instanceof fe ? t2.evalExpression(e3, i2) : e3;
         let a2 = 0;
-        if (n2 instanceof Be ? a2 = n2.value : "number" == typeof n2 ? a2 = n2 : console.error("GetDataValue: Invalid index type", e2), h2 instanceof s) u2 += a2 * h2.stride, h2 = h2.format;
+        if (n2 instanceof Be ? a2 = n2.value : "number" == typeof n2 ? a2 = n2 : console.error("GetDataValue: Invalid index type", e3), h2 instanceof s) u2 += a2 * h2.stride, h2 = h2.format;
         else {
-          const e3 = h2.getTypeName();
-          "mat4x4" === e3 || "mat4x4f" === e3 || "mat4x4h" === e3 ? (u2 += 16 * a2, h2 = t2.getTypeInfo("vec4f")) : console.error(`getDataValue: Type ${h2.getTypeName()} is not an array`);
+          const e4 = h2.getTypeName();
+          "mat4x4" === e4 || "mat4x4f" === e4 || "mat4x4h" === e4 ? (u2 += 16 * a2, h2 = t2.getTypeInfo("vec4f")) : console.error(`getDataValue: Type ${h2.getTypeName()} is not an array`);
         }
       } else {
         if (!(r2 instanceof pe)) return console.error("GetDataValue: Unknown postfix type", r2), null;
         {
           const s2 = r2.value;
           if (h2 instanceof n) {
-            let e2 = false;
+            let e3 = false;
             for (const t3 of h2.members) if (t3.name === s2) {
-              u2 += t3.offset, h2 = t3.type, e2 = true;
+              u2 += t3.offset, h2 = t3.type, e3 = true;
               break;
             }
-            if (!e2) return console.error(`GetDataValue: Member ${s2} not found`), null;
+            if (!e3) return console.error(`GetDataValue: Member ${s2} not found`), null;
           } else if (h2 instanceof e) {
-            const e2 = h2.getTypeName();
-            if ("vec2f" === e2 || "vec3f" === e2 || "vec4f" === e2 || "vec2i" === e2 || "vec3i" === e2 || "vec4i" === e2 || "vec2u" === e2 || "vec3u" === e2 || "vec4u" === e2 || "vec2b" === e2 || "vec3b" === e2 || "vec4b" === e2 || "vec2h" === e2 || "vec3h" === e2 || "vec4h" === e2 || "vec2" === e2 || "vec3" === e2 || "vec4" === e2) {
+            const e3 = h2.getTypeName();
+            if ("vec2f" === e3 || "vec3f" === e3 || "vec4f" === e3 || "vec2i" === e3 || "vec3i" === e3 || "vec4i" === e3 || "vec2u" === e3 || "vec3u" === e3 || "vec4u" === e3 || "vec2b" === e3 || "vec3b" === e3 || "vec4b" === e3 || "vec2h" === e3 || "vec3h" === e3 || "vec4h" === e3 || "vec2" === e3 || "vec3" === e3 || "vec4" === e3) {
               if (s2.length > 0 && s2.length < 5) {
                 let n2 = "f";
                 const r3 = [];
@@ -20521,32 +20521,32 @@ var Pe = class _Pe extends Ne {
                     o3 = 3;
                   }
                   if (1 === s2.length) {
-                    if (e2.endsWith("f")) return this.buffer.byteLength < u2 + 4 * o3 + 4 ? (console.log("Insufficient buffer data"), null) : new Be(new Float32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("f32"), this);
-                    if (e2.endsWith("h")) return new Be(new Float32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("f16"), this);
-                    if (e2.endsWith("i")) return new Be(new Int32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("i32"), this);
-                    if (e2.endsWith("b")) return new Be(new Int32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("bool"), this);
-                    if (e2.endsWith("u")) return new Be(new Uint32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("i32"), this);
+                    if (e3.endsWith("f")) return this.buffer.byteLength < u2 + 4 * o3 + 4 ? (console.log("Insufficient buffer data"), null) : new Be(new Float32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("f32"), this);
+                    if (e3.endsWith("h")) return new Be(new Float32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("f16"), this);
+                    if (e3.endsWith("i")) return new Be(new Int32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("i32"), this);
+                    if (e3.endsWith("b")) return new Be(new Int32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("bool"), this);
+                    if (e3.endsWith("u")) return new Be(new Uint32Array(this.buffer, u2 + 4 * o3, 1), t2.getTypeInfo("i32"), this);
                   }
-                  if ("vec2f" === e2) r3.push(new Float32Array(this.buffer, u2, 2)[o3]);
-                  else if ("vec3f" === e2) {
+                  if ("vec2f" === e3) r3.push(new Float32Array(this.buffer, u2, 2)[o3]);
+                  else if ("vec3f" === e3) {
                     if (u2 + 12 >= this.buffer.byteLength) return console.log("Insufficient buffer data"), null;
-                    const e3 = new Float32Array(this.buffer, u2, 3);
-                    r3.push(e3[o3]);
-                  } else if ("vec4f" === e2) r3.push(new Float32Array(this.buffer, u2, 4)[o3]);
-                  else if ("vec2i" === e2) n2 = "i", r3.push(new Int32Array(this.buffer, u2, 2)[o3]);
-                  else if ("vec3i" === e2) n2 = "i", r3.push(new Int32Array(this.buffer, u2, 3)[o3]);
-                  else if ("vec4i" === e2) n2 = "i", r3.push(new Int32Array(this.buffer, u2, 4)[o3]);
-                  else if ("vec2u" === e2) {
+                    const e4 = new Float32Array(this.buffer, u2, 3);
+                    r3.push(e4[o3]);
+                  } else if ("vec4f" === e3) r3.push(new Float32Array(this.buffer, u2, 4)[o3]);
+                  else if ("vec2i" === e3) n2 = "i", r3.push(new Int32Array(this.buffer, u2, 2)[o3]);
+                  else if ("vec3i" === e3) n2 = "i", r3.push(new Int32Array(this.buffer, u2, 3)[o3]);
+                  else if ("vec4i" === e3) n2 = "i", r3.push(new Int32Array(this.buffer, u2, 4)[o3]);
+                  else if ("vec2u" === e3) {
                     n2 = "u";
-                    const e3 = new Uint32Array(this.buffer, u2, 2);
-                    r3.push(e3[o3]);
-                  } else "vec3u" === e2 ? (n2 = "u", r3.push(new Uint32Array(this.buffer, u2, 3)[o3])) : "vec4u" === e2 && (n2 = "u", r3.push(new Uint32Array(this.buffer, u2, 4)[o3]));
+                    const e4 = new Uint32Array(this.buffer, u2, 2);
+                    r3.push(e4[o3]);
+                  } else "vec3u" === e3 ? (n2 = "u", r3.push(new Uint32Array(this.buffer, u2, 3)[o3])) : "vec4u" === e3 && (n2 = "u", r3.push(new Uint32Array(this.buffer, u2, 4)[o3]));
                 }
                 return 2 === r3.length ? h2 = t2.getTypeInfo(`vec2${n2}`) : 3 === r3.length ? h2 = t2.getTypeInfo(`vec3${n2}`) : 4 === r3.length ? h2 = t2.getTypeInfo(`vec4${n2}`) : console.error(`GetDataValue: Invalid vector length ${r3.length}`), new Me(r3, h2, null);
               }
               return console.error(`GetDataValue: Unknown member ${s2}`), null;
             }
-            return console.error(`GetDataValue: Type ${e2} is not a struct`), null;
+            return console.error(`GetDataValue: Type ${e3} is not a struct`), null;
           }
         }
       }
@@ -20556,186 +20556,186 @@ var Pe = class _Pe extends Ne {
     return "f32" === f2 ? new Be(new Float32Array(this.buffer, u2, 1), h2, this) : "i32" === f2 ? new Be(new Int32Array(this.buffer, u2, 1), h2, this) : "u32" === f2 ? new Be(new Uint32Array(this.buffer, u2, 1), h2, this) : "vec2f" === f2 ? new Me(new Float32Array(this.buffer, u2, 2), h2, this) : "vec3f" === f2 ? new Me(new Float32Array(this.buffer, u2, 3), h2, this) : "vec4f" === f2 ? new Me(new Float32Array(this.buffer, u2, 4), h2, this) : "vec2i" === f2 ? new Me(new Int32Array(this.buffer, u2, 2), h2, this) : "vec3i" === f2 ? new Me(new Int32Array(this.buffer, u2, 3), h2, this) : "vec4i" === f2 ? new Me(new Int32Array(this.buffer, u2, 4), h2, this) : "vec2u" === f2 ? new Me(new Uint32Array(this.buffer, u2, 2), h2, this) : "vec3u" === f2 ? new Me(new Uint32Array(this.buffer, u2, 3), h2, this) : "vec4u" === f2 ? new Me(new Uint32Array(this.buffer, u2, 4), h2, this) : h2 instanceof a && "atomic" === h2.name ? "u32" === (null === (o2 = h2.format) || void 0 === o2 ? void 0 : o2.name) ? new Be(new Uint32Array(this.buffer, u2, 1)[0], h2.format, this) : "i32" === (null === (c2 = h2.format) || void 0 === c2 ? void 0 : c2.name) ? new Be(new Int32Array(this.buffer, u2, 1)[0], h2.format, this) : (console.error(`GetDataValue: Invalid atomic format ${null === (l2 = h2.format) || void 0 === l2 ? void 0 : l2.name}`), null) : new _Pe(this.buffer, h2, u2, this);
   }
   toString() {
-    let e2 = "";
+    let e3 = "";
     if (this.typeInfo instanceof s) if ("f32" === this.typeInfo.format.name) {
       const t2 = new Float32Array(this.buffer, this.offset);
-      e2 = `[${t2[0]}`;
-      for (let n2 = 1; n2 < t2.length; ++n2) e2 += `, ${t2[n2]}`;
+      e3 = `[${t2[0]}`;
+      for (let n2 = 1; n2 < t2.length; ++n2) e3 += `, ${t2[n2]}`;
     } else if ("i32" === this.typeInfo.format.name) {
       const t2 = new Int32Array(this.buffer, this.offset);
-      e2 = `[${t2[0]}`;
-      for (let n2 = 1; n2 < t2.length; ++n2) e2 += `, ${t2[n2]}`;
+      e3 = `[${t2[0]}`;
+      for (let n2 = 1; n2 < t2.length; ++n2) e3 += `, ${t2[n2]}`;
     } else if ("u32" === this.typeInfo.format.name) {
       const t2 = new Uint32Array(this.buffer, this.offset);
-      e2 = `[${t2[0]}`;
-      for (let n2 = 1; n2 < t2.length; ++n2) e2 += `, ${t2[n2]}`;
+      e3 = `[${t2[0]}`;
+      for (let n2 = 1; n2 < t2.length; ++n2) e3 += `, ${t2[n2]}`;
     } else if ("vec2f" === this.typeInfo.format.name) {
       const t2 = new Float32Array(this.buffer, this.offset);
-      e2 = `[${t2[0]}, ${t2[1]}]`;
-      for (let n2 = 1; n2 < t2.length / 2; ++n2) e2 += `, [${t2[2 * n2]}, ${t2[2 * n2 + 1]}]`;
+      e3 = `[${t2[0]}, ${t2[1]}]`;
+      for (let n2 = 1; n2 < t2.length / 2; ++n2) e3 += `, [${t2[2 * n2]}, ${t2[2 * n2 + 1]}]`;
     } else if ("vec3f" === this.typeInfo.format.name) {
       const t2 = new Float32Array(this.buffer, this.offset);
-      e2 = `[${t2[0]}, ${t2[1]}, ${t2[2]}]`;
-      for (let n2 = 4; n2 < t2.length; n2 += 4) e2 += `, [${t2[n2]}, ${t2[n2 + 1]}, ${t2[n2 + 2]}]`;
+      e3 = `[${t2[0]}, ${t2[1]}, ${t2[2]}]`;
+      for (let n2 = 4; n2 < t2.length; n2 += 4) e3 += `, [${t2[n2]}, ${t2[n2 + 1]}, ${t2[n2 + 2]}]`;
     } else if ("vec4f" === this.typeInfo.format.name) {
       const t2 = new Float32Array(this.buffer, this.offset);
-      e2 = `[${t2[0]}, ${t2[1]}, ${t2[2]}, ${t2[3]}]`;
-      for (let n2 = 4; n2 < t2.length; n2 += 4) e2 += `, [${t2[n2]}, ${t2[n2 + 1]}, ${t2[n2 + 2]}, ${t2[n2 + 3]}]`;
-    } else e2 = "[...]";
-    else this.typeInfo instanceof n ? e2 += "{...}" : e2 = "[...]";
-    return e2;
+      e3 = `[${t2[0]}, ${t2[1]}, ${t2[2]}, ${t2[3]}]`;
+      for (let n2 = 4; n2 < t2.length; n2 += 4) e3 += `, [${t2[n2]}, ${t2[n2 + 1]}, ${t2[n2 + 2]}, ${t2[n2 + 3]}]`;
+    } else e3 = "[...]";
+    else this.typeInfo instanceof n ? e3 += "{...}" : e3 = "[...]";
+    return e3;
   }
 };
 var We = class _We extends Ne {
-  constructor(e2, t2, n2, s2) {
-    super(t2, null), this.data = e2, this.descriptor = n2, this.view = s2;
+  constructor(e3, t2, n2, s2) {
+    super(t2, null), this.data = e3, this.descriptor = n2, this.view = s2;
   }
   clone() {
     return new _We(this.data, this.typeInfo, this.descriptor, this.view);
   }
   get width() {
-    var e2, t2;
+    var e3, t2;
     const n2 = this.descriptor.size;
-    return n2 instanceof Array && n2.length > 0 ? null !== (e2 = n2[0]) && void 0 !== e2 ? e2 : 0 : n2 instanceof Object && null !== (t2 = n2.width) && void 0 !== t2 ? t2 : 0;
+    return n2 instanceof Array && n2.length > 0 ? null !== (e3 = n2[0]) && void 0 !== e3 ? e3 : 0 : n2 instanceof Object && null !== (t2 = n2.width) && void 0 !== t2 ? t2 : 0;
   }
   get height() {
-    var e2, t2;
+    var e3, t2;
     const n2 = this.descriptor.size;
-    return n2 instanceof Array && n2.length > 1 ? null !== (e2 = n2[1]) && void 0 !== e2 ? e2 : 0 : n2 instanceof Object && null !== (t2 = n2.height) && void 0 !== t2 ? t2 : 0;
+    return n2 instanceof Array && n2.length > 1 ? null !== (e3 = n2[1]) && void 0 !== e3 ? e3 : 0 : n2 instanceof Object && null !== (t2 = n2.height) && void 0 !== t2 ? t2 : 0;
   }
   get depthOrArrayLayers() {
-    var e2, t2;
+    var e3, t2;
     const n2 = this.descriptor.size;
-    return n2 instanceof Array && n2.length > 2 ? null !== (e2 = n2[2]) && void 0 !== e2 ? e2 : 0 : n2 instanceof Object && null !== (t2 = n2.depthOrArrayLayers) && void 0 !== t2 ? t2 : 0;
+    return n2 instanceof Array && n2.length > 2 ? null !== (e3 = n2[2]) && void 0 !== e3 ? e3 : 0 : n2 instanceof Object && null !== (t2 = n2.depthOrArrayLayers) && void 0 !== t2 ? t2 : 0;
   }
   get format() {
-    var e2;
-    return this.descriptor && null !== (e2 = this.descriptor.format) && void 0 !== e2 ? e2 : "rgba8unorm";
+    var e3;
+    return this.descriptor && null !== (e3 = this.descriptor.format) && void 0 !== e3 ? e3 : "rgba8unorm";
   }
   get sampleCount() {
-    var e2;
-    return this.descriptor && null !== (e2 = this.descriptor.sampleCount) && void 0 !== e2 ? e2 : 1;
+    var e3;
+    return this.descriptor && null !== (e3 = this.descriptor.sampleCount) && void 0 !== e3 ? e3 : 1;
   }
   get mipLevelCount() {
-    var e2;
-    return this.descriptor && null !== (e2 = this.descriptor.mipLevelCount) && void 0 !== e2 ? e2 : 1;
+    var e3;
+    return this.descriptor && null !== (e3 = this.descriptor.mipLevelCount) && void 0 !== e3 ? e3 : 1;
   }
   get dimension() {
-    var e2;
-    return this.descriptor && null !== (e2 = this.descriptor.dimension) && void 0 !== e2 ? e2 : "2d";
+    var e3;
+    return this.descriptor && null !== (e3 = this.descriptor.dimension) && void 0 !== e3 ? e3 : "2d";
   }
-  getMipLevelSize(e2) {
-    if (e2 >= this.mipLevelCount) return [0, 0, 0];
+  getMipLevelSize(e3) {
+    if (e3 >= this.mipLevelCount) return [0, 0, 0];
     const t2 = [this.width, this.height, this.depthOrArrayLayers];
-    for (let n2 = 0; n2 < t2.length; ++n2) t2[n2] = Math.max(1, t2[n2] >> e2);
+    for (let n2 = 0; n2 < t2.length; ++n2) t2[n2] = Math.max(1, t2[n2] >> e3);
     return t2;
   }
   get texelByteSize() {
-    const e2 = this.format, t2 = S[e2];
+    const e3 = this.format, t2 = S[e3];
     return t2 ? t2.isDepthStencil ? 4 : t2.bytesPerBlock : 0;
   }
   get bytesPerRow() {
     return this.width * this.texelByteSize;
   }
   get isDepthStencil() {
-    const e2 = this.format, t2 = S[e2];
+    const e3 = this.format, t2 = S[e3];
     return !!t2 && t2.isDepthStencil;
   }
   getGpuSize() {
-    const e2 = this.format, t2 = S[e2], n2 = this.width;
-    if (!e2 || n2 <= 0 || !t2) return -1;
+    const e3 = this.format, t2 = S[e3], n2 = this.width;
+    if (!e3 || n2 <= 0 || !t2) return -1;
     const s2 = this.height, r2 = this.depthOrArrayLayers, a2 = this.dimension;
     return n2 / t2.blockWidth * ("1d" === a2 ? 1 : s2 / t2.blockHeight) * t2.bytesPerBlock * r2;
   }
-  getPixel(e2, t2, n2 = 0, s2 = 0) {
+  getPixel(e3, t2, n2 = 0, s2 = 0) {
     const r2 = this.texelByteSize, a2 = this.bytesPerRow, i2 = this.height, o2 = this.data[s2];
-    return k(new Uint8Array(o2), e2, t2, n2, s2, i2, a2, r2, this.format);
+    return k(new Uint8Array(o2), e3, t2, n2, s2, i2, a2, r2, this.format);
   }
-  setPixel(e2, t2, n2, s2, r2) {
+  setPixel(e3, t2, n2, s2, r2) {
     const a2 = this.texelByteSize, i2 = this.bytesPerRow, o2 = this.height, c2 = this.data[s2];
-    !(function(e3, t3, n3, s3, r3, a3, i3, o3, c3, l2) {
+    !(function(e4, t3, n3, s3, r3, a3, i3, o3, c3, l2) {
       const u2 = s3 * (i3 >>= r3) * (a3 >>= r3) + n3 * i3 + t3 * o3;
       switch (c3) {
         case "r8unorm":
-          return void T(e3, u2, "8unorm", 1, l2);
+          return void T(e4, u2, "8unorm", 1, l2);
         case "r8snorm":
-          return void T(e3, u2, "8snorm", 1, l2);
+          return void T(e4, u2, "8snorm", 1, l2);
         case "r8uint":
-          return void T(e3, u2, "8uint", 1, l2);
+          return void T(e4, u2, "8uint", 1, l2);
         case "r8sint":
-          return void T(e3, u2, "8sint", 1, l2);
+          return void T(e4, u2, "8sint", 1, l2);
         case "rg8unorm":
-          return void T(e3, u2, "8unorm", 2, l2);
+          return void T(e4, u2, "8unorm", 2, l2);
         case "rg8snorm":
-          return void T(e3, u2, "8snorm", 2, l2);
+          return void T(e4, u2, "8snorm", 2, l2);
         case "rg8uint":
-          return void T(e3, u2, "8uint", 2, l2);
+          return void T(e4, u2, "8uint", 2, l2);
         case "rg8sint":
-          return void T(e3, u2, "8sint", 2, l2);
+          return void T(e4, u2, "8sint", 2, l2);
         case "rgba8unorm-srgb":
         case "rgba8unorm":
         case "bgra8unorm-srgb":
         case "bgra8unorm":
-          return void T(e3, u2, "8unorm", 4, l2);
+          return void T(e4, u2, "8unorm", 4, l2);
         case "rgba8snorm":
-          return void T(e3, u2, "8snorm", 4, l2);
+          return void T(e4, u2, "8snorm", 4, l2);
         case "rgba8uint":
-          return void T(e3, u2, "8uint", 4, l2);
+          return void T(e4, u2, "8uint", 4, l2);
         case "rgba8sint":
-          return void T(e3, u2, "8sint", 4, l2);
+          return void T(e4, u2, "8sint", 4, l2);
         case "r16uint":
-          return void T(e3, u2, "16uint", 1, l2);
+          return void T(e4, u2, "16uint", 1, l2);
         case "r16sint":
-          return void T(e3, u2, "16sint", 1, l2);
+          return void T(e4, u2, "16sint", 1, l2);
         case "r16float":
-          return void T(e3, u2, "16float", 1, l2);
+          return void T(e4, u2, "16float", 1, l2);
         case "rg16uint":
-          return void T(e3, u2, "16uint", 2, l2);
+          return void T(e4, u2, "16uint", 2, l2);
         case "rg16sint":
-          return void T(e3, u2, "16sint", 2, l2);
+          return void T(e4, u2, "16sint", 2, l2);
         case "rg16float":
-          return void T(e3, u2, "16float", 2, l2);
+          return void T(e4, u2, "16float", 2, l2);
         case "rgba16uint":
-          return void T(e3, u2, "16uint", 4, l2);
+          return void T(e4, u2, "16uint", 4, l2);
         case "rgba16sint":
-          return void T(e3, u2, "16sint", 4, l2);
+          return void T(e4, u2, "16sint", 4, l2);
         case "rgba16float":
-          return void T(e3, u2, "16float", 4, l2);
+          return void T(e4, u2, "16float", 4, l2);
         case "r32uint":
-          return void T(e3, u2, "32uint", 1, l2);
+          return void T(e4, u2, "32uint", 1, l2);
         case "r32sint":
-          return void T(e3, u2, "32sint", 1, l2);
+          return void T(e4, u2, "32sint", 1, l2);
         case "depth16unorm":
         case "depth24plus":
         case "depth24plus-stencil8":
         case "depth32float":
         case "depth32float-stencil8":
         case "r32float":
-          return void T(e3, u2, "32float", 1, l2);
+          return void T(e4, u2, "32float", 1, l2);
         case "rg32uint":
-          return void T(e3, u2, "32uint", 2, l2);
+          return void T(e4, u2, "32uint", 2, l2);
         case "rg32sint":
-          return void T(e3, u2, "32sint", 2, l2);
+          return void T(e4, u2, "32sint", 2, l2);
         case "rg32float":
-          return void T(e3, u2, "32float", 2, l2);
+          return void T(e4, u2, "32float", 2, l2);
         case "rgba32uint":
-          return void T(e3, u2, "32uint", 4, l2);
+          return void T(e4, u2, "32uint", 4, l2);
         case "rgba32sint":
-          return void T(e3, u2, "32sint", 4, l2);
+          return void T(e4, u2, "32sint", 4, l2);
         case "rgba32float":
-          return void T(e3, u2, "32float", 4, l2);
+          return void T(e4, u2, "32float", 4, l2);
         case "rg11b10ufloat":
           console.error("TODO: rg11b10ufloat not supported for writing");
       }
-    })(new Uint8Array(c2), e2, t2, n2, s2, o2, i2, a2, this.format, r2);
+    })(new Uint8Array(c2), e3, t2, n2, s2, o2, i2, a2, this.format, r2);
   }
 };
-((e2) => {
-  e2[e2.token = 0] = "token", e2[e2.keyword = 1] = "keyword", e2[e2.reserved = 2] = "reserved";
+((e3) => {
+  e3[e3.token = 0] = "token", e3[e3.keyword = 1] = "keyword", e3[e3.reserved = 2] = "reserved";
 })(z || (z = {}));
 var qe = class {
-  constructor(e2, t2, n2) {
-    this.name = e2, this.type = t2, this.rule = n2;
+  constructor(e3, t2, n2) {
+    this.name = e3, this.type = t2, this.rule = n2;
   }
   toString() {
     return this.name;
@@ -20745,8 +20745,8 @@ var He = class {
 };
 H = He, He.none = new qe("", z.reserved, ""), He.eof = new qe("EOF", z.token, ""), He.reserved = { asm: new qe("asm", z.reserved, "asm"), bf16: new qe("bf16", z.reserved, "bf16"), do: new qe("do", z.reserved, "do"), enum: new qe("enum", z.reserved, "enum"), f16: new qe("f16", z.reserved, "f16"), f64: new qe("f64", z.reserved, "f64"), handle: new qe("handle", z.reserved, "handle"), i8: new qe("i8", z.reserved, "i8"), i16: new qe("i16", z.reserved, "i16"), i64: new qe("i64", z.reserved, "i64"), mat: new qe("mat", z.reserved, "mat"), premerge: new qe("premerge", z.reserved, "premerge"), regardless: new qe("regardless", z.reserved, "regardless"), typedef: new qe("typedef", z.reserved, "typedef"), u8: new qe("u8", z.reserved, "u8"), u16: new qe("u16", z.reserved, "u16"), u64: new qe("u64", z.reserved, "u64"), unless: new qe("unless", z.reserved, "unless"), using: new qe("using", z.reserved, "using"), vec: new qe("vec", z.reserved, "vec"), void: new qe("void", z.reserved, "void") }, He.keywords = { array: new qe("array", z.keyword, "array"), atomic: new qe("atomic", z.keyword, "atomic"), bool: new qe("bool", z.keyword, "bool"), f32: new qe("f32", z.keyword, "f32"), i32: new qe("i32", z.keyword, "i32"), mat2x2: new qe("mat2x2", z.keyword, "mat2x2"), mat2x3: new qe("mat2x3", z.keyword, "mat2x3"), mat2x4: new qe("mat2x4", z.keyword, "mat2x4"), mat3x2: new qe("mat3x2", z.keyword, "mat3x2"), mat3x3: new qe("mat3x3", z.keyword, "mat3x3"), mat3x4: new qe("mat3x4", z.keyword, "mat3x4"), mat4x2: new qe("mat4x2", z.keyword, "mat4x2"), mat4x3: new qe("mat4x3", z.keyword, "mat4x3"), mat4x4: new qe("mat4x4", z.keyword, "mat4x4"), ptr: new qe("ptr", z.keyword, "ptr"), sampler: new qe("sampler", z.keyword, "sampler"), sampler_comparison: new qe("sampler_comparison", z.keyword, "sampler_comparison"), struct: new qe("struct", z.keyword, "struct"), texture_1d: new qe("texture_1d", z.keyword, "texture_1d"), texture_2d: new qe("texture_2d", z.keyword, "texture_2d"), texture_2d_array: new qe("texture_2d_array", z.keyword, "texture_2d_array"), texture_3d: new qe("texture_3d", z.keyword, "texture_3d"), texture_cube: new qe("texture_cube", z.keyword, "texture_cube"), texture_cube_array: new qe("texture_cube_array", z.keyword, "texture_cube_array"), texture_multisampled_2d: new qe("texture_multisampled_2d", z.keyword, "texture_multisampled_2d"), texture_storage_1d: new qe("texture_storage_1d", z.keyword, "texture_storage_1d"), texture_storage_2d: new qe("texture_storage_2d", z.keyword, "texture_storage_2d"), texture_storage_2d_array: new qe("texture_storage_2d_array", z.keyword, "texture_storage_2d_array"), texture_storage_3d: new qe("texture_storage_3d", z.keyword, "texture_storage_3d"), texture_depth_2d: new qe("texture_depth_2d", z.keyword, "texture_depth_2d"), texture_depth_2d_array: new qe("texture_depth_2d_array", z.keyword, "texture_depth_2d_array"), texture_depth_cube: new qe("texture_depth_cube", z.keyword, "texture_depth_cube"), texture_depth_cube_array: new qe("texture_depth_cube_array", z.keyword, "texture_depth_cube_array"), texture_depth_multisampled_2d: new qe("texture_depth_multisampled_2d", z.keyword, "texture_depth_multisampled_2d"), texture_external: new qe("texture_external", z.keyword, "texture_external"), u32: new qe("u32", z.keyword, "u32"), vec2: new qe("vec2", z.keyword, "vec2"), vec3: new qe("vec3", z.keyword, "vec3"), vec4: new qe("vec4", z.keyword, "vec4"), bitcast: new qe("bitcast", z.keyword, "bitcast"), block: new qe("block", z.keyword, "block"), break: new qe("break", z.keyword, "break"), case: new qe("case", z.keyword, "case"), continue: new qe("continue", z.keyword, "continue"), continuing: new qe("continuing", z.keyword, "continuing"), default: new qe("default", z.keyword, "default"), diagnostic: new qe("diagnostic", z.keyword, "diagnostic"), discard: new qe("discard", z.keyword, "discard"), else: new qe("else", z.keyword, "else"), enable: new qe("enable", z.keyword, "enable"), fallthrough: new qe("fallthrough", z.keyword, "fallthrough"), false: new qe("false", z.keyword, "false"), fn: new qe("fn", z.keyword, "fn"), for: new qe("for", z.keyword, "for"), function: new qe("function", z.keyword, "function"), if: new qe("if", z.keyword, "if"), let: new qe("let", z.keyword, "let"), const: new qe("const", z.keyword, "const"), loop: new qe("loop", z.keyword, "loop"), while: new qe("while", z.keyword, "while"), private: new qe("private", z.keyword, "private"), read: new qe("read", z.keyword, "read"), read_write: new qe("read_write", z.keyword, "read_write"), return: new qe("return", z.keyword, "return"), requires: new qe("requires", z.keyword, "requires"), storage: new qe("storage", z.keyword, "storage"), switch: new qe("switch", z.keyword, "switch"), true: new qe("true", z.keyword, "true"), alias: new qe("alias", z.keyword, "alias"), type: new qe("type", z.keyword, "type"), uniform: new qe("uniform", z.keyword, "uniform"), var: new qe("var", z.keyword, "var"), override: new qe("override", z.keyword, "override"), workgroup: new qe("workgroup", z.keyword, "workgroup"), write: new qe("write", z.keyword, "write"), r8unorm: new qe("r8unorm", z.keyword, "r8unorm"), r8snorm: new qe("r8snorm", z.keyword, "r8snorm"), r8uint: new qe("r8uint", z.keyword, "r8uint"), r8sint: new qe("r8sint", z.keyword, "r8sint"), r16uint: new qe("r16uint", z.keyword, "r16uint"), r16sint: new qe("r16sint", z.keyword, "r16sint"), r16float: new qe("r16float", z.keyword, "r16float"), rg8unorm: new qe("rg8unorm", z.keyword, "rg8unorm"), rg8snorm: new qe("rg8snorm", z.keyword, "rg8snorm"), rg8uint: new qe("rg8uint", z.keyword, "rg8uint"), rg8sint: new qe("rg8sint", z.keyword, "rg8sint"), r32uint: new qe("r32uint", z.keyword, "r32uint"), r32sint: new qe("r32sint", z.keyword, "r32sint"), r32float: new qe("r32float", z.keyword, "r32float"), rg16uint: new qe("rg16uint", z.keyword, "rg16uint"), rg16sint: new qe("rg16sint", z.keyword, "rg16sint"), rg16float: new qe("rg16float", z.keyword, "rg16float"), rgba8unorm: new qe("rgba8unorm", z.keyword, "rgba8unorm"), rgba8unorm_srgb: new qe("rgba8unorm_srgb", z.keyword, "rgba8unorm_srgb"), rgba8snorm: new qe("rgba8snorm", z.keyword, "rgba8snorm"), rgba8uint: new qe("rgba8uint", z.keyword, "rgba8uint"), rgba8sint: new qe("rgba8sint", z.keyword, "rgba8sint"), bgra8unorm: new qe("bgra8unorm", z.keyword, "bgra8unorm"), bgra8unorm_srgb: new qe("bgra8unorm_srgb", z.keyword, "bgra8unorm_srgb"), rgb10a2unorm: new qe("rgb10a2unorm", z.keyword, "rgb10a2unorm"), rg11b10float: new qe("rg11b10float", z.keyword, "rg11b10float"), rg32uint: new qe("rg32uint", z.keyword, "rg32uint"), rg32sint: new qe("rg32sint", z.keyword, "rg32sint"), rg32float: new qe("rg32float", z.keyword, "rg32float"), rgba16uint: new qe("rgba16uint", z.keyword, "rgba16uint"), rgba16sint: new qe("rgba16sint", z.keyword, "rgba16sint"), rgba16float: new qe("rgba16float", z.keyword, "rgba16float"), rgba32uint: new qe("rgba32uint", z.keyword, "rgba32uint"), rgba32sint: new qe("rgba32sint", z.keyword, "rgba32sint"), rgba32float: new qe("rgba32float", z.keyword, "rgba32float"), static_assert: new qe("static_assert", z.keyword, "static_assert") }, He.tokens = { decimal_float_literal: new qe("decimal_float_literal", z.token, /((-?[0-9]*\.[0-9]+|-?[0-9]+\.[0-9]*)((e|E)(\+|-)?[0-9]+)?[fh]?)|(-?[0-9]+(e|E)(\+|-)?[0-9]+[fh]?)|(-?[0-9]+[fh])/), hex_float_literal: new qe("hex_float_literal", z.token, /-?0x((([0-9a-fA-F]*\.[0-9a-fA-F]+|[0-9a-fA-F]+\.[0-9a-fA-F]*)((p|P)(\+|-)?[0-9]+[fh]?)?)|([0-9a-fA-F]+(p|P)(\+|-)?[0-9]+[fh]?))/), int_literal: new qe("int_literal", z.token, /-?0x[0-9a-fA-F]+|0i?|-?[1-9][0-9]*i?/), uint_literal: new qe("uint_literal", z.token, /0x[0-9a-fA-F]+u|0u|[1-9][0-9]*u/), name: new qe("name", z.token, /([_\p{XID_Start}][\p{XID_Continue}]+)|([\p{XID_Start}])/u), ident: new qe("ident", z.token, /[_a-zA-Z][0-9a-zA-Z_]*/), and: new qe("and", z.token, "&"), and_and: new qe("and_and", z.token, "&&"), arrow: new qe("arrow ", z.token, "->"), attr: new qe("attr", z.token, "@"), forward_slash: new qe("forward_slash", z.token, "/"), bang: new qe("bang", z.token, "!"), bracket_left: new qe("bracket_left", z.token, "["), bracket_right: new qe("bracket_right", z.token, "]"), brace_left: new qe("brace_left", z.token, "{"), brace_right: new qe("brace_right", z.token, "}"), colon: new qe("colon", z.token, ":"), comma: new qe("comma", z.token, ","), equal: new qe("equal", z.token, "="), equal_equal: new qe("equal_equal", z.token, "=="), not_equal: new qe("not_equal", z.token, "!="), greater_than: new qe("greater_than", z.token, ">"), greater_than_equal: new qe("greater_than_equal", z.token, ">="), shift_right: new qe("shift_right", z.token, ">>"), less_than: new qe("less_than", z.token, "<"), less_than_equal: new qe("less_than_equal", z.token, "<="), shift_left: new qe("shift_left", z.token, "<<"), modulo: new qe("modulo", z.token, "%"), minus: new qe("minus", z.token, "-"), minus_minus: new qe("minus_minus", z.token, "--"), period: new qe("period", z.token, "."), plus: new qe("plus", z.token, "+"), plus_plus: new qe("plus_plus", z.token, "++"), or: new qe("or", z.token, "|"), or_or: new qe("or_or", z.token, "||"), paren_left: new qe("paren_left", z.token, "("), paren_right: new qe("paren_right", z.token, ")"), semicolon: new qe("semicolon", z.token, ";"), star: new qe("star", z.token, "*"), tilde: new qe("tilde", z.token, "~"), underscore: new qe("underscore", z.token, "_"), xor: new qe("xor", z.token, "^"), plus_equal: new qe("plus_equal", z.token, "+="), minus_equal: new qe("minus_equal", z.token, "-="), times_equal: new qe("times_equal", z.token, "*="), division_equal: new qe("division_equal", z.token, "/="), modulo_equal: new qe("modulo_equal", z.token, "%="), and_equal: new qe("and_equal", z.token, "&="), or_equal: new qe("or_equal", z.token, "|="), xor_equal: new qe("xor_equal", z.token, "^="), shift_right_equal: new qe("shift_right_equal", z.token, ">>="), shift_left_equal: new qe("shift_left_equal", z.token, "<<=") }, He.simpleTokens = { "@": H.tokens.attr, "{": H.tokens.brace_left, "}": H.tokens.brace_right, ":": H.tokens.colon, ",": H.tokens.comma, "(": H.tokens.paren_left, ")": H.tokens.paren_right, ";": H.tokens.semicolon }, He.literalTokens = { "&": H.tokens.and, "&&": H.tokens.and_and, "->": H.tokens.arrow, "/": H.tokens.forward_slash, "!": H.tokens.bang, "[": H.tokens.bracket_left, "]": H.tokens.bracket_right, "=": H.tokens.equal, "==": H.tokens.equal_equal, "!=": H.tokens.not_equal, ">": H.tokens.greater_than, ">=": H.tokens.greater_than_equal, ">>": H.tokens.shift_right, "<": H.tokens.less_than, "<=": H.tokens.less_than_equal, "<<": H.tokens.shift_left, "%": H.tokens.modulo, "-": H.tokens.minus, "--": H.tokens.minus_minus, ".": H.tokens.period, "+": H.tokens.plus, "++": H.tokens.plus_plus, "|": H.tokens.or, "||": H.tokens.or_or, "*": H.tokens.star, "~": H.tokens.tilde, _: H.tokens.underscore, "^": H.tokens.xor, "+=": H.tokens.plus_equal, "-=": H.tokens.minus_equal, "*=": H.tokens.times_equal, "/=": H.tokens.division_equal, "%=": H.tokens.modulo_equal, "&=": H.tokens.and_equal, "|=": H.tokens.or_equal, "^=": H.tokens.xor_equal, ">>=": H.tokens.shift_right_equal, "<<=": H.tokens.shift_left_equal }, He.regexTokens = { decimal_float_literal: H.tokens.decimal_float_literal, hex_float_literal: H.tokens.hex_float_literal, int_literal: H.tokens.int_literal, uint_literal: H.tokens.uint_literal, ident: H.tokens.ident }, He.storage_class = [H.keywords.function, H.keywords.private, H.keywords.workgroup, H.keywords.uniform, H.keywords.storage], He.access_mode = [H.keywords.read, H.keywords.write, H.keywords.read_write], He.sampler_type = [H.keywords.sampler, H.keywords.sampler_comparison], He.sampled_texture_type = [H.keywords.texture_1d, H.keywords.texture_2d, H.keywords.texture_2d_array, H.keywords.texture_3d, H.keywords.texture_cube, H.keywords.texture_cube_array], He.multisampled_texture_type = [H.keywords.texture_multisampled_2d], He.storage_texture_type = [H.keywords.texture_storage_1d, H.keywords.texture_storage_2d, H.keywords.texture_storage_2d_array, H.keywords.texture_storage_3d], He.depth_texture_type = [H.keywords.texture_depth_2d, H.keywords.texture_depth_2d_array, H.keywords.texture_depth_cube, H.keywords.texture_depth_cube_array, H.keywords.texture_depth_multisampled_2d], He.texture_external_type = [H.keywords.texture_external], He.any_texture_type = [...H.sampled_texture_type, ...H.multisampled_texture_type, ...H.storage_texture_type, ...H.depth_texture_type, ...H.texture_external_type], He.texel_format = [H.keywords.r8unorm, H.keywords.r8snorm, H.keywords.r8uint, H.keywords.r8sint, H.keywords.r16uint, H.keywords.r16sint, H.keywords.r16float, H.keywords.rg8unorm, H.keywords.rg8snorm, H.keywords.rg8uint, H.keywords.rg8sint, H.keywords.r32uint, H.keywords.r32sint, H.keywords.r32float, H.keywords.rg16uint, H.keywords.rg16sint, H.keywords.rg16float, H.keywords.rgba8unorm, H.keywords.rgba8unorm_srgb, H.keywords.rgba8snorm, H.keywords.rgba8uint, H.keywords.rgba8sint, H.keywords.bgra8unorm, H.keywords.bgra8unorm_srgb, H.keywords.rgb10a2unorm, H.keywords.rg11b10float, H.keywords.rg32uint, H.keywords.rg32sint, H.keywords.rg32float, H.keywords.rgba16uint, H.keywords.rgba16sint, H.keywords.rgba16float, H.keywords.rgba32uint, H.keywords.rgba32sint, H.keywords.rgba32float], He.const_literal = [H.tokens.int_literal, H.tokens.uint_literal, H.tokens.decimal_float_literal, H.tokens.hex_float_literal, H.keywords.true, H.keywords.false], He.literal_or_ident = [H.tokens.ident, H.tokens.int_literal, H.tokens.uint_literal, H.tokens.decimal_float_literal, H.tokens.hex_float_literal, H.tokens.name], He.element_count_expression = [H.tokens.int_literal, H.tokens.uint_literal, H.tokens.ident], He.template_types = [H.keywords.vec2, H.keywords.vec3, H.keywords.vec4, H.keywords.mat2x2, H.keywords.mat2x3, H.keywords.mat2x4, H.keywords.mat3x2, H.keywords.mat3x3, H.keywords.mat3x4, H.keywords.mat4x2, H.keywords.mat4x3, H.keywords.mat4x4, H.keywords.atomic, H.keywords.bitcast, ...H.any_texture_type], He.attribute_name = [H.tokens.ident, H.keywords.block, H.keywords.diagnostic], He.assignment_operators = [H.tokens.equal, H.tokens.plus_equal, H.tokens.minus_equal, H.tokens.times_equal, H.tokens.division_equal, H.tokens.modulo_equal, H.tokens.and_equal, H.tokens.or_equal, H.tokens.xor_equal, H.tokens.shift_right_equal, H.tokens.shift_left_equal], He.increment_operators = [H.tokens.plus_plus, H.tokens.minus_minus];
 var ze = class {
-  constructor(e2, t2, n2, s2, r2) {
-    this.type = e2, this.lexeme = t2, this.line = n2, this.start = s2, this.end = r2;
+  constructor(e3, t2, n2, s2, r2) {
+    this.type = e3, this.lexeme = t2, this.line = n2, this.start = s2, this.end = r2;
   }
   toString() {
     return this.lexeme;
@@ -20762,22 +20762,22 @@ var ze = class {
   }
 };
 var Re = class {
-  constructor(e2) {
-    this._tokens = [], this._start = 0, this._current = 0, this._line = 1, this._source = null != e2 ? e2 : "";
+  constructor(e3) {
+    this._tokens = [], this._start = 0, this._current = 0, this._line = 1, this._source = null != e3 ? e3 : "";
   }
   scanTokens() {
     for (; !this._isAtEnd(); ) if (this._start = this._current, !this.scanToken()) throw `Invalid syntax at line ${this._line}`;
     return this._tokens.push(new ze(He.eof, "", this._line, this._current, this._current)), this._tokens;
   }
   scanToken() {
-    let e2 = this._advance();
-    if ("\n" == e2) return this._line++, true;
-    if (this._isWhitespace(e2)) return true;
-    if ("/" == e2) {
+    let e3 = this._advance();
+    if ("\n" == e3) return this._line++, true;
+    if (this._isWhitespace(e3)) return true;
+    if ("/" == e3) {
       if ("/" == this._peekAhead()) {
-        for (; "\n" != e2; ) {
+        for (; "\n" != e3; ) {
           if (this._isAtEnd()) return true;
-          e2 = this._advance();
+          e3 = this._advance();
         }
         return this._line++, true;
       }
@@ -20786,100 +20786,100 @@ var Re = class {
         let t3 = 1;
         for (; t3 > 0; ) {
           if (this._isAtEnd()) return true;
-          if (e2 = this._advance(), "\n" == e2) this._line++;
-          else if ("*" == e2) {
+          if (e3 = this._advance(), "\n" == e3) this._line++;
+          else if ("*" == e3) {
             if ("/" == this._peekAhead() && (this._advance(), t3--, 0 == t3)) return true;
-          } else "/" == e2 && "*" == this._peekAhead() && (this._advance(), t3++);
+          } else "/" == e3 && "*" == this._peekAhead() && (this._advance(), t3++);
         }
         return true;
       }
     }
-    const t2 = He.simpleTokens[e2];
+    const t2 = He.simpleTokens[e3];
     if (t2) return this._addToken(t2), true;
     let n2 = He.none;
-    const s2 = this._isAlpha(e2), r2 = "_" === e2;
-    if (this._isAlphaNumeric(e2)) {
+    const s2 = this._isAlpha(e3), r2 = "_" === e3;
+    if (this._isAlphaNumeric(e3)) {
       let t3 = this._peekAhead();
-      for (; this._isAlphaNumeric(t3); ) e2 += this._advance(), t3 = this._peekAhead();
+      for (; this._isAlphaNumeric(t3); ) e3 += this._advance(), t3 = this._peekAhead();
     }
     if (s2) {
-      const t3 = He.keywords[e2];
+      const t3 = He.keywords[e3];
       if (t3) return this._addToken(t3), true;
     }
     if (s2 || r2) return this._addToken(He.tokens.ident), true;
     for (; ; ) {
-      let t3 = this._findType(e2);
+      let t3 = this._findType(e3);
       const s3 = this._peekAhead();
-      if ("-" == e2 && this._tokens.length > 0) {
-        if ("=" == s3) return this._current++, e2 += s3, this._addToken(He.tokens.minus_equal), true;
-        if ("-" == s3) return this._current++, e2 += s3, this._addToken(He.tokens.minus_minus), true;
+      if ("-" == e3 && this._tokens.length > 0) {
+        if ("=" == s3) return this._current++, e3 += s3, this._addToken(He.tokens.minus_equal), true;
+        if ("-" == s3) return this._current++, e3 += s3, this._addToken(He.tokens.minus_minus), true;
         const n3 = this._tokens.length - 1;
         if ((-1 != He.literal_or_ident.indexOf(this._tokens[n3].type) || this._tokens[n3].type == He.tokens.paren_right) && ">" != s3) return this._addToken(t3), true;
       }
-      if (">" == e2 && (">" == s3 || "=" == s3)) {
-        let e3 = false, n3 = this._tokens.length - 1;
+      if (">" == e3 && (">" == s3 || "=" == s3)) {
+        let e4 = false, n3 = this._tokens.length - 1;
         for (let t4 = 0; t4 < 5 && n3 >= 0 && -1 === He.assignment_operators.indexOf(this._tokens[n3].type); ++t4, --n3) if (this._tokens[n3].type === He.tokens.less_than) {
-          n3 > 0 && this._tokens[n3 - 1].isArrayOrTemplateType() && (e3 = true);
+          n3 > 0 && this._tokens[n3 - 1].isArrayOrTemplateType() && (e4 = true);
           break;
         }
-        if (e3) return this._addToken(t3), true;
+        if (e4) return this._addToken(t3), true;
       }
       if (t3 === He.none) {
-        let s4 = e2, r3 = 0;
+        let s4 = e3, r3 = 0;
         const a2 = 2;
-        for (let e3 = 0; e3 < a2; ++e3) if (s4 += this._peekAhead(e3), t3 = this._findType(s4), t3 !== He.none) {
-          r3 = e3;
+        for (let e4 = 0; e4 < a2; ++e4) if (s4 += this._peekAhead(e4), t3 = this._findType(s4), t3 !== He.none) {
+          r3 = e4;
           break;
         }
         if (t3 === He.none) return n2 !== He.none && (this._current--, this._addToken(n2), true);
-        e2 = s4, this._current += r3 + 1;
+        e3 = s4, this._current += r3 + 1;
       }
       if (n2 = t3, this._isAtEnd()) break;
-      e2 += this._advance();
+      e3 += this._advance();
     }
     return n2 !== He.none && (this._addToken(n2), true);
   }
-  _findType(e2) {
+  _findType(e3) {
     for (const t3 in He.regexTokens) {
       const n2 = He.regexTokens[t3];
-      if (this._match(e2, n2.rule)) return n2;
+      if (this._match(e3, n2.rule)) return n2;
     }
-    const t2 = He.literalTokens[e2];
+    const t2 = He.literalTokens[e3];
     return t2 || He.none;
   }
-  _match(e2, t2) {
-    const n2 = t2.exec(e2);
-    return n2 && 0 == n2.index && n2[0] == e2;
+  _match(e3, t2) {
+    const n2 = t2.exec(e3);
+    return n2 && 0 == n2.index && n2[0] == e3;
   }
   _isAtEnd() {
     return this._current >= this._source.length;
   }
-  _isAlpha(e2) {
-    return !this._isNumeric(e2) && !this._isWhitespace(e2) && "_" !== e2 && "." !== e2 && "(" !== e2 && ")" !== e2 && "[" !== e2 && "]" !== e2 && "{" !== e2 && "}" !== e2 && "," !== e2 && ";" !== e2 && ":" !== e2 && "=" !== e2 && "!" !== e2 && "<" !== e2 && ">" !== e2 && "+" !== e2 && "-" !== e2 && "*" !== e2 && "/" !== e2 && "%" !== e2 && "&" !== e2 && "|" !== e2 && "^" !== e2 && "~" !== e2 && "@" !== e2 && "#" !== e2 && "?" !== e2 && "'" !== e2 && "`" !== e2 && '"' !== e2 && "\\" !== e2 && "\n" !== e2 && "\r" !== e2 && "	" !== e2 && "\0" !== e2;
+  _isAlpha(e3) {
+    return !this._isNumeric(e3) && !this._isWhitespace(e3) && "_" !== e3 && "." !== e3 && "(" !== e3 && ")" !== e3 && "[" !== e3 && "]" !== e3 && "{" !== e3 && "}" !== e3 && "," !== e3 && ";" !== e3 && ":" !== e3 && "=" !== e3 && "!" !== e3 && "<" !== e3 && ">" !== e3 && "+" !== e3 && "-" !== e3 && "*" !== e3 && "/" !== e3 && "%" !== e3 && "&" !== e3 && "|" !== e3 && "^" !== e3 && "~" !== e3 && "@" !== e3 && "#" !== e3 && "?" !== e3 && "'" !== e3 && "`" !== e3 && '"' !== e3 && "\\" !== e3 && "\n" !== e3 && "\r" !== e3 && "	" !== e3 && "\0" !== e3;
   }
-  _isNumeric(e2) {
-    return e2 >= "0" && e2 <= "9";
+  _isNumeric(e3) {
+    return e3 >= "0" && e3 <= "9";
   }
-  _isAlphaNumeric(e2) {
-    return this._isAlpha(e2) || this._isNumeric(e2) || "_" === e2;
+  _isAlphaNumeric(e3) {
+    return this._isAlpha(e3) || this._isNumeric(e3) || "_" === e3;
   }
-  _isWhitespace(e2) {
-    return " " == e2 || "	" == e2 || "\r" == e2;
+  _isWhitespace(e3) {
+    return " " == e3 || "	" == e3 || "\r" == e3;
   }
-  _advance(e2 = 0) {
+  _advance(e3 = 0) {
     let t2 = this._source[this._current];
-    return e2 = e2 || 0, e2++, this._current += e2, t2;
+    return e3 = e3 || 0, e3++, this._current += e3, t2;
   }
-  _peekAhead(e2 = 0) {
-    return e2 = e2 || 0, this._current + e2 >= this._source.length ? "\0" : this._source[this._current + e2];
+  _peekAhead(e3 = 0) {
+    return e3 = e3 || 0, this._current + e3 >= this._source.length ? "\0" : this._source[this._current + e3];
   }
-  _addToken(e2) {
+  _addToken(e3) {
     const t2 = this._source.substring(this._start, this._current);
-    this._tokens.push(new ze(e2, t2, this._line, this._start, this._current));
+    this._tokens.push(new ze(e3, t2, this._line, this._start, this._current));
   }
 };
-function Ge(e2) {
-  return Array.isArray(e2) || (null == e2 ? void 0 : e2.buffer) instanceof ArrayBuffer;
+function Ge(e3) {
+  return Array.isArray(e3) || (null == e3 ? void 0 : e3.buffer) instanceof ArrayBuffer;
 }
 var Xe = new Float32Array(1);
 var je = new Uint32Array(Xe.buffer);
@@ -20890,284 +20890,284 @@ var Ke = new Uint32Array(Qe.buffer);
 var Je = new Uint32Array(1);
 var et = new Float32Array(Je.buffer);
 var tt = new Int32Array(Je.buffer);
-function nt(e2, t2, n2) {
-  if (t2 === n2) return e2;
+function nt(e3, t2, n2) {
+  if (t2 === n2) return e3;
   if ("f32" === t2) {
-    if ("i32" === n2 || "x32" === n2) return Xe[0] = e2, je[0];
-    if ("u32" === n2) return Xe[0] = e2, Ze[0];
+    if ("i32" === n2 || "x32" === n2) return Xe[0] = e3, je[0];
+    if ("u32" === n2) return Xe[0] = e3, Ze[0];
   } else if ("i32" === t2 || "x32" === t2) {
-    if ("f32" === n2) return Qe[0] = e2, Ye[0];
-    if ("u32" === n2) return Qe[0] = e2, Ke[0];
+    if ("f32" === n2) return Qe[0] = e3, Ye[0];
+    if ("u32" === n2) return Qe[0] = e3, Ke[0];
   } else if ("u32" === t2) {
-    if ("f32" === n2) return Je[0] = e2, et[0];
-    if ("i32" === n2 || "x32" === n2) return Je[0] = e2, tt[0];
+    if ("f32" === n2) return Je[0] = e3, et[0];
+    if ("i32" === n2 || "x32" === n2) return Je[0] = e3, tt[0];
   }
-  return console.error(`Unsupported cast from ${t2} to ${n2}`), e2;
+  return console.error(`Unsupported cast from ${t2} to ${n2}`), e3;
 }
 var st = class {
-  constructor(e2) {
-    this.resources = null, this.inUse = false, this.info = null, this.node = e2;
+  constructor(e3) {
+    this.resources = null, this.inUse = false, this.info = null, this.node = e3;
   }
 };
 var rt = class {
-  constructor(e2, t2) {
-    this.align = e2, this.size = t2;
+  constructor(e3, t2) {
+    this.align = e3, this.size = t2;
   }
 };
 var at = class _at {
   constructor() {
     this.uniforms = [], this.storage = [], this.textures = [], this.samplers = [], this.aliases = [], this.overrides = [], this.structs = [], this.entry = new d(), this.functions = [], this._types = /* @__PURE__ */ new Map(), this._functions = /* @__PURE__ */ new Map();
   }
-  _isStorageTexture(e2) {
-    return "texture_storage_1d" == e2.name || "texture_storage_2d" == e2.name || "texture_storage_2d_array" == e2.name || "texture_storage_3d" == e2.name;
+  _isStorageTexture(e3) {
+    return "texture_storage_1d" == e3.name || "texture_storage_2d" == e3.name || "texture_storage_2d_array" == e3.name || "texture_storage_3d" == e3.name;
   }
-  updateAST(e2) {
-    for (const t2 of e2) t2 instanceof D && this._functions.set(t2.name, new st(t2));
-    for (const t2 of e2) if (t2 instanceof oe) {
-      const e3 = this.getTypeInfo(t2, null);
-      e3 instanceof n && this.structs.push(e3);
+  updateAST(e3) {
+    for (const t2 of e3) t2 instanceof D && this._functions.set(t2.name, new st(t2));
+    for (const t2 of e3) if (t2 instanceof oe) {
+      const e4 = this.getTypeInfo(t2, null);
+      e4 instanceof n && this.structs.push(e4);
     }
-    for (const t2 of e2) if (t2 instanceof te) this.aliases.push(this._getAliasInfo(t2));
+    for (const t2 of e3) if (t2 instanceof te) this.aliases.push(this._getAliasInfo(t2));
     else {
       if (t2 instanceof M) {
-        const e3 = t2, n2 = this._getAttributeNum(e3.attributes, "id", 0), s2 = null != e3.type ? this.getTypeInfo(e3.type, e3.attributes) : null;
-        this.overrides.push(new h(e3.name, s2, e3.attributes, n2));
+        const e4 = t2, n2 = this._getAttributeNum(e4.attributes, "id", 0), s2 = null != e4.type ? this.getTypeInfo(e4.type, e4.attributes) : null;
+        this.overrides.push(new h(e4.name, s2, e4.attributes, n2));
         continue;
       }
       if (this._isUniformVar(t2)) {
-        const e3 = t2, n2 = this._getAttributeNum(e3.attributes, "group", 0), s2 = this._getAttributeNum(e3.attributes, "binding", 0), r2 = this.getTypeInfo(e3.type, e3.attributes), a2 = new o(e3.name, r2, n2, s2, e3.attributes, i.Uniform, e3.access);
+        const e4 = t2, n2 = this._getAttributeNum(e4.attributes, "group", 0), s2 = this._getAttributeNum(e4.attributes, "binding", 0), r2 = this.getTypeInfo(e4.type, e4.attributes), a2 = new o(e4.name, r2, n2, s2, e4.attributes, i.Uniform, e4.access);
         a2.access || (a2.access = "read"), this.uniforms.push(a2);
         continue;
       }
       if (this._isStorageVar(t2)) {
-        const e3 = t2, n2 = this._getAttributeNum(e3.attributes, "group", 0), s2 = this._getAttributeNum(e3.attributes, "binding", 0), r2 = this.getTypeInfo(e3.type, e3.attributes), a2 = this._isStorageTexture(r2), c2 = new o(e3.name, r2, n2, s2, e3.attributes, a2 ? i.StorageTexture : i.Storage, e3.access);
+        const e4 = t2, n2 = this._getAttributeNum(e4.attributes, "group", 0), s2 = this._getAttributeNum(e4.attributes, "binding", 0), r2 = this.getTypeInfo(e4.type, e4.attributes), a2 = this._isStorageTexture(r2), c2 = new o(e4.name, r2, n2, s2, e4.attributes, a2 ? i.StorageTexture : i.Storage, e4.access);
         c2.access || (c2.access = "read"), this.storage.push(c2);
         continue;
       }
       if (this._isTextureVar(t2)) {
-        const e3 = t2, n2 = this._getAttributeNum(e3.attributes, "group", 0), s2 = this._getAttributeNum(e3.attributes, "binding", 0), r2 = this.getTypeInfo(e3.type, e3.attributes), a2 = this._isStorageTexture(r2), c2 = new o(e3.name, r2, n2, s2, e3.attributes, a2 ? i.StorageTexture : i.Texture, e3.access);
+        const e4 = t2, n2 = this._getAttributeNum(e4.attributes, "group", 0), s2 = this._getAttributeNum(e4.attributes, "binding", 0), r2 = this.getTypeInfo(e4.type, e4.attributes), a2 = this._isStorageTexture(r2), c2 = new o(e4.name, r2, n2, s2, e4.attributes, a2 ? i.StorageTexture : i.Texture, e4.access);
         c2.access || (c2.access = "read"), a2 ? this.storage.push(c2) : this.textures.push(c2);
         continue;
       }
       if (this._isSamplerVar(t2)) {
-        const e3 = t2, n2 = this._getAttributeNum(e3.attributes, "group", 0), s2 = this._getAttributeNum(e3.attributes, "binding", 0), r2 = this.getTypeInfo(e3.type, e3.attributes), a2 = new o(e3.name, r2, n2, s2, e3.attributes, i.Sampler, e3.access);
+        const e4 = t2, n2 = this._getAttributeNum(e4.attributes, "group", 0), s2 = this._getAttributeNum(e4.attributes, "binding", 0), r2 = this.getTypeInfo(e4.type, e4.attributes), a2 = new o(e4.name, r2, n2, s2, e4.attributes, i.Sampler, e4.access);
         this.samplers.push(a2);
         continue;
       }
     }
-    for (const t2 of e2) if (t2 instanceof D) {
-      const e3 = this._getAttribute(t2, "vertex"), n2 = this._getAttribute(t2, "fragment"), s2 = this._getAttribute(t2, "compute"), r2 = e3 || n2 || s2, a2 = new p(t2.name, null == r2 ? void 0 : r2.name, t2.attributes);
-      a2.attributes = t2.attributes, a2.startLine = t2.startLine, a2.endLine = t2.endLine, this.functions.push(a2), this._functions.get(t2.name).info = a2, r2 && (this._functions.get(t2.name).inUse = true, a2.inUse = true, a2.resources = this._findResources(t2, !!r2), a2.inputs = this._getInputs(t2.args), a2.outputs = this._getOutputs(t2.returnType), this.entry[r2.name].push(a2)), a2.arguments = t2.args.map((e4) => new f(e4.name, this.getTypeInfo(e4.type, e4.attributes), e4.attributes)), a2.returnType = t2.returnType ? this.getTypeInfo(t2.returnType, t2.attributes) : null;
+    for (const t2 of e3) if (t2 instanceof D) {
+      const e4 = this._getAttribute(t2, "vertex"), n2 = this._getAttribute(t2, "fragment"), s2 = this._getAttribute(t2, "compute"), r2 = e4 || n2 || s2, a2 = new p(t2.name, null == r2 ? void 0 : r2.name, t2.attributes);
+      a2.attributes = t2.attributes, a2.startLine = t2.startLine, a2.endLine = t2.endLine, this.functions.push(a2), this._functions.get(t2.name).info = a2, r2 && (this._functions.get(t2.name).inUse = true, a2.inUse = true, a2.resources = this._findResources(t2, !!r2), a2.inputs = this._getInputs(t2.args), a2.outputs = this._getOutputs(t2.returnType), this.entry[r2.name].push(a2)), a2.arguments = t2.args.map((e5) => new f(e5.name, this.getTypeInfo(e5.type, e5.attributes), e5.attributes)), a2.returnType = t2.returnType ? this.getTypeInfo(t2.returnType, t2.attributes) : null;
       continue;
     }
-    for (const e3 of this._functions.values()) e3.info && (e3.info.inUse = e3.inUse, this._addCalls(e3.node, e3.info.calls));
-    for (const e3 of this._functions.values()) e3.node.search((t2) => {
+    for (const e4 of this._functions.values()) e4.info && (e4.info.inUse = e4.inUse, this._addCalls(e4.node, e4.info.calls));
+    for (const e4 of this._functions.values()) e4.node.search((t2) => {
       var n2, s2, r2;
       if (t2 instanceof De) {
-        if (t2.value) if (Ge(t2.value)) for (const s3 of t2.value) for (const t3 of this.overrides) s3 === t3.name && (null === (n2 = e3.info) || void 0 === n2 || n2.overrides.push(t3));
-        else for (const n3 of this.overrides) t2.value === n3.name && (null === (s2 = e3.info) || void 0 === s2 || s2.overrides.push(n3));
-      } else if (t2 instanceof ge) for (const n3 of this.overrides) t2.name === n3.name && (null === (r2 = e3.info) || void 0 === r2 || r2.overrides.push(n3));
+        if (t2.value) if (Ge(t2.value)) for (const s3 of t2.value) for (const t3 of this.overrides) s3 === t3.name && (null === (n2 = e4.info) || void 0 === n2 || n2.overrides.push(t3));
+        else for (const n3 of this.overrides) t2.value === n3.name && (null === (s2 = e4.info) || void 0 === s2 || s2.overrides.push(n3));
+      } else if (t2 instanceof ge) for (const n3 of this.overrides) t2.name === n3.name && (null === (r2 = e4.info) || void 0 === r2 || r2.overrides.push(n3));
     });
-    for (const e3 of this.uniforms) this._markStructsInUse(e3.type);
-    for (const e3 of this.storage) this._markStructsInUse(e3.type);
+    for (const e4 of this.uniforms) this._markStructsInUse(e4.type);
+    for (const e4 of this.storage) this._markStructsInUse(e4.type);
   }
-  getFunctionInfo(e2) {
-    for (const t2 of this.functions) if (t2.name == e2) return t2;
+  getFunctionInfo(e3) {
+    for (const t2 of this.functions) if (t2.name == e3) return t2;
     return null;
   }
-  getStructInfo(e2) {
-    for (const t2 of this.structs) if (t2.name == e2) return t2;
+  getStructInfo(e3) {
+    for (const t2 of this.structs) if (t2.name == e3) return t2;
     return null;
   }
-  getOverrideInfo(e2) {
-    for (const t2 of this.overrides) if (t2.name == e2) return t2;
+  getOverrideInfo(e3) {
+    for (const t2 of this.overrides) if (t2.name == e3) return t2;
     return null;
   }
-  _markStructsInUse(e2) {
-    if (e2) if (e2.isStruct) {
-      if (e2.inUse = true, e2.members) for (const t2 of e2.members) this._markStructsInUse(t2.type);
-    } else if (e2.isArray) this._markStructsInUse(e2.format);
-    else if (e2.isTemplate) e2.format && this._markStructsInUse(e2.format);
+  _markStructsInUse(e3) {
+    if (e3) if (e3.isStruct) {
+      if (e3.inUse = true, e3.members) for (const t2 of e3.members) this._markStructsInUse(t2.type);
+    } else if (e3.isArray) this._markStructsInUse(e3.format);
+    else if (e3.isTemplate) e3.format && this._markStructsInUse(e3.format);
     else {
-      const t2 = this._getAlias(e2.name);
+      const t2 = this._getAlias(e3.name);
       t2 && this._markStructsInUse(t2);
     }
   }
-  _addCalls(e2, t2) {
+  _addCalls(e3, t2) {
     var n2;
-    for (const s2 of e2.calls) {
-      const e3 = null === (n2 = this._functions.get(s2.name)) || void 0 === n2 ? void 0 : n2.info;
-      e3 && t2.add(e3);
+    for (const s2 of e3.calls) {
+      const e4 = null === (n2 = this._functions.get(s2.name)) || void 0 === n2 ? void 0 : n2.info;
+      e4 && t2.add(e4);
     }
   }
-  findResource(e2, t2, n2) {
+  findResource(e3, t2, n2) {
     if (n2) {
       for (const s2 of this.entry.compute) if (s2.name === n2) {
-        for (const n3 of s2.resources) if (n3.group == e2 && n3.binding == t2) return n3;
+        for (const n3 of s2.resources) if (n3.group == e3 && n3.binding == t2) return n3;
       }
       for (const s2 of this.entry.vertex) if (s2.name === n2) {
-        for (const n3 of s2.resources) if (n3.group == e2 && n3.binding == t2) return n3;
+        for (const n3 of s2.resources) if (n3.group == e3 && n3.binding == t2) return n3;
       }
       for (const s2 of this.entry.fragment) if (s2.name === n2) {
-        for (const n3 of s2.resources) if (n3.group == e2 && n3.binding == t2) return n3;
+        for (const n3 of s2.resources) if (n3.group == e3 && n3.binding == t2) return n3;
       }
     }
-    for (const n3 of this.uniforms) if (n3.group == e2 && n3.binding == t2) return n3;
-    for (const n3 of this.storage) if (n3.group == e2 && n3.binding == t2) return n3;
-    for (const n3 of this.textures) if (n3.group == e2 && n3.binding == t2) return n3;
-    for (const n3 of this.samplers) if (n3.group == e2 && n3.binding == t2) return n3;
+    for (const n3 of this.uniforms) if (n3.group == e3 && n3.binding == t2) return n3;
+    for (const n3 of this.storage) if (n3.group == e3 && n3.binding == t2) return n3;
+    for (const n3 of this.textures) if (n3.group == e3 && n3.binding == t2) return n3;
+    for (const n3 of this.samplers) if (n3.group == e3 && n3.binding == t2) return n3;
     return null;
   }
-  _findResource(e2) {
-    for (const t2 of this.uniforms) if (t2.name == e2) return t2;
-    for (const t2 of this.storage) if (t2.name == e2) return t2;
-    for (const t2 of this.textures) if (t2.name == e2) return t2;
-    for (const t2 of this.samplers) if (t2.name == e2) return t2;
+  _findResource(e3) {
+    for (const t2 of this.uniforms) if (t2.name == e3) return t2;
+    for (const t2 of this.storage) if (t2.name == e3) return t2;
+    for (const t2 of this.textures) if (t2.name == e3) return t2;
+    for (const t2 of this.samplers) if (t2.name == e3) return t2;
     return null;
   }
-  _markStructsFromAST(e2) {
-    const t2 = this.getTypeInfo(e2, null);
+  _markStructsFromAST(e3) {
+    const t2 = this.getTypeInfo(e3, null);
     this._markStructsInUse(t2);
   }
-  _findResources(e2, t2) {
+  _findResources(e3, t2) {
     const n2 = [], s2 = this, r2 = [];
-    return e2.search((a2) => {
+    return e3.search((a2) => {
       if (a2 instanceof E) r2.push({});
       else if (a2 instanceof $) r2.pop();
       else if (a2 instanceof F) {
-        const e3 = a2;
-        t2 && null !== e3.type && this._markStructsFromAST(e3.type), r2.length > 0 && (r2[r2.length - 1][e3.name] = e3);
+        const e4 = a2;
+        t2 && null !== e4.type && this._markStructsFromAST(e4.type), r2.length > 0 && (r2[r2.length - 1][e4.name] = e4);
       } else if (a2 instanceof de) {
-        const e3 = a2;
-        t2 && null !== e3.type && this._markStructsFromAST(e3.type);
+        const e4 = a2;
+        t2 && null !== e4.type && this._markStructsFromAST(e4.type);
       } else if (a2 instanceof U) {
-        const e3 = a2;
-        t2 && null !== e3.type && this._markStructsFromAST(e3.type), r2.length > 0 && (r2[r2.length - 1][e3.name] = e3);
+        const e4 = a2;
+        t2 && null !== e4.type && this._markStructsFromAST(e4.type), r2.length > 0 && (r2[r2.length - 1][e4.name] = e4);
       } else if (a2 instanceof ge) {
-        const e3 = a2;
+        const e4 = a2;
         if (r2.length > 0) {
-          if (r2[r2.length - 1][e3.name]) return;
+          if (r2[r2.length - 1][e4.name]) return;
         }
-        const t3 = s2._findResource(e3.name);
+        const t3 = s2._findResource(e4.name);
         t3 && n2.push(t3);
       } else if (a2 instanceof me) {
         const r3 = a2, i2 = s2._functions.get(r3.name);
-        i2 && (t2 && (i2.inUse = true), e2.calls.add(i2.node), null === i2.resources && (i2.resources = s2._findResources(i2.node, t2)), n2.push(...i2.resources));
+        i2 && (t2 && (i2.inUse = true), e3.calls.add(i2.node), null === i2.resources && (i2.resources = s2._findResources(i2.node, t2)), n2.push(...i2.resources));
       } else if (a2 instanceof X) {
         const r3 = a2, i2 = s2._functions.get(r3.name);
-        i2 && (t2 && (i2.inUse = true), e2.calls.add(i2.node), null === i2.resources && (i2.resources = s2._findResources(i2.node, t2)), n2.push(...i2.resources));
+        i2 && (t2 && (i2.inUse = true), e3.calls.add(i2.node), null === i2.resources && (i2.resources = s2._findResources(i2.node, t2)), n2.push(...i2.resources));
       }
-    }), [...new Map(n2.map((e3) => [e3.name, e3])).values()];
+    }), [...new Map(n2.map((e4) => [e4.name, e4])).values()];
   }
   getBindGroups() {
-    const e2 = [];
+    const e3 = [];
     function t2(t3, n2) {
-      t3 >= e2.length && (e2.length = t3 + 1), void 0 === e2[t3] && (e2[t3] = []), n2 >= e2[t3].length && (e2[t3].length = n2 + 1);
+      t3 >= e3.length && (e3.length = t3 + 1), void 0 === e3[t3] && (e3[t3] = []), n2 >= e3[t3].length && (e3[t3].length = n2 + 1);
     }
     for (const n2 of this.uniforms) {
       t2(n2.group, n2.binding);
-      e2[n2.group][n2.binding] = n2;
+      e3[n2.group][n2.binding] = n2;
     }
     for (const n2 of this.storage) {
       t2(n2.group, n2.binding);
-      e2[n2.group][n2.binding] = n2;
+      e3[n2.group][n2.binding] = n2;
     }
     for (const n2 of this.textures) {
       t2(n2.group, n2.binding);
-      e2[n2.group][n2.binding] = n2;
+      e3[n2.group][n2.binding] = n2;
     }
     for (const n2 of this.samplers) {
       t2(n2.group, n2.binding);
-      e2[n2.group][n2.binding] = n2;
+      e3[n2.group][n2.binding] = n2;
     }
-    return e2;
+    return e3;
   }
-  _getOutputs(e2, t2 = void 0) {
-    if (void 0 === t2 && (t2 = []), e2 instanceof oe) this._getStructOutputs(e2, t2);
+  _getOutputs(e3, t2 = void 0) {
+    if (void 0 === t2 && (t2 = []), e3 instanceof oe) this._getStructOutputs(e3, t2);
     else {
-      const n2 = this._getOutputInfo(e2);
+      const n2 = this._getOutputInfo(e3);
       null !== n2 && t2.push(n2);
     }
     return t2;
   }
-  _getStructOutputs(e2, t2) {
-    for (const n2 of e2.members) if (n2.type instanceof oe) this._getStructOutputs(n2.type, t2);
+  _getStructOutputs(e3, t2) {
+    for (const n2 of e3.members) if (n2.type instanceof oe) this._getStructOutputs(n2.type, t2);
     else {
-      const e3 = this._getAttribute(n2, "location") || this._getAttribute(n2, "builtin");
-      if (null !== e3) {
-        const s2 = this.getTypeInfo(n2.type, n2.type.attributes), r2 = this._parseInt(e3.value), a2 = new u(n2.name, s2, e3.name, r2);
+      const e4 = this._getAttribute(n2, "location") || this._getAttribute(n2, "builtin");
+      if (null !== e4) {
+        const s2 = this.getTypeInfo(n2.type, n2.type.attributes), r2 = this._parseInt(e4.value), a2 = new u(n2.name, s2, e4.name, r2);
         t2.push(a2);
       }
     }
   }
-  _getOutputInfo(e2) {
-    const t2 = this._getAttribute(e2, "location") || this._getAttribute(e2, "builtin");
+  _getOutputInfo(e3) {
+    const t2 = this._getAttribute(e3, "location") || this._getAttribute(e3, "builtin");
     if (null !== t2) {
-      const n2 = this.getTypeInfo(e2, e2.attributes), s2 = this._parseInt(t2.value);
+      const n2 = this.getTypeInfo(e3, e3.attributes), s2 = this._parseInt(t2.value);
       return new u("", n2, t2.name, s2);
     }
     return null;
   }
-  _getInputs(e2, t2 = void 0) {
+  _getInputs(e3, t2 = void 0) {
     void 0 === t2 && (t2 = []);
-    for (const n2 of e2) if (n2.type instanceof oe) this._getStructInputs(n2.type, t2);
+    for (const n2 of e3) if (n2.type instanceof oe) this._getStructInputs(n2.type, t2);
     else {
-      const e3 = this._getInputInfo(n2);
-      null !== e3 && t2.push(e3);
+      const e4 = this._getInputInfo(n2);
+      null !== e4 && t2.push(e4);
     }
     return t2;
   }
-  _getStructInputs(e2, t2) {
-    for (const n2 of e2.members) if (n2.type instanceof oe) this._getStructInputs(n2.type, t2);
+  _getStructInputs(e3, t2) {
+    for (const n2 of e3.members) if (n2.type instanceof oe) this._getStructInputs(n2.type, t2);
     else {
-      const e3 = this._getInputInfo(n2);
-      null !== e3 && t2.push(e3);
+      const e4 = this._getInputInfo(n2);
+      null !== e4 && t2.push(e4);
     }
   }
-  _getInputInfo(e2) {
-    const t2 = this._getAttribute(e2, "location") || this._getAttribute(e2, "builtin");
+  _getInputInfo(e3) {
+    const t2 = this._getAttribute(e3, "location") || this._getAttribute(e3, "builtin");
     if (null !== t2) {
-      const n2 = this._getAttribute(e2, "interpolation"), s2 = this.getTypeInfo(e2.type, e2.attributes), r2 = this._parseInt(t2.value), a2 = new l(e2.name, s2, t2.name, r2);
+      const n2 = this._getAttribute(e3, "interpolation"), s2 = this.getTypeInfo(e3.type, e3.attributes), r2 = this._parseInt(t2.value), a2 = new l(e3.name, s2, t2.name, r2);
       return null !== n2 && (a2.interpolation = this._parseString(n2.value)), a2;
     }
     return null;
   }
-  _parseString(e2) {
-    return e2 instanceof Array && (e2 = e2[0]), e2;
+  _parseString(e3) {
+    return e3 instanceof Array && (e3 = e3[0]), e3;
   }
-  _parseInt(e2) {
-    e2 instanceof Array && (e2 = e2[0]);
-    const t2 = parseInt(e2);
-    return isNaN(t2) ? e2 : t2;
+  _parseInt(e3) {
+    e3 instanceof Array && (e3 = e3[0]);
+    const t2 = parseInt(e3);
+    return isNaN(t2) ? e3 : t2;
   }
-  _getAlias(e2) {
-    for (const t2 of this.aliases) if (t2.name == e2) return t2.type;
+  _getAlias(e3) {
+    for (const t2 of this.aliases) if (t2.name == e3) return t2.type;
     return null;
   }
-  _getAliasInfo(e2) {
-    return new c(e2.name, this.getTypeInfo(e2.type, null));
+  _getAliasInfo(e3) {
+    return new c(e3.name, this.getTypeInfo(e3.type, null));
   }
-  getTypeInfoByName(e2) {
-    for (const t2 of this.structs) if (t2.name == e2) return t2;
-    for (const t2 of this.aliases) if (t2.name == e2) return t2.type;
+  getTypeInfoByName(e3) {
+    for (const t2 of this.structs) if (t2.name == e3) return t2;
+    for (const t2 of this.aliases) if (t2.name == e3) return t2.type;
     return null;
   }
   getTypeInfo(i2, o2 = null) {
     if (this._types.has(i2)) return this._types.get(i2);
     if (i2 instanceof le) {
-      const e2 = i2.type ? this.getTypeInfo(i2.type, i2.attributes) : null, t2 = new r(i2.name, e2, o2);
+      const e3 = i2.type ? this.getTypeInfo(i2.type, i2.attributes) : null, t2 = new r(i2.name, e3, o2);
       return this._types.set(i2, t2), this._updateTypeInfo(t2), t2;
     }
     if (i2 instanceof ue) {
-      const e2 = i2, t2 = e2.format ? this.getTypeInfo(e2.format, e2.attributes) : null, n2 = new s(e2.name, o2);
-      return n2.format = t2, n2.count = e2.count, this._types.set(i2, n2), this._updateTypeInfo(n2), n2;
+      const e3 = i2, t2 = e3.format ? this.getTypeInfo(e3.format, e3.attributes) : null, n2 = new s(e3.name, o2);
+      return n2.format = t2, n2.count = e3.count, this._types.set(i2, n2), this._updateTypeInfo(n2), n2;
     }
     if (i2 instanceof oe) {
-      const e2 = i2, s2 = new n(e2.name, o2);
-      s2.startLine = e2.startLine, s2.endLine = e2.endLine;
-      for (const n2 of e2.members) {
-        const e3 = this.getTypeInfo(n2.type, n2.attributes);
-        s2.members.push(new t(n2.name, e3, n2.attributes));
+      const e3 = i2, s2 = new n(e3.name, o2);
+      s2.startLine = e3.startLine, s2.endLine = e3.endLine;
+      for (const n2 of e3.members) {
+        const e4 = this.getTypeInfo(n2.type, n2.attributes);
+        s2.members.push(new t(n2.name, e4, n2.attributes));
       }
       return this._types.set(i2, s2), this._updateTypeInfo(s2), s2;
     }
@@ -21176,142 +21176,142 @@ var at = class _at {
       return this._types.set(i2, r2), this._updateTypeInfo(r2), r2;
     }
     if (i2 instanceof ce) {
-      const e2 = i2, t2 = e2.format ? this.getTypeInfo(e2.format, null) : null, n2 = new a(e2.name, t2, o2, e2.access);
+      const e3 = i2, t2 = e3.format ? this.getTypeInfo(e3.format, null) : null, n2 = new a(e3.name, t2, o2, e3.access);
       return this._types.set(i2, n2), this._updateTypeInfo(n2), n2;
     }
     const c2 = new e(i2.name, o2);
     return this._types.set(i2, c2), this._updateTypeInfo(c2), c2;
   }
-  _updateTypeInfo(e2) {
+  _updateTypeInfo(e3) {
     var t2, a2, i2;
-    const o2 = this._getTypeSize(e2);
-    if (e2.size = null !== (t2 = null == o2 ? void 0 : o2.size) && void 0 !== t2 ? t2 : 0, e2 instanceof s && e2.format) {
-      const t3 = this._getTypeSize(e2.format);
-      e2.stride = Math.max(null !== (a2 = null == t3 ? void 0 : t3.size) && void 0 !== a2 ? a2 : 0, null !== (i2 = null == t3 ? void 0 : t3.align) && void 0 !== i2 ? i2 : 0), this._updateTypeInfo(e2.format);
+    const o2 = this._getTypeSize(e3);
+    if (e3.size = null !== (t2 = null == o2 ? void 0 : o2.size) && void 0 !== t2 ? t2 : 0, e3 instanceof s && e3.format) {
+      const t3 = this._getTypeSize(e3.format);
+      e3.stride = Math.max(null !== (a2 = null == t3 ? void 0 : t3.size) && void 0 !== a2 ? a2 : 0, null !== (i2 = null == t3 ? void 0 : t3.align) && void 0 !== i2 ? i2 : 0), this._updateTypeInfo(e3.format);
     }
-    e2 instanceof r && this._updateTypeInfo(e2.format), e2 instanceof n && this._updateStructInfo(e2);
+    e3 instanceof r && this._updateTypeInfo(e3.format), e3 instanceof n && this._updateStructInfo(e3);
   }
-  _updateStructInfo(e2) {
+  _updateStructInfo(e3) {
     var t2;
     let n2 = 0, s2 = 0, r2 = 0, a2 = 0;
-    for (let i2 = 0, o2 = e2.members.length; i2 < o2; ++i2) {
-      const o3 = e2.members[i2], c2 = this._getTypeSize(o3);
+    for (let i2 = 0, o2 = e3.members.length; i2 < o2; ++i2) {
+      const o3 = e3.members[i2], c2 = this._getTypeSize(o3);
       if (!c2) continue;
       null !== (t2 = this._getAlias(o3.type.name)) && void 0 !== t2 || o3.type;
       const l2 = c2.align, u2 = c2.size;
       n2 = this._roundUp(l2, n2 + s2), s2 = u2, r2 = n2, a2 = Math.max(a2, l2), o3.offset = n2, o3.size = u2, this._updateTypeInfo(o3.type);
     }
-    e2.size = this._roundUp(a2, r2 + s2), e2.align = a2;
+    e3.size = this._roundUp(a2, r2 + s2), e3.align = a2;
   }
   _getTypeSize(r2) {
     var a2, i2;
     if (null == r2) return null;
     const o2 = this._getAttributeNum(r2.attributes, "size", 0), c2 = this._getAttributeNum(r2.attributes, "align", 0);
     if (r2 instanceof t && (r2 = r2.type), r2 instanceof e) {
-      const e2 = this._getAlias(r2.name);
-      null !== e2 && (r2 = e2);
+      const e3 = this._getAlias(r2.name);
+      null !== e3 && (r2 = e3);
     }
     {
-      const e2 = _at._typeInfo[r2.name];
-      if (void 0 !== e2) {
+      const e3 = _at._typeInfo[r2.name];
+      if (void 0 !== e3) {
         const t2 = "f16" === (null === (a2 = r2.format) || void 0 === a2 ? void 0 : a2.name) ? 2 : 1;
-        return new rt(Math.max(c2, e2.align / t2), Math.max(o2, e2.size / t2));
+        return new rt(Math.max(c2, e3.align / t2), Math.max(o2, e3.size / t2));
       }
     }
     {
-      const e2 = _at._typeInfo[r2.name.substring(0, r2.name.length - 1)];
-      if (e2) {
+      const e3 = _at._typeInfo[r2.name.substring(0, r2.name.length - 1)];
+      if (e3) {
         const t2 = "h" === r2.name[r2.name.length - 1] ? 2 : 1;
-        return new rt(Math.max(c2, e2.align / t2), Math.max(o2, e2.size / t2));
+        return new rt(Math.max(c2, e3.align / t2), Math.max(o2, e3.size / t2));
       }
     }
     if (r2 instanceof s) {
-      let e2 = r2, t2 = 8, n2 = 8;
-      const s2 = this._getTypeSize(e2.format);
+      let e3 = r2, t2 = 8, n2 = 8;
+      const s2 = this._getTypeSize(e3.format);
       null !== s2 && (n2 = s2.size, t2 = s2.align);
-      return n2 = e2.count * this._getAttributeNum(null !== (i2 = null == r2 ? void 0 : r2.attributes) && void 0 !== i2 ? i2 : null, "stride", this._roundUp(t2, n2)), o2 && (n2 = o2), new rt(Math.max(c2, t2), Math.max(o2, n2));
+      return n2 = e3.count * this._getAttributeNum(null !== (i2 = null == r2 ? void 0 : r2.attributes) && void 0 !== i2 ? i2 : null, "stride", this._roundUp(t2, n2)), o2 && (n2 = o2), new rt(Math.max(c2, t2), Math.max(o2, n2));
     }
     if (r2 instanceof n) {
-      let e2 = 0, t2 = 0, n2 = 0, s2 = 0, a3 = 0;
+      let e3 = 0, t2 = 0, n2 = 0, s2 = 0, a3 = 0;
       for (const t3 of r2.members) {
         const r3 = this._getTypeSize(t3.type);
-        null !== r3 && (e2 = Math.max(r3.align, e2), n2 = this._roundUp(r3.align, n2 + s2), s2 = r3.size, a3 = n2);
+        null !== r3 && (e3 = Math.max(r3.align, e3), n2 = this._roundUp(r3.align, n2 + s2), s2 = r3.size, a3 = n2);
       }
-      return t2 = this._roundUp(e2, a3 + s2), new rt(Math.max(c2, e2), Math.max(o2, t2));
+      return t2 = this._roundUp(e3, a3 + s2), new rt(Math.max(c2, e3), Math.max(o2, t2));
     }
     return null;
   }
-  _isUniformVar(e2) {
-    return e2 instanceof F && "uniform" == e2.storage;
+  _isUniformVar(e3) {
+    return e3 instanceof F && "uniform" == e3.storage;
   }
-  _isStorageVar(e2) {
-    return e2 instanceof F && "storage" == e2.storage;
+  _isStorageVar(e3) {
+    return e3 instanceof F && "storage" == e3.storage;
   }
-  _isTextureVar(e2) {
-    return e2 instanceof F && null !== e2.type && -1 != _at._textureTypes.indexOf(e2.type.name);
+  _isTextureVar(e3) {
+    return e3 instanceof F && null !== e3.type && -1 != _at._textureTypes.indexOf(e3.type.name);
   }
-  _isSamplerVar(e2) {
-    return e2 instanceof F && null !== e2.type && -1 != _at._samplerTypes.indexOf(e2.type.name);
+  _isSamplerVar(e3) {
+    return e3 instanceof F && null !== e3.type && -1 != _at._samplerTypes.indexOf(e3.type.name);
   }
-  _getAttribute(e2, t2) {
-    const n2 = e2;
+  _getAttribute(e3, t2) {
+    const n2 = e3;
     if (!n2 || !n2.attributes) return null;
     const s2 = n2.attributes;
-    for (let e3 of s2) if (e3.name == t2) return e3;
+    for (let e4 of s2) if (e4.name == t2) return e4;
     return null;
   }
-  _getAttributeNum(e2, t2, n2) {
-    if (null === e2) return n2;
-    for (let s2 of e2) if (s2.name == t2) {
-      let e3 = null !== s2 && null !== s2.value ? s2.value : n2;
-      return e3 instanceof Array && (e3 = e3[0]), "number" == typeof e3 ? e3 : "string" == typeof e3 ? parseInt(e3) : n2;
+  _getAttributeNum(e3, t2, n2) {
+    if (null === e3) return n2;
+    for (let s2 of e3) if (s2.name == t2) {
+      let e4 = null !== s2 && null !== s2.value ? s2.value : n2;
+      return e4 instanceof Array && (e4 = e4[0]), "number" == typeof e4 ? e4 : "string" == typeof e4 ? parseInt(e4) : n2;
     }
     return n2;
   }
-  _roundUp(e2, t2) {
-    return Math.ceil(t2 / e2) * e2;
+  _roundUp(e3, t2) {
+    return Math.ceil(t2 / e3) * e3;
   }
 };
-at._typeInfo = { f16: { align: 2, size: 2 }, i32: { align: 4, size: 4 }, u32: { align: 4, size: 4 }, f32: { align: 4, size: 4 }, atomic: { align: 4, size: 4 }, vec2: { align: 8, size: 8 }, vec3: { align: 16, size: 12 }, vec4: { align: 16, size: 16 }, mat2x2: { align: 8, size: 16 }, mat3x2: { align: 8, size: 24 }, mat4x2: { align: 8, size: 32 }, mat2x3: { align: 16, size: 32 }, mat3x3: { align: 16, size: 48 }, mat4x3: { align: 16, size: 64 }, mat2x4: { align: 16, size: 32 }, mat3x4: { align: 16, size: 48 }, mat4x4: { align: 16, size: 64 } }, at._textureTypes = He.any_texture_type.map((e2) => e2.name), at._samplerTypes = He.sampler_type.map((e2) => e2.name);
+at._typeInfo = { f16: { align: 2, size: 2 }, i32: { align: 4, size: 4 }, u32: { align: 4, size: 4 }, f32: { align: 4, size: 4 }, atomic: { align: 4, size: 4 }, vec2: { align: 8, size: 8 }, vec3: { align: 16, size: 12 }, vec4: { align: 16, size: 16 }, mat2x2: { align: 8, size: 16 }, mat3x2: { align: 8, size: 24 }, mat4x2: { align: 8, size: 32 }, mat2x3: { align: 16, size: 32 }, mat3x3: { align: 16, size: 48 }, mat4x3: { align: 16, size: 64 }, mat2x4: { align: 16, size: 32 }, mat3x4: { align: 16, size: 48 }, mat4x4: { align: 16, size: 64 } }, at._textureTypes = He.any_texture_type.map((e3) => e3.name), at._samplerTypes = He.sampler_type.map((e3) => e3.name);
 var it = 0;
 var ot = class _ot {
-  constructor(e2, t2, n2) {
-    this.id = it++, this.name = e2, this.value = t2, this.node = n2;
+  constructor(e3, t2, n2) {
+    this.id = it++, this.name = e3, this.value = t2, this.node = n2;
   }
   clone() {
     return new _ot(this.name, this.value, this.node);
   }
 };
 var ct = class _ct {
-  constructor(e2) {
-    this.id = it++, this.name = e2.name, this.node = e2;
+  constructor(e3) {
+    this.id = it++, this.name = e3.name, this.node = e3;
   }
   clone() {
     return new _ct(this.node);
   }
 };
 var lt = class _lt {
-  constructor(e2) {
-    this.parent = null, this.variables = /* @__PURE__ */ new Map(), this.functions = /* @__PURE__ */ new Map(), this.currentFunctionName = "", this.id = it++, e2 && (this.parent = e2, this.currentFunctionName = e2.currentFunctionName);
+  constructor(e3) {
+    this.parent = null, this.variables = /* @__PURE__ */ new Map(), this.functions = /* @__PURE__ */ new Map(), this.currentFunctionName = "", this.id = it++, e3 && (this.parent = e3, this.currentFunctionName = e3.currentFunctionName);
   }
-  getVariable(e2) {
+  getVariable(e3) {
     var t2;
-    return this.variables.has(e2) ? null !== (t2 = this.variables.get(e2)) && void 0 !== t2 ? t2 : null : this.parent ? this.parent.getVariable(e2) : null;
+    return this.variables.has(e3) ? null !== (t2 = this.variables.get(e3)) && void 0 !== t2 ? t2 : null : this.parent ? this.parent.getVariable(e3) : null;
   }
-  getFunction(e2) {
+  getFunction(e3) {
     var t2;
-    return this.functions.has(e2) ? null !== (t2 = this.functions.get(e2)) && void 0 !== t2 ? t2 : null : this.parent ? this.parent.getFunction(e2) : null;
+    return this.functions.has(e3) ? null !== (t2 = this.functions.get(e3)) && void 0 !== t2 ? t2 : null : this.parent ? this.parent.getFunction(e3) : null;
   }
-  createVariable(e2, t2, n2) {
-    this.variables.set(e2, new ot(e2, t2, null != n2 ? n2 : null));
+  createVariable(e3, t2, n2) {
+    this.variables.set(e3, new ot(e3, t2, null != n2 ? n2 : null));
   }
-  setVariable(e2, t2, n2) {
-    const s2 = this.getVariable(e2);
-    null !== s2 ? s2.value = t2 : this.createVariable(e2, t2, n2);
+  setVariable(e3, t2, n2) {
+    const s2 = this.getVariable(e3);
+    null !== s2 ? s2.value = t2 : this.createVariable(e3, t2, n2);
   }
-  getVariableValue(e2) {
+  getVariableValue(e3) {
     var t2;
-    const n2 = this.getVariable(e2);
+    const n2 = this.getVariable(e3);
     return null !== (t2 = null == n2 ? void 0 : n2.value) && void 0 !== t2 ? t2 : null;
   }
   clone() {
@@ -21319,856 +21319,856 @@ var lt = class _lt {
   }
 };
 var ut = class {
-  evalExpression(e2, t2) {
+  evalExpression(e3, t2) {
     return null;
   }
-  getTypeInfo(e2) {
+  getTypeInfo(e3) {
     return null;
   }
-  getVariableName(e2, t2) {
+  getVariableName(e3, t2) {
     return "";
   }
 };
 var ht = class {
-  constructor(e2) {
-    this.exec = e2;
+  constructor(e3) {
+    this.exec = e3;
   }
-  getTypeInfo(e2) {
-    return this.exec.getTypeInfo(e2);
+  getTypeInfo(e3) {
+    return this.exec.getTypeInfo(e3);
   }
-  All(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
+  All(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
     let s2 = true;
-    if (n2 instanceof Me) return n2.data.forEach((e3) => {
-      e3 || (s2 = false);
+    if (n2 instanceof Me) return n2.data.forEach((e4) => {
+      e4 || (s2 = false);
     }), new Be(s2 ? 1 : 0, this.getTypeInfo("bool"));
-    throw new Error(`All() expects a vector argument. Line ${e2.line}`);
+    throw new Error(`All() expects a vector argument. Line ${e3.line}`);
   }
-  Any(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
+  Any(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
     if (n2 instanceof Me) {
-      const e3 = n2.data.some((e4) => e4);
-      return new Be(e3 ? 1 : 0, this.getTypeInfo("bool"));
+      const e4 = n2.data.some((e5) => e5);
+      return new Be(e4 ? 1 : 0, this.getTypeInfo("bool"));
     }
-    throw new Error(`Any() expects a vector argument. Line ${e2.line}`);
+    throw new Error(`Any() expects a vector argument. Line ${e3.line}`);
   }
-  Select(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[2], t2);
-    if (!(n2 instanceof Be)) throw new Error(`Select() expects a bool condition. Line ${e2.line}`);
-    return n2.value ? this.exec.evalExpression(e2.args[1], t2) : this.exec.evalExpression(e2.args[0], t2);
+  Select(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[2], t2);
+    if (!(n2 instanceof Be)) throw new Error(`Select() expects a bool condition. Line ${e3.line}`);
+    return n2.value ? this.exec.evalExpression(e3.args[1], t2) : this.exec.evalExpression(e3.args[0], t2);
   }
-  ArrayLength(e2, t2) {
-    let n2 = e2.args[0];
+  ArrayLength(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.evalExpression(n2, t2);
     if (s2 instanceof Pe && 0 === s2.typeInfo.size) {
-      const e3 = s2.typeInfo, t3 = s2.buffer.byteLength / e3.stride;
+      const e4 = s2.typeInfo, t3 = s2.buffer.byteLength / e4.stride;
       return new Be(t3, this.getTypeInfo("u32"));
     }
     return new Be(s2.typeInfo.size, this.getTypeInfo("u32"));
   }
-  Abs(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.abs(e3)), n2.typeInfo);
+  Abs(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.abs(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.abs(s2.value), s2.typeInfo);
   }
-  Acos(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.acos(e3)), n2.typeInfo);
+  Acos(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.acos(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.acos(s2.value), n2.typeInfo);
   }
-  Acosh(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.acosh(e3)), n2.typeInfo);
+  Acosh(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.acosh(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.acosh(s2.value), n2.typeInfo);
   }
-  Asin(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.asin(e3)), n2.typeInfo);
+  Asin(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.asin(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.asin(s2.value), n2.typeInfo);
   }
-  Asinh(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.asinh(e3)), n2.typeInfo);
+  Asinh(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.asinh(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.asinh(s2.value), n2.typeInfo);
   }
-  Atan(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.atan(e3)), n2.typeInfo);
+  Atan(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.atan(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.atan(s2.value), n2.typeInfo);
   }
-  Atanh(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.atanh(e3)), n2.typeInfo);
+  Atanh(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.atanh(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.atanh(s2.value), n2.typeInfo);
   }
-  Atan2(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
-    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e3, t3) => Math.atan2(e3, s2.data[t3])), n2.typeInfo);
+  Atan2(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
+    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e4, t3) => Math.atan2(e4, s2.data[t3])), n2.typeInfo);
     const r2 = n2, a2 = s2;
     return new Be(Math.atan2(r2.value, a2.value), n2.typeInfo);
   }
-  Ceil(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.ceil(e3)), n2.typeInfo);
+  Ceil(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.ceil(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.ceil(s2.value), n2.typeInfo);
   }
-  _clamp(e2, t2, n2) {
-    return Math.min(Math.max(e2, t2), n2);
+  _clamp(e3, t2, n2) {
+    return Math.min(Math.max(e3, t2), n2);
   }
-  Clamp(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2), r2 = this.exec.evalExpression(e2.args[2], t2);
-    if (n2 instanceof Me && s2 instanceof Me && r2 instanceof Me) return new Me(n2.data.map((e3, t3) => this._clamp(e3, s2.data[t3], r2.data[t3])), n2.typeInfo);
+  Clamp(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2), r2 = this.exec.evalExpression(e3.args[2], t2);
+    if (n2 instanceof Me && s2 instanceof Me && r2 instanceof Me) return new Me(n2.data.map((e4, t3) => this._clamp(e4, s2.data[t3], r2.data[t3])), n2.typeInfo);
     const a2 = n2, i2 = s2, o2 = r2;
     return new Be(this._clamp(a2.value, i2.value, o2.value), n2.typeInfo);
   }
-  Cos(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.cos(e3)), n2.typeInfo);
+  Cos(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.cos(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.cos(s2.value), n2.typeInfo);
   }
-  Cosh(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.cosh(e3)), n2.typeInfo);
+  Cosh(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.cosh(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.cos(s2.value), n2.typeInfo);
   }
-  CountLeadingZeros(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.clz32(e3)), n2.typeInfo);
+  CountLeadingZeros(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.clz32(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.clz32(s2.value), n2.typeInfo);
   }
-  _countOneBits(e2) {
+  _countOneBits(e3) {
     let t2 = 0;
-    for (; 0 !== e2; ) 1 & e2 && t2++, e2 >>= 1;
+    for (; 0 !== e3; ) 1 & e3 && t2++, e3 >>= 1;
     return t2;
   }
-  CountOneBits(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => this._countOneBits(e3)), n2.typeInfo);
+  CountOneBits(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => this._countOneBits(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(this._countOneBits(s2.value), n2.typeInfo);
   }
-  _countTrailingZeros(e2) {
-    if (0 === e2) return 32;
+  _countTrailingZeros(e3) {
+    if (0 === e3) return 32;
     let t2 = 0;
-    for (; !(1 & e2); ) e2 >>= 1, t2++;
+    for (; !(1 & e3); ) e3 >>= 1, t2++;
     return t2;
   }
-  CountTrailingZeros(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => this._countTrailingZeros(e3)), n2.typeInfo);
+  CountTrailingZeros(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => this._countTrailingZeros(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(this._countTrailingZeros(s2.value), n2.typeInfo);
   }
-  Cross(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
+  Cross(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
     if (n2 instanceof Me && s2 instanceof Me) {
-      if (3 !== n2.data.length || 3 !== s2.data.length) return console.error(`Cross() expects 3D vectors. Line ${e2.line}`), null;
+      if (3 !== n2.data.length || 3 !== s2.data.length) return console.error(`Cross() expects 3D vectors. Line ${e3.line}`), null;
       const t3 = n2.data, r2 = s2.data;
       return new Me([t3[1] * r2[2] - r2[1] * t3[2], t3[2] * r2[0] - r2[2] * t3[0], t3[0] * r2[1] - r2[0] * t3[1]], n2.typeInfo);
     }
-    return console.error(`Cross() expects vector arguments. Line ${e2.line}`), null;
+    return console.error(`Cross() expects vector arguments. Line ${e3.line}`), null;
   }
-  Degrees(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = 180 / Math.PI;
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => e3 * s2), n2.typeInfo);
+  Degrees(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = 180 / Math.PI;
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => e4 * s2), n2.typeInfo);
     return new Be(n2.value * s2, this.getTypeInfo("f32"));
   }
-  Determinant(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
+  Determinant(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
     if (n2 instanceof Ue) {
-      const e3 = n2.data, t3 = n2.typeInfo.getTypeName(), s2 = t3.endsWith("h") ? this.getTypeInfo("f16") : this.getTypeInfo("f32");
-      if ("mat2x2" === t3 || "mat2x2f" === t3 || "mat2x2h" === t3) return new Be(e3[0] * e3[3] - e3[1] * e3[2], s2);
-      if ("mat2x3" === t3 || "mat2x3f" === t3 || "mat2x3h" === t3) return new Be(e3[0] * (e3[4] * e3[8] - e3[5] * e3[7]) - e3[1] * (e3[3] * e3[8] - e3[5] * e3[6]) + e3[2] * (e3[3] * e3[7] - e3[4] * e3[6]), s2);
+      const e4 = n2.data, t3 = n2.typeInfo.getTypeName(), s2 = t3.endsWith("h") ? this.getTypeInfo("f16") : this.getTypeInfo("f32");
+      if ("mat2x2" === t3 || "mat2x2f" === t3 || "mat2x2h" === t3) return new Be(e4[0] * e4[3] - e4[1] * e4[2], s2);
+      if ("mat2x3" === t3 || "mat2x3f" === t3 || "mat2x3h" === t3) return new Be(e4[0] * (e4[4] * e4[8] - e4[5] * e4[7]) - e4[1] * (e4[3] * e4[8] - e4[5] * e4[6]) + e4[2] * (e4[3] * e4[7] - e4[4] * e4[6]), s2);
       if ("mat2x4" === t3 || "mat2x4f" === t3 || "mat2x4h" === t3) console.error(`TODO: Determinant for ${t3}`);
       else if ("mat3x2" === t3 || "mat3x2f" === t3 || "mat3x2h" === t3) console.error(`TODO: Determinant for ${t3}`);
       else {
-        if ("mat3x3" === t3 || "mat3x3f" === t3 || "mat3x3h" === t3) return new Be(e3[0] * (e3[4] * e3[8] - e3[5] * e3[7]) - e3[1] * (e3[3] * e3[8] - e3[5] * e3[6]) + e3[2] * (e3[3] * e3[7] - e3[4] * e3[6]), s2);
+        if ("mat3x3" === t3 || "mat3x3f" === t3 || "mat3x3h" === t3) return new Be(e4[0] * (e4[4] * e4[8] - e4[5] * e4[7]) - e4[1] * (e4[3] * e4[8] - e4[5] * e4[6]) + e4[2] * (e4[3] * e4[7] - e4[4] * e4[6]), s2);
         "mat3x4" === t3 || "mat3x4f" === t3 || "mat3x4h" === t3 || "mat4x2" === t3 || "mat4x2f" === t3 || "mat4x2h" === t3 || "mat4x3" === t3 || "mat4x3f" === t3 || "mat4x3h" === t3 ? console.error(`TODO: Determinant for ${t3}`) : "mat4x4" !== t3 && "mat4x4f" !== t3 && "mat4x4h" !== t3 || console.error(`TODO: Determinant for ${t3}`);
       }
     }
-    return console.error(`Determinant expects a matrix argument. Line ${e2.line}`), null;
+    return console.error(`Determinant expects a matrix argument. Line ${e3.line}`), null;
   }
-  Distance(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
+  Distance(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
     if (n2 instanceof Me && s2 instanceof Me) {
-      let e3 = 0;
-      for (let t3 = 0; t3 < n2.data.length; ++t3) e3 += (n2.data[t3] - s2.data[t3]) * (n2.data[t3] - s2.data[t3]);
-      return new Be(Math.sqrt(e3), this.getTypeInfo("f32"));
+      let e4 = 0;
+      for (let t3 = 0; t3 < n2.data.length; ++t3) e4 += (n2.data[t3] - s2.data[t3]) * (n2.data[t3] - s2.data[t3]);
+      return new Be(Math.sqrt(e4), this.getTypeInfo("f32"));
     }
     const r2 = n2, a2 = s2;
     return new Be(Math.abs(r2.value - a2.value), n2.typeInfo);
   }
-  _dot(e2, t2) {
+  _dot(e3, t2) {
     let n2 = 0;
-    for (let s2 = 0; s2 < e2.length; ++s2) n2 += t2[s2] * e2[s2];
+    for (let s2 = 0; s2 < e3.length; ++s2) n2 += t2[s2] * e3[s2];
     return n2;
   }
-  Dot(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
-    return n2 instanceof Me && s2 instanceof Me ? new Be(this._dot(n2.data, s2.data), this.getTypeInfo("f32")) : (console.error(`Dot() expects vector arguments. Line ${e2.line}`), null);
+  Dot(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
+    return n2 instanceof Me && s2 instanceof Me ? new Be(this._dot(n2.data, s2.data), this.getTypeInfo("f32")) : (console.error(`Dot() expects vector arguments. Line ${e3.line}`), null);
   }
-  Dot4U8Packed(e2, t2) {
-    return console.error(`TODO: dot4U8Packed. Line ${e2.line}`), null;
+  Dot4U8Packed(e3, t2) {
+    return console.error(`TODO: dot4U8Packed. Line ${e3.line}`), null;
   }
-  Dot4I8Packed(e2, t2) {
-    return console.error(`TODO: dot4I8Packed. Line ${e2.line}`), null;
+  Dot4I8Packed(e3, t2) {
+    return console.error(`TODO: dot4I8Packed. Line ${e3.line}`), null;
   }
-  Exp(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.exp(e3)), n2.typeInfo);
+  Exp(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.exp(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.exp(s2.value), n2.typeInfo);
   }
-  Exp2(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.pow(2, e3)), n2.typeInfo);
+  Exp2(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.pow(2, e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.pow(2, s2.value), n2.typeInfo);
   }
-  ExtractBits(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2), r2 = this.exec.evalExpression(e2.args[2], t2);
-    if ("u32" !== s2.typeInfo.name && "x32" !== s2.typeInfo.name) return console.error(`ExtractBits() expects an i32 offset argument. Line ${e2.line}`), null;
-    if ("u32" !== r2.typeInfo.name && "x32" !== r2.typeInfo.name) return console.error(`ExtractBits() expects an i32 count argument. Line ${e2.line}`), null;
+  ExtractBits(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2), r2 = this.exec.evalExpression(e3.args[2], t2);
+    if ("u32" !== s2.typeInfo.name && "x32" !== s2.typeInfo.name) return console.error(`ExtractBits() expects an i32 offset argument. Line ${e3.line}`), null;
+    if ("u32" !== r2.typeInfo.name && "x32" !== r2.typeInfo.name) return console.error(`ExtractBits() expects an i32 count argument. Line ${e3.line}`), null;
     const a2 = s2.value, i2 = r2.value;
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => e3 >> a2 & (1 << i2) - 1), n2.typeInfo);
-    if ("i32" !== n2.typeInfo.name && "x32" !== n2.typeInfo.name) return console.error(`ExtractBits() expects an i32 argument. Line ${e2.line}`), null;
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => e4 >> a2 & (1 << i2) - 1), n2.typeInfo);
+    if ("i32" !== n2.typeInfo.name && "x32" !== n2.typeInfo.name) return console.error(`ExtractBits() expects an i32 argument. Line ${e3.line}`), null;
     const o2 = n2.value;
     return new Be(o2 >> a2 & (1 << i2) - 1, this.getTypeInfo("i32"));
   }
-  FaceForward(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2), r2 = this.exec.evalExpression(e2.args[2], t2);
+  FaceForward(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2), r2 = this.exec.evalExpression(e3.args[2], t2);
     if (n2 instanceof Me && s2 instanceof Me && r2 instanceof Me) {
-      const e3 = this._dot(s2.data, r2.data);
-      return new Me(e3 < 0 ? Array.from(n2.data) : n2.data.map((e4) => -e4), n2.typeInfo);
+      const e4 = this._dot(s2.data, r2.data);
+      return new Me(e4 < 0 ? Array.from(n2.data) : n2.data.map((e5) => -e5), n2.typeInfo);
     }
-    return console.error(`FaceForward() expects vector arguments. Line ${e2.line}`), null;
+    return console.error(`FaceForward() expects vector arguments. Line ${e3.line}`), null;
   }
-  _firstLeadingBit(e2) {
-    return 0 === e2 ? -1 : 31 - Math.clz32(e2);
+  _firstLeadingBit(e3) {
+    return 0 === e3 ? -1 : 31 - Math.clz32(e3);
   }
-  FirstLeadingBit(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => this._firstLeadingBit(e3)), n2.typeInfo);
+  FirstLeadingBit(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => this._firstLeadingBit(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(this._firstLeadingBit(s2.value), n2.typeInfo);
   }
-  _firstTrailingBit(e2) {
-    return 0 === e2 ? -1 : Math.log2(e2 & -e2);
+  _firstTrailingBit(e3) {
+    return 0 === e3 ? -1 : Math.log2(e3 & -e3);
   }
-  FirstTrailingBit(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => this._firstTrailingBit(e3)), n2.typeInfo);
+  FirstTrailingBit(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => this._firstTrailingBit(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(this._firstTrailingBit(s2.value), n2.typeInfo);
   }
-  Floor(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.floor(e3)), n2.typeInfo);
+  Floor(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.floor(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.floor(s2.value), n2.typeInfo);
   }
-  Fma(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2), r2 = this.exec.evalExpression(e2.args[2], t2);
-    if (n2 instanceof Me && s2 instanceof Me && r2 instanceof Me) return n2.data.length !== s2.data.length || n2.data.length !== r2.data.length ? (console.error(`Fma() expects vectors of the same length. Line ${e2.line}`), null) : new Me(n2.data.map((e3, t3) => e3 * s2.data[t3] + r2.data[t3]), n2.typeInfo);
+  Fma(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2), r2 = this.exec.evalExpression(e3.args[2], t2);
+    if (n2 instanceof Me && s2 instanceof Me && r2 instanceof Me) return n2.data.length !== s2.data.length || n2.data.length !== r2.data.length ? (console.error(`Fma() expects vectors of the same length. Line ${e3.line}`), null) : new Me(n2.data.map((e4, t3) => e4 * s2.data[t3] + r2.data[t3]), n2.typeInfo);
     const a2 = n2, i2 = s2, o2 = r2;
     return new Be(a2.value * i2.value + o2.value, a2.typeInfo);
   }
-  Fract(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => e3 - Math.floor(e3)), n2.typeInfo);
+  Fract(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => e4 - Math.floor(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(s2.value - Math.floor(s2.value), n2.typeInfo);
   }
-  Frexp(e2, t2) {
-    return console.error(`TODO: frexp. Line ${e2.line}`), null;
+  Frexp(e3, t2) {
+    return console.error(`TODO: frexp. Line ${e3.line}`), null;
   }
-  InsertBits(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2), r2 = this.exec.evalExpression(e2.args[2], t2), a2 = this.exec.evalExpression(e2.args[3], t2);
-    if ("u32" !== r2.typeInfo.name && "x32" !== r2.typeInfo.name) return console.error(`InsertBits() expects an i32 offset argument. Line ${e2.line}`), null;
+  InsertBits(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2), r2 = this.exec.evalExpression(e3.args[2], t2), a2 = this.exec.evalExpression(e3.args[3], t2);
+    if ("u32" !== r2.typeInfo.name && "x32" !== r2.typeInfo.name) return console.error(`InsertBits() expects an i32 offset argument. Line ${e3.line}`), null;
     const i2 = r2.value, o2 = (1 << a2.value) - 1 << i2, c2 = ~o2;
-    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e3, t3) => e3 & c2 | s2.data[t3] << i2 & o2), n2.typeInfo);
+    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e4, t3) => e4 & c2 | s2.data[t3] << i2 & o2), n2.typeInfo);
     const l2 = n2.value, u2 = s2.value;
     return new Be(l2 & c2 | u2 << i2 & o2, n2.typeInfo);
   }
-  InverseSqrt(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => 1 / Math.sqrt(e3)), n2.typeInfo);
+  InverseSqrt(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => 1 / Math.sqrt(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(1 / Math.sqrt(s2.value), n2.typeInfo);
   }
-  Ldexp(e2, t2) {
-    return console.error(`TODO: ldexp. Line ${e2.line}`), null;
+  Ldexp(e3, t2) {
+    return console.error(`TODO: ldexp. Line ${e3.line}`), null;
   }
-  Length(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
+  Length(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
     if (n2 instanceof Me) {
-      let e3 = 0;
+      let e4 = 0;
       return n2.data.forEach((t3) => {
-        e3 += t3 * t3;
-      }), new Be(Math.sqrt(e3), this.getTypeInfo("f32"));
+        e4 += t3 * t3;
+      }), new Be(Math.sqrt(e4), this.getTypeInfo("f32"));
     }
     const s2 = n2;
     return new Be(Math.abs(s2.value), n2.typeInfo);
   }
-  Log(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.log(e3)), n2.typeInfo);
+  Log(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.log(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.log(s2.value), n2.typeInfo);
   }
-  Log2(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.log2(e3)), n2.typeInfo);
+  Log2(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.log2(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.log2(s2.value), n2.typeInfo);
   }
-  Max(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
-    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e3, t3) => Math.max(e3, s2.data[t3])), n2.typeInfo);
+  Max(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
+    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e4, t3) => Math.max(e4, s2.data[t3])), n2.typeInfo);
     const r2 = n2, a2 = s2;
     return new Be(Math.max(r2.value, a2.value), n2.typeInfo);
   }
-  Min(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
-    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e3, t3) => Math.min(e3, s2.data[t3])), n2.typeInfo);
+  Min(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
+    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e4, t3) => Math.min(e4, s2.data[t3])), n2.typeInfo);
     const r2 = n2, a2 = s2;
     return new Be(Math.min(r2.value, a2.value), n2.typeInfo);
   }
-  Mix(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2), r2 = this.exec.evalExpression(e2.args[2], t2);
-    if (n2 instanceof Me && s2 instanceof Me && r2 instanceof Me) return new Me(n2.data.map((e3, t3) => n2.data[t3] * (1 - r2.data[t3]) + s2.data[t3] * r2.data[t3]), n2.typeInfo);
+  Mix(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2), r2 = this.exec.evalExpression(e3.args[2], t2);
+    if (n2 instanceof Me && s2 instanceof Me && r2 instanceof Me) return new Me(n2.data.map((e4, t3) => n2.data[t3] * (1 - r2.data[t3]) + s2.data[t3] * r2.data[t3]), n2.typeInfo);
     const a2 = s2, i2 = r2;
     return new Be(n2.value * (1 - i2.value) + a2.value * i2.value, n2.typeInfo);
   }
-  Modf(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
-    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e3, t3) => e3 % s2.data[t3]), n2.typeInfo);
+  Modf(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
+    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e4, t3) => e4 % s2.data[t3]), n2.typeInfo);
     const r2 = s2;
     return new Be(n2.value % r2.value, n2.typeInfo);
   }
-  Normalize(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
+  Normalize(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
     if (n2 instanceof Me) {
-      const s2 = this.Length(e2, t2).value;
-      return new Me(n2.data.map((e3) => e3 / s2), n2.typeInfo);
+      const s2 = this.Length(e3, t2).value;
+      return new Me(n2.data.map((e4) => e4 / s2), n2.typeInfo);
     }
-    return console.error(`Normalize() expects a vector argument. Line ${e2.line}`), null;
+    return console.error(`Normalize() expects a vector argument. Line ${e3.line}`), null;
   }
-  Pow(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
-    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e3, t3) => Math.pow(e3, s2.data[t3])), n2.typeInfo);
+  Pow(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
+    if (n2 instanceof Me && s2 instanceof Me) return new Me(n2.data.map((e4, t3) => Math.pow(e4, s2.data[t3])), n2.typeInfo);
     const r2 = n2, a2 = s2;
     return new Be(Math.pow(r2.value, a2.value), n2.typeInfo);
   }
-  QuantizeToF16(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => e3), n2.typeInfo);
+  QuantizeToF16(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => e4), n2.typeInfo);
     return new Be(n2.value, n2.typeInfo);
   }
-  Radians(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => e3 * Math.PI / 180), n2.typeInfo);
+  Radians(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => e4 * Math.PI / 180), n2.typeInfo);
     return new Be(n2.value * Math.PI / 180, this.getTypeInfo("f32"));
   }
-  Reflect(e2, t2) {
-    let n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
+  Reflect(e3, t2) {
+    let n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
     if (n2 instanceof Me && s2 instanceof Me) {
-      const e3 = this._dot(n2.data, s2.data);
-      return new Me(n2.data.map((t3, n3) => t3 - 2 * e3 * s2.data[n3]), n2.typeInfo);
+      const e4 = this._dot(n2.data, s2.data);
+      return new Me(n2.data.map((t3, n3) => t3 - 2 * e4 * s2.data[n3]), n2.typeInfo);
     }
-    return console.error(`Reflect() expects vector arguments. Line ${e2.line}`), null;
+    return console.error(`Reflect() expects vector arguments. Line ${e3.line}`), null;
   }
-  Refract(e2, t2) {
-    let n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2), r2 = this.exec.evalExpression(e2.args[2], t2);
+  Refract(e3, t2) {
+    let n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2), r2 = this.exec.evalExpression(e3.args[2], t2);
     if (n2 instanceof Me && s2 instanceof Me && r2 instanceof Be) {
-      const e3 = this._dot(s2.data, n2.data);
+      const e4 = this._dot(s2.data, n2.data);
       return new Me(n2.data.map((t3, n3) => {
-        const a2 = 1 - r2.value * r2.value * (1 - e3 * e3);
+        const a2 = 1 - r2.value * r2.value * (1 - e4 * e4);
         if (a2 < 0) return 0;
         const i2 = Math.sqrt(a2);
-        return r2.value * t3 - (r2.value * e3 + i2) * s2.data[n3];
+        return r2.value * t3 - (r2.value * e4 + i2) * s2.data[n3];
       }), n2.typeInfo);
     }
-    return console.error(`Refract() expects vector arguments and a scalar argument. Line ${e2.line}`), null;
+    return console.error(`Refract() expects vector arguments and a scalar argument. Line ${e3.line}`), null;
   }
-  ReverseBits(e2, t2) {
-    return console.error(`TODO: reverseBits. Line ${e2.line}`), null;
+  ReverseBits(e3, t2) {
+    return console.error(`TODO: reverseBits. Line ${e3.line}`), null;
   }
-  Round(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.round(e3)), n2.typeInfo);
+  Round(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.round(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.round(s2.value), n2.typeInfo);
   }
-  Saturate(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.min(Math.max(e3, 0), 1)), n2.typeInfo);
+  Saturate(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.min(Math.max(e4, 0), 1)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.min(Math.max(s2.value, 0), 1), n2.typeInfo);
   }
-  Sign(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.sign(e3)), n2.typeInfo);
+  Sign(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.sign(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.sign(s2.value), n2.typeInfo);
   }
-  Sin(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.sin(e3)), n2.typeInfo);
+  Sin(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.sin(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.sin(s2.value), n2.typeInfo);
   }
-  Sinh(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.sinh(e3)), n2.typeInfo);
+  Sinh(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.sinh(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.sinh(s2.value), n2.typeInfo);
   }
-  _smoothstep(e2, t2, n2) {
-    const s2 = Math.min(Math.max((n2 - e2) / (t2 - e2), 0), 1);
+  _smoothstep(e3, t2, n2) {
+    const s2 = Math.min(Math.max((n2 - e3) / (t2 - e3), 0), 1);
     return s2 * s2 * (3 - 2 * s2);
   }
-  SmoothStep(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2), r2 = this.exec.evalExpression(e2.args[2], t2);
-    if (r2 instanceof Me && n2 instanceof Me && s2 instanceof Me) return new Me(r2.data.map((e3, t3) => this._smoothstep(n2.data[t3], s2.data[t3], e3)), r2.typeInfo);
+  SmoothStep(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2), r2 = this.exec.evalExpression(e3.args[2], t2);
+    if (r2 instanceof Me && n2 instanceof Me && s2 instanceof Me) return new Me(r2.data.map((e4, t3) => this._smoothstep(n2.data[t3], s2.data[t3], e4)), r2.typeInfo);
     const a2 = n2, i2 = s2, o2 = r2;
     return new Be(this._smoothstep(a2.value, i2.value, o2.value), r2.typeInfo);
   }
-  Sqrt(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.sqrt(e3)), n2.typeInfo);
+  Sqrt(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.sqrt(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.sqrt(s2.value), n2.typeInfo);
   }
-  Step(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2), s2 = this.exec.evalExpression(e2.args[1], t2);
-    if (s2 instanceof Me && n2 instanceof Me) return new Me(s2.data.map((e3, t3) => e3 < n2.data[t3] ? 0 : 1), s2.typeInfo);
+  Step(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2), s2 = this.exec.evalExpression(e3.args[1], t2);
+    if (s2 instanceof Me && n2 instanceof Me) return new Me(s2.data.map((e4, t3) => e4 < n2.data[t3] ? 0 : 1), s2.typeInfo);
     const r2 = n2;
     return new Be(s2.value < r2.value ? 0 : 1, r2.typeInfo);
   }
-  Tan(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.tan(e3)), n2.typeInfo);
+  Tan(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.tan(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.tan(s2.value), n2.typeInfo);
   }
-  Tanh(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.tanh(e3)), n2.typeInfo);
+  Tanh(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.tanh(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.tanh(s2.value), n2.typeInfo);
   }
-  _getTransposeType(e2) {
-    const t2 = e2.getTypeName();
-    return "mat2x2f" === t2 || "mat2x2h" === t2 ? e2 : "mat2x3f" === t2 ? this.getTypeInfo("mat3x2f") : "mat2x3h" === t2 ? this.getTypeInfo("mat3x2h") : "mat2x4f" === t2 ? this.getTypeInfo("mat4x2f") : "mat2x4h" === t2 ? this.getTypeInfo("mat4x2h") : "mat3x2f" === t2 ? this.getTypeInfo("mat2x3f") : "mat3x2h" === t2 ? this.getTypeInfo("mat2x3h") : "mat3x3f" === t2 || "mat3x3h" === t2 ? e2 : "mat3x4f" === t2 ? this.getTypeInfo("mat4x3f") : "mat3x4h" === t2 ? this.getTypeInfo("mat4x3h") : "mat4x2f" === t2 ? this.getTypeInfo("mat2x4f") : "mat4x2h" === t2 ? this.getTypeInfo("mat2x4h") : "mat4x3f" === t2 ? this.getTypeInfo("mat3x4f") : "mat4x3h" === t2 ? this.getTypeInfo("mat3x4h") : ("mat4x4f" === t2 || "mat4x4h" === t2 || console.error(`Invalid matrix type ${t2}`), e2);
+  _getTransposeType(e3) {
+    const t2 = e3.getTypeName();
+    return "mat2x2f" === t2 || "mat2x2h" === t2 ? e3 : "mat2x3f" === t2 ? this.getTypeInfo("mat3x2f") : "mat2x3h" === t2 ? this.getTypeInfo("mat3x2h") : "mat2x4f" === t2 ? this.getTypeInfo("mat4x2f") : "mat2x4h" === t2 ? this.getTypeInfo("mat4x2h") : "mat3x2f" === t2 ? this.getTypeInfo("mat2x3f") : "mat3x2h" === t2 ? this.getTypeInfo("mat2x3h") : "mat3x3f" === t2 || "mat3x3h" === t2 ? e3 : "mat3x4f" === t2 ? this.getTypeInfo("mat4x3f") : "mat3x4h" === t2 ? this.getTypeInfo("mat4x3h") : "mat4x2f" === t2 ? this.getTypeInfo("mat2x4f") : "mat4x2h" === t2 ? this.getTypeInfo("mat2x4h") : "mat4x3f" === t2 ? this.getTypeInfo("mat3x4f") : "mat4x3h" === t2 ? this.getTypeInfo("mat3x4h") : ("mat4x4f" === t2 || "mat4x4h" === t2 || console.error(`Invalid matrix type ${t2}`), e3);
   }
-  Transpose(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (!(n2 instanceof Ue)) return console.error(`Transpose() expects a matrix argument. Line ${e2.line}`), null;
+  Transpose(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (!(n2 instanceof Ue)) return console.error(`Transpose() expects a matrix argument. Line ${e3.line}`), null;
     const s2 = this._getTransposeType(n2.typeInfo);
     if ("mat2x2" === n2.typeInfo.name || "mat2x2f" === n2.typeInfo.name || "mat2x2h" === n2.typeInfo.name) {
-      const e3 = n2.data;
-      return new Ue([e3[0], e3[2], e3[1], e3[3]], s2);
+      const e4 = n2.data;
+      return new Ue([e4[0], e4[2], e4[1], e4[3]], s2);
     }
     if ("mat2x3" === n2.typeInfo.name || "mat2x3f" === n2.typeInfo.name || "mat2x3h" === n2.typeInfo.name) {
-      const e3 = n2.data;
-      return new Ue([e3[0], e3[3], e3[6], e3[1], e3[4], e3[7]], s2);
+      const e4 = n2.data;
+      return new Ue([e4[0], e4[3], e4[6], e4[1], e4[4], e4[7]], s2);
     }
     if ("mat2x4" === n2.typeInfo.name || "mat2x4f" === n2.typeInfo.name || "mat2x4h" === n2.typeInfo.name) {
-      const e3 = n2.data;
-      return new Ue([e3[0], e3[4], e3[8], e3[12], e3[1], e3[5], e3[9], e3[13]], s2);
+      const e4 = n2.data;
+      return new Ue([e4[0], e4[4], e4[8], e4[12], e4[1], e4[5], e4[9], e4[13]], s2);
     }
     if ("mat3x2" === n2.typeInfo.name || "mat3x2f" === n2.typeInfo.name || "mat3x2h" === n2.typeInfo.name) {
-      const e3 = n2.data;
-      return new Ue([e3[0], e3[3], e3[1], e3[4], e3[2], e3[5]], s2);
+      const e4 = n2.data;
+      return new Ue([e4[0], e4[3], e4[1], e4[4], e4[2], e4[5]], s2);
     }
     if ("mat3x3" === n2.typeInfo.name || "mat3x3f" === n2.typeInfo.name || "mat3x3h" === n2.typeInfo.name) {
-      const e3 = n2.data;
-      return new Ue([e3[0], e3[3], e3[6], e3[1], e3[4], e3[7], e3[2], e3[5], e3[8]], s2);
+      const e4 = n2.data;
+      return new Ue([e4[0], e4[3], e4[6], e4[1], e4[4], e4[7], e4[2], e4[5], e4[8]], s2);
     }
     if ("mat3x4" === n2.typeInfo.name || "mat3x4f" === n2.typeInfo.name || "mat3x4h" === n2.typeInfo.name) {
-      const e3 = n2.data;
-      return new Ue([e3[0], e3[4], e3[8], e3[12], e3[1], e3[5], e3[9], e3[13], e3[2], e3[6], e3[10], e3[14]], s2);
+      const e4 = n2.data;
+      return new Ue([e4[0], e4[4], e4[8], e4[12], e4[1], e4[5], e4[9], e4[13], e4[2], e4[6], e4[10], e4[14]], s2);
     }
     if ("mat4x2" === n2.typeInfo.name || "mat4x2f" === n2.typeInfo.name || "mat4x2h" === n2.typeInfo.name) {
-      const e3 = n2.data;
-      return new Ue([e3[0], e3[4], e3[1], e3[5], e3[2], e3[6]], s2);
+      const e4 = n2.data;
+      return new Ue([e4[0], e4[4], e4[1], e4[5], e4[2], e4[6]], s2);
     }
     if ("mat4x3" === n2.typeInfo.name || "mat4x3f" === n2.typeInfo.name || "mat4x3h" === n2.typeInfo.name) {
-      const e3 = n2.data;
-      return new Ue([e3[0], e3[4], e3[8], e3[1], e3[5], e3[9], e3[2], e3[6], e3[10]], s2);
+      const e4 = n2.data;
+      return new Ue([e4[0], e4[4], e4[8], e4[1], e4[5], e4[9], e4[2], e4[6], e4[10]], s2);
     }
     if ("mat4x4" === n2.typeInfo.name || "mat4x4f" === n2.typeInfo.name || "mat4x4h" === n2.typeInfo.name) {
-      const e3 = n2.data;
-      return new Ue([e3[0], e3[4], e3[8], e3[12], e3[1], e3[5], e3[9], e3[13], e3[2], e3[6], e3[10], e3[14], e3[3], e3[7], e3[11], e3[15]], s2);
+      const e4 = n2.data;
+      return new Ue([e4[0], e4[4], e4[8], e4[12], e4[1], e4[5], e4[9], e4[13], e4[2], e4[6], e4[10], e4[14], e4[3], e4[7], e4[11], e4[15]], s2);
     }
     return console.error(`Invalid matrix type ${n2.typeInfo.name}`), null;
   }
-  Trunc(e2, t2) {
-    const n2 = this.exec.evalExpression(e2.args[0], t2);
-    if (n2 instanceof Me) return new Me(n2.data.map((e3) => Math.trunc(e3)), n2.typeInfo);
+  Trunc(e3, t2) {
+    const n2 = this.exec.evalExpression(e3.args[0], t2);
+    if (n2 instanceof Me) return new Me(n2.data.map((e4) => Math.trunc(e4)), n2.typeInfo);
     const s2 = n2;
     return new Be(Math.trunc(s2.value), n2.typeInfo);
   }
-  Dpdx(e2, t2) {
-    return console.error(`TODO: dpdx. Line ${e2.line}`), null;
+  Dpdx(e3, t2) {
+    return console.error(`TODO: dpdx. Line ${e3.line}`), null;
   }
-  DpdxCoarse(e2, t2) {
-    return console.error(`TODO: dpdxCoarse. Line ${e2.line}`), null;
+  DpdxCoarse(e3, t2) {
+    return console.error(`TODO: dpdxCoarse. Line ${e3.line}`), null;
   }
-  DpdxFine(e2, t2) {
+  DpdxFine(e3, t2) {
     return console.error("TODO: dpdxFine"), null;
   }
-  Dpdy(e2, t2) {
+  Dpdy(e3, t2) {
     return console.error("TODO: dpdy"), null;
   }
-  DpdyCoarse(e2, t2) {
+  DpdyCoarse(e3, t2) {
     return console.error("TODO: dpdyCoarse"), null;
   }
-  DpdyFine(e2, t2) {
+  DpdyFine(e3, t2) {
     return console.error("TODO: dpdyFine"), null;
   }
-  Fwidth(e2, t2) {
+  Fwidth(e3, t2) {
     return console.error("TODO: fwidth"), null;
   }
-  FwidthCoarse(e2, t2) {
+  FwidthCoarse(e3, t2) {
     return console.error("TODO: fwidthCoarse"), null;
   }
-  FwidthFine(e2, t2) {
+  FwidthFine(e3, t2) {
     return console.error("TODO: fwidthFine"), null;
   }
-  TextureDimensions(e2, t2) {
-    const n2 = e2.args[0], s2 = e2.args.length > 1 ? this.exec.evalExpression(e2.args[1], t2).value : 0;
+  TextureDimensions(e3, t2) {
+    const n2 = e3.args[0], s2 = e3.args.length > 1 ? this.exec.evalExpression(e3.args[1], t2).value : 0;
     if (n2 instanceof ge) {
       const r2 = n2.name, a2 = t2.getVariableValue(r2);
       if (a2 instanceof We) {
-        if (s2 < 0 || s2 >= a2.mipLevelCount) return console.error(`Invalid mip level for textureDimensions. Line ${e2.line}`), null;
+        if (s2 < 0 || s2 >= a2.mipLevelCount) return console.error(`Invalid mip level for textureDimensions. Line ${e3.line}`), null;
         const t3 = a2.getMipLevelSize(s2), n3 = a2.dimension;
-        return "1d" === n3 ? new Be(t3[0], this.getTypeInfo("u32")) : "3d" === n3 ? new Me(t3, this.getTypeInfo("vec3u")) : "2d" === n3 ? new Me(t3.slice(0, 2), this.getTypeInfo("vec2u")) : (console.error(`Invalid texture dimension ${n3} not found. Line ${e2.line}`), null);
+        return "1d" === n3 ? new Be(t3[0], this.getTypeInfo("u32")) : "3d" === n3 ? new Me(t3, this.getTypeInfo("vec3u")) : "2d" === n3 ? new Me(t3.slice(0, 2), this.getTypeInfo("vec2u")) : (console.error(`Invalid texture dimension ${n3} not found. Line ${e3.line}`), null);
       }
-      return console.error(`Texture ${r2} not found. Line ${e2.line}`), null;
+      return console.error(`Texture ${r2} not found. Line ${e3.line}`), null;
     }
-    return console.error(`Invalid texture argument for textureDimensions. Line ${e2.line}`), null;
+    return console.error(`Invalid texture argument for textureDimensions. Line ${e3.line}`), null;
   }
-  TextureGather(e2, t2) {
+  TextureGather(e3, t2) {
     return console.error("TODO: textureGather"), null;
   }
-  TextureGatherCompare(e2, t2) {
+  TextureGatherCompare(e3, t2) {
     return console.error("TODO: textureGatherCompare"), null;
   }
-  TextureLoad(e2, t2) {
-    const n2 = e2.args[0], s2 = this.exec.evalExpression(e2.args[1], t2), r2 = e2.args.length > 2 ? this.exec.evalExpression(e2.args[2], t2).value : 0;
-    if (!(s2 instanceof Me) || 2 !== s2.data.length) return console.error(`Invalid UV argument for textureLoad. Line ${e2.line}`), null;
+  TextureLoad(e3, t2) {
+    const n2 = e3.args[0], s2 = this.exec.evalExpression(e3.args[1], t2), r2 = e3.args.length > 2 ? this.exec.evalExpression(e3.args[2], t2).value : 0;
+    if (!(s2 instanceof Me) || 2 !== s2.data.length) return console.error(`Invalid UV argument for textureLoad. Line ${e3.line}`), null;
     if (n2 instanceof ge) {
       const a2 = n2.name, i2 = t2.getVariableValue(a2);
       if (i2 instanceof We) {
         const t3 = Math.floor(s2.data[0]), n3 = Math.floor(s2.data[1]);
-        if (t3 < 0 || t3 >= i2.width || n3 < 0 || n3 >= i2.height) return console.error(`Texture ${a2} out of bounds. Line ${e2.line}`), null;
+        if (t3 < 0 || t3 >= i2.width || n3 < 0 || n3 >= i2.height) return console.error(`Texture ${a2} out of bounds. Line ${e3.line}`), null;
         const o2 = i2.getPixel(t3, n3, 0, r2);
-        return null === o2 ? (console.error(`Invalid texture format for textureLoad. Line ${e2.line}`), null) : new Me(o2, this.getTypeInfo("vec4f"));
+        return null === o2 ? (console.error(`Invalid texture format for textureLoad. Line ${e3.line}`), null) : new Me(o2, this.getTypeInfo("vec4f"));
       }
-      return console.error(`Texture ${a2} not found. Line ${e2.line}`), null;
+      return console.error(`Texture ${a2} not found. Line ${e3.line}`), null;
     }
-    return console.error(`Invalid texture argument for textureLoad. Line ${e2.line}`), null;
+    return console.error(`Invalid texture argument for textureLoad. Line ${e3.line}`), null;
   }
-  TextureNumLayers(e2, t2) {
-    const n2 = e2.args[0];
+  TextureNumLayers(e3, t2) {
+    const n2 = e3.args[0];
     if (n2 instanceof ge) {
       const s2 = n2.name, r2 = t2.getVariableValue(s2);
-      return r2 instanceof We ? new Be(r2.depthOrArrayLayers, this.getTypeInfo("u32")) : (console.error(`Texture ${s2} not found. Line ${e2.line}`), null);
+      return r2 instanceof We ? new Be(r2.depthOrArrayLayers, this.getTypeInfo("u32")) : (console.error(`Texture ${s2} not found. Line ${e3.line}`), null);
     }
-    return console.error(`Invalid texture argument for textureNumLayers. Line ${e2.line}`), null;
+    return console.error(`Invalid texture argument for textureNumLayers. Line ${e3.line}`), null;
   }
-  TextureNumLevels(e2, t2) {
-    const n2 = e2.args[0];
+  TextureNumLevels(e3, t2) {
+    const n2 = e3.args[0];
     if (n2 instanceof ge) {
       const s2 = n2.name, r2 = t2.getVariableValue(s2);
-      return r2 instanceof We ? new Be(r2.mipLevelCount, this.getTypeInfo("u32")) : (console.error(`Texture ${s2} not found. Line ${e2.line}`), null);
+      return r2 instanceof We ? new Be(r2.mipLevelCount, this.getTypeInfo("u32")) : (console.error(`Texture ${s2} not found. Line ${e3.line}`), null);
     }
-    return console.error(`Invalid texture argument for textureNumLevels. Line ${e2.line}`), null;
+    return console.error(`Invalid texture argument for textureNumLevels. Line ${e3.line}`), null;
   }
-  TextureNumSamples(e2, t2) {
-    const n2 = e2.args[0];
+  TextureNumSamples(e3, t2) {
+    const n2 = e3.args[0];
     if (n2 instanceof ge) {
       const s2 = n2.name, r2 = t2.getVariableValue(s2);
-      return r2 instanceof We ? new Be(r2.sampleCount, this.getTypeInfo("u32")) : (console.error(`Texture ${s2} not found. Line ${e2.line}`), null);
+      return r2 instanceof We ? new Be(r2.sampleCount, this.getTypeInfo("u32")) : (console.error(`Texture ${s2} not found. Line ${e3.line}`), null);
     }
-    return console.error(`Invalid texture argument for textureNumSamples. Line ${e2.line}`), null;
+    return console.error(`Invalid texture argument for textureNumSamples. Line ${e3.line}`), null;
   }
-  TextureSample(e2, t2) {
+  TextureSample(e3, t2) {
     return console.error("TODO: textureSample"), null;
   }
-  TextureSampleBias(e2, t2) {
+  TextureSampleBias(e3, t2) {
     return console.error("TODO: textureSampleBias"), null;
   }
-  TextureSampleCompare(e2, t2) {
+  TextureSampleCompare(e3, t2) {
     return console.error("TODO: textureSampleCompare"), null;
   }
-  TextureSampleCompareLevel(e2, t2) {
+  TextureSampleCompareLevel(e3, t2) {
     return console.error("TODO: textureSampleCompareLevel"), null;
   }
-  TextureSampleGrad(e2, t2) {
+  TextureSampleGrad(e3, t2) {
     return console.error("TODO: textureSampleGrad"), null;
   }
-  TextureSampleLevel(e2, t2) {
+  TextureSampleLevel(e3, t2) {
     return console.error("TODO: textureSampleLevel"), null;
   }
-  TextureSampleBaseClampToEdge(e2, t2) {
+  TextureSampleBaseClampToEdge(e3, t2) {
     return console.error("TODO: textureSampleBaseClampToEdge"), null;
   }
-  TextureStore(e2, t2) {
-    const n2 = e2.args[0], s2 = this.exec.evalExpression(e2.args[1], t2), r2 = 4 === e2.args.length ? this.exec.evalExpression(e2.args[2], t2).value : 0, a2 = 4 === e2.args.length ? this.exec.evalExpression(e2.args[3], t2).data : this.exec.evalExpression(e2.args[2], t2).data;
-    if (4 !== a2.length) return console.error(`Invalid value argument for textureStore. Line ${e2.line}`), null;
-    if (!(s2 instanceof Me) || 2 !== s2.data.length) return console.error(`Invalid UV argument for textureStore. Line ${e2.line}`), null;
+  TextureStore(e3, t2) {
+    const n2 = e3.args[0], s2 = this.exec.evalExpression(e3.args[1], t2), r2 = 4 === e3.args.length ? this.exec.evalExpression(e3.args[2], t2).value : 0, a2 = 4 === e3.args.length ? this.exec.evalExpression(e3.args[3], t2).data : this.exec.evalExpression(e3.args[2], t2).data;
+    if (4 !== a2.length) return console.error(`Invalid value argument for textureStore. Line ${e3.line}`), null;
+    if (!(s2 instanceof Me) || 2 !== s2.data.length) return console.error(`Invalid UV argument for textureStore. Line ${e3.line}`), null;
     if (n2 instanceof ge) {
       const i2 = n2.name, o2 = t2.getVariableValue(i2);
       if (o2 instanceof We) {
         const t3 = o2.getMipLevelSize(0), n3 = Math.floor(s2.data[0]), c2 = Math.floor(s2.data[1]);
-        return n3 < 0 || n3 >= t3[0] || c2 < 0 || c2 >= t3[1] ? (console.error(`Texture ${i2} out of bounds. Line ${e2.line}`), null) : (o2.setPixel(n3, c2, 0, r2, Array.from(a2)), null);
+        return n3 < 0 || n3 >= t3[0] || c2 < 0 || c2 >= t3[1] ? (console.error(`Texture ${i2} out of bounds. Line ${e3.line}`), null) : (o2.setPixel(n3, c2, 0, r2, Array.from(a2)), null);
       }
-      return console.error(`Texture ${i2} not found. Line ${e2.line}`), null;
+      return console.error(`Texture ${i2} not found. Line ${e3.line}`), null;
     }
-    return console.error(`Invalid texture argument for textureStore. Line ${e2.line}`), null;
+    return console.error(`Invalid texture argument for textureStore. Line ${e3.line}`), null;
   }
-  AtomicLoad(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicLoad(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2);
     return t2.getVariable(s2).value.getSubData(this.exec, n2.postfix, t2);
   }
-  AtomicStore(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicStore(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2), r2 = t2.getVariable(s2);
-    let a2 = e2.args[1];
+    let a2 = e3.args[1];
     const i2 = this.exec.evalExpression(a2, t2), o2 = r2.value.getSubData(this.exec, n2.postfix, t2);
     return o2 instanceof Be && i2 instanceof Be && (o2.value = i2.value), r2.value instanceof Pe && r2.value.setDataValue(this.exec, o2, n2.postfix, t2), null;
   }
-  AtomicAdd(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicAdd(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2), r2 = t2.getVariable(s2);
-    let a2 = e2.args[1];
+    let a2 = e3.args[1];
     const i2 = this.exec.evalExpression(a2, t2), o2 = r2.value.getSubData(this.exec, n2.postfix, t2), c2 = new Be(o2.value, o2.typeInfo);
     return o2 instanceof Be && i2 instanceof Be && (o2.value += i2.value), r2.value instanceof Pe && r2.value.setDataValue(this.exec, o2, n2.postfix, t2), c2;
   }
-  AtomicSub(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicSub(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2), r2 = t2.getVariable(s2);
-    let a2 = e2.args[1];
+    let a2 = e3.args[1];
     const i2 = this.exec.evalExpression(a2, t2), o2 = r2.value.getSubData(this.exec, n2.postfix, t2), c2 = new Be(o2.value, o2.typeInfo);
     return o2 instanceof Be && i2 instanceof Be && (o2.value -= i2.value), r2.value instanceof Pe && r2.value.setDataValue(this.exec, o2, n2.postfix, t2), c2;
   }
-  AtomicMax(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicMax(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2), r2 = t2.getVariable(s2);
-    let a2 = e2.args[1];
+    let a2 = e3.args[1];
     const i2 = this.exec.evalExpression(a2, t2), o2 = r2.value.getSubData(this.exec, n2.postfix, t2), c2 = new Be(o2.value, o2.typeInfo);
     return o2 instanceof Be && i2 instanceof Be && (o2.value = Math.max(o2.value, i2.value)), r2.value instanceof Pe && r2.value.setDataValue(this.exec, o2, n2.postfix, t2), c2;
   }
-  AtomicMin(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicMin(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2), r2 = t2.getVariable(s2);
-    let a2 = e2.args[1];
+    let a2 = e3.args[1];
     const i2 = this.exec.evalExpression(a2, t2), o2 = r2.value.getSubData(this.exec, n2.postfix, t2), c2 = new Be(o2.value, o2.typeInfo);
     return o2 instanceof Be && i2 instanceof Be && (o2.value = Math.min(o2.value, i2.value)), r2.value instanceof Pe && r2.value.setDataValue(this.exec, o2, n2.postfix, t2), c2;
   }
-  AtomicAnd(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicAnd(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2), r2 = t2.getVariable(s2);
-    let a2 = e2.args[1];
+    let a2 = e3.args[1];
     const i2 = this.exec.evalExpression(a2, t2), o2 = r2.value.getSubData(this.exec, n2.postfix, t2), c2 = new Be(o2.value, o2.typeInfo);
     return o2 instanceof Be && i2 instanceof Be && (o2.value = o2.value & i2.value), r2.value instanceof Pe && r2.value.setDataValue(this.exec, o2, n2.postfix, t2), c2;
   }
-  AtomicOr(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicOr(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2), r2 = t2.getVariable(s2);
-    let a2 = e2.args[1];
+    let a2 = e3.args[1];
     const i2 = this.exec.evalExpression(a2, t2), o2 = r2.value.getSubData(this.exec, n2.postfix, t2), c2 = new Be(o2.value, o2.typeInfo);
     return o2 instanceof Be && i2 instanceof Be && (o2.value = o2.value | i2.value), r2.value instanceof Pe && r2.value.setDataValue(this.exec, o2, n2.postfix, t2), c2;
   }
-  AtomicXor(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicXor(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2), r2 = t2.getVariable(s2);
-    let a2 = e2.args[1];
+    let a2 = e3.args[1];
     const i2 = this.exec.evalExpression(a2, t2), o2 = r2.value.getSubData(this.exec, n2.postfix, t2), c2 = new Be(o2.value, o2.typeInfo);
     return o2 instanceof Be && i2 instanceof Be && (o2.value = o2.value ^ i2.value), r2.value instanceof Pe && r2.value.setDataValue(this.exec, o2, n2.postfix, t2), c2;
   }
-  AtomicExchange(e2, t2) {
-    let n2 = e2.args[0];
+  AtomicExchange(e3, t2) {
+    let n2 = e3.args[0];
     n2 instanceof ke && (n2 = n2.right);
     const s2 = this.exec.getVariableName(n2, t2), r2 = t2.getVariable(s2);
-    let a2 = e2.args[1];
+    let a2 = e3.args[1];
     const i2 = this.exec.evalExpression(a2, t2), o2 = r2.value.getSubData(this.exec, n2.postfix, t2), c2 = new Be(o2.value, o2.typeInfo);
     return o2 instanceof Be && i2 instanceof Be && (o2.value = i2.value), r2.value instanceof Pe && r2.value.setDataValue(this.exec, o2, n2.postfix, t2), c2;
   }
-  AtomicCompareExchangeWeak(e2, t2) {
+  AtomicCompareExchangeWeak(e3, t2) {
     return console.error("TODO: atomicCompareExchangeWeak"), null;
   }
-  Pack4x8snorm(e2, t2) {
+  Pack4x8snorm(e3, t2) {
     return console.error("TODO: pack4x8snorm"), null;
   }
-  Pack4x8unorm(e2, t2) {
+  Pack4x8unorm(e3, t2) {
     return console.error("TODO: pack4x8unorm"), null;
   }
-  Pack4xI8(e2, t2) {
+  Pack4xI8(e3, t2) {
     return console.error("TODO: pack4xI8"), null;
   }
-  Pack4xU8(e2, t2) {
+  Pack4xU8(e3, t2) {
     return console.error("TODO: pack4xU8"), null;
   }
-  Pack4x8Clamp(e2, t2) {
+  Pack4x8Clamp(e3, t2) {
     return console.error("TODO: pack4x8Clamp"), null;
   }
-  Pack4xU8Clamp(e2, t2) {
+  Pack4xU8Clamp(e3, t2) {
     return console.error("TODO: pack4xU8Clamp"), null;
   }
-  Pack2x16snorm(e2, t2) {
+  Pack2x16snorm(e3, t2) {
     return console.error("TODO: pack2x16snorm"), null;
   }
-  Pack2x16unorm(e2, t2) {
+  Pack2x16unorm(e3, t2) {
     return console.error("TODO: pack2x16unorm"), null;
   }
-  Pack2x16float(e2, t2) {
+  Pack2x16float(e3, t2) {
     return console.error("TODO: pack2x16float"), null;
   }
-  Unpack4x8snorm(e2, t2) {
+  Unpack4x8snorm(e3, t2) {
     return console.error("TODO: unpack4x8snorm"), null;
   }
-  Unpack4x8unorm(e2, t2) {
+  Unpack4x8unorm(e3, t2) {
     return console.error("TODO: unpack4x8unorm"), null;
   }
-  Unpack4xI8(e2, t2) {
+  Unpack4xI8(e3, t2) {
     return console.error("TODO: unpack4xI8"), null;
   }
-  Unpack4xU8(e2, t2) {
+  Unpack4xU8(e3, t2) {
     return console.error("TODO: unpack4xU8"), null;
   }
-  Unpack2x16snorm(e2, t2) {
+  Unpack2x16snorm(e3, t2) {
     return console.error("TODO: unpack2x16snorm"), null;
   }
-  Unpack2x16unorm(e2, t2) {
+  Unpack2x16unorm(e3, t2) {
     return console.error("TODO: unpack2x16unorm"), null;
   }
-  Unpack2x16float(e2, t2) {
+  Unpack2x16float(e3, t2) {
     return console.error("TODO: unpack2x16float"), null;
   }
-  StorageBarrier(e2, t2) {
+  StorageBarrier(e3, t2) {
     return null;
   }
-  TextureBarrier(e2, t2) {
+  TextureBarrier(e3, t2) {
     return null;
   }
-  WorkgroupBarrier(e2, t2) {
+  WorkgroupBarrier(e3, t2) {
     return null;
   }
-  WorkgroupUniformLoad(e2, t2) {
+  WorkgroupUniformLoad(e3, t2) {
     return null;
   }
-  SubgroupAdd(e2, t2) {
+  SubgroupAdd(e3, t2) {
     return console.error("TODO: subgroupAdd"), null;
   }
-  SubgroupExclusiveAdd(e2, t2) {
+  SubgroupExclusiveAdd(e3, t2) {
     return console.error("TODO: subgroupExclusiveAdd"), null;
   }
-  SubgroupInclusiveAdd(e2, t2) {
+  SubgroupInclusiveAdd(e3, t2) {
     return console.error("TODO: subgroupInclusiveAdd"), null;
   }
-  SubgroupAll(e2, t2) {
+  SubgroupAll(e3, t2) {
     return console.error("TODO: subgroupAll"), null;
   }
-  SubgroupAnd(e2, t2) {
+  SubgroupAnd(e3, t2) {
     return console.error("TODO: subgroupAnd"), null;
   }
-  SubgroupAny(e2, t2) {
+  SubgroupAny(e3, t2) {
     return console.error("TODO: subgroupAny"), null;
   }
-  SubgroupBallot(e2, t2) {
+  SubgroupBallot(e3, t2) {
     return console.error("TODO: subgroupBallot"), null;
   }
-  SubgroupBroadcast(e2, t2) {
+  SubgroupBroadcast(e3, t2) {
     return console.error("TODO: subgroupBroadcast"), null;
   }
-  SubgroupBroadcastFirst(e2, t2) {
+  SubgroupBroadcastFirst(e3, t2) {
     return console.error("TODO: subgroupBroadcastFirst"), null;
   }
-  SubgroupElect(e2, t2) {
+  SubgroupElect(e3, t2) {
     return console.error("TODO: subgroupElect"), null;
   }
-  SubgroupMax(e2, t2) {
+  SubgroupMax(e3, t2) {
     return console.error("TODO: subgroupMax"), null;
   }
-  SubgroupMin(e2, t2) {
+  SubgroupMin(e3, t2) {
     return console.error("TODO: subgroupMin"), null;
   }
-  SubgroupMul(e2, t2) {
+  SubgroupMul(e3, t2) {
     return console.error("TODO: subgroupMul"), null;
   }
-  SubgroupExclusiveMul(e2, t2) {
+  SubgroupExclusiveMul(e3, t2) {
     return console.error("TODO: subgroupExclusiveMul"), null;
   }
-  SubgroupInclusiveMul(e2, t2) {
+  SubgroupInclusiveMul(e3, t2) {
     return console.error("TODO: subgroupInclusiveMul"), null;
   }
-  SubgroupOr(e2, t2) {
+  SubgroupOr(e3, t2) {
     return console.error("TODO: subgroupOr"), null;
   }
-  SubgroupShuffle(e2, t2) {
+  SubgroupShuffle(e3, t2) {
     return console.error("TODO: subgroupShuffle"), null;
   }
-  SubgroupShuffleDown(e2, t2) {
+  SubgroupShuffleDown(e3, t2) {
     return console.error("TODO: subgroupShuffleDown"), null;
   }
-  SubgroupShuffleUp(e2, t2) {
+  SubgroupShuffleUp(e3, t2) {
     return console.error("TODO: subgroupShuffleUp"), null;
   }
-  SubgroupShuffleXor(e2, t2) {
+  SubgroupShuffleXor(e3, t2) {
     return console.error("TODO: subgroupShuffleXor"), null;
   }
-  SubgroupXor(e2, t2) {
+  SubgroupXor(e3, t2) {
     return console.error("TODO: subgroupXor"), null;
   }
-  QuadBroadcast(e2, t2) {
+  QuadBroadcast(e3, t2) {
     return console.error("TODO: quadBroadcast"), null;
   }
-  QuadSwapDiagonal(e2, t2) {
+  QuadSwapDiagonal(e3, t2) {
     return console.error("TODO: quadSwapDiagonal"), null;
   }
-  QuadSwapX(e2, t2) {
+  QuadSwapX(e3, t2) {
     return console.error("TODO: quadSwapX"), null;
   }
-  QuadSwapY(e2, t2) {
+  QuadSwapY(e3, t2) {
     return console.error("TODO: quadSwapY"), null;
   }
 };
 var ft = { vec2: 2, vec2f: 2, vec2i: 2, vec2u: 2, vec2b: 2, vec2h: 2, vec3: 3, vec3f: 3, vec3i: 3, vec3u: 3, vec3b: 3, vec3h: 3, vec4: 4, vec4f: 4, vec4i: 4, vec4u: 4, vec4b: 4, vec4h: 4 };
 var pt = { mat2x2: [2, 2, 4], mat2x2f: [2, 2, 4], mat2x2h: [2, 2, 4], mat2x3: [2, 3, 6], mat2x3f: [2, 3, 6], mat2x3h: [2, 3, 6], mat2x4: [2, 4, 8], mat2x4f: [2, 4, 8], mat2x4h: [2, 4, 8], mat3x2: [3, 2, 6], mat3x2f: [3, 2, 6], mat3x2h: [3, 2, 6], mat3x3: [3, 3, 9], mat3x3f: [3, 3, 9], mat3x3h: [3, 3, 9], mat3x4: [3, 4, 12], mat3x4f: [3, 4, 12], mat3x4h: [3, 4, 12], mat4x2: [4, 2, 8], mat4x2f: [4, 2, 8], mat4x2h: [4, 2, 8], mat4x3: [4, 3, 12], mat4x3f: [4, 3, 12], mat4x3h: [4, 3, 12], mat4x4: [4, 4, 16], mat4x4f: [4, 4, 16], mat4x4h: [4, 4, 16] };
 var dt = class _dt extends ut {
-  constructor(e2, t2) {
+  constructor(e3, t2) {
     var n2;
-    super(), this.ast = null != e2 ? e2 : [], this.reflection = new at(), this.reflection.updateAST(this.ast), this.context = null !== (n2 = null == t2 ? void 0 : t2.clone()) && void 0 !== n2 ? n2 : new lt(), this.builtins = new ht(this), this.typeInfo = { bool: this.getTypeInfo(ae.bool), i32: this.getTypeInfo(ae.i32), u32: this.getTypeInfo(ae.u32), f32: this.getTypeInfo(ae.f32), f16: this.getTypeInfo(ae.f16), vec2f: this.getTypeInfo(ce.vec2f), vec2u: this.getTypeInfo(ce.vec2u), vec2i: this.getTypeInfo(ce.vec2i), vec2h: this.getTypeInfo(ce.vec2h), vec3f: this.getTypeInfo(ce.vec3f), vec3u: this.getTypeInfo(ce.vec3u), vec3i: this.getTypeInfo(ce.vec3i), vec3h: this.getTypeInfo(ce.vec3h), vec4f: this.getTypeInfo(ce.vec4f), vec4u: this.getTypeInfo(ce.vec4u), vec4i: this.getTypeInfo(ce.vec4i), vec4h: this.getTypeInfo(ce.vec4h), mat2x2f: this.getTypeInfo(ce.mat2x2f), mat2x3f: this.getTypeInfo(ce.mat2x3f), mat2x4f: this.getTypeInfo(ce.mat2x4f), mat3x2f: this.getTypeInfo(ce.mat3x2f), mat3x3f: this.getTypeInfo(ce.mat3x3f), mat3x4f: this.getTypeInfo(ce.mat3x4f), mat4x2f: this.getTypeInfo(ce.mat4x2f), mat4x3f: this.getTypeInfo(ce.mat4x3f), mat4x4f: this.getTypeInfo(ce.mat4x4f) };
+    super(), this.ast = null != e3 ? e3 : [], this.reflection = new at(), this.reflection.updateAST(this.ast), this.context = null !== (n2 = null == t2 ? void 0 : t2.clone()) && void 0 !== n2 ? n2 : new lt(), this.builtins = new ht(this), this.typeInfo = { bool: this.getTypeInfo(ae.bool), i32: this.getTypeInfo(ae.i32), u32: this.getTypeInfo(ae.u32), f32: this.getTypeInfo(ae.f32), f16: this.getTypeInfo(ae.f16), vec2f: this.getTypeInfo(ce.vec2f), vec2u: this.getTypeInfo(ce.vec2u), vec2i: this.getTypeInfo(ce.vec2i), vec2h: this.getTypeInfo(ce.vec2h), vec3f: this.getTypeInfo(ce.vec3f), vec3u: this.getTypeInfo(ce.vec3u), vec3i: this.getTypeInfo(ce.vec3i), vec3h: this.getTypeInfo(ce.vec3h), vec4f: this.getTypeInfo(ce.vec4f), vec4u: this.getTypeInfo(ce.vec4u), vec4i: this.getTypeInfo(ce.vec4i), vec4h: this.getTypeInfo(ce.vec4h), mat2x2f: this.getTypeInfo(ce.mat2x2f), mat2x3f: this.getTypeInfo(ce.mat2x3f), mat2x4f: this.getTypeInfo(ce.mat2x4f), mat3x2f: this.getTypeInfo(ce.mat3x2f), mat3x3f: this.getTypeInfo(ce.mat3x3f), mat3x4f: this.getTypeInfo(ce.mat3x4f), mat4x2f: this.getTypeInfo(ce.mat4x2f), mat4x3f: this.getTypeInfo(ce.mat4x3f), mat4x4f: this.getTypeInfo(ce.mat4x4f) };
   }
-  getVariableValue(e2) {
+  getVariableValue(e3) {
     var t2, n2;
-    const r2 = null !== (n2 = null === (t2 = this.context.getVariable(e2)) || void 0 === t2 ? void 0 : t2.value) && void 0 !== n2 ? n2 : null;
+    const r2 = null !== (n2 = null === (t2 = this.context.getVariable(e3)) || void 0 === t2 ? void 0 : t2.value) && void 0 !== n2 ? n2 : null;
     if (null === r2) return null;
     if (r2 instanceof Be) return r2.value;
     if (r2 instanceof Me) return Array.from(r2.data);
@@ -22180,14 +22180,14 @@ var dt = class _dt extends ut {
     }
     return console.error(`Unsupported return variable type ${r2.typeInfo.name}`), null;
   }
-  execute(e2) {
-    (e2 = null != e2 ? e2 : {}).constants && this._setOverrides(e2.constants, this.context), this._execStatements(this.ast, this.context);
+  execute(e3) {
+    (e3 = null != e3 ? e3 : {}).constants && this._setOverrides(e3.constants, this.context), this._execStatements(this.ast, this.context);
   }
-  dispatchWorkgroups(e2, t2, n2, s2) {
+  dispatchWorkgroups(e3, t2, n2, s2) {
     const r2 = this.context.clone();
     (s2 = null != s2 ? s2 : {}).constants && this._setOverrides(s2.constants, r2), this._execStatements(this.ast, r2);
-    const a2 = r2.getFunction(e2);
-    if (!a2) return void console.error(`Function ${e2} not found`);
+    const a2 = r2.getFunction(e3);
+    if (!a2) return void console.error(`Function ${e3} not found`);
     if ("number" == typeof t2) t2 = [t2, 1, 1];
     else {
       if (0 === t2.length) return void console.error("Invalid dispatch count");
@@ -22195,106 +22195,106 @@ var dt = class _dt extends ut {
     }
     const i2 = t2[0], o2 = t2[1], c2 = t2[2], l2 = this.getTypeInfo("vec3u");
     r2.setVariable("@num_workgroups", new Me(t2, l2));
-    const u2 = this.reflection.getFunctionInfo(e2);
-    null === u2 && console.error(`Function ${e2} not found in reflection data`);
-    for (const e3 in n2) for (const t3 in n2[e3]) {
-      const s3 = n2[e3][t3];
+    const u2 = this.reflection.getFunctionInfo(e3);
+    null === u2 && console.error(`Function ${e3} not found in reflection data`);
+    for (const e4 in n2) for (const t3 in n2[e4]) {
+      const s3 = n2[e4][t3];
       r2.variables.forEach((n3) => {
         var r3;
         const a3 = n3.node;
         if (null == a3 ? void 0 : a3.attributes) {
           let i3 = null, o3 = null;
-          for (const e4 of a3.attributes) "binding" === e4.name ? i3 = e4.value : "group" === e4.name && (o3 = e4.value);
-          if (t3 == i3 && e3 == o3) {
+          for (const e5 of a3.attributes) "binding" === e5.name ? i3 = e5.value : "group" === e5.name && (o3 = e5.value);
+          if (t3 == i3 && e4 == o3) {
             let i4 = false;
-            for (const s4 of u2.resources) if (s4.name === n3.name && s4.group === parseInt(e3) && s4.binding === parseInt(t3)) {
+            for (const s4 of u2.resources) if (s4.name === n3.name && s4.group === parseInt(e4) && s4.binding === parseInt(t3)) {
               i4 = true;
               break;
             }
             if (i4) if (void 0 !== s3.texture && void 0 !== s3.descriptor) {
-              const e4 = new We(s3.texture, this.getTypeInfo(a3.type), s3.descriptor, null !== (r3 = s3.texture.view) && void 0 !== r3 ? r3 : null);
-              n3.value = e4;
+              const e5 = new We(s3.texture, this.getTypeInfo(a3.type), s3.descriptor, null !== (r3 = s3.texture.view) && void 0 !== r3 ? r3 : null);
+              n3.value = e5;
             } else void 0 !== s3.uniform ? n3.value = new Pe(s3.uniform, this.getTypeInfo(a3.type)) : n3.value = new Pe(s3, this.getTypeInfo(a3.type));
           }
         }
       });
     }
-    for (let e3 = 0; e3 < c2; ++e3) for (let t3 = 0; t3 < o2; ++t3) for (let n3 = 0; n3 < i2; ++n3) r2.setVariable("@workgroup_id", new Me([n3, t3, e3], this.getTypeInfo("vec3u"))), this._dispatchWorkgroup(a2, [n3, t3, e3], r2);
+    for (let e4 = 0; e4 < c2; ++e4) for (let t3 = 0; t3 < o2; ++t3) for (let n3 = 0; n3 < i2; ++n3) r2.setVariable("@workgroup_id", new Me([n3, t3, e4], this.getTypeInfo("vec3u"))), this._dispatchWorkgroup(a2, [n3, t3, e4], r2);
   }
-  execStatement(e2, t2) {
-    if (e2 instanceof Y) return this.evalExpression(e2.value, t2);
-    if (e2 instanceof se) {
-      if (e2.condition) {
-        const n2 = this.evalExpression(e2.condition, t2);
+  execStatement(e3, t2) {
+    if (e3 instanceof Y) return this.evalExpression(e3.value, t2);
+    if (e3 instanceof se) {
+      if (e3.condition) {
+        const n2 = this.evalExpression(e3.condition, t2);
         if (!(n2 instanceof Be)) throw new Error("Invalid break-if condition");
         if (!n2.value) return null;
       }
       return _dt._breakObj;
     }
-    if (e2 instanceof re) return _dt._continueObj;
-    if (e2 instanceof U) this._let(e2, t2);
-    else if (e2 instanceof F) this._var(e2, t2);
-    else if (e2 instanceof P) this._const(e2, t2);
-    else if (e2 instanceof D) this._function(e2, t2);
+    if (e3 instanceof re) return _dt._continueObj;
+    if (e3 instanceof U) this._let(e3, t2);
+    else if (e3 instanceof F) this._var(e3, t2);
+    else if (e3 instanceof P) this._const(e3, t2);
+    else if (e3 instanceof D) this._function(e3, t2);
     else {
-      if (e2 instanceof Q) return this._if(e2, t2);
-      if (e2 instanceof Z) return this._switch(e2, t2);
-      if (e2 instanceof B) return this._for(e2, t2);
-      if (e2 instanceof V) return this._while(e2, t2);
-      if (e2 instanceof j) return this._loop(e2, t2);
-      if (e2 instanceof O) {
+      if (e3 instanceof Q) return this._if(e3, t2);
+      if (e3 instanceof Z) return this._switch(e3, t2);
+      if (e3 instanceof B) return this._for(e3, t2);
+      if (e3 instanceof V) return this._while(e3, t2);
+      if (e3 instanceof j) return this._loop(e3, t2);
+      if (e3 instanceof O) {
         const n2 = t2.clone();
-        return n2.currentFunctionName = t2.currentFunctionName, this._execStatements(e2.body, n2);
+        return n2.currentFunctionName = t2.currentFunctionName, this._execStatements(e3.body, n2);
       }
-      if (e2 instanceof G) this._assign(e2, t2);
-      else if (e2 instanceof R) this._increment(e2, t2);
+      if (e3 instanceof G) this._assign(e3, t2);
+      else if (e3 instanceof R) this._increment(e3, t2);
       else {
-        if (e2 instanceof oe) return null;
-        if (e2 instanceof M) {
-          const n2 = e2.name;
+        if (e3 instanceof oe) return null;
+        if (e3 instanceof M) {
+          const n2 = e3.name;
           null === t2.getVariable(n2) && t2.setVariable(n2, new Be(0, this.getTypeInfo("u32")));
-        } else if (e2 instanceof X) this._call(e2, t2);
+        } else if (e3 instanceof X) this._call(e3, t2);
         else {
-          if (e2 instanceof ee) return null;
-          if (e2 instanceof te) return null;
-          console.error("Invalid statement type.", e2, `Line ${e2.line}`);
+          if (e3 instanceof ee) return null;
+          if (e3 instanceof te) return null;
+          console.error("Invalid statement type.", e3, `Line ${e3.line}`);
         }
       }
     }
     return null;
   }
-  evalExpression(e2, t2) {
-    return e2 instanceof Ie ? this._evalBinaryOp(e2, t2) : e2 instanceof xe ? this._evalLiteral(e2, t2) : e2 instanceof ge ? this._evalVariable(e2, t2) : e2 instanceof me ? this._evalCall(e2, t2) : e2 instanceof de ? this._evalCreate(e2, t2) : e2 instanceof _e ? this._evalConst(e2, t2) : e2 instanceof ye ? this._evalBitcast(e2, t2) : e2 instanceof ke ? this._evalUnaryOp(e2, t2) : (console.error("Invalid expression type", e2, `Line ${e2.line}`), null);
+  evalExpression(e3, t2) {
+    return e3 instanceof Ie ? this._evalBinaryOp(e3, t2) : e3 instanceof xe ? this._evalLiteral(e3, t2) : e3 instanceof ge ? this._evalVariable(e3, t2) : e3 instanceof me ? this._evalCall(e3, t2) : e3 instanceof de ? this._evalCreate(e3, t2) : e3 instanceof _e ? this._evalConst(e3, t2) : e3 instanceof ye ? this._evalBitcast(e3, t2) : e3 instanceof ke ? this._evalUnaryOp(e3, t2) : (console.error("Invalid expression type", e3, `Line ${e3.line}`), null);
   }
-  getTypeInfo(e2) {
+  getTypeInfo(e3) {
     var t2;
-    if (e2 instanceof ae) {
-      const t3 = this.reflection.getTypeInfo(e2);
+    if (e3 instanceof ae) {
+      const t3 = this.reflection.getTypeInfo(e3);
       if (null !== t3) return t3;
     }
-    let n2 = null !== (t2 = this.typeInfo[e2]) && void 0 !== t2 ? t2 : null;
-    return null !== n2 || (n2 = this.reflection.getTypeInfoByName(e2)), n2;
+    let n2 = null !== (t2 = this.typeInfo[e3]) && void 0 !== t2 ? t2 : null;
+    return null !== n2 || (n2 = this.reflection.getTypeInfoByName(e3)), n2;
   }
-  _setOverrides(e2, t2) {
-    for (const n2 in e2) {
-      const s2 = e2[n2], r2 = this.reflection.getOverrideInfo(n2);
+  _setOverrides(e3, t2) {
+    for (const n2 in e3) {
+      const s2 = e3[n2], r2 = this.reflection.getOverrideInfo(n2);
       null !== r2 ? (null === r2.type && (r2.type = this.getTypeInfo("u32")), "u32" === r2.type.name || "i32" === r2.type.name || "f32" === r2.type.name || "f16" === r2.type.name ? t2.setVariable(n2, new Be(s2, r2.type)) : "bool" === r2.type.name ? t2.setVariable(n2, new Be(s2 ? 1 : 0, r2.type)) : "vec2" === r2.type.name || "vec3" === r2.type.name || "vec4" === r2.type.name || "vec2f" === r2.type.name || "vec3f" === r2.type.name || "vec4f" === r2.type.name || "vec2i" === r2.type.name || "vec3i" === r2.type.name || "vec4i" === r2.type.name || "vec2u" === r2.type.name || "vec3u" === r2.type.name || "vec4u" === r2.type.name || "vec2h" === r2.type.name || "vec3h" === r2.type.name || "vec4h" === r2.type.name ? t2.setVariable(n2, new Me(s2, r2.type)) : console.error(`Invalid constant type for ${n2}`)) : console.error(`Override ${n2} does not exist in the shader.`);
     }
   }
-  _dispatchWorkgroup(e2, t2, n2) {
+  _dispatchWorkgroup(e3, t2, n2) {
     const s2 = [1, 1, 1];
-    for (const t3 of e2.node.attributes) if ("workgroup_size" === t3.name) {
+    for (const t3 of e3.node.attributes) if ("workgroup_size" === t3.name) {
       if (t3.value.length > 0) {
-        const e3 = n2.getVariableValue(t3.value[0]);
-        s2[0] = e3 instanceof Be ? e3.value : parseInt(t3.value[0]);
+        const e4 = n2.getVariableValue(t3.value[0]);
+        s2[0] = e4 instanceof Be ? e4.value : parseInt(t3.value[0]);
       }
       if (t3.value.length > 1) {
-        const e3 = n2.getVariableValue(t3.value[1]);
-        s2[1] = e3 instanceof Be ? e3.value : parseInt(t3.value[1]);
+        const e4 = n2.getVariableValue(t3.value[1]);
+        s2[1] = e4 instanceof Be ? e4.value : parseInt(t3.value[1]);
       }
       if (t3.value.length > 2) {
-        const e3 = n2.getVariableValue(t3.value[2]);
-        s2[2] = e3 instanceof Be ? e3.value : parseInt(t3.value[2]);
+        const e4 = n2.getVariableValue(t3.value[2]);
+        s2[2] = e4 instanceof Be ? e4.value : parseInt(t3.value[2]);
       }
     }
     const r2 = this.getTypeInfo("vec3u"), a2 = this.getTypeInfo("u32");
@@ -22302,91 +22302,91 @@ var dt = class _dt extends ut {
     const i2 = s2[0], o2 = s2[1], c2 = s2[2];
     for (let l2 = 0, u2 = 0; l2 < c2; ++l2) for (let c3 = 0; c3 < o2; ++c3) for (let o3 = 0; o3 < i2; ++o3, ++u2) {
       const i3 = [o3, c3, l2], h2 = [o3 + t2[0] * s2[0], c3 + t2[1] * s2[1], l2 + t2[2] * s2[2]];
-      n2.setVariable("@local_invocation_id", new Me(i3, r2)), n2.setVariable("@global_invocation_id", new Me(h2, r2)), n2.setVariable("@local_invocation_index", new Be(u2, a2)), this._dispatchExec(e2, n2);
+      n2.setVariable("@local_invocation_id", new Me(i3, r2)), n2.setVariable("@global_invocation_id", new Me(h2, r2)), n2.setVariable("@local_invocation_index", new Be(u2, a2)), this._dispatchExec(e3, n2);
     }
   }
-  _dispatchExec(e2, t2) {
-    for (const n2 of e2.node.args) for (const e3 of n2.attributes) if ("builtin" === e3.name) {
-      const s2 = `@${e3.value}`, r2 = t2.getVariable(s2);
+  _dispatchExec(e3, t2) {
+    for (const n2 of e3.node.args) for (const e4 of n2.attributes) if ("builtin" === e4.name) {
+      const s2 = `@${e4.value}`, r2 = t2.getVariable(s2);
       void 0 !== r2 && t2.variables.set(n2.name, r2);
     }
-    this._execStatements(e2.node.body, t2);
+    this._execStatements(e3.node.body, t2);
   }
-  getVariableName(e2, t2) {
-    for (; e2 instanceof ke; ) e2 = e2.right;
-    return e2 instanceof ge ? e2.name : (console.error("Unknown variable type", e2, "Line", e2.line), null);
+  getVariableName(e3, t2) {
+    for (; e3 instanceof ke; ) e3 = e3.right;
+    return e3 instanceof ge ? e3.name : (console.error("Unknown variable type", e3, "Line", e3.line), null);
   }
-  _execStatements(e2, t2) {
-    for (const n2 of e2) {
+  _execStatements(e3, t2) {
+    for (const n2 of e3) {
       if (n2 instanceof Array) {
-        const e4 = t2.clone(), s2 = this._execStatements(n2, e4);
+        const e5 = t2.clone(), s2 = this._execStatements(n2, e5);
         if (s2) return s2;
         continue;
       }
-      const e3 = this.execStatement(n2, t2);
-      if (e3) return e3;
+      const e4 = this.execStatement(n2, t2);
+      if (e4) return e4;
     }
     return null;
   }
-  _call(e2, t2) {
+  _call(e3, t2) {
     const n2 = t2.clone();
-    n2.currentFunctionName = e2.name;
-    const s2 = t2.getFunction(e2.name);
+    n2.currentFunctionName = e3.name;
+    const s2 = t2.getFunction(e3.name);
     if (s2) {
       for (let t3 = 0; t3 < s2.node.args.length; ++t3) {
-        const r2 = s2.node.args[t3], a2 = this.evalExpression(e2.args[t3], n2);
+        const r2 = s2.node.args[t3], a2 = this.evalExpression(e3.args[t3], n2);
         n2.setVariable(r2.name, a2, r2);
       }
       this._execStatements(s2.node.body, n2);
-    } else if (e2.isBuiltin) this._callBuiltinFunction(e2, n2);
+    } else if (e3.isBuiltin) this._callBuiltinFunction(e3, n2);
     else {
-      this.getTypeInfo(e2.name) && this._evalCreate(e2, t2);
+      this.getTypeInfo(e3.name) && this._evalCreate(e3, t2);
     }
   }
-  _increment(e2, t2) {
-    const n2 = this.getVariableName(e2.variable, t2), s2 = t2.getVariable(n2);
-    s2 ? "++" === e2.operator ? s2.value instanceof Be ? s2.value.value++ : console.error(`Variable ${n2} is not a scalar. Line ${e2.line}`) : "--" === e2.operator ? s2.value instanceof Be ? s2.value.value-- : console.error(`Variable ${n2} is not a scalar. Line ${e2.line}`) : console.error(`Unknown increment operator ${e2.operator}. Line ${e2.line}`) : console.error(`Variable ${n2} not found. Line ${e2.line}`);
+  _increment(e3, t2) {
+    const n2 = this.getVariableName(e3.variable, t2), s2 = t2.getVariable(n2);
+    s2 ? "++" === e3.operator ? s2.value instanceof Be ? s2.value.value++ : console.error(`Variable ${n2} is not a scalar. Line ${e3.line}`) : "--" === e3.operator ? s2.value instanceof Be ? s2.value.value-- : console.error(`Variable ${n2} is not a scalar. Line ${e3.line}`) : console.error(`Unknown increment operator ${e3.operator}. Line ${e3.line}`) : console.error(`Variable ${n2} not found. Line ${e3.line}`);
   }
-  _getVariableData(e2, t2) {
-    if (e2 instanceof ge) {
-      const n2 = this.getVariableName(e2, t2), s2 = t2.getVariable(n2);
-      return null === s2 ? (console.error(`Variable ${n2} not found. Line ${e2.line}`), null) : s2.value.getSubData(this, e2.postfix, t2);
+  _getVariableData(e3, t2) {
+    if (e3 instanceof ge) {
+      const n2 = this.getVariableName(e3, t2), s2 = t2.getVariable(n2);
+      return null === s2 ? (console.error(`Variable ${n2} not found. Line ${e3.line}`), null) : s2.value.getSubData(this, e3.postfix, t2);
     }
-    if (e2 instanceof ke) {
-      if ("*" === e2.operator) {
-        const n2 = this._getVariableData(e2.right, t2);
-        return n2 instanceof Oe ? n2.reference.getSubData(this, e2.postfix, t2) : (console.error(`Variable ${e2.right} is not a pointer. Line ${e2.line}`), null);
+    if (e3 instanceof ke) {
+      if ("*" === e3.operator) {
+        const n2 = this._getVariableData(e3.right, t2);
+        return n2 instanceof Oe ? n2.reference.getSubData(this, e3.postfix, t2) : (console.error(`Variable ${e3.right} is not a pointer. Line ${e3.line}`), null);
       }
-      if ("&" === e2.operator) {
-        const n2 = this._getVariableData(e2.right, t2);
+      if ("&" === e3.operator) {
+        const n2 = this._getVariableData(e3.right, t2);
         return new Oe(n2);
       }
     }
     return null;
   }
-  _assign(e2, t2) {
+  _assign(e3, t2) {
     let n2 = null, s2 = "<var>", r2 = null;
-    if (e2.variable instanceof ke) {
-      const n3 = this._getVariableData(e2.variable, t2), s3 = this.evalExpression(e2.value, t2), r3 = e2.operator;
+    if (e3.variable instanceof ke) {
+      const n3 = this._getVariableData(e3.variable, t2), s3 = this.evalExpression(e3.value, t2), r3 = e3.operator;
       if ("=" === r3) {
         if (n3 instanceof Be || n3 instanceof Me || n3 instanceof Ue) {
           if (s3 instanceof Be || s3 instanceof Me || s3 instanceof Ue && n3.data.length === s3.data.length) return void n3.data.set(s3.data);
-          console.error(`Invalid assignment. Line ${e2.line}`);
+          console.error(`Invalid assignment. Line ${e3.line}`);
         } else if (n3 instanceof Pe && s3 instanceof Pe && n3.buffer.byteLength - n3.offset >= s3.buffer.byteLength - s3.offset) return void (n3.buffer.byteLength % 4 == 0 ? new Uint32Array(n3.buffer, n3.offset, n3.typeInfo.size / 4).set(new Uint32Array(s3.buffer, s3.offset, s3.typeInfo.size / 4)) : new Uint8Array(n3.buffer, n3.offset, n3.typeInfo.size).set(new Uint8Array(s3.buffer, s3.offset, s3.typeInfo.size)));
-        return console.error(`Invalid assignment. Line ${e2.line}`), null;
+        return console.error(`Invalid assignment. Line ${e3.line}`), null;
       }
-      if ("+=" === r3) return n3 instanceof Be || n3 instanceof Me || n3 instanceof Ue ? s3 instanceof Be || s3 instanceof Me || s3 instanceof Ue ? void n3.data.set(s3.data.map((e3, t3) => n3.data[t3] + e3)) : void console.error(`Invalid assignment . Line ${e2.line}`) : void console.error(`Invalid assignment. Line ${e2.line}`);
-      if ("-=" === r3) return (n3 instanceof Be || n3 instanceof Me || n3 instanceof Ue) && (s3 instanceof Be || s3 instanceof Me || s3 instanceof Ue) ? void n3.data.set(s3.data.map((e3, t3) => n3.data[t3] - e3)) : void console.error(`Invalid assignment. Line ${e2.line}`);
+      if ("+=" === r3) return n3 instanceof Be || n3 instanceof Me || n3 instanceof Ue ? s3 instanceof Be || s3 instanceof Me || s3 instanceof Ue ? void n3.data.set(s3.data.map((e4, t3) => n3.data[t3] + e4)) : void console.error(`Invalid assignment . Line ${e3.line}`) : void console.error(`Invalid assignment. Line ${e3.line}`);
+      if ("-=" === r3) return (n3 instanceof Be || n3 instanceof Me || n3 instanceof Ue) && (s3 instanceof Be || s3 instanceof Me || s3 instanceof Ue) ? void n3.data.set(s3.data.map((e4, t3) => n3.data[t3] - e4)) : void console.error(`Invalid assignment. Line ${e3.line}`);
     }
-    if (e2.variable instanceof ke) {
-      if ("*" === e2.variable.operator) {
-        s2 = this.getVariableName(e2.variable.right, t2);
+    if (e3.variable instanceof ke) {
+      if ("*" === e3.variable.operator) {
+        s2 = this.getVariableName(e3.variable.right, t2);
         const r3 = t2.getVariable(s2);
-        if (!(r3 && r3.value instanceof Oe)) return void console.error(`Variable ${s2} is not a pointer. Line ${e2.line}`);
+        if (!(r3 && r3.value instanceof Oe)) return void console.error(`Variable ${s2} is not a pointer. Line ${e3.line}`);
         n2 = r3.value.reference;
-        let a3 = e2.variable.postfix;
+        let a3 = e3.variable.postfix;
         if (!a3) {
-          let t3 = e2.variable.right;
+          let t3 = e3.variable.right;
           for (; t3 instanceof ke; ) {
             if (t3.postfix) {
               a3 = t3.postfix;
@@ -22398,91 +22398,91 @@ var dt = class _dt extends ut {
         a3 && (n2 = n2.getSubData(this, a3, t2));
       }
     } else {
-      r2 = e2.variable.postfix, s2 = this.getVariableName(e2.variable, t2);
+      r2 = e3.variable.postfix, s2 = this.getVariableName(e3.variable, t2);
       const a3 = t2.getVariable(s2);
-      if (null === a3) return void console.error(`Variable ${s2} not found. Line ${e2.line}`);
+      if (null === a3) return void console.error(`Variable ${s2} not found. Line ${e3.line}`);
       n2 = a3.value;
     }
-    if (n2 instanceof Oe && (n2 = n2.reference), null === n2) return void console.error(`Variable ${s2} not found. Line ${e2.line}`);
-    const a2 = this.evalExpression(e2.value, t2), i2 = e2.operator;
+    if (n2 instanceof Oe && (n2 = n2.reference), null === n2) return void console.error(`Variable ${s2} not found. Line ${e3.line}`);
+    const a2 = this.evalExpression(e3.value, t2), i2 = e3.operator;
     if ("=" !== i2) {
       const s3 = n2.getSubData(this, r2, t2);
       if (s3 instanceof Me && a2 instanceof Be) {
         const t3 = s3.data, n3 = a2.value;
-        if ("+=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] += n3;
-        else if ("-=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] -= n3;
-        else if ("*=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] *= n3;
-        else if ("/=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] /= n3;
-        else if ("%=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] %= n3;
-        else if ("&=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] &= n3;
-        else if ("|=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] |= n3;
-        else if ("^=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] ^= n3;
-        else if ("<<=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] <<= n3;
-        else if (">>=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] >>= n3;
-        else console.error(`Invalid operator ${i2}. Line ${e2.line}`);
+        if ("+=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] += n3;
+        else if ("-=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] -= n3;
+        else if ("*=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] *= n3;
+        else if ("/=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] /= n3;
+        else if ("%=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] %= n3;
+        else if ("&=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] &= n3;
+        else if ("|=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] |= n3;
+        else if ("^=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] ^= n3;
+        else if ("<<=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] <<= n3;
+        else if (">>=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] >>= n3;
+        else console.error(`Invalid operator ${i2}. Line ${e3.line}`);
       } else if (s3 instanceof Me && a2 instanceof Me) {
         const t3 = s3.data, n3 = a2.data;
-        if (t3.length !== n3.length) return void console.error(`Vector length mismatch. Line ${e2.line}`);
-        if ("+=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] += n3[e3];
-        else if ("-=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] -= n3[e3];
-        else if ("*=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] *= n3[e3];
-        else if ("/=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] /= n3[e3];
-        else if ("%=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] %= n3[e3];
-        else if ("&=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] &= n3[e3];
-        else if ("|=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] |= n3[e3];
-        else if ("^=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] ^= n3[e3];
-        else if ("<<=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] <<= n3[e3];
-        else if (">>=" === i2) for (let e3 = 0; e3 < t3.length; ++e3) t3[e3] >>= n3[e3];
-        else console.error(`Invalid operator ${i2}. Line ${e2.line}`);
+        if (t3.length !== n3.length) return void console.error(`Vector length mismatch. Line ${e3.line}`);
+        if ("+=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] += n3[e4];
+        else if ("-=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] -= n3[e4];
+        else if ("*=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] *= n3[e4];
+        else if ("/=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] /= n3[e4];
+        else if ("%=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] %= n3[e4];
+        else if ("&=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] &= n3[e4];
+        else if ("|=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] |= n3[e4];
+        else if ("^=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] ^= n3[e4];
+        else if ("<<=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] <<= n3[e4];
+        else if (">>=" === i2) for (let e4 = 0; e4 < t3.length; ++e4) t3[e4] >>= n3[e4];
+        else console.error(`Invalid operator ${i2}. Line ${e3.line}`);
       } else {
-        if (!(s3 instanceof Be && a2 instanceof Be)) return void console.error(`Invalid type for ${e2.operator} operator. Line ${e2.line}`);
-        "+=" === i2 ? s3.value += a2.value : "-=" === i2 ? s3.value -= a2.value : "*=" === i2 ? s3.value *= a2.value : "/=" === i2 ? s3.value /= a2.value : "%=" === i2 ? s3.value %= a2.value : "&=" === i2 ? s3.value &= a2.value : "|=" === i2 ? s3.value |= a2.value : "^=" === i2 ? s3.value ^= a2.value : "<<=" === i2 ? s3.value <<= a2.value : ">>=" === i2 ? s3.value >>= a2.value : console.error(`Invalid operator ${i2}. Line ${e2.line}`);
+        if (!(s3 instanceof Be && a2 instanceof Be)) return void console.error(`Invalid type for ${e3.operator} operator. Line ${e3.line}`);
+        "+=" === i2 ? s3.value += a2.value : "-=" === i2 ? s3.value -= a2.value : "*=" === i2 ? s3.value *= a2.value : "/=" === i2 ? s3.value /= a2.value : "%=" === i2 ? s3.value %= a2.value : "&=" === i2 ? s3.value &= a2.value : "|=" === i2 ? s3.value |= a2.value : "^=" === i2 ? s3.value ^= a2.value : "<<=" === i2 ? s3.value <<= a2.value : ">>=" === i2 ? s3.value >>= a2.value : console.error(`Invalid operator ${i2}. Line ${e3.line}`);
       }
       return void (n2 instanceof Pe && n2.setDataValue(this, s3, r2, t2));
     }
     if (n2 instanceof Pe) n2.setDataValue(this, a2, r2, t2);
     else if (r2) {
-      if (!(n2 instanceof Me || n2 instanceof Ue)) return void console.error(`Variable ${s2} is not a vector or matrix. Line ${e2.line}`);
+      if (!(n2 instanceof Me || n2 instanceof Ue)) return void console.error(`Variable ${s2} is not a vector or matrix. Line ${e3.line}`);
       if (r2 instanceof ve) {
         const i3 = this.evalExpression(r2.index, t2).value;
         if (n2 instanceof Me) {
-          if (!(a2 instanceof Be)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+          if (!(a2 instanceof Be)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
           n2.data[i3] = a2.value;
         } else {
-          if (!(n2 instanceof Ue)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+          if (!(n2 instanceof Ue)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
           {
             const i4 = this.evalExpression(r2.index, t2).value;
-            if (i4 < 0) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
-            if (!(a2 instanceof Me)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+            if (i4 < 0) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
+            if (!(a2 instanceof Me)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
             {
               const t3 = n2.typeInfo.getTypeName();
               if ("mat2x2" === t3 || "mat2x2f" === t3 || "mat2x2h" === t3) {
-                if (!(i4 < 2 && 2 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+                if (!(i4 < 2 && 2 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
                 n2.data[2 * i4] = a2.data[0], n2.data[2 * i4 + 1] = a2.data[1];
               } else if ("mat2x3" === t3 || "mat2x3f" === t3 || "mat2x3h" === t3) {
-                if (!(i4 < 2 && 3 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+                if (!(i4 < 2 && 3 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
                 n2.data[3 * i4] = a2.data[0], n2.data[3 * i4 + 1] = a2.data[1], n2.data[3 * i4 + 2] = a2.data[2];
               } else if ("mat2x4" === t3 || "mat2x4f" === t3 || "mat2x4h" === t3) {
-                if (!(i4 < 2 && 4 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+                if (!(i4 < 2 && 4 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
                 n2.data[4 * i4] = a2.data[0], n2.data[4 * i4 + 1] = a2.data[1], n2.data[4 * i4 + 2] = a2.data[2], n2.data[4 * i4 + 3] = a2.data[3];
               } else if ("mat3x2" === t3 || "mat3x2f" === t3 || "mat3x2h" === t3) {
-                if (!(i4 < 3 && 2 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+                if (!(i4 < 3 && 2 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
                 n2.data[2 * i4] = a2.data[0], n2.data[2 * i4 + 1] = a2.data[1];
               } else if ("mat3x3" === t3 || "mat3x3f" === t3 || "mat3x3h" === t3) {
-                if (!(i4 < 3 && 3 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+                if (!(i4 < 3 && 3 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
                 n2.data[3 * i4] = a2.data[0], n2.data[3 * i4 + 1] = a2.data[1], n2.data[3 * i4 + 2] = a2.data[2];
               } else if ("mat3x4" === t3 || "mat3x4f" === t3 || "mat3x4h" === t3) {
-                if (!(i4 < 3 && 4 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+                if (!(i4 < 3 && 4 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
                 n2.data[4 * i4] = a2.data[0], n2.data[4 * i4 + 1] = a2.data[1], n2.data[4 * i4 + 2] = a2.data[2], n2.data[4 * i4 + 3] = a2.data[3];
               } else if ("mat4x2" === t3 || "mat4x2f" === t3 || "mat4x2h" === t3) {
-                if (!(i4 < 4 && 2 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+                if (!(i4 < 4 && 2 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
                 n2.data[2 * i4] = a2.data[0], n2.data[2 * i4 + 1] = a2.data[1];
               } else if ("mat4x3" === t3 || "mat4x3f" === t3 || "mat4x3h" === t3) {
-                if (!(i4 < 4 && 3 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+                if (!(i4 < 4 && 3 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
                 n2.data[3 * i4] = a2.data[0], n2.data[3 * i4 + 1] = a2.data[1], n2.data[3 * i4 + 2] = a2.data[2];
               } else {
-                if ("mat4x4" !== t3 && "mat4x4f" !== t3 && "mat4x4h" !== t3) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
-                if (!(i4 < 4 && 4 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+                if ("mat4x4" !== t3 && "mat4x4f" !== t3 && "mat4x4h" !== t3) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
+                if (!(i4 < 4 && 4 === a2.data.length)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
                 n2.data[4 * i4] = a2.data[0], n2.data[4 * i4 + 1] = a2.data[1], n2.data[4 * i4 + 2] = a2.data[2], n2.data[4 * i4 + 3] = a2.data[3];
               }
             }
@@ -22490,145 +22490,145 @@ var dt = class _dt extends ut {
         }
       } else if (r2 instanceof pe) {
         const t3 = r2.value;
-        if (!(n2 instanceof Me)) return void console.error(`Invalid assignment to ${t3}. Variable ${s2} is not a vector. Line ${e2.line}`);
+        if (!(n2 instanceof Me)) return void console.error(`Invalid assignment to ${t3}. Variable ${s2} is not a vector. Line ${e3.line}`);
         if (a2 instanceof Be) {
-          if (t3.length > 1) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e2.line}`);
+          if (t3.length > 1) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e3.line}`);
           if ("x" === t3) n2.data[0] = a2.value;
           else if ("y" === t3) {
-            if (n2.data.length < 2) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e2.line}`);
+            if (n2.data.length < 2) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e3.line}`);
             n2.data[1] = a2.value;
           } else if ("z" === t3) {
-            if (n2.data.length < 3) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e2.line}`);
+            if (n2.data.length < 3) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e3.line}`);
             n2.data[2] = a2.value;
           } else if ("w" === t3) {
-            if (n2.data.length < 4) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e2.line}`);
+            if (n2.data.length < 4) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e3.line}`);
             n2.data[3] = a2.value;
           }
         } else {
-          if (!(a2 instanceof Me)) return void console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
-          if (t3.length !== a2.data.length) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e2.line}`);
+          if (!(a2 instanceof Me)) return void console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
+          if (t3.length !== a2.data.length) return void console.error(`Invalid assignment to ${t3} for variable ${s2}. Line ${e3.line}`);
           for (let r3 = 0; r3 < t3.length; ++r3) {
             const i3 = t3[r3];
             if ("x" === i3 || "r" === i3) n2.data[0] = a2.data[r3];
             else if ("y" === i3 || "g" === i3) {
-              if (a2.data.length < 2) return void console.error(`Invalid assignment to ${i3} for variable ${s2}. Line ${e2.line}`);
+              if (a2.data.length < 2) return void console.error(`Invalid assignment to ${i3} for variable ${s2}. Line ${e3.line}`);
               n2.data[1] = a2.data[r3];
             } else if ("z" === i3 || "b" === i3) {
-              if (a2.data.length < 3) return void console.error(`Invalid assignment to ${i3} for variable ${s2}. Line ${e2.line}`);
+              if (a2.data.length < 3) return void console.error(`Invalid assignment to ${i3} for variable ${s2}. Line ${e3.line}`);
               n2.data[2] = a2.data[r3];
             } else {
-              if ("w" !== i3 && "a" !== i3) return void console.error(`Invalid assignment to ${i3} for variable ${s2}. Line ${e2.line}`);
-              if (a2.data.length < 4) return void console.error(`Invalid assignment to ${i3} for variable ${s2}. Line ${e2.line}`);
+              if ("w" !== i3 && "a" !== i3) return void console.error(`Invalid assignment to ${i3} for variable ${s2}. Line ${e3.line}`);
+              if (a2.data.length < 4) return void console.error(`Invalid assignment to ${i3} for variable ${s2}. Line ${e3.line}`);
               n2.data[3] = a2.data[r3];
             }
           }
         }
       }
-    } else n2 instanceof Be && a2 instanceof Be ? n2.value = a2.value : n2 instanceof Me && a2 instanceof Me || n2 instanceof Ue && a2 instanceof Ue ? n2.data.set(a2.data) : console.error(`Invalid assignment to ${s2}. Line ${e2.line}`);
+    } else n2 instanceof Be && a2 instanceof Be ? n2.value = a2.value : n2 instanceof Me && a2 instanceof Me || n2 instanceof Ue && a2 instanceof Ue ? n2.data.set(a2.data) : console.error(`Invalid assignment to ${s2}. Line ${e3.line}`);
   }
-  _function(e2, t2) {
-    const n2 = new ct(e2);
-    t2.functions.set(e2.name, n2);
+  _function(e3, t2) {
+    const n2 = new ct(e3);
+    t2.functions.set(e3.name, n2);
   }
-  _const(e2, t2) {
+  _const(e3, t2) {
     let n2 = null;
-    null !== e2.value && (n2 = this.evalExpression(e2.value, t2)), t2.createVariable(e2.name, n2, e2);
+    null !== e3.value && (n2 = this.evalExpression(e3.value, t2)), t2.createVariable(e3.name, n2, e3);
   }
-  _let(e2, t2) {
+  _let(e3, t2) {
     let n2 = null;
-    if (null !== e2.value) {
-      if (n2 = this.evalExpression(e2.value, t2), null === n2) return void console.error(`Invalid value for variable ${e2.name}. Line ${e2.line}`);
-      e2.value instanceof ke || (n2 = n2.clone());
+    if (null !== e3.value) {
+      if (n2 = this.evalExpression(e3.value, t2), null === n2) return void console.error(`Invalid value for variable ${e3.name}. Line ${e3.line}`);
+      e3.value instanceof ke || (n2 = n2.clone());
     } else {
-      const s2 = e2.type.name;
+      const s2 = e3.type.name;
       if ("f32" === s2 || "i32" === s2 || "u32" === s2 || "bool" === s2 || "f16" === s2 || "vec2" === s2 || "vec3" === s2 || "vec4" === s2 || "vec2f" === s2 || "vec3f" === s2 || "vec4f" === s2 || "vec2i" === s2 || "vec3i" === s2 || "vec4i" === s2 || "vec2u" === s2 || "vec3u" === s2 || "vec4u" === s2 || "vec2h" === s2 || "vec3h" === s2 || "vec4h" === s2 || "vec2b" === s2 || "vec3b" === s2 || "vec4b" === s2 || "mat2x2" === s2 || "mat2x3" === s2 || "mat2x4" === s2 || "mat3x2" === s2 || "mat3x3" === s2 || "mat3x4" === s2 || "mat4x2" === s2 || "mat4x3" === s2 || "mat4x4" === s2 || "mat2x2f" === s2 || "mat2x3f" === s2 || "mat2x4f" === s2 || "mat3x2f" === s2 || "mat3x3f" === s2 || "mat3x4f" === s2 || "mat4x2f" === s2 || "mat4x3f" === s2 || "mat4x4f" === s2 || "mat2x2h" === s2 || "mat2x3h" === s2 || "mat2x4h" === s2 || "mat3x2h" === s2 || "mat3x3h" === s2 || "mat3x4h" === s2 || "mat4x2h" === s2 || "mat4x3h" === s2 || "mat4x4h" === s2 || "array" === s2) {
-        const s3 = new de(e2.type, []);
+        const s3 = new de(e3.type, []);
         n2 = this._evalCreate(s3, t2);
       }
     }
-    t2.createVariable(e2.name, n2, e2);
+    t2.createVariable(e3.name, n2, e3);
   }
-  _var(e2, t2) {
+  _var(e3, t2) {
     let n2 = null;
-    if (null !== e2.value) {
-      if (n2 = this.evalExpression(e2.value, t2), null === n2) return void console.error(`Invalid value for variable ${e2.name}. Line ${e2.line}`);
-      e2.value instanceof ke || (n2 = n2.clone());
+    if (null !== e3.value) {
+      if (n2 = this.evalExpression(e3.value, t2), null === n2) return void console.error(`Invalid value for variable ${e3.name}. Line ${e3.line}`);
+      e3.value instanceof ke || (n2 = n2.clone());
     } else {
-      if (null === e2.type) return void console.error(`Variable ${e2.name} has no type. Line ${e2.line}`);
-      const s2 = e2.type.name;
-      if ("f32" === s2 || "i32" === s2 || "u32" === s2 || "bool" === s2 || "f16" === s2 || "vec2" === s2 || "vec3" === s2 || "vec4" === s2 || "vec2f" === s2 || "vec3f" === s2 || "vec4f" === s2 || "vec2i" === s2 || "vec3i" === s2 || "vec4i" === s2 || "vec2u" === s2 || "vec3u" === s2 || "vec4u" === s2 || "vec2h" === s2 || "vec3h" === s2 || "vec4h" === s2 || "vec2b" === s2 || "vec3b" === s2 || "vec4b" === s2 || "mat2x2" === s2 || "mat2x3" === s2 || "mat2x4" === s2 || "mat3x2" === s2 || "mat3x3" === s2 || "mat3x4" === s2 || "mat4x2" === s2 || "mat4x3" === s2 || "mat4x4" === s2 || "mat2x2f" === s2 || "mat2x3f" === s2 || "mat2x4f" === s2 || "mat3x2f" === s2 || "mat3x3f" === s2 || "mat3x4f" === s2 || "mat4x2f" === s2 || "mat4x3f" === s2 || "mat4x4f" === s2 || "mat2x2h" === s2 || "mat2x3h" === s2 || "mat2x4h" === s2 || "mat3x2h" === s2 || "mat3x3h" === s2 || "mat3x4h" === s2 || "mat4x2h" === s2 || "mat4x3h" === s2 || "mat4x4h" === s2 || e2.type instanceof ue || e2.type instanceof oe || e2.type instanceof ce) {
-        const s3 = new de(e2.type, []);
+      if (null === e3.type) return void console.error(`Variable ${e3.name} has no type. Line ${e3.line}`);
+      const s2 = e3.type.name;
+      if ("f32" === s2 || "i32" === s2 || "u32" === s2 || "bool" === s2 || "f16" === s2 || "vec2" === s2 || "vec3" === s2 || "vec4" === s2 || "vec2f" === s2 || "vec3f" === s2 || "vec4f" === s2 || "vec2i" === s2 || "vec3i" === s2 || "vec4i" === s2 || "vec2u" === s2 || "vec3u" === s2 || "vec4u" === s2 || "vec2h" === s2 || "vec3h" === s2 || "vec4h" === s2 || "vec2b" === s2 || "vec3b" === s2 || "vec4b" === s2 || "mat2x2" === s2 || "mat2x3" === s2 || "mat2x4" === s2 || "mat3x2" === s2 || "mat3x3" === s2 || "mat3x4" === s2 || "mat4x2" === s2 || "mat4x3" === s2 || "mat4x4" === s2 || "mat2x2f" === s2 || "mat2x3f" === s2 || "mat2x4f" === s2 || "mat3x2f" === s2 || "mat3x3f" === s2 || "mat3x4f" === s2 || "mat4x2f" === s2 || "mat4x3f" === s2 || "mat4x4f" === s2 || "mat2x2h" === s2 || "mat2x3h" === s2 || "mat2x4h" === s2 || "mat3x2h" === s2 || "mat3x3h" === s2 || "mat3x4h" === s2 || "mat4x2h" === s2 || "mat4x3h" === s2 || "mat4x4h" === s2 || e3.type instanceof ue || e3.type instanceof oe || e3.type instanceof ce) {
+        const s3 = new de(e3.type, []);
         n2 = this._evalCreate(s3, t2);
       }
     }
-    t2.createVariable(e2.name, n2, e2);
+    t2.createVariable(e3.name, n2, e3);
   }
-  _switch(e2, t2) {
+  _switch(e3, t2) {
     t2 = t2.clone();
-    const n2 = this.evalExpression(e2.condition, t2);
-    if (!(n2 instanceof Be)) return console.error(`Invalid if condition. Line ${e2.line}`), null;
+    const n2 = this.evalExpression(e3.condition, t2);
+    if (!(n2 instanceof Be)) return console.error(`Invalid if condition. Line ${e3.line}`), null;
     let s2 = null;
-    for (const r2 of e2.cases) if (r2 instanceof Ae) for (const a2 of r2.selectors) {
+    for (const r2 of e3.cases) if (r2 instanceof Ae) for (const a2 of r2.selectors) {
       if (a2 instanceof Se) {
         s2 = r2;
         continue;
       }
       const i2 = this.evalExpression(a2, t2);
-      if (!(i2 instanceof Be)) return console.error(`Invalid case selector. Line ${e2.line}`), null;
+      if (!(i2 instanceof Be)) return console.error(`Invalid case selector. Line ${e3.line}`), null;
       if (i2.value === n2.value) return this._execStatements(r2.body, t2);
     }
     else r2 instanceof Ee && (s2 = r2);
     return s2 ? this._execStatements(s2.body, t2) : null;
   }
-  _if(e2, t2) {
+  _if(e3, t2) {
     t2 = t2.clone();
-    const n2 = this.evalExpression(e2.condition, t2);
-    if (!(n2 instanceof Be)) return console.error(`Invalid if condition. Line ${e2.line}`), null;
-    if (n2.value) return this._execStatements(e2.body, t2);
-    for (const n3 of e2.elseif) {
+    const n2 = this.evalExpression(e3.condition, t2);
+    if (!(n2 instanceof Be)) return console.error(`Invalid if condition. Line ${e3.line}`), null;
+    if (n2.value) return this._execStatements(e3.body, t2);
+    for (const n3 of e3.elseif) {
       const s2 = this.evalExpression(n3.condition, t2);
-      if (!(s2 instanceof Be)) return console.error(`Invalid if condition. Line ${e2.line}`), null;
+      if (!(s2 instanceof Be)) return console.error(`Invalid if condition. Line ${e3.line}`), null;
       if (s2.value) return this._execStatements(n3.body, t2);
     }
-    return e2.else ? this._execStatements(e2.else, t2) : null;
+    return e3.else ? this._execStatements(e3.else, t2) : null;
   }
-  _getScalarValue(e2) {
-    return e2 instanceof Be ? e2.value : (console.error("Expected scalar value.", e2), 0);
+  _getScalarValue(e3) {
+    return e3 instanceof Be ? e3.value : (console.error("Expected scalar value.", e3), 0);
   }
-  _for(e2, t2) {
-    for (t2 = t2.clone(), this.execStatement(e2.init, t2); this._getScalarValue(this.evalExpression(e2.condition, t2)); ) {
-      const n2 = this._execStatements(e2.body, t2);
+  _for(e3, t2) {
+    for (t2 = t2.clone(), this.execStatement(e3.init, t2); this._getScalarValue(this.evalExpression(e3.condition, t2)); ) {
+      const n2 = this._execStatements(e3.body, t2);
       if (n2 === _dt._breakObj) break;
       if (null !== n2 && n2 !== _dt._continueObj) return n2;
-      this.execStatement(e2.increment, t2);
+      this.execStatement(e3.increment, t2);
     }
     return null;
   }
-  _loop(e2, t2) {
+  _loop(e3, t2) {
     for (t2 = t2.clone(); ; ) {
-      const n2 = this._execStatements(e2.body, t2);
+      const n2 = this._execStatements(e3.body, t2);
       if (n2 === _dt._breakObj) break;
       if (n2 === _dt._continueObj) {
-        if (e2.continuing) {
-          if (this._execStatements(e2.continuing.body, t2) === _dt._breakObj) break;
+        if (e3.continuing) {
+          if (this._execStatements(e3.continuing.body, t2) === _dt._breakObj) break;
         }
       } else if (null !== n2) return n2;
     }
     return null;
   }
-  _while(e2, t2) {
-    for (t2 = t2.clone(); this._getScalarValue(this.evalExpression(e2.condition, t2)); ) {
-      const n2 = this._execStatements(e2.body, t2);
+  _while(e3, t2) {
+    for (t2 = t2.clone(); this._getScalarValue(this.evalExpression(e3.condition, t2)); ) {
+      const n2 = this._execStatements(e3.body, t2);
       if (n2 === _dt._breakObj) break;
       if (n2 !== _dt._continueObj && null !== n2) return n2;
     }
     return null;
   }
-  _evalBitcast(e2, t2) {
-    const n2 = this.evalExpression(e2.value, t2), s2 = e2.type;
+  _evalBitcast(e3, t2) {
+    const n2 = this.evalExpression(e3.value, t2), s2 = e3.type;
     if (n2 instanceof Be) {
-      const e3 = nt(n2.value, n2.typeInfo.name, s2.name);
-      return new Be(e3, this.getTypeInfo(s2));
+      const e4 = nt(n2.value, n2.typeInfo.name, s2.name);
+      return new Be(e4, this.getTypeInfo(s2));
     }
     if (n2 instanceof Me) {
       const t3 = n2.typeInfo.getTypeName();
@@ -22638,7 +22638,7 @@ var dt = class _dt extends ut {
       else if (t3.endsWith("u")) r2 = "u32";
       else if (t3.endsWith("b")) r2 = "bool";
       else {
-        if (!t3.endsWith("h")) return console.error(`Unknown vector type ${t3}. Line ${e2.line}`), null;
+        if (!t3.endsWith("h")) return console.error(`Unknown vector type ${t3}. Line ${e3.line}`), null;
         r2 = "f16";
       }
       const a2 = s2.getTypeName();
@@ -22648,33 +22648,33 @@ var dt = class _dt extends ut {
       else if (a2.endsWith("u")) i2 = "u32";
       else if (a2.endsWith("b")) i2 = "bool";
       else {
-        if (!a2.endsWith("h")) return console.error(`Unknown vector type ${i2}. Line ${e2.line}`), null;
+        if (!a2.endsWith("h")) return console.error(`Unknown vector type ${i2}. Line ${e3.line}`), null;
         i2 = "f16";
       }
-      const o2 = (function(e3, t4, n3) {
-        if (t4 === n3) return e3;
-        const s3 = new Array(e3.length);
-        for (let r3 = 0; r3 < e3.length; r3++) s3[r3] = nt(e3[r3], t4, n3);
+      const o2 = (function(e4, t4, n3) {
+        if (t4 === n3) return e4;
+        const s3 = new Array(e4.length);
+        for (let r3 = 0; r3 < e4.length; r3++) s3[r3] = nt(e4[r3], t4, n3);
         return s3;
       })(Array.from(n2.data), r2, i2);
       return new Me(o2, this.getTypeInfo(s2));
     }
-    return console.error(`TODO: bitcast for ${n2.typeInfo.name}. Line ${e2.line}`), null;
+    return console.error(`TODO: bitcast for ${n2.typeInfo.name}. Line ${e3.line}`), null;
   }
-  _evalConst(e2, t2) {
-    return t2.getVariableValue(e2.name).clone().getSubData(this, e2.postfix, t2);
+  _evalConst(e3, t2) {
+    return t2.getVariableValue(e3.name).clone().getSubData(this, e3.postfix, t2);
   }
-  _evalCreate(e2, t2) {
+  _evalCreate(e3, t2) {
     var r2;
-    if (e2 instanceof de) {
-      if (null === e2.type) return Ve.void;
-      switch (e2.type.getTypeName()) {
+    if (e3 instanceof de) {
+      if (null === e3.type) return Ve.void;
+      switch (e3.type.getTypeName()) {
         case "bool":
         case "i32":
         case "u32":
         case "f32":
         case "f16":
-          return this._callConstructorValue(e2, t2);
+          return this._callConstructorValue(e3, t2);
         case "vec2":
         case "vec3":
         case "vec4":
@@ -22693,7 +22693,7 @@ var dt = class _dt extends ut {
         case "vec2b":
         case "vec3b":
         case "vec4b":
-          return this._callConstructorVec(e2, t2);
+          return this._callConstructorVec(e3, t2);
         case "mat2x2":
         case "mat2x2f":
         case "mat2x2h":
@@ -22721,104 +22721,104 @@ var dt = class _dt extends ut {
         case "mat4x4":
         case "mat4x4f":
         case "mat4x4h":
-          return this._callConstructorMatrix(e2, t2);
+          return this._callConstructorMatrix(e3, t2);
       }
     }
-    const a2 = e2 instanceof de ? e2.type.name : e2.name, i2 = e2 instanceof de ? this.getTypeInfo(e2.type) : this.getTypeInfo(e2.name);
-    if (null === i2) return console.error(`Unknown type ${a2}. Line ${e2.line}`), null;
+    const a2 = e3 instanceof de ? e3.type.name : e3.name, i2 = e3 instanceof de ? this.getTypeInfo(e3.type) : this.getTypeInfo(e3.name);
+    if (null === i2) return console.error(`Unknown type ${a2}. Line ${e3.line}`), null;
     if (0 === i2.size) return null;
     const o2 = new Pe(new ArrayBuffer(i2.size), i2, 0);
     if (i2 instanceof n) {
-      if (e2.args) for (let n2 = 0; n2 < e2.args.length; ++n2) {
-        const s2 = i2.members[n2], r3 = e2.args[n2], a3 = this.evalExpression(r3, t2);
+      if (e3.args) for (let n2 = 0; n2 < e3.args.length; ++n2) {
+        const s2 = i2.members[n2], r3 = e3.args[n2], a3 = this.evalExpression(r3, t2);
         o2.setData(this, a3, s2.type, s2.offset, t2);
       }
     } else if (i2 instanceof s) {
       let n2 = 0;
-      if (e2.args) for (let s2 = 0; s2 < e2.args.length; ++s2) {
-        const a3 = e2.args[s2], c2 = this.evalExpression(a3, t2);
+      if (e3.args) for (let s2 = 0; s2 < e3.args.length; ++s2) {
+        const a3 = e3.args[s2], c2 = this.evalExpression(a3, t2);
         null === i2.format && ("x32" === (null === (r2 = c2.typeInfo) || void 0 === r2 ? void 0 : r2.name) ? i2.format = this.getTypeInfo("i32") : i2.format = c2.typeInfo), o2.setData(this, c2, i2.format, n2, t2), n2 += i2.stride;
       }
-    } else console.error(`Unknown type "${a2}". Line ${e2.line}`);
-    return e2 instanceof de ? o2.getSubData(this, e2.postfix, t2) : o2;
+    } else console.error(`Unknown type "${a2}". Line ${e3.line}`);
+    return e3 instanceof de ? o2.getSubData(this, e3.postfix, t2) : o2;
   }
-  _evalLiteral(e2, t2) {
-    const n2 = this.getTypeInfo(e2.type), s2 = n2.name;
+  _evalLiteral(e3, t2) {
+    const n2 = this.getTypeInfo(e3.type), s2 = n2.name;
     if ("x32" === s2 || "u32" === s2 || "f32" === s2 || "f16" === s2 || "i32" === s2 || "bool" === s2) {
-      return new Be(e2.scalarValue, n2);
+      return new Be(e3.scalarValue, n2);
     }
-    return "vec2" === s2 || "vec3" === s2 || "vec4" === s2 || "vec2f" === s2 || "vec3f" === s2 || "vec4f" === s2 || "vec2h" === s2 || "vec3h" === s2 || "vec4h" === s2 || "vec2i" === s2 || "vec3i" === s2 || "vec4i" === s2 || "vec2u" === s2 || "vec3u" === s2 || "vec4u" === s2 ? this._callConstructorVec(e2, t2) : "mat2x2" === s2 || "mat2x3" === s2 || "mat2x4" === s2 || "mat3x2" === s2 || "mat3x3" === s2 || "mat3x4" === s2 || "mat4x2" === s2 || "mat4x3" === s2 || "mat4x4" === s2 || "mat2x2f" === s2 || "mat2x3f" === s2 || "mat2x4f" === s2 || "mat3x2f" === s2 || "mat3x3f" === s2 || "mat3x4f" === s2 || "mat4x2f" === s2 || "mat4x3f" === s2 || "mat4x4f" === s2 || "mat2x2h" === s2 || "mat2x3h" === s2 || "mat2x4h" === s2 || "mat3x2h" === s2 || "mat3x3h" === s2 || "mat3x4h" === s2 || "mat4x2h" === s2 || "mat4x3h" === s2 || "mat4x4h" === s2 ? this._callConstructorMatrix(e2, t2) : e2.value;
+    return "vec2" === s2 || "vec3" === s2 || "vec4" === s2 || "vec2f" === s2 || "vec3f" === s2 || "vec4f" === s2 || "vec2h" === s2 || "vec3h" === s2 || "vec4h" === s2 || "vec2i" === s2 || "vec3i" === s2 || "vec4i" === s2 || "vec2u" === s2 || "vec3u" === s2 || "vec4u" === s2 ? this._callConstructorVec(e3, t2) : "mat2x2" === s2 || "mat2x3" === s2 || "mat2x4" === s2 || "mat3x2" === s2 || "mat3x3" === s2 || "mat3x4" === s2 || "mat4x2" === s2 || "mat4x3" === s2 || "mat4x4" === s2 || "mat2x2f" === s2 || "mat2x3f" === s2 || "mat2x4f" === s2 || "mat3x2f" === s2 || "mat3x3f" === s2 || "mat3x4f" === s2 || "mat4x2f" === s2 || "mat4x3f" === s2 || "mat4x4f" === s2 || "mat2x2h" === s2 || "mat2x3h" === s2 || "mat2x4h" === s2 || "mat3x2h" === s2 || "mat3x3h" === s2 || "mat3x4h" === s2 || "mat4x2h" === s2 || "mat4x3h" === s2 || "mat4x4h" === s2 ? this._callConstructorMatrix(e3, t2) : e3.value;
   }
-  _evalVariable(e2, t2) {
-    const n2 = t2.getVariableValue(e2.name);
-    return null === n2 ? n2 : n2.getSubData(this, e2.postfix, t2);
+  _evalVariable(e3, t2) {
+    const n2 = t2.getVariableValue(e3.name);
+    return null === n2 ? n2 : n2.getSubData(this, e3.postfix, t2);
   }
-  _maxFormatTypeInfo(e2) {
-    let t2 = e2[0];
+  _maxFormatTypeInfo(e3) {
+    let t2 = e3[0];
     if ("f32" === t2.name) return t2;
-    for (let n2 = 1; n2 < e2.length; ++n2) {
+    for (let n2 = 1; n2 < e3.length; ++n2) {
       const s2 = _dt._priority.get(t2.name);
-      _dt._priority.get(e2[n2].name) < s2 && (t2 = e2[n2]);
+      _dt._priority.get(e3[n2].name) < s2 && (t2 = e3[n2]);
     }
     return "x32" === t2.name ? this.getTypeInfo("i32") : t2;
   }
-  _evalUnaryOp(e2, t2) {
-    const n2 = this.evalExpression(e2.right, t2);
-    if ("&" === e2.operator) return new Oe(n2);
-    if ("*" === e2.operator) return n2 instanceof Oe ? n2.reference.getSubData(this, e2.postfix, t2) : (console.error(`Invalid dereference. Line ${e2.line}`), null);
+  _evalUnaryOp(e3, t2) {
+    const n2 = this.evalExpression(e3.right, t2);
+    if ("&" === e3.operator) return new Oe(n2);
+    if ("*" === e3.operator) return n2 instanceof Oe ? n2.reference.getSubData(this, e3.postfix, t2) : (console.error(`Invalid dereference. Line ${e3.line}`), null);
     const s2 = n2 instanceof Be ? n2.value : n2 instanceof Me ? Array.from(n2.data) : null;
-    switch (e2.operator) {
+    switch (e3.operator) {
       case "+": {
         if (Ge(s2)) {
-          const e4 = s2.map((e5, t4) => +e5);
-          return new Me(e4, n2.typeInfo);
+          const e5 = s2.map((e6, t4) => +e6);
+          return new Me(e5, n2.typeInfo);
         }
-        const e3 = s2, t3 = this._maxFormatTypeInfo([n2.typeInfo, n2.typeInfo]);
-        return new Be(+e3, t3);
+        const e4 = s2, t3 = this._maxFormatTypeInfo([n2.typeInfo, n2.typeInfo]);
+        return new Be(+e4, t3);
       }
       case "-": {
         if (Ge(s2)) {
-          const e4 = s2.map((e5, t4) => -e5);
-          return new Me(e4, n2.typeInfo);
+          const e5 = s2.map((e6, t4) => -e6);
+          return new Me(e5, n2.typeInfo);
         }
-        const e3 = s2, t3 = this._maxFormatTypeInfo([n2.typeInfo, n2.typeInfo]);
-        return new Be(-e3, t3);
+        const e4 = s2, t3 = this._maxFormatTypeInfo([n2.typeInfo, n2.typeInfo]);
+        return new Be(-e4, t3);
       }
       case "!": {
         if (Ge(s2)) {
-          const e4 = s2.map((e5, t4) => e5 ? 0 : 1);
-          return new Me(e4, n2.typeInfo);
+          const e5 = s2.map((e6, t4) => e6 ? 0 : 1);
+          return new Me(e5, n2.typeInfo);
         }
-        const e3 = s2, t3 = this._maxFormatTypeInfo([n2.typeInfo, n2.typeInfo]);
-        return new Be(e3 ? 0 : 1, t3);
+        const e4 = s2, t3 = this._maxFormatTypeInfo([n2.typeInfo, n2.typeInfo]);
+        return new Be(e4 ? 0 : 1, t3);
       }
       case "~": {
         if (Ge(s2)) {
-          const e4 = s2.map((e5, t4) => ~e5);
-          return new Me(e4, n2.typeInfo);
+          const e5 = s2.map((e6, t4) => ~e6);
+          return new Me(e5, n2.typeInfo);
         }
-        const e3 = s2, t3 = this._maxFormatTypeInfo([n2.typeInfo, n2.typeInfo]);
-        return new Be(~e3, t3);
+        const e4 = s2, t3 = this._maxFormatTypeInfo([n2.typeInfo, n2.typeInfo]);
+        return new Be(~e4, t3);
       }
     }
-    return console.error(`Invalid unary operator ${e2.operator}. Line ${e2.line}`), null;
+    return console.error(`Invalid unary operator ${e3.operator}. Line ${e3.line}`), null;
   }
-  _evalBinaryOp(e2, t2) {
-    const n2 = this.evalExpression(e2.left, t2), s2 = this.evalExpression(e2.right, t2), r2 = n2 instanceof Be ? n2.value : n2 instanceof Me || n2 instanceof Ue ? Array.from(n2.data) : null, a2 = s2 instanceof Be ? s2.value : s2 instanceof Me || s2 instanceof Ue ? Array.from(s2.data) : null;
-    switch (e2.operator) {
+  _evalBinaryOp(e3, t2) {
+    const n2 = this.evalExpression(e3.left, t2), s2 = this.evalExpression(e3.right, t2), r2 = n2 instanceof Be ? n2.value : n2 instanceof Me || n2 instanceof Ue ? Array.from(n2.data) : null, a2 = s2 instanceof Be ? s2.value : s2 instanceof Me || s2 instanceof Ue ? Array.from(s2.data) : null;
+    switch (e3.operator) {
       case "+": {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, s3 = a2;
-          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i3 = t4.map((e3, t5) => e3 + s3[t5]);
+          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i3 = t4.map((e4, t5) => e4 + s3[t5]);
           return new Me(i3, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 + e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 + e4);
           return new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 + t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 + t5);
           return new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -22827,16 +22827,16 @@ var dt = class _dt extends ut {
       case "-": {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, s3 = a2;
-          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i3 = t4.map((e3, t5) => e3 - s3[t5]);
+          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i3 = t4.map((e4, t5) => e4 - s3[t5]);
           return new Me(i3, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 - e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 - e4);
           return new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 - t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 - t5);
           return new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -22846,64 +22846,64 @@ var dt = class _dt extends ut {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, i3 = a2;
           if (n2 instanceof Ue && s2 instanceof Ue) {
-            const r3 = (function(e3, t5, n3, s3) {
+            const r3 = (function(e4, t5, n3, s3) {
               if (void 0 === pt[t5.name] || void 0 === pt[s3.name]) return null;
               const r4 = pt[t5.name][0], a4 = pt[t5.name][1], i4 = pt[s3.name][0];
               if (r4 !== pt[s3.name][1]) return null;
               const o4 = new Array(i4 * a4);
               for (let t6 = 0; t6 < a4; t6++) for (let s4 = 0; s4 < i4; s4++) {
                 let c3 = 0;
-                for (let i5 = 0; i5 < r4; i5++) c3 += e3[i5 * a4 + t6] * n3[s4 * r4 + i5];
+                for (let i5 = 0; i5 < r4; i5++) c3 += e4[i5 * a4 + t6] * n3[s4 * r4 + i5];
                 o4[t6 * i4 + s4] = c3;
               }
               return o4;
             })(t4, n2.typeInfo, i3, s2.typeInfo);
-            if (null === r3) return console.error(`Matrix multiplication failed. Line ${e2.line}.`), null;
+            if (null === r3) return console.error(`Matrix multiplication failed. Line ${e3.line}.`), null;
             const a3 = pt[s2.typeInfo.name][0], o3 = pt[n2.typeInfo.name][1], c2 = this.getTypeInfo(`mat${a3}x${o3}f`);
             return new Ue(r3, c2);
           }
           if (n2 instanceof Ue && s2 instanceof Me) {
-            const r3 = (function(e3, t5, n3, s3) {
+            const r3 = (function(e4, t5, n3, s3) {
               if (void 0 === pt[t5.name] || void 0 === ft[s3.name]) return null;
               const r4 = pt[t5.name][0], a3 = pt[t5.name][1];
               if (r4 !== n3.length) return null;
               const i4 = new Array(a3);
               for (let t6 = 0; t6 < a3; t6++) {
                 let s4 = 0;
-                for (let i5 = 0; i5 < r4; i5++) s4 += e3[i5 * a3 + t6] * n3[i5];
+                for (let i5 = 0; i5 < r4; i5++) s4 += e4[i5 * a3 + t6] * n3[i5];
                 i4[t6] = s4;
               }
               return i4;
             })(t4, n2.typeInfo, i3, s2.typeInfo);
-            return null === r3 ? (console.error(`Matrix vector multiplication failed. Line ${e2.line}.`), null) : new Me(r3, s2.typeInfo);
+            return null === r3 ? (console.error(`Matrix vector multiplication failed. Line ${e3.line}.`), null) : new Me(r3, s2.typeInfo);
           }
           if (n2 instanceof Me && s2 instanceof Ue) {
-            const r3 = (function(e3, t5, n3, s3) {
+            const r3 = (function(e4, t5, n3, s3) {
               if (void 0 === ft[t5.name] || void 0 === pt[s3.name]) return null;
               const r4 = pt[s3.name][0], a3 = pt[s3.name][1];
-              if (a3 !== e3.length) return null;
+              if (a3 !== e4.length) return null;
               const i4 = [];
               for (let t6 = 0; t6 < r4; t6++) {
                 let s4 = 0;
-                for (let i5 = 0; i5 < a3; i5++) s4 += e3[i5] * n3[i5 * r4 + t6];
+                for (let i5 = 0; i5 < a3; i5++) s4 += e4[i5] * n3[i5 * r4 + t6];
                 i4[t6] = s4;
               }
               return i4;
             })(t4, n2.typeInfo, i3, s2.typeInfo);
-            return null === r3 ? (console.error(`Matrix vector multiplication failed. Line ${e2.line}.`), null) : new Me(r3, n2.typeInfo);
+            return null === r3 ? (console.error(`Matrix vector multiplication failed. Line ${e3.line}.`), null) : new Me(r3, n2.typeInfo);
           }
           {
-            if (t4.length !== i3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-            const s3 = t4.map((e3, t5) => e3 * i3[t5]);
+            if (t4.length !== i3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+            const s3 = t4.map((e4, t5) => e4 * i3[t5]);
             return new Me(s3, n2.typeInfo);
           }
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 * e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 * e4);
           return n2 instanceof Ue ? new Ue(t4, n2.typeInfo) : new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 * t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 * t5);
           return s2 instanceof Ue ? new Ue(t4, s2.typeInfo) : new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -22912,16 +22912,16 @@ var dt = class _dt extends ut {
       case "%": {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, s3 = a2;
-          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i3 = t4.map((e3, t5) => e3 % s3[t5]);
+          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i3 = t4.map((e4, t5) => e4 % s3[t5]);
           return new Me(i3, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 % e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 % e4);
           return new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 % t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 % t5);
           return new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -22930,16 +22930,16 @@ var dt = class _dt extends ut {
       case "/": {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, s3 = a2;
-          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i3 = t4.map((e3, t5) => e3 / s3[t5]);
+          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i3 = t4.map((e4, t5) => e4 / s3[t5]);
           return new Me(i3, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 / e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 / e4);
           return new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 / t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 / t5);
           return new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -22948,16 +22948,16 @@ var dt = class _dt extends ut {
       case "&": {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, s3 = a2;
-          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i3 = t4.map((e3, t5) => e3 & s3[t5]);
+          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i3 = t4.map((e4, t5) => e4 & s3[t5]);
           return new Me(i3, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 & e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 & e4);
           return new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 & t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 & t5);
           return new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -22966,16 +22966,16 @@ var dt = class _dt extends ut {
       case "|": {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, s3 = a2;
-          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i3 = t4.map((e3, t5) => e3 | s3[t5]);
+          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i3 = t4.map((e4, t5) => e4 | s3[t5]);
           return new Me(i3, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 | e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 | e4);
           return new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 | t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 | t5);
           return new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -22984,16 +22984,16 @@ var dt = class _dt extends ut {
       case "^": {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, s3 = a2;
-          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i3 = t4.map((e3, t5) => e3 ^ s3[t5]);
+          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i3 = t4.map((e4, t5) => e4 ^ s3[t5]);
           return new Me(i3, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 ^ e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 ^ e4);
           return new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 ^ t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 ^ t5);
           return new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -23002,16 +23002,16 @@ var dt = class _dt extends ut {
       case "<<": {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, s3 = a2;
-          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i3 = t4.map((e3, t5) => e3 << s3[t5]);
+          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i3 = t4.map((e4, t5) => e4 << s3[t5]);
           return new Me(i3, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 << e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 << e4);
           return new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 << t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 << t5);
           return new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -23020,16 +23020,16 @@ var dt = class _dt extends ut {
       case ">>": {
         if (Ge(r2) && Ge(a2)) {
           const t4 = r2, s3 = a2;
-          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i3 = t4.map((e3, t5) => e3 >> s3[t5]);
+          if (t4.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i3 = t4.map((e4, t5) => e4 >> s3[t5]);
           return new Me(i3, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t4 = r2.map((t5, n3) => t5 >> e3);
+          const e4 = a2, t4 = r2.map((t5, n3) => t5 >> e4);
           return new Me(t4, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t4 = a2.map((t5, n3) => e3 >> t5);
+          const e4 = r2, t4 = a2.map((t5, n3) => e4 >> t5);
           return new Me(t4, s2.typeInfo);
         }
         const t3 = r2, i2 = a2, o2 = this._maxFormatTypeInfo([n2.typeInfo, s2.typeInfo]);
@@ -23038,504 +23038,504 @@ var dt = class _dt extends ut {
       case ">":
         if (Ge(r2) && Ge(a2)) {
           const t3 = r2, s3 = a2;
-          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i2 = t3.map((e3, t4) => e3 > s3[t4] ? 1 : 0);
+          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i2 = t3.map((e4, t4) => e4 > s3[t4] ? 1 : 0);
           return new Me(i2, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t3 = r2.map((t4, n3) => t4 > e3 ? 1 : 0);
+          const e4 = a2, t3 = r2.map((t4, n3) => t4 > e4 ? 1 : 0);
           return new Me(t3, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t3 = a2.map((t4, n3) => e3 > t4 ? 1 : 0);
+          const e4 = r2, t3 = a2.map((t4, n3) => e4 > t4 ? 1 : 0);
           return new Me(t3, s2.typeInfo);
         }
         return new Be(r2 > a2 ? 1 : 0, this.getTypeInfo("bool"));
       case "<":
         if (Ge(r2) && Ge(a2)) {
           const t3 = r2, s3 = a2;
-          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i2 = t3.map((e3, t4) => e3 < s3[t4] ? 1 : 0);
+          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i2 = t3.map((e4, t4) => e4 < s3[t4] ? 1 : 0);
           return new Me(i2, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t3 = r2.map((t4, n3) => t4 < e3 ? 1 : 0);
+          const e4 = a2, t3 = r2.map((t4, n3) => t4 < e4 ? 1 : 0);
           return new Me(t3, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t3 = a2.map((t4, n3) => e3 < t4 ? 1 : 0);
+          const e4 = r2, t3 = a2.map((t4, n3) => e4 < t4 ? 1 : 0);
           return new Me(t3, s2.typeInfo);
         }
         return new Be(r2 < a2 ? 1 : 0, this.getTypeInfo("bool"));
       case "==":
         if (Ge(r2) && Ge(a2)) {
           const t3 = r2, s3 = a2;
-          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i2 = t3.map((e3, t4) => e3 === s3[t4] ? 1 : 0);
+          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i2 = t3.map((e4, t4) => e4 === s3[t4] ? 1 : 0);
           return new Me(i2, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t3 = r2.map((t4, n3) => t4 == e3 ? 1 : 0);
+          const e4 = a2, t3 = r2.map((t4, n3) => t4 == e4 ? 1 : 0);
           return new Me(t3, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t3 = a2.map((t4, n3) => e3 == t4 ? 1 : 0);
+          const e4 = r2, t3 = a2.map((t4, n3) => e4 == t4 ? 1 : 0);
           return new Me(t3, s2.typeInfo);
         }
         return new Be(r2 === a2 ? 1 : 0, this.getTypeInfo("bool"));
       case "!=":
         if (Ge(r2) && Ge(a2)) {
           const t3 = r2, s3 = a2;
-          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i2 = t3.map((e3, t4) => e3 !== s3[t4] ? 1 : 0);
+          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i2 = t3.map((e4, t4) => e4 !== s3[t4] ? 1 : 0);
           return new Me(i2, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t3 = r2.map((t4, n3) => t4 !== e3 ? 1 : 0);
+          const e4 = a2, t3 = r2.map((t4, n3) => t4 !== e4 ? 1 : 0);
           return new Me(t3, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t3 = a2.map((t4, n3) => e3 !== t4 ? 1 : 0);
+          const e4 = r2, t3 = a2.map((t4, n3) => e4 !== t4 ? 1 : 0);
           return new Me(t3, s2.typeInfo);
         }
         return new Be(r2 !== a2 ? 1 : 0, this.getTypeInfo("bool"));
       case ">=":
         if (Ge(r2) && Ge(a2)) {
           const t3 = r2, s3 = a2;
-          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i2 = t3.map((e3, t4) => e3 >= s3[t4] ? 1 : 0);
+          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i2 = t3.map((e4, t4) => e4 >= s3[t4] ? 1 : 0);
           return new Me(i2, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t3 = r2.map((t4, n3) => t4 >= e3 ? 1 : 0);
+          const e4 = a2, t3 = r2.map((t4, n3) => t4 >= e4 ? 1 : 0);
           return new Me(t3, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t3 = a2.map((t4, n3) => e3 >= t4 ? 1 : 0);
+          const e4 = r2, t3 = a2.map((t4, n3) => e4 >= t4 ? 1 : 0);
           return new Me(t3, s2.typeInfo);
         }
         return new Be(r2 >= a2 ? 1 : 0, this.getTypeInfo("bool"));
       case "<=":
         if (Ge(r2) && Ge(a2)) {
           const t3 = r2, s3 = a2;
-          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i2 = t3.map((e3, t4) => e3 <= s3[t4] ? 1 : 0);
+          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i2 = t3.map((e4, t4) => e4 <= s3[t4] ? 1 : 0);
           return new Me(i2, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t3 = r2.map((t4, n3) => t4 <= e3 ? 1 : 0);
+          const e4 = a2, t3 = r2.map((t4, n3) => t4 <= e4 ? 1 : 0);
           return new Me(t3, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t3 = a2.map((t4, n3) => e3 <= t4 ? 1 : 0);
+          const e4 = r2, t3 = a2.map((t4, n3) => e4 <= t4 ? 1 : 0);
           return new Me(t3, s2.typeInfo);
         }
         return new Be(r2 <= a2 ? 1 : 0, this.getTypeInfo("bool"));
       case "&&":
         if (Ge(r2) && Ge(a2)) {
           const t3 = r2, s3 = a2;
-          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i2 = t3.map((e3, t4) => e3 && s3[t4] ? 1 : 0);
+          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i2 = t3.map((e4, t4) => e4 && s3[t4] ? 1 : 0);
           return new Me(i2, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t3 = r2.map((t4, n3) => t4 && e3 ? 1 : 0);
+          const e4 = a2, t3 = r2.map((t4, n3) => t4 && e4 ? 1 : 0);
           return new Me(t3, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t3 = a2.map((t4, n3) => e3 && t4 ? 1 : 0);
+          const e4 = r2, t3 = a2.map((t4, n3) => e4 && t4 ? 1 : 0);
           return new Me(t3, s2.typeInfo);
         }
         return new Be(r2 && a2 ? 1 : 0, this.getTypeInfo("bool"));
       case "||":
         if (Ge(r2) && Ge(a2)) {
           const t3 = r2, s3 = a2;
-          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e2.line}.`), null;
-          const i2 = t3.map((e3, t4) => e3 || s3[t4] ? 1 : 0);
+          if (t3.length !== s3.length) return console.error(`Vector length mismatch. Line ${e3.line}.`), null;
+          const i2 = t3.map((e4, t4) => e4 || s3[t4] ? 1 : 0);
           return new Me(i2, n2.typeInfo);
         }
         if (Ge(r2)) {
-          const e3 = a2, t3 = r2.map((t4, n3) => t4 || e3 ? 1 : 0);
+          const e4 = a2, t3 = r2.map((t4, n3) => t4 || e4 ? 1 : 0);
           return new Me(t3, n2.typeInfo);
         }
         if (Ge(a2)) {
-          const e3 = r2, t3 = a2.map((t4, n3) => e3 || t4 ? 1 : 0);
+          const e4 = r2, t3 = a2.map((t4, n3) => e4 || t4 ? 1 : 0);
           return new Me(t3, s2.typeInfo);
         }
         return new Be(r2 || a2 ? 1 : 0, this.getTypeInfo("bool"));
     }
-    return console.error(`Unknown operator ${e2.operator}. Line ${e2.line}`), null;
+    return console.error(`Unknown operator ${e3.operator}. Line ${e3.line}`), null;
   }
-  _evalCall(e2, t2) {
-    if (null !== e2.cachedReturnValue) return e2.cachedReturnValue;
+  _evalCall(e3, t2) {
+    if (null !== e3.cachedReturnValue) return e3.cachedReturnValue;
     const n2 = t2.clone();
-    n2.currentFunctionName = e2.name;
-    const s2 = t2.getFunction(e2.name);
+    n2.currentFunctionName = e3.name;
+    const s2 = t2.getFunction(e3.name);
     if (!s2) {
-      if (e2.isBuiltin) return this._callBuiltinFunction(e2, n2);
-      return this.getTypeInfo(e2.name) ? this._evalCreate(e2, t2) : (console.error(`Unknown function "${e2.name}". Line ${e2.line}`), null);
+      if (e3.isBuiltin) return this._callBuiltinFunction(e3, n2);
+      return this.getTypeInfo(e3.name) ? this._evalCreate(e3, t2) : (console.error(`Unknown function "${e3.name}". Line ${e3.line}`), null);
     }
     for (let t3 = 0; t3 < s2.node.args.length; ++t3) {
-      const r2 = s2.node.args[t3], a2 = this.evalExpression(e2.args[t3], n2);
+      const r2 = s2.node.args[t3], a2 = this.evalExpression(e3.args[t3], n2);
       n2.createVariable(r2.name, a2, r2);
     }
     return this._execStatements(s2.node.body, n2);
   }
-  _callBuiltinFunction(e2, t2) {
-    switch (e2.name) {
+  _callBuiltinFunction(e3, t2) {
+    switch (e3.name) {
       case "all":
-        return this.builtins.All(e2, t2);
+        return this.builtins.All(e3, t2);
       case "any":
-        return this.builtins.Any(e2, t2);
+        return this.builtins.Any(e3, t2);
       case "select":
-        return this.builtins.Select(e2, t2);
+        return this.builtins.Select(e3, t2);
       case "arrayLength":
-        return this.builtins.ArrayLength(e2, t2);
+        return this.builtins.ArrayLength(e3, t2);
       case "abs":
-        return this.builtins.Abs(e2, t2);
+        return this.builtins.Abs(e3, t2);
       case "acos":
-        return this.builtins.Acos(e2, t2);
+        return this.builtins.Acos(e3, t2);
       case "acosh":
-        return this.builtins.Acosh(e2, t2);
+        return this.builtins.Acosh(e3, t2);
       case "asin":
-        return this.builtins.Asin(e2, t2);
+        return this.builtins.Asin(e3, t2);
       case "asinh":
-        return this.builtins.Asinh(e2, t2);
+        return this.builtins.Asinh(e3, t2);
       case "atan":
-        return this.builtins.Atan(e2, t2);
+        return this.builtins.Atan(e3, t2);
       case "atanh":
-        return this.builtins.Atanh(e2, t2);
+        return this.builtins.Atanh(e3, t2);
       case "atan2":
-        return this.builtins.Atan2(e2, t2);
+        return this.builtins.Atan2(e3, t2);
       case "ceil":
-        return this.builtins.Ceil(e2, t2);
+        return this.builtins.Ceil(e3, t2);
       case "clamp":
-        return this.builtins.Clamp(e2, t2);
+        return this.builtins.Clamp(e3, t2);
       case "cos":
-        return this.builtins.Cos(e2, t2);
+        return this.builtins.Cos(e3, t2);
       case "cosh":
-        return this.builtins.Cosh(e2, t2);
+        return this.builtins.Cosh(e3, t2);
       case "countLeadingZeros":
-        return this.builtins.CountLeadingZeros(e2, t2);
+        return this.builtins.CountLeadingZeros(e3, t2);
       case "countOneBits":
-        return this.builtins.CountOneBits(e2, t2);
+        return this.builtins.CountOneBits(e3, t2);
       case "countTrailingZeros":
-        return this.builtins.CountTrailingZeros(e2, t2);
+        return this.builtins.CountTrailingZeros(e3, t2);
       case "cross":
-        return this.builtins.Cross(e2, t2);
+        return this.builtins.Cross(e3, t2);
       case "degrees":
-        return this.builtins.Degrees(e2, t2);
+        return this.builtins.Degrees(e3, t2);
       case "determinant":
-        return this.builtins.Determinant(e2, t2);
+        return this.builtins.Determinant(e3, t2);
       case "distance":
-        return this.builtins.Distance(e2, t2);
+        return this.builtins.Distance(e3, t2);
       case "dot":
-        return this.builtins.Dot(e2, t2);
+        return this.builtins.Dot(e3, t2);
       case "dot4U8Packed":
-        return this.builtins.Dot4U8Packed(e2, t2);
+        return this.builtins.Dot4U8Packed(e3, t2);
       case "dot4I8Packed":
-        return this.builtins.Dot4I8Packed(e2, t2);
+        return this.builtins.Dot4I8Packed(e3, t2);
       case "exp":
-        return this.builtins.Exp(e2, t2);
+        return this.builtins.Exp(e3, t2);
       case "exp2":
-        return this.builtins.Exp2(e2, t2);
+        return this.builtins.Exp2(e3, t2);
       case "extractBits":
-        return this.builtins.ExtractBits(e2, t2);
+        return this.builtins.ExtractBits(e3, t2);
       case "faceForward":
-        return this.builtins.FaceForward(e2, t2);
+        return this.builtins.FaceForward(e3, t2);
       case "firstLeadingBit":
-        return this.builtins.FirstLeadingBit(e2, t2);
+        return this.builtins.FirstLeadingBit(e3, t2);
       case "firstTrailingBit":
-        return this.builtins.FirstTrailingBit(e2, t2);
+        return this.builtins.FirstTrailingBit(e3, t2);
       case "floor":
-        return this.builtins.Floor(e2, t2);
+        return this.builtins.Floor(e3, t2);
       case "fma":
-        return this.builtins.Fma(e2, t2);
+        return this.builtins.Fma(e3, t2);
       case "fract":
-        return this.builtins.Fract(e2, t2);
+        return this.builtins.Fract(e3, t2);
       case "frexp":
-        return this.builtins.Frexp(e2, t2);
+        return this.builtins.Frexp(e3, t2);
       case "insertBits":
-        return this.builtins.InsertBits(e2, t2);
+        return this.builtins.InsertBits(e3, t2);
       case "inverseSqrt":
-        return this.builtins.InverseSqrt(e2, t2);
+        return this.builtins.InverseSqrt(e3, t2);
       case "ldexp":
-        return this.builtins.Ldexp(e2, t2);
+        return this.builtins.Ldexp(e3, t2);
       case "length":
-        return this.builtins.Length(e2, t2);
+        return this.builtins.Length(e3, t2);
       case "log":
-        return this.builtins.Log(e2, t2);
+        return this.builtins.Log(e3, t2);
       case "log2":
-        return this.builtins.Log2(e2, t2);
+        return this.builtins.Log2(e3, t2);
       case "max":
-        return this.builtins.Max(e2, t2);
+        return this.builtins.Max(e3, t2);
       case "min":
-        return this.builtins.Min(e2, t2);
+        return this.builtins.Min(e3, t2);
       case "mix":
-        return this.builtins.Mix(e2, t2);
+        return this.builtins.Mix(e3, t2);
       case "modf":
-        return this.builtins.Modf(e2, t2);
+        return this.builtins.Modf(e3, t2);
       case "normalize":
-        return this.builtins.Normalize(e2, t2);
+        return this.builtins.Normalize(e3, t2);
       case "pow":
-        return this.builtins.Pow(e2, t2);
+        return this.builtins.Pow(e3, t2);
       case "quantizeToF16":
-        return this.builtins.QuantizeToF16(e2, t2);
+        return this.builtins.QuantizeToF16(e3, t2);
       case "radians":
-        return this.builtins.Radians(e2, t2);
+        return this.builtins.Radians(e3, t2);
       case "reflect":
-        return this.builtins.Reflect(e2, t2);
+        return this.builtins.Reflect(e3, t2);
       case "refract":
-        return this.builtins.Refract(e2, t2);
+        return this.builtins.Refract(e3, t2);
       case "reverseBits":
-        return this.builtins.ReverseBits(e2, t2);
+        return this.builtins.ReverseBits(e3, t2);
       case "round":
-        return this.builtins.Round(e2, t2);
+        return this.builtins.Round(e3, t2);
       case "saturate":
-        return this.builtins.Saturate(e2, t2);
+        return this.builtins.Saturate(e3, t2);
       case "sign":
-        return this.builtins.Sign(e2, t2);
+        return this.builtins.Sign(e3, t2);
       case "sin":
-        return this.builtins.Sin(e2, t2);
+        return this.builtins.Sin(e3, t2);
       case "sinh":
-        return this.builtins.Sinh(e2, t2);
+        return this.builtins.Sinh(e3, t2);
       case "smoothstep":
-        return this.builtins.SmoothStep(e2, t2);
+        return this.builtins.SmoothStep(e3, t2);
       case "sqrt":
-        return this.builtins.Sqrt(e2, t2);
+        return this.builtins.Sqrt(e3, t2);
       case "step":
-        return this.builtins.Step(e2, t2);
+        return this.builtins.Step(e3, t2);
       case "tan":
-        return this.builtins.Tan(e2, t2);
+        return this.builtins.Tan(e3, t2);
       case "tanh":
-        return this.builtins.Tanh(e2, t2);
+        return this.builtins.Tanh(e3, t2);
       case "transpose":
-        return this.builtins.Transpose(e2, t2);
+        return this.builtins.Transpose(e3, t2);
       case "trunc":
-        return this.builtins.Trunc(e2, t2);
+        return this.builtins.Trunc(e3, t2);
       case "dpdx":
-        return this.builtins.Dpdx(e2, t2);
+        return this.builtins.Dpdx(e3, t2);
       case "dpdxCoarse":
-        return this.builtins.DpdxCoarse(e2, t2);
+        return this.builtins.DpdxCoarse(e3, t2);
       case "dpdxFine":
-        return this.builtins.DpdxFine(e2, t2);
+        return this.builtins.DpdxFine(e3, t2);
       case "dpdy":
-        return this.builtins.Dpdy(e2, t2);
+        return this.builtins.Dpdy(e3, t2);
       case "dpdyCoarse":
-        return this.builtins.DpdyCoarse(e2, t2);
+        return this.builtins.DpdyCoarse(e3, t2);
       case "dpdyFine":
-        return this.builtins.DpdyFine(e2, t2);
+        return this.builtins.DpdyFine(e3, t2);
       case "fwidth":
-        return this.builtins.Fwidth(e2, t2);
+        return this.builtins.Fwidth(e3, t2);
       case "fwidthCoarse":
-        return this.builtins.FwidthCoarse(e2, t2);
+        return this.builtins.FwidthCoarse(e3, t2);
       case "fwidthFine":
-        return this.builtins.FwidthFine(e2, t2);
+        return this.builtins.FwidthFine(e3, t2);
       case "textureDimensions":
-        return this.builtins.TextureDimensions(e2, t2);
+        return this.builtins.TextureDimensions(e3, t2);
       case "textureGather":
-        return this.builtins.TextureGather(e2, t2);
+        return this.builtins.TextureGather(e3, t2);
       case "textureGatherCompare":
-        return this.builtins.TextureGatherCompare(e2, t2);
+        return this.builtins.TextureGatherCompare(e3, t2);
       case "textureLoad":
-        return this.builtins.TextureLoad(e2, t2);
+        return this.builtins.TextureLoad(e3, t2);
       case "textureNumLayers":
-        return this.builtins.TextureNumLayers(e2, t2);
+        return this.builtins.TextureNumLayers(e3, t2);
       case "textureNumLevels":
-        return this.builtins.TextureNumLevels(e2, t2);
+        return this.builtins.TextureNumLevels(e3, t2);
       case "textureNumSamples":
-        return this.builtins.TextureNumSamples(e2, t2);
+        return this.builtins.TextureNumSamples(e3, t2);
       case "textureSample":
-        return this.builtins.TextureSample(e2, t2);
+        return this.builtins.TextureSample(e3, t2);
       case "textureSampleBias":
-        return this.builtins.TextureSampleBias(e2, t2);
+        return this.builtins.TextureSampleBias(e3, t2);
       case "textureSampleCompare":
-        return this.builtins.TextureSampleCompare(e2, t2);
+        return this.builtins.TextureSampleCompare(e3, t2);
       case "textureSampleCompareLevel":
-        return this.builtins.TextureSampleCompareLevel(e2, t2);
+        return this.builtins.TextureSampleCompareLevel(e3, t2);
       case "textureSampleGrad":
-        return this.builtins.TextureSampleGrad(e2, t2);
+        return this.builtins.TextureSampleGrad(e3, t2);
       case "textureSampleLevel":
-        return this.builtins.TextureSampleLevel(e2, t2);
+        return this.builtins.TextureSampleLevel(e3, t2);
       case "textureSampleBaseClampToEdge":
-        return this.builtins.TextureSampleBaseClampToEdge(e2, t2);
+        return this.builtins.TextureSampleBaseClampToEdge(e3, t2);
       case "textureStore":
-        return this.builtins.TextureStore(e2, t2);
+        return this.builtins.TextureStore(e3, t2);
       case "atomicLoad":
-        return this.builtins.AtomicLoad(e2, t2);
+        return this.builtins.AtomicLoad(e3, t2);
       case "atomicStore":
-        return this.builtins.AtomicStore(e2, t2);
+        return this.builtins.AtomicStore(e3, t2);
       case "atomicAdd":
-        return this.builtins.AtomicAdd(e2, t2);
+        return this.builtins.AtomicAdd(e3, t2);
       case "atomicSub":
-        return this.builtins.AtomicSub(e2, t2);
+        return this.builtins.AtomicSub(e3, t2);
       case "atomicMax":
-        return this.builtins.AtomicMax(e2, t2);
+        return this.builtins.AtomicMax(e3, t2);
       case "atomicMin":
-        return this.builtins.AtomicMin(e2, t2);
+        return this.builtins.AtomicMin(e3, t2);
       case "atomicAnd":
-        return this.builtins.AtomicAnd(e2, t2);
+        return this.builtins.AtomicAnd(e3, t2);
       case "atomicOr":
-        return this.builtins.AtomicOr(e2, t2);
+        return this.builtins.AtomicOr(e3, t2);
       case "atomicXor":
-        return this.builtins.AtomicXor(e2, t2);
+        return this.builtins.AtomicXor(e3, t2);
       case "atomicExchange":
-        return this.builtins.AtomicExchange(e2, t2);
+        return this.builtins.AtomicExchange(e3, t2);
       case "atomicCompareExchangeWeak":
-        return this.builtins.AtomicCompareExchangeWeak(e2, t2);
+        return this.builtins.AtomicCompareExchangeWeak(e3, t2);
       case "pack4x8snorm":
-        return this.builtins.Pack4x8snorm(e2, t2);
+        return this.builtins.Pack4x8snorm(e3, t2);
       case "pack4x8unorm":
-        return this.builtins.Pack4x8unorm(e2, t2);
+        return this.builtins.Pack4x8unorm(e3, t2);
       case "pack4xI8":
-        return this.builtins.Pack4xI8(e2, t2);
+        return this.builtins.Pack4xI8(e3, t2);
       case "pack4xU8":
-        return this.builtins.Pack4xU8(e2, t2);
+        return this.builtins.Pack4xU8(e3, t2);
       case "pack4x8Clamp":
-        return this.builtins.Pack4x8Clamp(e2, t2);
+        return this.builtins.Pack4x8Clamp(e3, t2);
       case "pack4xU8Clamp":
-        return this.builtins.Pack4xU8Clamp(e2, t2);
+        return this.builtins.Pack4xU8Clamp(e3, t2);
       case "pack2x16snorm":
-        return this.builtins.Pack2x16snorm(e2, t2);
+        return this.builtins.Pack2x16snorm(e3, t2);
       case "pack2x16unorm":
-        return this.builtins.Pack2x16unorm(e2, t2);
+        return this.builtins.Pack2x16unorm(e3, t2);
       case "pack2x16float":
-        return this.builtins.Pack2x16float(e2, t2);
+        return this.builtins.Pack2x16float(e3, t2);
       case "unpack4x8snorm":
-        return this.builtins.Unpack4x8snorm(e2, t2);
+        return this.builtins.Unpack4x8snorm(e3, t2);
       case "unpack4x8unorm":
-        return this.builtins.Unpack4x8unorm(e2, t2);
+        return this.builtins.Unpack4x8unorm(e3, t2);
       case "unpack4xI8":
-        return this.builtins.Unpack4xI8(e2, t2);
+        return this.builtins.Unpack4xI8(e3, t2);
       case "unpack4xU8":
-        return this.builtins.Unpack4xU8(e2, t2);
+        return this.builtins.Unpack4xU8(e3, t2);
       case "unpack2x16snorm":
-        return this.builtins.Unpack2x16snorm(e2, t2);
+        return this.builtins.Unpack2x16snorm(e3, t2);
       case "unpack2x16unorm":
-        return this.builtins.Unpack2x16unorm(e2, t2);
+        return this.builtins.Unpack2x16unorm(e3, t2);
       case "unpack2x16float":
-        return this.builtins.Unpack2x16float(e2, t2);
+        return this.builtins.Unpack2x16float(e3, t2);
       case "storageBarrier":
-        return this.builtins.StorageBarrier(e2, t2);
+        return this.builtins.StorageBarrier(e3, t2);
       case "textureBarrier":
-        return this.builtins.TextureBarrier(e2, t2);
+        return this.builtins.TextureBarrier(e3, t2);
       case "workgroupBarrier":
-        return this.builtins.WorkgroupBarrier(e2, t2);
+        return this.builtins.WorkgroupBarrier(e3, t2);
       case "workgroupUniformLoad":
-        return this.builtins.WorkgroupUniformLoad(e2, t2);
+        return this.builtins.WorkgroupUniformLoad(e3, t2);
       case "subgroupAdd":
-        return this.builtins.SubgroupAdd(e2, t2);
+        return this.builtins.SubgroupAdd(e3, t2);
       case "subgroupExclusiveAdd":
-        return this.builtins.SubgroupExclusiveAdd(e2, t2);
+        return this.builtins.SubgroupExclusiveAdd(e3, t2);
       case "subgroupInclusiveAdd":
-        return this.builtins.SubgroupInclusiveAdd(e2, t2);
+        return this.builtins.SubgroupInclusiveAdd(e3, t2);
       case "subgroupAll":
-        return this.builtins.SubgroupAll(e2, t2);
+        return this.builtins.SubgroupAll(e3, t2);
       case "subgroupAnd":
-        return this.builtins.SubgroupAnd(e2, t2);
+        return this.builtins.SubgroupAnd(e3, t2);
       case "subgroupAny":
-        return this.builtins.SubgroupAny(e2, t2);
+        return this.builtins.SubgroupAny(e3, t2);
       case "subgroupBallot":
-        return this.builtins.SubgroupBallot(e2, t2);
+        return this.builtins.SubgroupBallot(e3, t2);
       case "subgroupBroadcast":
-        return this.builtins.SubgroupBroadcast(e2, t2);
+        return this.builtins.SubgroupBroadcast(e3, t2);
       case "subgroupBroadcastFirst":
-        return this.builtins.SubgroupBroadcastFirst(e2, t2);
+        return this.builtins.SubgroupBroadcastFirst(e3, t2);
       case "subgroupElect":
-        return this.builtins.SubgroupElect(e2, t2);
+        return this.builtins.SubgroupElect(e3, t2);
       case "subgroupMax":
-        return this.builtins.SubgroupMax(e2, t2);
+        return this.builtins.SubgroupMax(e3, t2);
       case "subgroupMin":
-        return this.builtins.SubgroupMin(e2, t2);
+        return this.builtins.SubgroupMin(e3, t2);
       case "subgroupMul":
-        return this.builtins.SubgroupMul(e2, t2);
+        return this.builtins.SubgroupMul(e3, t2);
       case "subgroupExclusiveMul":
-        return this.builtins.SubgroupExclusiveMul(e2, t2);
+        return this.builtins.SubgroupExclusiveMul(e3, t2);
       case "subgroupInclusiveMul":
-        return this.builtins.SubgroupInclusiveMul(e2, t2);
+        return this.builtins.SubgroupInclusiveMul(e3, t2);
       case "subgroupOr":
-        return this.builtins.SubgroupOr(e2, t2);
+        return this.builtins.SubgroupOr(e3, t2);
       case "subgroupShuffle":
-        return this.builtins.SubgroupShuffle(e2, t2);
+        return this.builtins.SubgroupShuffle(e3, t2);
       case "subgroupShuffleDown":
-        return this.builtins.SubgroupShuffleDown(e2, t2);
+        return this.builtins.SubgroupShuffleDown(e3, t2);
       case "subgroupShuffleUp":
-        return this.builtins.SubgroupShuffleUp(e2, t2);
+        return this.builtins.SubgroupShuffleUp(e3, t2);
       case "subgroupShuffleXor":
-        return this.builtins.SubgroupShuffleXor(e2, t2);
+        return this.builtins.SubgroupShuffleXor(e3, t2);
       case "subgroupXor":
-        return this.builtins.SubgroupXor(e2, t2);
+        return this.builtins.SubgroupXor(e3, t2);
       case "quadBroadcast":
-        return this.builtins.QuadBroadcast(e2, t2);
+        return this.builtins.QuadBroadcast(e3, t2);
       case "quadSwapDiagonal":
-        return this.builtins.QuadSwapDiagonal(e2, t2);
+        return this.builtins.QuadSwapDiagonal(e3, t2);
       case "quadSwapX":
-        return this.builtins.QuadSwapX(e2, t2);
+        return this.builtins.QuadSwapX(e3, t2);
       case "quadSwapY":
-        return this.builtins.QuadSwapY(e2, t2);
+        return this.builtins.QuadSwapY(e3, t2);
     }
-    const n2 = t2.getFunction(e2.name);
+    const n2 = t2.getFunction(e3.name);
     if (n2) {
       const s2 = t2.clone();
       for (let t3 = 0; t3 < n2.node.args.length; ++t3) {
-        const r2 = n2.node.args[t3], a2 = this.evalExpression(e2.args[t3], s2);
+        const r2 = n2.node.args[t3], a2 = this.evalExpression(e3.args[t3], s2);
         s2.setVariable(r2.name, a2, r2);
       }
       return this._execStatements(n2.node.body, s2);
     }
     return null;
   }
-  _callConstructorValue(e2, t2) {
-    if (!e2.args || 0 === e2.args.length) return new Be(0, this.getTypeInfo(e2.type));
-    const n2 = this.evalExpression(e2.args[0], t2);
-    return n2.typeInfo = this.getTypeInfo(e2.type), n2.getSubData(this, e2.postfix, t2).clone();
+  _callConstructorValue(e3, t2) {
+    if (!e3.args || 0 === e3.args.length) return new Be(0, this.getTypeInfo(e3.type));
+    const n2 = this.evalExpression(e3.args[0], t2);
+    return n2.typeInfo = this.getTypeInfo(e3.type), n2.getSubData(this, e3.postfix, t2).clone();
   }
-  _callConstructorVec(e2, t2) {
-    const n2 = this.getTypeInfo(e2.type), s2 = e2.type.getTypeName(), r2 = ft[s2];
-    if (void 0 === r2) return console.error(`Invalid vec constructor ${s2}. Line ${e2.line}`), null;
+  _callConstructorVec(e3, t2) {
+    const n2 = this.getTypeInfo(e3.type), s2 = e3.type.getTypeName(), r2 = ft[s2];
+    if (void 0 === r2) return console.error(`Invalid vec constructor ${s2}. Line ${e3.line}`), null;
     const a2 = [];
-    if (e2 instanceof xe) if (e2.isVector) {
-      const t3 = e2.vectorValue;
-      for (const e3 of t3) a2.push(e3);
-    } else a2.push(e2.scalarValue);
-    else if (e2.args) for (const n3 of e2.args) {
-      const e3 = this.evalExpression(n3, t2);
-      if (e3 instanceof Me) {
-        const t3 = e3.data;
-        for (let e4 = 0; e4 < t3.length; ++e4) {
-          let n4 = t3[e4];
+    if (e3 instanceof xe) if (e3.isVector) {
+      const t3 = e3.vectorValue;
+      for (const e4 of t3) a2.push(e4);
+    } else a2.push(e3.scalarValue);
+    else if (e3.args) for (const n3 of e3.args) {
+      const e4 = this.evalExpression(n3, t2);
+      if (e4 instanceof Me) {
+        const t3 = e4.data;
+        for (let e5 = 0; e5 < t3.length; ++e5) {
+          let n4 = t3[e5];
           a2.push(n4);
         }
-      } else if (e3 instanceof Be) {
-        let t3 = e3.value;
+      } else if (e4 instanceof Be) {
+        let t3 = e4.value;
         a2.push(t3);
       }
     }
-    if (e2.type instanceof ce && null === e2.type.format && (e2.type.format = ce.f32), 0 === a2.length) {
+    if (e3.type instanceof ce && null === e3.type.format && (e3.type.format = ce.f32), 0 === a2.length) {
       const s3 = new Array(r2).fill(0);
-      return new Me(s3, n2).getSubData(this, e2.postfix, t2);
+      return new Me(s3, n2).getSubData(this, e3.postfix, t2);
     }
     if (1 === a2.length) for (; a2.length < r2; ) a2.push(a2[0]);
-    if (a2.length < r2) return console.error(`Invalid vec constructor. Line ${e2.line}`), null;
-    return new Me(a2.length > r2 ? a2.slice(0, r2) : a2, n2).getSubData(this, e2.postfix, t2);
+    if (a2.length < r2) return console.error(`Invalid vec constructor. Line ${e3.line}`), null;
+    return new Me(a2.length > r2 ? a2.slice(0, r2) : a2, n2).getSubData(this, e3.postfix, t2);
   }
-  _callConstructorMatrix(e2, t2) {
-    const n2 = this.getTypeInfo(e2.type), s2 = e2.type.getTypeName(), r2 = pt[s2];
-    if (void 0 === r2) return console.error(`Invalid matrix constructor ${s2}. Line ${e2.line}`), null;
+  _callConstructorMatrix(e3, t2) {
+    const n2 = this.getTypeInfo(e3.type), s2 = e3.type.getTypeName(), r2 = pt[s2];
+    if (void 0 === r2) return console.error(`Invalid matrix constructor ${s2}. Line ${e3.line}`), null;
     const i2 = [];
-    if (e2 instanceof xe) if (e2.isVector) {
-      const t3 = e2.vectorValue;
-      for (const e3 of t3) i2.push(e3);
-    } else i2.push(e2.scalarValue);
-    else if (e2.args) for (const n3 of e2.args) {
-      const e3 = this.evalExpression(n3, t2);
-      e3 instanceof Me ? i2.push(...e3.data) : e3 instanceof Be ? i2.push(e3.value) : e3 instanceof Ue && i2.push(...e3.data);
+    if (e3 instanceof xe) if (e3.isVector) {
+      const t3 = e3.vectorValue;
+      for (const e4 of t3) i2.push(e4);
+    } else i2.push(e3.scalarValue);
+    else if (e3.args) for (const n3 of e3.args) {
+      const e4 = this.evalExpression(n3, t2);
+      e4 instanceof Me ? i2.push(...e4.data) : e4 instanceof Be ? i2.push(e4.value) : e4 instanceof Ue && i2.push(...e4.data);
     }
     if (n2 instanceof a && null === n2.format && (n2.format = this.getTypeInfo("f32")), 0 === i2.length) {
       const s3 = new Array(r2[2]).fill(0);
-      return new Ue(s3, n2).getSubData(this, e2.postfix, t2);
+      return new Ue(s3, n2).getSubData(this, e3.postfix, t2);
     }
-    return i2.length !== r2[2] ? (console.error(`Invalid matrix constructor. Line ${e2.line}`), null) : new Ue(i2, n2).getSubData(this, e2.postfix, t2);
+    return i2.length !== r2[2] ? (console.error(`Invalid matrix constructor. Line ${e3.line}`), null) : new Ue(i2, n2).getSubData(this, e3.postfix, t2);
   }
 };
 dt._breakObj = new Ne(new e("BREAK", null), null), dt._continueObj = new Ne(new e("CONTINUE", null), null), dt._priority = /* @__PURE__ */ new Map([["f32", 0], ["f16", 1], ["u32", 2], ["i32", 3], ["x32", 3]]);
@@ -23548,95 +23548,95 @@ var gt = class {
   constructor() {
     this._tokens = [], this._current = 0, this._currentLine = 1, this._deferArrayCountEval = [], this._currentLoop = [], this._context = new mt(), this._exec = new dt(), this._forwardTypeCount = 0;
   }
-  parse(e2) {
-    this._initialize(e2), this._deferArrayCountEval.length = 0;
+  parse(e3) {
+    this._initialize(e3), this._deferArrayCountEval.length = 0;
     const t2 = [];
     for (; !this._isAtEnd(); ) {
-      const e3 = this._global_decl_or_directive();
-      if (!e3) break;
-      t2.push(e3);
+      const e4 = this._global_decl_or_directive();
+      if (!e4) break;
+      t2.push(e4);
     }
     if (this._deferArrayCountEval.length > 0) {
-      for (const e3 of this._deferArrayCountEval) {
-        const t3 = e3.arrayType, n2 = e3.countNode;
+      for (const e4 of this._deferArrayCountEval) {
+        const t3 = e4.arrayType, n2 = e4.countNode;
         if (n2 instanceof ge) {
-          const e4 = n2.name, s2 = this._context.constants.get(e4);
+          const e5 = n2.name, s2 = this._context.constants.get(e5);
           if (s2) try {
-            const e5 = s2.constEvaluate(this._exec);
-            t3.count = e5;
-          } catch (e5) {
+            const e6 = s2.constEvaluate(this._exec);
+            t3.count = e6;
+          } catch (e6) {
           }
         }
       }
       this._deferArrayCountEval.length = 0;
     }
-    if (this._forwardTypeCount > 0) for (const e3 of t2) e3.search((e4) => {
-      e4 instanceof Ce || e4 instanceof le ? e4.type = this._forwardType(e4.type) : e4 instanceof ue ? e4.format = this._forwardType(e4.format) : e4 instanceof F || e4 instanceof U || e4 instanceof P ? e4.type = this._forwardType(e4.type) : e4 instanceof D ? e4.returnType = this._forwardType(e4.returnType) : e4 instanceof $e && (e4.type = this._forwardType(e4.type));
+    if (this._forwardTypeCount > 0) for (const e4 of t2) e4.search((e5) => {
+      e5 instanceof Ce || e5 instanceof le ? e5.type = this._forwardType(e5.type) : e5 instanceof ue ? e5.format = this._forwardType(e5.format) : e5 instanceof F || e5 instanceof U || e5 instanceof P ? e5.type = this._forwardType(e5.type) : e5 instanceof D ? e5.returnType = this._forwardType(e5.returnType) : e5 instanceof $e && (e5.type = this._forwardType(e5.type));
     });
     return t2;
   }
-  _forwardType(e2) {
-    if (e2 instanceof ie) {
-      const t2 = this._getType(e2.name);
+  _forwardType(e3) {
+    if (e3 instanceof ie) {
+      const t2 = this._getType(e3.name);
       if (t2) return t2;
-    } else e2 instanceof le ? e2.type = this._forwardType(e2.type) : e2 instanceof ue && (e2.format = this._forwardType(e2.format));
-    return e2;
+    } else e3 instanceof le ? e3.type = this._forwardType(e3.type) : e3 instanceof ue && (e3.format = this._forwardType(e3.format));
+    return e3;
   }
-  _initialize(e2) {
-    if (e2) if ("string" == typeof e2) {
-      const t2 = new Re(e2);
+  _initialize(e3) {
+    if (e3) if ("string" == typeof e3) {
+      const t2 = new Re(e3);
       this._tokens = t2.scanTokens();
-    } else this._tokens = e2;
+    } else this._tokens = e3;
     else this._tokens = [];
     this._current = 0;
   }
-  _updateNode(e2, t2) {
-    return e2.line = null != t2 ? t2 : this._currentLine, e2;
+  _updateNode(e3, t2) {
+    return e3.line = null != t2 ? t2 : this._currentLine, e3;
   }
-  _error(e2, t2) {
-    return { token: e2, message: t2, toString: () => `${t2}` };
+  _error(e3, t2) {
+    return { token: e3, message: t2, toString: () => `${t2}` };
   }
   _isAtEnd() {
     return this._current >= this._tokens.length || this._peek().type == He.eof;
   }
-  _match(e2) {
-    if (e2 instanceof qe) return !!this._check(e2) && (this._advance(), true);
-    for (let t2 = 0, n2 = e2.length; t2 < n2; ++t2) {
-      const n3 = e2[t2];
+  _match(e3) {
+    if (e3 instanceof qe) return !!this._check(e3) && (this._advance(), true);
+    for (let t2 = 0, n2 = e3.length; t2 < n2; ++t2) {
+      const n3 = e3[t2];
       if (this._check(n3)) return this._advance(), true;
     }
     return false;
   }
-  _consume(e2, t2) {
-    if (this._check(e2)) return this._advance();
+  _consume(e3, t2) {
+    if (this._check(e3)) return this._advance();
     throw this._error(this._peek(), `${t2}. Line:${this._currentLine}`);
   }
-  _check(e2) {
+  _check(e3) {
     if (this._isAtEnd()) return false;
     const t2 = this._peek();
-    if (e2 instanceof Array) {
+    if (e3 instanceof Array) {
       const n2 = t2.type;
       let s2 = false;
-      for (const t3 of e2) {
+      for (const t3 of e3) {
         if (n2 === t3) return true;
         t3 === He.tokens.name && (s2 = true);
       }
       if (s2) {
-        const e3 = He.tokens.name.rule.exec(t2.lexeme);
-        if (e3 && 0 == e3.index && e3[0] == t2.lexeme) return true;
+        const e4 = He.tokens.name.rule.exec(t2.lexeme);
+        if (e4 && 0 == e4.index && e4[0] == t2.lexeme) return true;
       }
       return false;
     }
-    if (t2.type === e2) return true;
-    if (e2 === He.tokens.name) {
-      const e3 = He.tokens.name.rule.exec(t2.lexeme);
-      return e3 && 0 == e3.index && e3[0] == t2.lexeme;
+    if (t2.type === e3) return true;
+    if (e3 === He.tokens.name) {
+      const e4 = He.tokens.name.rule.exec(t2.lexeme);
+      return e4 && 0 == e4.index && e4[0] == t2.lexeme;
     }
     return false;
   }
   _advance() {
-    var e2, t2;
-    return this._currentLine = null !== (t2 = null === (e2 = this._peek()) || void 0 === e2 ? void 0 : e2.line) && void 0 !== t2 ? t2 : -1, this._isAtEnd() || this._current++, this._previous();
+    var e3, t2;
+    return this._currentLine = null !== (t2 = null === (e3 = this._peek()) || void 0 === e3 ? void 0 : e3.line) && void 0 !== t2 ? t2 : -1, this._isAtEnd() || this._current++, this._previous();
   }
   _peek() {
     return this._tokens[this._current];
@@ -23647,76 +23647,76 @@ var gt = class {
   _global_decl_or_directive() {
     for (; this._match(He.tokens.semicolon) && !this._isAtEnd(); ) ;
     if (this._match(He.keywords.alias)) {
-      const e3 = this._type_alias();
-      return this._consume(He.tokens.semicolon, "Expected ';'"), this._exec.reflection.updateAST([e3]), e3;
+      const e4 = this._type_alias();
+      return this._consume(He.tokens.semicolon, "Expected ';'"), this._exec.reflection.updateAST([e4]), e4;
     }
     if (this._match(He.keywords.diagnostic)) {
-      const e3 = this._diagnostic();
-      return this._consume(He.tokens.semicolon, "Expected ';'"), this._exec.reflection.updateAST([e3]), e3;
+      const e4 = this._diagnostic();
+      return this._consume(He.tokens.semicolon, "Expected ';'"), this._exec.reflection.updateAST([e4]), e4;
     }
     if (this._match(He.keywords.requires)) {
-      const e3 = this._requires_directive();
-      return this._consume(He.tokens.semicolon, "Expected ';'"), this._exec.reflection.updateAST([e3]), e3;
+      const e4 = this._requires_directive();
+      return this._consume(He.tokens.semicolon, "Expected ';'"), this._exec.reflection.updateAST([e4]), e4;
     }
     if (this._match(He.keywords.enable)) {
-      const e3 = this._enable_directive();
-      return this._consume(He.tokens.semicolon, "Expected ';'"), this._exec.reflection.updateAST([e3]), e3;
+      const e4 = this._enable_directive();
+      return this._consume(He.tokens.semicolon, "Expected ';'"), this._exec.reflection.updateAST([e4]), e4;
     }
-    const e2 = this._attribute();
+    const e3 = this._attribute();
     if (this._check(He.keywords.var)) {
       const t2 = this._global_variable_decl();
-      return null != t2 && (t2.attributes = e2), this._consume(He.tokens.semicolon, "Expected ';'."), this._exec.reflection.updateAST([t2]), t2;
+      return null != t2 && (t2.attributes = e3), this._consume(He.tokens.semicolon, "Expected ';'."), this._exec.reflection.updateAST([t2]), t2;
     }
     if (this._check(He.keywords.override)) {
       const t2 = this._override_variable_decl();
-      return null != t2 && (t2.attributes = e2), this._consume(He.tokens.semicolon, "Expected ';'."), this._exec.reflection.updateAST([t2]), t2;
+      return null != t2 && (t2.attributes = e3), this._consume(He.tokens.semicolon, "Expected ';'."), this._exec.reflection.updateAST([t2]), t2;
     }
     if (this._check(He.keywords.let)) {
       const t2 = this._global_let_decl();
-      return null != t2 && (t2.attributes = e2), this._consume(He.tokens.semicolon, "Expected ';'."), this._exec.reflection.updateAST([t2]), t2;
+      return null != t2 && (t2.attributes = e3), this._consume(He.tokens.semicolon, "Expected ';'."), this._exec.reflection.updateAST([t2]), t2;
     }
     if (this._check(He.keywords.const)) {
       const t2 = this._global_const_decl();
-      return null != t2 && (t2.attributes = e2), this._consume(He.tokens.semicolon, "Expected ';'."), this._exec.reflection.updateAST([t2]), t2;
+      return null != t2 && (t2.attributes = e3), this._consume(He.tokens.semicolon, "Expected ';'."), this._exec.reflection.updateAST([t2]), t2;
     }
     if (this._check(He.keywords.struct)) {
       const t2 = this._struct_decl();
-      return null != t2 && (t2.attributes = e2), this._exec.reflection.updateAST([t2]), t2;
+      return null != t2 && (t2.attributes = e3), this._exec.reflection.updateAST([t2]), t2;
     }
     if (this._check(He.keywords.fn)) {
       const t2 = this._function_decl();
-      return null != t2 && (t2.attributes = e2), this._exec.reflection.updateAST([t2]), t2;
+      return null != t2 && (t2.attributes = e3), this._exec.reflection.updateAST([t2]), t2;
     }
     return null;
   }
   _function_decl() {
     if (!this._match(He.keywords.fn)) return null;
-    const e2 = this._currentLine, t2 = this._consume(He.tokens.ident, "Expected function name.").toString();
+    const e3 = this._currentLine, t2 = this._consume(He.tokens.ident, "Expected function name.").toString();
     this._consume(He.tokens.paren_left, "Expected '(' for function arguments.");
     const n2 = [];
     if (!this._check(He.tokens.paren_right)) do {
       if (this._check(He.tokens.paren_right)) break;
-      const e3 = this._attribute(), t3 = this._consume(He.tokens.name, "Expected argument name.").toString();
+      const e4 = this._attribute(), t3 = this._consume(He.tokens.name, "Expected argument name.").toString();
       this._consume(He.tokens.colon, "Expected ':' for argument type.");
       const s3 = this._attribute(), r3 = this._type_decl();
-      null != r3 && (r3.attributes = s3, n2.push(this._updateNode(new $e(t3, r3, e3))));
+      null != r3 && (r3.attributes = s3, n2.push(this._updateNode(new $e(t3, r3, e4))));
     } while (this._match(He.tokens.comma));
     this._consume(He.tokens.paren_right, "Expected ')' after function arguments.");
     let s2 = null;
     if (this._match(He.tokens.arrow)) {
-      const e3 = this._attribute();
-      s2 = this._type_decl(), null != s2 && (s2.attributes = e3);
+      const e4 = this._attribute();
+      s2 = this._type_decl(), null != s2 && (s2.attributes = e4);
     }
     const r2 = this._compound_statement(), a2 = this._currentLine;
-    return this._updateNode(new D(t2, n2, s2, r2, e2, a2), e2);
+    return this._updateNode(new D(t2, n2, s2, r2, e3, a2), e3);
   }
   _compound_statement() {
-    const e2 = [];
+    const e3 = [];
     for (this._consume(He.tokens.brace_left, "Expected '{' for block."); !this._check(He.tokens.brace_right); ) {
       const t2 = this._statement();
-      null !== t2 && e2.push(t2);
+      null !== t2 && e3.push(t2);
     }
-    return this._consume(He.tokens.brace_right, "Expected '}' for block."), e2;
+    return this._consume(He.tokens.brace_right, "Expected '}' for block."), e3;
   }
   _statement() {
     for (; this._match(He.tokens.semicolon) && !this._isAtEnd(); ) ;
@@ -23728,49 +23728,49 @@ var gt = class {
     if (this._check(He.keywords.continuing)) return this._continuing_statement();
     if (this._check(He.keywords.static_assert)) return this._static_assert_statement();
     if (this._check(He.tokens.brace_left)) return this._compound_statement();
-    let e2 = null;
-    if (this._check(He.keywords.return)) e2 = this._return_statement();
-    else if (this._check([He.keywords.var, He.keywords.let, He.keywords.const])) e2 = this._variable_statement();
-    else if (this._match(He.keywords.discard)) e2 = this._updateNode(new ne());
+    let e3 = null;
+    if (this._check(He.keywords.return)) e3 = this._return_statement();
+    else if (this._check([He.keywords.var, He.keywords.let, He.keywords.const])) e3 = this._variable_statement();
+    else if (this._match(He.keywords.discard)) e3 = this._updateNode(new ne());
     else if (this._match(He.keywords.break)) {
       const t2 = this._updateNode(new se());
       if (this._currentLoop.length > 0) {
-        const e3 = this._currentLoop[this._currentLoop.length - 1];
-        t2.loopId = e3.id;
+        const e4 = this._currentLoop[this._currentLoop.length - 1];
+        t2.loopId = e4.id;
       }
-      e2 = t2, this._check(He.keywords.if) && (this._advance(), t2.condition = this._optional_paren_expression());
+      e3 = t2, this._check(He.keywords.if) && (this._advance(), t2.condition = this._optional_paren_expression());
     } else if (this._match(He.keywords.continue)) {
       const t2 = this._updateNode(new re());
       if (!(this._currentLoop.length > 0)) throw this._error(this._peek(), `Continue statement must be inside a loop. Line: ${t2.line}`);
       {
-        const e3 = this._currentLoop[this._currentLoop.length - 1];
-        t2.loopId = e3.id;
+        const e4 = this._currentLoop[this._currentLoop.length - 1];
+        t2.loopId = e4.id;
       }
-      e2 = t2;
-    } else e2 = this._increment_decrement_statement() || this._func_call_statement() || this._assignment_statement();
-    return null != e2 && this._consume(He.tokens.semicolon, "Expected ';' after statement."), e2;
+      e3 = t2;
+    } else e3 = this._increment_decrement_statement() || this._func_call_statement() || this._assignment_statement();
+    return null != e3 && this._consume(He.tokens.semicolon, "Expected ';' after statement."), e3;
   }
   _static_assert_statement() {
     if (!this._match(He.keywords.static_assert)) return null;
-    const e2 = this._currentLine, t2 = this._optional_paren_expression();
-    return this._updateNode(new N(t2), e2);
+    const e3 = this._currentLine, t2 = this._optional_paren_expression();
+    return this._updateNode(new N(t2), e3);
   }
   _while_statement() {
     if (!this._match(He.keywords.while)) return null;
-    const e2 = this._updateNode(new V(null, null));
-    return this._currentLoop.push(e2), e2.condition = this._optional_paren_expression(), this._check(He.tokens.attr) && this._attribute(), e2.body = this._compound_statement(), this._currentLoop.pop(), e2;
+    const e3 = this._updateNode(new V(null, null));
+    return this._currentLoop.push(e3), e3.condition = this._optional_paren_expression(), this._check(He.tokens.attr) && this._attribute(), e3.body = this._compound_statement(), this._currentLoop.pop(), e3;
   }
   _continuing_statement() {
-    const e2 = this._currentLoop.length > 0 ? this._currentLoop[this._currentLoop.length - 1].id : -1;
+    const e3 = this._currentLoop.length > 0 ? this._currentLoop[this._currentLoop.length - 1].id : -1;
     if (!this._match(He.keywords.continuing)) return null;
     const t2 = this._currentLine, n2 = this._compound_statement();
-    return this._updateNode(new O(n2, e2), t2);
+    return this._updateNode(new O(n2, e3), t2);
   }
   _for_statement() {
     if (!this._match(He.keywords.for)) return null;
     this._consume(He.tokens.paren_left, "Expected '('.");
-    const e2 = this._updateNode(new B(null, null, null, null));
-    return this._currentLoop.push(e2), e2.init = this._check(He.tokens.semicolon) ? null : this._for_init(), this._consume(He.tokens.semicolon, "Expected ';'."), e2.condition = this._check(He.tokens.semicolon) ? null : this._short_circuit_or_expression(), this._consume(He.tokens.semicolon, "Expected ';'."), e2.increment = this._check(He.tokens.paren_right) ? null : this._for_increment(), this._consume(He.tokens.paren_right, "Expected ')'."), this._check(He.tokens.attr) && this._attribute(), e2.body = this._compound_statement(), this._currentLoop.pop(), e2;
+    const e3 = this._updateNode(new B(null, null, null, null));
+    return this._currentLoop.push(e3), e3.init = this._check(He.tokens.semicolon) ? null : this._for_init(), this._consume(He.tokens.semicolon, "Expected ';'."), e3.condition = this._check(He.tokens.semicolon) ? null : this._short_circuit_or_expression(), this._consume(He.tokens.semicolon, "Expected ';'."), e3.increment = this._check(He.tokens.paren_right) ? null : this._for_increment(), this._consume(He.tokens.paren_right, "Expected ')'."), this._check(He.tokens.attr) && this._attribute(), e3.body = this._compound_statement(), this._currentLoop.pop(), e3;
   }
   _for_init() {
     return this._variable_statement() || this._func_call_statement() || this._assignment_statement();
@@ -23780,220 +23780,220 @@ var gt = class {
   }
   _variable_statement() {
     if (this._check(He.keywords.var)) {
-      const e2 = this._variable_decl();
-      if (null === e2) throw this._error(this._peek(), "Variable declaration expected.");
+      const e3 = this._variable_decl();
+      if (null === e3) throw this._error(this._peek(), "Variable declaration expected.");
       let t2 = null;
-      return this._match(He.tokens.equal) && (t2 = this._short_circuit_or_expression()), this._updateNode(new F(e2.name, e2.type, e2.storage, e2.access, t2), e2.line);
+      return this._match(He.tokens.equal) && (t2 = this._short_circuit_or_expression()), this._updateNode(new F(e3.name, e3.type, e3.storage, e3.access, t2), e3.line);
     }
     if (this._match(He.keywords.let)) {
-      const e2 = this._currentLine, t2 = this._consume(He.tokens.name, "Expected name for let.").toString();
+      const e3 = this._currentLine, t2 = this._consume(He.tokens.name, "Expected name for let.").toString();
       let n2 = null;
       if (this._match(He.tokens.colon)) {
-        const e3 = this._attribute();
-        n2 = this._type_decl(), null != n2 && (n2.attributes = e3);
+        const e4 = this._attribute();
+        n2 = this._type_decl(), null != n2 && (n2.attributes = e4);
       }
       this._consume(He.tokens.equal, "Expected '=' for let.");
       const s2 = this._short_circuit_or_expression();
-      return this._updateNode(new U(t2, n2, null, null, s2), e2);
+      return this._updateNode(new U(t2, n2, null, null, s2), e3);
     }
     if (this._match(He.keywords.const)) {
-      const e2 = this._currentLine, t2 = this._consume(He.tokens.name, "Expected name for const.").toString();
+      const e3 = this._currentLine, t2 = this._consume(He.tokens.name, "Expected name for const.").toString();
       let n2 = null;
       if (this._match(He.tokens.colon)) {
-        const e3 = this._attribute();
-        n2 = this._type_decl(), null != n2 && (n2.attributes = e3);
+        const e4 = this._attribute();
+        n2 = this._type_decl(), null != n2 && (n2.attributes = e4);
       }
       this._consume(He.tokens.equal, "Expected '=' for const.");
       const s2 = this._short_circuit_or_expression();
-      return null === n2 && s2 instanceof xe && (n2 = s2.type), this._updateNode(new P(t2, n2, null, null, s2), e2);
+      return null === n2 && s2 instanceof xe && (n2 = s2.type), this._updateNode(new P(t2, n2, null, null, s2), e3);
     }
     return null;
   }
   _increment_decrement_statement() {
-    const e2 = this._current, t2 = this._unary_expression();
+    const e3 = this._current, t2 = this._unary_expression();
     if (null == t2) return null;
-    if (!this._check(He.increment_operators)) return this._current = e2, null;
+    if (!this._check(He.increment_operators)) return this._current = e3, null;
     const n2 = this._consume(He.increment_operators, "Expected increment operator");
     return this._updateNode(new R(n2.type === He.tokens.plus_plus ? W.increment : W.decrement, t2));
   }
   _assignment_statement() {
-    let e2 = null;
+    let e3 = null;
     const t2 = this._currentLine;
     if (this._check(He.tokens.brace_right)) return null;
     let n2 = this._match(He.tokens.underscore);
-    if (n2 || (e2 = this._unary_expression()), !n2 && null == e2) return null;
+    if (n2 || (e3 = this._unary_expression()), !n2 && null == e3) return null;
     const s2 = this._consume(He.assignment_operators, "Expected assignment operator."), r2 = this._short_circuit_or_expression();
-    return this._updateNode(new G(q.parse(s2.lexeme), e2, r2), t2);
+    return this._updateNode(new G(q.parse(s2.lexeme), e3, r2), t2);
   }
   _func_call_statement() {
     if (!this._check(He.tokens.ident)) return null;
-    const e2 = this._currentLine, t2 = this._current, n2 = this._consume(He.tokens.ident, "Expected function name."), s2 = this._argument_expression_list();
-    return null === s2 ? (this._current = t2, null) : this._updateNode(new X(n2.lexeme, s2), e2);
+    const e3 = this._currentLine, t2 = this._current, n2 = this._consume(He.tokens.ident, "Expected function name."), s2 = this._argument_expression_list();
+    return null === s2 ? (this._current = t2, null) : this._updateNode(new X(n2.lexeme, s2), e3);
   }
   _loop_statement() {
     if (!this._match(He.keywords.loop)) return null;
     this._check(He.tokens.attr) && this._attribute(), this._consume(He.tokens.brace_left, "Expected '{' for loop.");
-    const e2 = this._updateNode(new j([], null));
-    this._currentLoop.push(e2);
+    const e3 = this._updateNode(new j([], null));
+    this._currentLoop.push(e3);
     let t2 = this._statement();
     for (; null !== t2; ) {
-      if (Array.isArray(t2)) for (let n2 of t2) e2.body.push(n2);
-      else e2.body.push(t2);
+      if (Array.isArray(t2)) for (let n2 of t2) e3.body.push(n2);
+      else e3.body.push(t2);
       if (t2 instanceof O) {
-        e2.continuing = t2;
+        e3.continuing = t2;
         break;
       }
       t2 = this._statement();
     }
-    return this._currentLoop.pop(), this._consume(He.tokens.brace_right, "Expected '}' for loop."), e2;
+    return this._currentLoop.pop(), this._consume(He.tokens.brace_right, "Expected '}' for loop."), e3;
   }
   _switch_statement() {
     if (!this._match(He.keywords.switch)) return null;
-    const e2 = this._updateNode(new Z(null, []));
-    if (this._currentLoop.push(e2), e2.condition = this._optional_paren_expression(), this._check(He.tokens.attr) && this._attribute(), this._consume(He.tokens.brace_left, "Expected '{' for switch."), e2.cases = this._switch_body(), null == e2.cases || 0 == e2.cases.length) throw this._error(this._previous(), "Expected 'case' or 'default'.");
-    return this._consume(He.tokens.brace_right, "Expected '}' for switch."), this._currentLoop.pop(), e2;
+    const e3 = this._updateNode(new Z(null, []));
+    if (this._currentLoop.push(e3), e3.condition = this._optional_paren_expression(), this._check(He.tokens.attr) && this._attribute(), this._consume(He.tokens.brace_left, "Expected '{' for switch."), e3.cases = this._switch_body(), null == e3.cases || 0 == e3.cases.length) throw this._error(this._previous(), "Expected 'case' or 'default'.");
+    return this._consume(He.tokens.brace_right, "Expected '}' for switch."), this._currentLoop.pop(), e3;
   }
   _switch_body() {
-    const e2 = [];
+    const e3 = [];
     let t2 = false;
     for (; this._check([He.keywords.default, He.keywords.case]); ) {
       if (this._match(He.keywords.case)) {
         const n2 = this._case_selectors();
-        for (const e3 of n2) if (e3 instanceof Se) {
+        for (const e4 of n2) if (e4 instanceof Se) {
           if (t2) throw this._error(this._previous(), "Multiple default cases in switch statement.");
           t2 = true;
           break;
         }
         this._match(He.tokens.colon), this._check(He.tokens.attr) && this._attribute(), this._consume(He.tokens.brace_left, "Exected '{' for switch case.");
         const s2 = this._case_body();
-        this._consume(He.tokens.brace_right, "Exected '}' for switch case."), e2.push(this._updateNode(new Ae(n2, s2)));
+        this._consume(He.tokens.brace_right, "Exected '}' for switch case."), e3.push(this._updateNode(new Ae(n2, s2)));
       }
       if (this._match(He.keywords.default)) {
         if (t2) throw this._error(this._previous(), "Multiple default cases in switch statement.");
         this._match(He.tokens.colon), this._check(He.tokens.attr) && this._attribute(), this._consume(He.tokens.brace_left, "Exected '{' for switch default.");
         const n2 = this._case_body();
-        this._consume(He.tokens.brace_right, "Exected '}' for switch default."), e2.push(this._updateNode(new Ee(n2)));
+        this._consume(He.tokens.brace_right, "Exected '}' for switch default."), e3.push(this._updateNode(new Ee(n2)));
       }
     }
-    return e2;
+    return e3;
   }
   _case_selectors() {
-    const e2 = [];
-    for (this._match(He.keywords.default) ? e2.push(this._updateNode(new Se())) : e2.push(this._shift_expression()); this._match(He.tokens.comma); ) this._match(He.keywords.default) ? e2.push(this._updateNode(new Se())) : e2.push(this._shift_expression());
-    return e2;
+    const e3 = [];
+    for (this._match(He.keywords.default) ? e3.push(this._updateNode(new Se())) : e3.push(this._shift_expression()); this._match(He.tokens.comma); ) this._match(He.keywords.default) ? e3.push(this._updateNode(new Se())) : e3.push(this._shift_expression());
+    return e3;
   }
   _case_body() {
     if (this._match(He.keywords.fallthrough)) return this._consume(He.tokens.semicolon, "Expected ';'"), [];
-    let e2 = this._statement();
-    if (null == e2) return [];
-    e2 instanceof Array || (e2 = [e2]);
+    let e3 = this._statement();
+    if (null == e3) return [];
+    e3 instanceof Array || (e3 = [e3]);
     const t2 = this._case_body();
-    return 0 == t2.length ? e2 : [...e2, t2[0]];
+    return 0 == t2.length ? e3 : [...e3, t2[0]];
   }
   _if_statement() {
     if (!this._match(He.keywords.if)) return null;
-    const e2 = this._currentLine, t2 = this._optional_paren_expression();
+    const e3 = this._currentLine, t2 = this._optional_paren_expression();
     this._check(He.tokens.attr) && this._attribute();
     const n2 = this._compound_statement();
     let s2 = [];
     this._match_elseif() && (this._check(He.tokens.attr) && this._attribute(), s2 = this._elseif_statement(s2));
     let r2 = null;
-    return this._match(He.keywords.else) && (this._check(He.tokens.attr) && this._attribute(), r2 = this._compound_statement()), this._updateNode(new Q(t2, n2, s2, r2), e2);
+    return this._match(He.keywords.else) && (this._check(He.tokens.attr) && this._attribute(), r2 = this._compound_statement()), this._updateNode(new Q(t2, n2, s2, r2), e3);
   }
   _match_elseif() {
     return this._tokens[this._current].type === He.keywords.else && this._tokens[this._current + 1].type === He.keywords.if && (this._advance(), this._advance(), true);
   }
-  _elseif_statement(e2 = []) {
+  _elseif_statement(e3 = []) {
     const t2 = this._optional_paren_expression(), n2 = this._compound_statement();
-    return e2.push(this._updateNode(new Le(t2, n2))), this._match_elseif() && (this._check(He.tokens.attr) && this._attribute(), this._elseif_statement(e2)), e2;
+    return e3.push(this._updateNode(new Le(t2, n2))), this._match_elseif() && (this._check(He.tokens.attr) && this._attribute(), this._elseif_statement(e3)), e3;
   }
   _return_statement() {
     if (!this._match(He.keywords.return)) return null;
-    const e2 = this._short_circuit_or_expression();
-    return this._updateNode(new Y(e2));
+    const e3 = this._short_circuit_or_expression();
+    return this._updateNode(new Y(e3));
   }
   _short_circuit_or_expression() {
-    let e2 = this._short_circuit_and_expr();
-    for (; this._match(He.tokens.or_or); ) e2 = this._updateNode(new Ie(this._previous().toString(), e2, this._short_circuit_and_expr()));
-    return e2;
+    let e3 = this._short_circuit_and_expr();
+    for (; this._match(He.tokens.or_or); ) e3 = this._updateNode(new Ie(this._previous().toString(), e3, this._short_circuit_and_expr()));
+    return e3;
   }
   _short_circuit_and_expr() {
-    let e2 = this._inclusive_or_expression();
-    for (; this._match(He.tokens.and_and); ) e2 = this._updateNode(new Ie(this._previous().toString(), e2, this._inclusive_or_expression()));
-    return e2;
+    let e3 = this._inclusive_or_expression();
+    for (; this._match(He.tokens.and_and); ) e3 = this._updateNode(new Ie(this._previous().toString(), e3, this._inclusive_or_expression()));
+    return e3;
   }
   _inclusive_or_expression() {
-    let e2 = this._exclusive_or_expression();
-    for (; this._match(He.tokens.or); ) e2 = this._updateNode(new Ie(this._previous().toString(), e2, this._exclusive_or_expression()));
-    return e2;
+    let e3 = this._exclusive_or_expression();
+    for (; this._match(He.tokens.or); ) e3 = this._updateNode(new Ie(this._previous().toString(), e3, this._exclusive_or_expression()));
+    return e3;
   }
   _exclusive_or_expression() {
-    let e2 = this._and_expression();
-    for (; this._match(He.tokens.xor); ) e2 = this._updateNode(new Ie(this._previous().toString(), e2, this._and_expression()));
-    return e2;
+    let e3 = this._and_expression();
+    for (; this._match(He.tokens.xor); ) e3 = this._updateNode(new Ie(this._previous().toString(), e3, this._and_expression()));
+    return e3;
   }
   _and_expression() {
-    let e2 = this._equality_expression();
-    for (; this._match(He.tokens.and); ) e2 = this._updateNode(new Ie(this._previous().toString(), e2, this._equality_expression()));
-    return e2;
+    let e3 = this._equality_expression();
+    for (; this._match(He.tokens.and); ) e3 = this._updateNode(new Ie(this._previous().toString(), e3, this._equality_expression()));
+    return e3;
   }
   _equality_expression() {
-    const e2 = this._relational_expression();
-    return this._match([He.tokens.equal_equal, He.tokens.not_equal]) ? this._updateNode(new Ie(this._previous().toString(), e2, this._relational_expression())) : e2;
+    const e3 = this._relational_expression();
+    return this._match([He.tokens.equal_equal, He.tokens.not_equal]) ? this._updateNode(new Ie(this._previous().toString(), e3, this._relational_expression())) : e3;
   }
   _relational_expression() {
-    let e2 = this._shift_expression();
-    for (; this._match([He.tokens.less_than, He.tokens.greater_than, He.tokens.less_than_equal, He.tokens.greater_than_equal]); ) e2 = this._updateNode(new Ie(this._previous().toString(), e2, this._shift_expression()));
-    return e2;
+    let e3 = this._shift_expression();
+    for (; this._match([He.tokens.less_than, He.tokens.greater_than, He.tokens.less_than_equal, He.tokens.greater_than_equal]); ) e3 = this._updateNode(new Ie(this._previous().toString(), e3, this._shift_expression()));
+    return e3;
   }
   _shift_expression() {
-    let e2 = this._additive_expression();
-    for (; this._match([He.tokens.shift_left, He.tokens.shift_right]); ) e2 = this._updateNode(new Ie(this._previous().toString(), e2, this._additive_expression()));
-    return e2;
+    let e3 = this._additive_expression();
+    for (; this._match([He.tokens.shift_left, He.tokens.shift_right]); ) e3 = this._updateNode(new Ie(this._previous().toString(), e3, this._additive_expression()));
+    return e3;
   }
   _additive_expression() {
-    let e2 = this._multiplicative_expression();
-    for (; this._match([He.tokens.plus, He.tokens.minus]); ) e2 = this._updateNode(new Ie(this._previous().toString(), e2, this._multiplicative_expression()));
-    return e2;
+    let e3 = this._multiplicative_expression();
+    for (; this._match([He.tokens.plus, He.tokens.minus]); ) e3 = this._updateNode(new Ie(this._previous().toString(), e3, this._multiplicative_expression()));
+    return e3;
   }
   _multiplicative_expression() {
-    let e2 = this._unary_expression();
-    for (; this._match([He.tokens.star, He.tokens.forward_slash, He.tokens.modulo]); ) e2 = this._updateNode(new Ie(this._previous().toString(), e2, this._unary_expression()));
-    return e2;
+    let e3 = this._unary_expression();
+    for (; this._match([He.tokens.star, He.tokens.forward_slash, He.tokens.modulo]); ) e3 = this._updateNode(new Ie(this._previous().toString(), e3, this._unary_expression()));
+    return e3;
   }
   _unary_expression() {
     return this._match([He.tokens.minus, He.tokens.bang, He.tokens.tilde, He.tokens.star, He.tokens.and]) ? this._updateNode(new ke(this._previous().toString(), this._unary_expression())) : this._singular_expression();
   }
   _singular_expression() {
-    const e2 = this._primary_expression(), t2 = this._postfix_expression();
-    return t2 && (e2.postfix = t2), e2;
+    const e3 = this._primary_expression(), t2 = this._postfix_expression();
+    return t2 && (e3.postfix = t2), e3;
   }
   _postfix_expression() {
     if (this._match(He.tokens.bracket_left)) {
-      const e2 = this._short_circuit_or_expression();
+      const e3 = this._short_circuit_or_expression();
       this._consume(He.tokens.bracket_right, "Expected ']'.");
-      const t2 = this._updateNode(new ve(e2)), n2 = this._postfix_expression();
+      const t2 = this._updateNode(new ve(e3)), n2 = this._postfix_expression();
       return n2 && (t2.postfix = n2), t2;
     }
     if (this._match(He.tokens.period)) {
-      const e2 = this._consume(He.tokens.name, "Expected member name."), t2 = this._postfix_expression(), n2 = this._updateNode(new pe(e2.lexeme));
+      const e3 = this._consume(He.tokens.name, "Expected member name."), t2 = this._postfix_expression(), n2 = this._updateNode(new pe(e3.lexeme));
       return t2 && (n2.postfix = t2), n2;
     }
     return null;
   }
-  _getStruct(e2) {
-    if (this._context.aliases.has(e2)) {
-      return this._context.aliases.get(e2).type;
+  _getStruct(e3) {
+    if (this._context.aliases.has(e3)) {
+      return this._context.aliases.get(e3).type;
     }
-    if (this._context.structs.has(e2)) {
-      return this._context.structs.get(e2);
+    if (this._context.structs.has(e3)) {
+      return this._context.structs.get(e3);
     }
     return null;
   }
-  _getType(e2) {
-    const t2 = this._getStruct(e2);
+  _getType(e3) {
+    const t2 = this._getStruct(e3);
     if (null !== t2) return t2;
-    switch (e2) {
+    switch (e3) {
       case "void":
         return ae.void;
       case "bool":
@@ -24105,127 +24105,127 @@ var gt = class {
     }
     return null;
   }
-  _validateTypeRange(e2, t2) {
+  _validateTypeRange(e3, t2) {
     if ("i32" === t2.name) {
-      if (e2 < -2147483648 || e2 > 2147483647) throw this._error(this._previous(), `Value out of range for i32: ${e2}. Line: ${this._currentLine}.`);
-    } else if ("u32" === t2.name && (e2 < 0 || e2 > 4294967295)) throw this._error(this._previous(), `Value out of range for u32: ${e2}. Line: ${this._currentLine}.`);
+      if (e3 < -2147483648 || e3 > 2147483647) throw this._error(this._previous(), `Value out of range for i32: ${e3}. Line: ${this._currentLine}.`);
+    } else if ("u32" === t2.name && (e3 < 0 || e3 > 4294967295)) throw this._error(this._previous(), `Value out of range for u32: ${e3}. Line: ${this._currentLine}.`);
   }
   _primary_expression() {
     if (this._match(He.tokens.ident)) {
-      const e3 = this._previous().toString();
+      const e4 = this._previous().toString();
       if (this._check(He.tokens.paren_left)) {
-        const t3 = this._argument_expression_list(), n2 = this._getType(e3);
-        return null !== n2 ? this._updateNode(new de(n2, t3)) : this._updateNode(new me(e3, t3));
+        const t3 = this._argument_expression_list(), n2 = this._getType(e4);
+        return null !== n2 ? this._updateNode(new de(n2, t3)) : this._updateNode(new me(e4, t3));
       }
-      if (this._context.constants.has(e3)) {
-        const t3 = this._context.constants.get(e3);
-        return this._updateNode(new _e(e3, t3.value));
+      if (this._context.constants.has(e4)) {
+        const t3 = this._context.constants.get(e4);
+        return this._updateNode(new _e(e4, t3.value));
       }
-      return this._updateNode(new ge(e3));
+      return this._updateNode(new ge(e4));
     }
     if (this._match(He.tokens.int_literal)) {
-      const e3 = this._previous().toString();
-      let t3 = e3.endsWith("i") || e3.endsWith("i") ? ae.i32 : e3.endsWith("u") || e3.endsWith("U") ? ae.u32 : ae.x32;
-      const n2 = parseInt(e3);
+      const e4 = this._previous().toString();
+      let t3 = e4.endsWith("i") || e4.endsWith("i") ? ae.i32 : e4.endsWith("u") || e4.endsWith("U") ? ae.u32 : ae.x32;
+      const n2 = parseInt(e4);
       return this._validateTypeRange(n2, t3), this._updateNode(new xe(new Be(n2, this._exec.getTypeInfo(t3)), t3));
     }
     if (this._match(He.tokens.uint_literal)) {
-      const e3 = parseInt(this._previous().toString());
-      return this._validateTypeRange(e3, ae.u32), this._updateNode(new xe(new Be(e3, this._exec.getTypeInfo(ae.u32)), ae.u32));
+      const e4 = parseInt(this._previous().toString());
+      return this._validateTypeRange(e4, ae.u32), this._updateNode(new xe(new Be(e4, this._exec.getTypeInfo(ae.u32)), ae.u32));
     }
     if (this._match([He.tokens.decimal_float_literal, He.tokens.hex_float_literal])) {
-      let e3 = this._previous().toString(), t3 = e3.endsWith("h");
-      t3 && (e3 = e3.substring(0, e3.length - 1));
-      const n2 = parseFloat(e3);
+      let e4 = this._previous().toString(), t3 = e4.endsWith("h");
+      t3 && (e4 = e4.substring(0, e4.length - 1));
+      const n2 = parseFloat(e4);
       this._validateTypeRange(n2, t3 ? ae.f16 : ae.f32);
       const s2 = t3 ? ae.f16 : ae.f32;
       return this._updateNode(new xe(new Be(n2, this._exec.getTypeInfo(s2)), s2));
     }
     if (this._match([He.keywords.true, He.keywords.false])) {
-      let e3 = this._previous().toString() === He.keywords.true.rule;
-      return this._updateNode(new xe(new Be(e3 ? 1 : 0, this._exec.getTypeInfo(ae.bool)), ae.bool));
+      let e4 = this._previous().toString() === He.keywords.true.rule;
+      return this._updateNode(new xe(new Be(e4 ? 1 : 0, this._exec.getTypeInfo(ae.bool)), ae.bool));
     }
     if (this._check(He.tokens.paren_left)) return this._paren_expression();
     if (this._match(He.keywords.bitcast)) {
       this._consume(He.tokens.less_than, "Expected '<'.");
-      const e3 = this._type_decl();
+      const e4 = this._type_decl();
       this._consume(He.tokens.greater_than, "Expected '>'.");
       const t3 = this._paren_expression();
-      return this._updateNode(new ye(e3, t3));
+      return this._updateNode(new ye(e4, t3));
     }
-    const e2 = this._type_decl(), t2 = this._argument_expression_list();
-    return this._updateNode(new de(e2, t2));
+    const e3 = this._type_decl(), t2 = this._argument_expression_list();
+    return this._updateNode(new de(e3, t2));
   }
   _argument_expression_list() {
     if (!this._match(He.tokens.paren_left)) return null;
-    const e2 = [];
+    const e3 = [];
     do {
       if (this._check(He.tokens.paren_right)) break;
       const t2 = this._short_circuit_or_expression();
-      e2.push(t2);
+      e3.push(t2);
     } while (this._match(He.tokens.comma));
-    return this._consume(He.tokens.paren_right, "Expected ')' for agument list"), e2;
+    return this._consume(He.tokens.paren_right, "Expected ')' for agument list"), e3;
   }
   _optional_paren_expression() {
     this._match(He.tokens.paren_left);
-    const e2 = this._short_circuit_or_expression();
-    return this._match(He.tokens.paren_right), e2;
+    const e3 = this._short_circuit_or_expression();
+    return this._match(He.tokens.paren_right), e3;
   }
   _paren_expression() {
     this._consume(He.tokens.paren_left, "Expected '('.");
-    const e2 = this._short_circuit_or_expression();
-    return this._consume(He.tokens.paren_right, "Expected ')'."), e2;
+    const e3 = this._short_circuit_or_expression();
+    return this._consume(He.tokens.paren_right, "Expected ')'."), e3;
   }
   _struct_decl() {
     if (!this._match(He.keywords.struct)) return null;
-    const e2 = this._currentLine, t2 = this._consume(He.tokens.ident, "Expected name for struct.").toString();
+    const e3 = this._currentLine, t2 = this._consume(He.tokens.ident, "Expected name for struct.").toString();
     this._consume(He.tokens.brace_left, "Expected '{' for struct body.");
     const n2 = [];
     for (; !this._check(He.tokens.brace_right); ) {
-      const e3 = this._attribute(), t3 = this._consume(He.tokens.name, "Expected variable name.").toString();
+      const e4 = this._attribute(), t3 = this._consume(He.tokens.name, "Expected variable name.").toString();
       this._consume(He.tokens.colon, "Expected ':' for struct member type.");
       const s3 = this._attribute(), r3 = this._type_decl();
-      null != r3 && (r3.attributes = s3), this._check(He.tokens.brace_right) ? this._match(He.tokens.comma) : this._consume(He.tokens.comma, "Expected ',' for struct member."), n2.push(this._updateNode(new Ce(t3, r3, e3)));
+      null != r3 && (r3.attributes = s3), this._check(He.tokens.brace_right) ? this._match(He.tokens.comma) : this._consume(He.tokens.comma, "Expected ',' for struct member."), n2.push(this._updateNode(new Ce(t3, r3, e4)));
     }
     this._consume(He.tokens.brace_right, "Expected '}' after struct body.");
-    const s2 = this._currentLine, r2 = this._updateNode(new oe(t2, n2, e2, s2), e2);
+    const s2 = this._currentLine, r2 = this._updateNode(new oe(t2, n2, e3, s2), e3);
     return this._context.structs.set(t2, r2), r2;
   }
   _global_variable_decl() {
-    const e2 = this._variable_decl();
-    if (!e2) return null;
+    const e3 = this._variable_decl();
+    if (!e3) return null;
     if (this._match(He.tokens.equal)) {
       const t2 = this._const_expression();
-      e2.value = t2;
+      e3.value = t2;
     }
-    if (null !== e2.type && e2.value instanceof xe) {
-      if ("x32" !== e2.value.type.name) {
-        if (e2.type.getTypeName() !== e2.value.type.getTypeName()) throw this._error(this._peek(), `Invalid cast from ${e2.value.type.name} to ${e2.type.name}. Line:${this._currentLine}`);
+    if (null !== e3.type && e3.value instanceof xe) {
+      if ("x32" !== e3.value.type.name) {
+        if (e3.type.getTypeName() !== e3.value.type.getTypeName()) throw this._error(this._peek(), `Invalid cast from ${e3.value.type.name} to ${e3.type.name}. Line:${this._currentLine}`);
       }
-      e2.value.isScalar && this._validateTypeRange(e2.value.scalarValue, e2.type), e2.value.type = e2.type;
-    } else null === e2.type && e2.value instanceof xe && (e2.type = "x32" === e2.value.type.name ? ae.i32 : e2.value.type, e2.value.isScalar && this._validateTypeRange(e2.value.scalarValue, e2.type));
-    return e2;
+      e3.value.isScalar && this._validateTypeRange(e3.value.scalarValue, e3.type), e3.value.type = e3.type;
+    } else null === e3.type && e3.value instanceof xe && (e3.type = "x32" === e3.value.type.name ? ae.i32 : e3.value.type, e3.value.isScalar && this._validateTypeRange(e3.value.scalarValue, e3.type));
+    return e3;
   }
   _override_variable_decl() {
-    const e2 = this._override_decl();
-    return e2 && this._match(He.tokens.equal) && (e2.value = this._const_expression()), e2;
+    const e3 = this._override_decl();
+    return e3 && this._match(He.tokens.equal) && (e3.value = this._const_expression()), e3;
   }
   _global_const_decl() {
-    var e2;
+    var e3;
     if (!this._match(He.keywords.const)) return null;
     const t2 = this._consume(He.tokens.name, "Expected variable name"), n2 = this._currentLine;
     let s2 = null;
     if (this._match(He.tokens.colon)) {
-      const e3 = this._attribute();
-      s2 = this._type_decl(), null != s2 && (s2.attributes = e3);
+      const e4 = this._attribute();
+      s2 = this._type_decl(), null != s2 && (s2.attributes = e4);
     }
     let r2 = null;
     this._consume(He.tokens.equal, "const declarations require an assignment");
     const i2 = this._short_circuit_or_expression();
     try {
-      let e3 = [ae.f32], n3 = i2.constEvaluate(this._exec, e3);
-      n3 instanceof Be && this._validateTypeRange(n3.value, e3[0]), e3[0] instanceof ce && null === e3[0].format && n3.typeInfo instanceof a && null !== n3.typeInfo.format && ("f16" === n3.typeInfo.format.name ? e3[0].format = ae.f16 : "f32" === n3.typeInfo.format.name ? e3[0].format = ae.f32 : "i32" === n3.typeInfo.format.name ? e3[0].format = ae.i32 : "u32" === n3.typeInfo.format.name ? e3[0].format = ae.u32 : "bool" === n3.typeInfo.format.name ? e3[0].format = ae.bool : console.error(`TODO: impelement template format type ${n3.typeInfo.format.name}`)), r2 = this._updateNode(new xe(n3, e3[0])), this._exec.context.setVariable(t2.toString(), n3);
-    } catch (e3) {
+      let e4 = [ae.f32], n3 = i2.constEvaluate(this._exec, e4);
+      n3 instanceof Be && this._validateTypeRange(n3.value, e4[0]), e4[0] instanceof ce && null === e4[0].format && n3.typeInfo instanceof a && null !== n3.typeInfo.format && ("f16" === n3.typeInfo.format.name ? e4[0].format = ae.f16 : "f32" === n3.typeInfo.format.name ? e4[0].format = ae.f32 : "i32" === n3.typeInfo.format.name ? e4[0].format = ae.i32 : "u32" === n3.typeInfo.format.name ? e4[0].format = ae.u32 : "bool" === n3.typeInfo.format.name ? e4[0].format = ae.bool : console.error(`TODO: impelement template format type ${n3.typeInfo.format.name}`)), r2 = this._updateNode(new xe(n3, e4[0])), this._exec.context.setVariable(t2.toString(), n3);
+    } catch (e4) {
       r2 = i2;
     }
     if (null !== s2 && r2 instanceof xe) {
@@ -24233,17 +24233,17 @@ var gt = class {
         if (s2.getTypeName() !== r2.type.getTypeName()) throw this._error(this._peek(), `Invalid cast from ${r2.type.name} to ${s2.name}. Line:${this._currentLine}`);
       }
       r2.type = s2, r2.isScalar && this._validateTypeRange(r2.scalarValue, r2.type);
-    } else null === s2 && r2 instanceof xe && (s2 = null !== (e2 = null == r2 ? void 0 : r2.type) && void 0 !== e2 ? e2 : ae.f32, s2 === ae.x32 && (s2 = ae.i32));
+    } else null === s2 && r2 instanceof xe && (s2 = null !== (e3 = null == r2 ? void 0 : r2.type) && void 0 !== e3 ? e3 : ae.f32, s2 === ae.x32 && (s2 = ae.i32));
     const o2 = this._updateNode(new P(t2.toString(), s2, "", "", r2), n2);
     return this._context.constants.set(o2.name, o2), o2;
   }
   _global_let_decl() {
     if (!this._match(He.keywords.let)) return null;
-    const e2 = this._currentLine, t2 = this._consume(He.tokens.name, "Expected variable name");
+    const e3 = this._currentLine, t2 = this._consume(He.tokens.name, "Expected variable name");
     let n2 = null;
     if (this._match(He.tokens.colon)) {
-      const e3 = this._attribute();
-      n2 = this._type_decl(), null != n2 && (n2.attributes = e3);
+      const e4 = this._attribute();
+      n2 = this._type_decl(), null != n2 && (n2.attributes = e4);
     }
     let s2 = null;
     if (this._match(He.tokens.equal) && (s2 = this._const_expression()), null !== n2 && s2 instanceof xe) {
@@ -24252,112 +24252,112 @@ var gt = class {
       }
       s2.type = n2;
     } else null === n2 && s2 instanceof xe && (n2 = "x32" === s2.type.name ? ae.i32 : s2.type);
-    return s2 instanceof xe && s2.isScalar && this._validateTypeRange(s2.scalarValue, n2), this._updateNode(new U(t2.toString(), n2, "", "", s2), e2);
+    return s2 instanceof xe && s2.isScalar && this._validateTypeRange(s2.scalarValue, n2), this._updateNode(new U(t2.toString(), n2, "", "", s2), e3);
   }
   _const_expression() {
     return this._short_circuit_or_expression();
   }
   _variable_decl() {
     if (!this._match(He.keywords.var)) return null;
-    const e2 = this._currentLine;
+    const e3 = this._currentLine;
     let t2 = "", n2 = "";
     this._match(He.tokens.less_than) && (t2 = this._consume(He.storage_class, "Expected storage_class.").toString(), this._match(He.tokens.comma) && (n2 = this._consume(He.access_mode, "Expected access_mode.").toString()), this._consume(He.tokens.greater_than, "Expected '>'."));
     const s2 = this._consume(He.tokens.name, "Expected variable name");
     let r2 = null;
     if (this._match(He.tokens.colon)) {
-      const e3 = this._attribute();
-      r2 = this._type_decl(), null != r2 && (r2.attributes = e3);
+      const e4 = this._attribute();
+      r2 = this._type_decl(), null != r2 && (r2.attributes = e4);
     }
-    return this._updateNode(new F(s2.toString(), r2, t2, n2, null), e2);
+    return this._updateNode(new F(s2.toString(), r2, t2, n2, null), e3);
   }
   _override_decl() {
     if (!this._match(He.keywords.override)) return null;
-    const e2 = this._consume(He.tokens.name, "Expected variable name");
+    const e3 = this._consume(He.tokens.name, "Expected variable name");
     let t2 = null;
     if (this._match(He.tokens.colon)) {
-      const e3 = this._attribute();
-      t2 = this._type_decl(), null != t2 && (t2.attributes = e3);
+      const e4 = this._attribute();
+      t2 = this._type_decl(), null != t2 && (t2.attributes = e4);
     }
-    return this._updateNode(new M(e2.toString(), t2, null));
+    return this._updateNode(new M(e3.toString(), t2, null));
   }
   _diagnostic() {
     this._consume(He.tokens.paren_left, "Expected '('");
-    const e2 = this._consume(He.tokens.ident, "Expected severity control name.");
+    const e3 = this._consume(He.tokens.ident, "Expected severity control name.");
     this._consume(He.tokens.comma, "Expected ','");
     let t2 = this._consume(He.tokens.ident, "Expected diagnostic rule name.").toString();
     if (this._match(He.tokens.period)) {
       t2 += `.${this._consume(He.tokens.ident, "Expected diagnostic message.").toString()}`;
     }
-    return this._consume(He.tokens.paren_right, "Expected ')'"), this._updateNode(new ee(e2.toString(), t2));
+    return this._consume(He.tokens.paren_right, "Expected ')'"), this._updateNode(new ee(e3.toString(), t2));
   }
   _enable_directive() {
-    const e2 = this._consume(He.tokens.ident, "identity expected.");
-    return this._updateNode(new K(e2.toString()));
+    const e3 = this._consume(He.tokens.ident, "identity expected.");
+    return this._updateNode(new K(e3.toString()));
   }
   _requires_directive() {
-    const e2 = [this._consume(He.tokens.ident, "identity expected.").toString()];
+    const e3 = [this._consume(He.tokens.ident, "identity expected.").toString()];
     for (; this._match(He.tokens.comma); ) {
       const t2 = this._consume(He.tokens.ident, "identity expected.");
-      e2.push(t2.toString());
+      e3.push(t2.toString());
     }
-    return this._updateNode(new J(e2));
+    return this._updateNode(new J(e3));
   }
   _type_alias() {
-    const e2 = this._consume(He.tokens.ident, "identity expected.");
+    const e3 = this._consume(He.tokens.ident, "identity expected.");
     this._consume(He.tokens.equal, "Expected '=' for type alias.");
     let t2 = this._type_decl();
     if (null === t2) throw this._error(this._peek(), "Expected Type for Alias.");
     this._context.aliases.has(t2.name) && (t2 = this._context.aliases.get(t2.name).type);
-    const n2 = this._updateNode(new te(e2.toString(), t2));
+    const n2 = this._updateNode(new te(e3.toString(), t2));
     return this._context.aliases.set(n2.name, n2), n2;
   }
   _type_decl() {
     if (this._check([He.tokens.ident, ...He.texel_format, He.keywords.bool, He.keywords.f32, He.keywords.i32, He.keywords.u32])) {
-      const e3 = this._advance().toString();
-      if (this._context.structs.has(e3)) return this._context.structs.get(e3);
-      if (this._context.aliases.has(e3)) return this._context.aliases.get(e3).type;
-      if (!this._getType(e3)) {
-        const t3 = this._updateNode(new ie(e3));
+      const e4 = this._advance().toString();
+      if (this._context.structs.has(e4)) return this._context.structs.get(e4);
+      if (this._context.aliases.has(e4)) return this._context.aliases.get(e4).type;
+      if (!this._getType(e4)) {
+        const t3 = this._updateNode(new ie(e4));
         return this._forwardTypeCount++, t3;
       }
-      return this._updateNode(new ae(e3));
+      return this._updateNode(new ae(e4));
     }
-    let e2 = this._texture_sampler_types();
-    if (e2) return e2;
+    let e3 = this._texture_sampler_types();
+    if (e3) return e3;
     if (this._check(He.template_types)) {
-      let e3 = this._advance().toString(), t3 = null, n2 = null;
+      let e4 = this._advance().toString(), t3 = null, n2 = null;
       this._match(He.tokens.less_than) && (t3 = this._type_decl(), n2 = null, this._match(He.tokens.comma) && (n2 = this._consume(He.access_mode, "Expected access_mode for pointer").toString()), this._consume(He.tokens.greater_than, "Expected '>' for type."));
-      return this._updateNode(new ce(e3, t3, n2));
+      return this._updateNode(new ce(e4, t3, n2));
     }
     if (this._match(He.keywords.ptr)) {
-      let e3 = this._previous().toString();
+      let e4 = this._previous().toString();
       this._consume(He.tokens.less_than, "Expected '<' for pointer.");
       const t3 = this._consume(He.storage_class, "Expected storage_class for pointer");
       this._consume(He.tokens.comma, "Expected ',' for pointer.");
       const n2 = this._type_decl();
       let s2 = null;
       this._match(He.tokens.comma) && (s2 = this._consume(He.access_mode, "Expected access_mode for pointer").toString()), this._consume(He.tokens.greater_than, "Expected '>' for pointer.");
-      return this._updateNode(new le(e3, t3.toString(), n2, s2));
+      return this._updateNode(new le(e4, t3.toString(), n2, s2));
     }
     const t2 = this._attribute();
     if (this._match(He.keywords.array)) {
-      let e3 = null, n2 = -1;
+      let e4 = null, n2 = -1;
       const s2 = this._previous();
       let r2 = null;
       if (this._match(He.tokens.less_than)) {
-        e3 = this._type_decl(), this._context.aliases.has(e3.name) && (e3 = this._context.aliases.get(e3.name).type);
+        e4 = this._type_decl(), this._context.aliases.has(e4.name) && (e4 = this._context.aliases.get(e4.name).type);
         let t3 = "";
         if (this._match(He.tokens.comma)) {
           r2 = this._shift_expression();
           try {
             t3 = r2.constEvaluate(this._exec).toString(), r2 = null;
-          } catch (e4) {
+          } catch (e5) {
             t3 = "1";
           }
         }
         this._consume(He.tokens.greater_than, "Expected '>' for array."), n2 = t3 ? parseInt(t3) : 0;
       }
-      const a2 = this._updateNode(new ue(s2.toString(), t2, e3, n2));
+      const a2 = this._updateNode(new ue(s2.toString(), t2, e4, n2));
       return r2 && this._deferArrayCountEval.push({ arrayType: a2, countNode: r2 }), a2;
     }
     return null;
@@ -24366,46 +24366,46 @@ var gt = class {
     if (this._match(He.sampler_type)) return this._updateNode(new he(this._previous().toString(), null, null));
     if (this._match(He.depth_texture_type)) return this._updateNode(new he(this._previous().toString(), null, null));
     if (this._match(He.sampled_texture_type) || this._match(He.multisampled_texture_type)) {
-      const e2 = this._previous();
+      const e3 = this._previous();
       this._consume(He.tokens.less_than, "Expected '<' for sampler type.");
       const t2 = this._type_decl();
-      return this._consume(He.tokens.greater_than, "Expected '>' for sampler type."), this._updateNode(new he(e2.toString(), t2, null));
+      return this._consume(He.tokens.greater_than, "Expected '>' for sampler type."), this._updateNode(new he(e3.toString(), t2, null));
     }
     if (this._match(He.storage_texture_type)) {
-      const e2 = this._previous();
+      const e3 = this._previous();
       this._consume(He.tokens.less_than, "Expected '<' for sampler type.");
       const t2 = this._consume(He.texel_format, "Invalid texel format.").toString();
       this._consume(He.tokens.comma, "Expected ',' after texel format.");
       const n2 = this._consume(He.access_mode, "Expected access mode for storage texture type.").toString();
-      return this._consume(He.tokens.greater_than, "Expected '>' for sampler type."), this._updateNode(new he(e2.toString(), t2, n2));
+      return this._consume(He.tokens.greater_than, "Expected '>' for sampler type."), this._updateNode(new he(e3.toString(), t2, n2));
     }
     return null;
   }
   _attribute() {
-    let e2 = [];
+    let e3 = [];
     for (; this._match(He.tokens.attr); ) {
       const t2 = this._consume(He.attribute_name, "Expected attribute name"), n2 = this._updateNode(new De(t2.toString(), null));
       if (this._match(He.tokens.paren_left)) {
         if (n2.value = this._consume(He.literal_or_ident, "Expected attribute value").toString(), this._check(He.tokens.comma)) {
           this._advance();
           do {
-            const e3 = this._consume(He.literal_or_ident, "Expected attribute value").toString();
-            n2.value instanceof Array || (n2.value = [n2.value]), n2.value.push(e3);
+            const e4 = this._consume(He.literal_or_ident, "Expected attribute value").toString();
+            n2.value instanceof Array || (n2.value = [n2.value]), n2.value.push(e4);
           } while (this._match(He.tokens.comma));
         }
         this._consume(He.tokens.paren_right, "Expected ')'");
       }
-      e2.push(n2);
+      e3.push(n2);
     }
-    return 0 == e2.length ? null : e2;
+    return 0 == e3.length ? null : e3;
   }
 };
 var _t = class extends at {
-  constructor(e2) {
-    super(), e2 && this.update(e2);
+  constructor(e3) {
+    super(), e3 && this.update(e3);
   }
-  update(e2) {
-    const t2 = new gt().parse(e2);
+  update(e3) {
+    const t2 = new gt().parse(e3);
     this.updateAST(t2);
   }
 };
@@ -29804,7 +29804,7 @@ var PointerEventInput = class extends Input {
     const eventType = POINTER_INPUT_MAP[ev.type];
     const pointerType = ev.pointerType;
     const isTouch = pointerType === "touch";
-    let storeIndex = store.findIndex((e2) => e2.pointerId === ev.pointerId);
+    let storeIndex = store.findIndex((e3) => e3.pointerId === ev.pointerId);
     if (eventType & InputEvent.Start && (ev.buttons || isTouch)) {
       if (storeIndex < 0) {
         store.push(ev);
@@ -33323,6 +33323,10 @@ var typed_array_manager_default = new TypedArrayManager();
 function createMat42() {
   return [1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1];
 }
+function mod2(value, divisor) {
+  const modulus = value % divisor;
+  return modulus < 0 ? divisor + modulus : modulus;
+}
 function getCameraPosition(viewMatrixInverse) {
   return [viewMatrixInverse[12], viewMatrixInverse[13], viewMatrixInverse[14]];
 }
@@ -33913,6 +33917,103 @@ function projectPosition(position, params) {
   }
   return worldPosition;
 }
+
+// ../../node_modules/.pnpm/@math.gl+sun@4.1.0/node_modules/@math.gl/sun/dist/suncalc.js
+var DEGREES_TO_RADIANS5 = Math.PI / 180;
+var DAY_IN_MS = 1e3 * 60 * 60 * 24;
+var JD1970 = 2440588;
+var JD2000 = 2451545;
+var e2 = DEGREES_TO_RADIANS5 * 23.4397;
+var M0 = 357.5291;
+var M1 = 0.98560028;
+var THETA0 = 280.147;
+var THETA1 = 360.9856235;
+function getSunPosition(timestamp, latitude, longitude) {
+  const longitudeWestInRadians = DEGREES_TO_RADIANS5 * -longitude;
+  const phi = DEGREES_TO_RADIANS5 * latitude;
+  const d2 = toDays(timestamp);
+  const c2 = getSunCoords(d2);
+  const H2 = getSiderealTime(d2, longitudeWestInRadians) - c2.rightAscension;
+  return {
+    azimuth: getAzimuth(H2, phi, c2.declination),
+    altitude: getAltitude(H2, phi, c2.declination)
+  };
+}
+function getSunDirection(timestamp, latitude, longitude) {
+  const { azimuth, altitude } = getSunPosition(timestamp, latitude, longitude);
+  return [
+    Math.sin(azimuth) * Math.cos(altitude),
+    Math.cos(azimuth) * Math.cos(altitude),
+    -Math.sin(altitude)
+  ];
+}
+function toJulianDay(timestamp) {
+  const ts = typeof timestamp === "number" ? timestamp : timestamp.getTime();
+  return ts / DAY_IN_MS - 0.5 + JD1970;
+}
+function toDays(timestamp) {
+  return toJulianDay(timestamp) - JD2000;
+}
+function getRightAscension(eclipticLongitude, b2) {
+  const lambda = eclipticLongitude;
+  return Math.atan2(Math.sin(lambda) * Math.cos(e2) - Math.tan(b2) * Math.sin(e2), Math.cos(lambda));
+}
+function getDeclination(eclipticLongitude, b2) {
+  const lambda = eclipticLongitude;
+  return Math.asin(Math.sin(b2) * Math.cos(e2) + Math.cos(b2) * Math.sin(e2) * Math.sin(lambda));
+}
+function getAzimuth(hourAngle, latitudeInRadians, declination) {
+  const H2 = hourAngle;
+  const phi = latitudeInRadians;
+  const delta = declination;
+  return Math.atan2(Math.sin(H2), Math.cos(H2) * Math.sin(phi) - Math.tan(delta) * Math.cos(phi));
+}
+function getAltitude(hourAngle, latitudeInRadians, declination) {
+  const H2 = hourAngle;
+  const phi = latitudeInRadians;
+  const delta = declination;
+  return Math.asin(Math.sin(phi) * Math.sin(delta) + Math.cos(phi) * Math.cos(delta) * Math.cos(H2));
+}
+function getSiderealTime(dates, longitudeWestInRadians) {
+  return DEGREES_TO_RADIANS5 * (THETA0 + THETA1 * dates) - longitudeWestInRadians;
+}
+function getSolarMeanAnomaly(days) {
+  return DEGREES_TO_RADIANS5 * (M0 + M1 * days);
+}
+function getEclipticLongitude(meanAnomaly) {
+  const M2 = meanAnomaly;
+  const C2 = DEGREES_TO_RADIANS5 * (1.9148 * Math.sin(M2) + 0.02 * Math.sin(2 * M2) + 3e-4 * Math.sin(3 * M2));
+  const P2 = DEGREES_TO_RADIANS5 * 102.9372;
+  return M2 + C2 + P2 + Math.PI;
+}
+function getSunCoords(dates) {
+  const M2 = getSolarMeanAnomaly(dates);
+  const L2 = getEclipticLongitude(M2);
+  return {
+    declination: getDeclination(L2, 0),
+    rightAscension: getRightAscension(L2, 0)
+  };
+}
+
+// ../../node_modules/.pnpm/@deck.gl+core@9.2.2/node_modules/@deck.gl/core/dist/effects/lighting/sun-light.js
+var SunLight = class extends DirectionalLight {
+  constructor(opts) {
+    super(opts);
+    this.timestamp = opts.timestamp;
+  }
+  getProjectedLight({ layer }) {
+    const { viewport } = layer.context;
+    const isGlobe = viewport.resolution && viewport.resolution > 0;
+    if (isGlobe) {
+      const [x2, y2, z2] = getSunDirection(this.timestamp, 0, 0);
+      this.direction = [x2, -z2, y2];
+    } else {
+      const { latitude, longitude } = viewport;
+      this.direction = getSunDirection(this.timestamp, latitude, longitude);
+    }
+    return this;
+  }
+};
 
 // ../../node_modules/.pnpm/@luma.gl+engine@9.2.2_@luma.gl+core@9.2.2_@luma.gl+shadertools@9.2.2/node_modules/@luma.gl/engine/dist/animation/timeline.js
 var channelHandles = 1;
@@ -36184,7 +36285,7 @@ var PickLayersPass = class extends LayersPass {
       viewports,
       onViewportActive,
       cullRect,
-      effects: effects == null ? void 0 : effects.filter((e2) => e2.useInPicking),
+      effects: effects == null ? void 0 : effects.filter((e3) => e3.useInPicking),
       pass,
       isPicking: true,
       shaderModuleProps,
@@ -38471,10 +38572,10 @@ var map_view_default = MapView;
 
 // ../../node_modules/.pnpm/@deck.gl+core@9.2.2/node_modules/@deck.gl/core/dist/lib/effect-manager.js
 var DEFAULT_LIGHTING_EFFECT = new LightingEffect();
-function compareEffects(e1, e2) {
+function compareEffects(e1, e22) {
   var _a2, _b;
   const o1 = (_a2 = e1.order) != null ? _a2 : Infinity;
-  const o2 = (_b = e2.order) != null ? _b : Infinity;
+  const o2 = (_b = e22.order) != null ? _b : Infinity;
   return o1 - o2;
 }
 var EffectManager = class {
@@ -38491,8 +38592,8 @@ var EffectManager = class {
    */
   addDefaultEffect(effect) {
     const defaultEffects = this._defaultEffects;
-    if (!defaultEffects.find((e2) => e2.id === effect.id)) {
-      const index = defaultEffects.findIndex((e2) => compareEffects(e2, effect) > 0);
+    if (!defaultEffects.find((e3) => e3.id === effect.id)) {
+      const index = defaultEffects.findIndex((e3) => compareEffects(e3, effect) > 0);
       if (index < 0) {
         defaultEffects.push(effect);
       } else {
@@ -44408,6 +44509,206 @@ var CompositeLayer = class extends layer_default {
 };
 CompositeLayer.layerName = "CompositeLayer";
 var composite_layer_default = CompositeLayer;
+
+// ../../node_modules/.pnpm/@deck.gl+core@9.2.2/node_modules/@deck.gl/core/dist/viewports/globe-viewport.js
+var DEGREES_TO_RADIANS6 = Math.PI / 180;
+var RADIANS_TO_DEGREES3 = 180 / Math.PI;
+var EARTH_RADIUS = 6370972;
+var GLOBE_RADIUS = 256;
+function getDistanceScales2() {
+  const unitsPerMeter2 = GLOBE_RADIUS / EARTH_RADIUS;
+  const unitsPerDegree = Math.PI / 180 * GLOBE_RADIUS;
+  return {
+    unitsPerMeter: [unitsPerMeter2, unitsPerMeter2, unitsPerMeter2],
+    unitsPerMeter2: [0, 0, 0],
+    metersPerUnit: [1 / unitsPerMeter2, 1 / unitsPerMeter2, 1 / unitsPerMeter2],
+    unitsPerDegree: [unitsPerDegree, unitsPerDegree, unitsPerMeter2],
+    unitsPerDegree2: [0, 0, 0],
+    degreesPerUnit: [1 / unitsPerDegree, 1 / unitsPerDegree, 1 / unitsPerMeter2]
+  };
+}
+var GlobeViewport = class extends viewport_default {
+  constructor(opts = {}) {
+    var _a2, _b;
+    const {
+      longitude = 0,
+      zoom = 0,
+      // Matches Maplibre defaults
+      // https://github.com/maplibre/maplibre-gl-js/blob/f8ab4b48d59ab8fe7b068b102538793bbdd4c848/src/geo/projection/globe_transform.ts#L632-L633
+      nearZMultiplier = 0.5,
+      farZMultiplier = 1,
+      resolution = 10
+    } = opts;
+    let { latitude = 0, height, altitude = 1.5, fovy } = opts;
+    latitude = Math.max(Math.min(latitude, MAX_LATITUDE), -MAX_LATITUDE);
+    height = height || 1;
+    if (fovy) {
+      altitude = fovyToAltitude(fovy);
+    } else {
+      fovy = altitudeToFovy(altitude);
+    }
+    const scaleAdjust = 1 / Math.PI / Math.cos(latitude * Math.PI / 180);
+    const scale5 = Math.pow(2, zoom) * scaleAdjust;
+    const nearZ = (_a2 = opts.nearZ) != null ? _a2 : nearZMultiplier;
+    const farZ = (_b = opts.farZ) != null ? _b : (altitude + GLOBE_RADIUS * 2 * scale5 / height) * farZMultiplier;
+    const viewMatrix = new Matrix4().lookAt({ eye: [0, -altitude, 0], up: [0, 0, 1] });
+    viewMatrix.rotateX(latitude * DEGREES_TO_RADIANS6);
+    viewMatrix.rotateZ(-longitude * DEGREES_TO_RADIANS6);
+    viewMatrix.scale(scale5 / height);
+    super({
+      ...opts,
+      // x, y, width,
+      height,
+      // view matrix
+      viewMatrix,
+      longitude,
+      latitude,
+      zoom,
+      // projection matrix parameters
+      distanceScales: getDistanceScales2(),
+      fovy,
+      focalDistance: altitude,
+      near: nearZ,
+      far: farZ
+    });
+    this.scale = scale5;
+    this.latitude = latitude;
+    this.longitude = longitude;
+    this.resolution = resolution;
+  }
+  get projectionMode() {
+    return PROJECTION_MODE.GLOBE;
+  }
+  getDistanceScales() {
+    return this.distanceScales;
+  }
+  getBounds(options = {}) {
+    const unprojectOption = { targetZ: options.z || 0 };
+    const left = this.unproject([0, this.height / 2], unprojectOption);
+    const top = this.unproject([this.width / 2, 0], unprojectOption);
+    const right = this.unproject([this.width, this.height / 2], unprojectOption);
+    const bottom = this.unproject([this.width / 2, this.height], unprojectOption);
+    if (right[0] < this.longitude)
+      right[0] += 360;
+    if (left[0] > this.longitude)
+      left[0] -= 360;
+    return [
+      Math.min(left[0], right[0], top[0], bottom[0]),
+      Math.min(left[1], right[1], top[1], bottom[1]),
+      Math.max(left[0], right[0], top[0], bottom[0]),
+      Math.max(left[1], right[1], top[1], bottom[1])
+    ];
+  }
+  unproject(xyz, { topLeft = true, targetZ } = {}) {
+    const [x2, y2, z2] = xyz;
+    const y22 = topLeft ? y2 : this.height - y2;
+    const { pixelUnprojectionMatrix } = this;
+    let coord;
+    if (Number.isFinite(z2)) {
+      coord = transformVector2(pixelUnprojectionMatrix, [x2, y22, z2, 1]);
+    } else {
+      const coord0 = transformVector2(pixelUnprojectionMatrix, [x2, y22, -1, 1]);
+      const coord1 = transformVector2(pixelUnprojectionMatrix, [x2, y22, 1, 1]);
+      const lt2 = ((targetZ || 0) / EARTH_RADIUS + 1) * GLOBE_RADIUS;
+      const lSqr = vec3_exports.sqrLen(vec3_exports.sub([], coord0, coord1));
+      const l0Sqr = vec3_exports.sqrLen(coord0);
+      const l1Sqr = vec3_exports.sqrLen(coord1);
+      const sSqr = (4 * l0Sqr * l1Sqr - (lSqr - l0Sqr - l1Sqr) ** 2) / 16;
+      const dSqr = 4 * sSqr / lSqr;
+      const r0 = Math.sqrt(l0Sqr - dSqr);
+      const dr = Math.sqrt(Math.max(0, lt2 * lt2 - dSqr));
+      const t2 = (r0 - dr) / Math.sqrt(lSqr);
+      coord = vec3_exports.lerp([], coord0, coord1, t2);
+    }
+    const [X2, Y2, Z2] = this.unprojectPosition(coord);
+    if (Number.isFinite(z2)) {
+      return [X2, Y2, Z2];
+    }
+    return Number.isFinite(targetZ) ? [X2, Y2, targetZ] : [X2, Y2];
+  }
+  projectPosition(xyz) {
+    const [lng, lat, Z2 = 0] = xyz;
+    const lambda = lng * DEGREES_TO_RADIANS6;
+    const phi = lat * DEGREES_TO_RADIANS6;
+    const cosPhi = Math.cos(phi);
+    const D2 = (Z2 / EARTH_RADIUS + 1) * GLOBE_RADIUS;
+    return [Math.sin(lambda) * cosPhi * D2, -Math.cos(lambda) * cosPhi * D2, Math.sin(phi) * D2];
+  }
+  unprojectPosition(xyz) {
+    const [x2, y2, z2] = xyz;
+    const D2 = vec3_exports.len(xyz);
+    const phi = Math.asin(z2 / D2);
+    const lambda = Math.atan2(x2, -y2);
+    const lng = lambda * RADIANS_TO_DEGREES3;
+    const lat = phi * RADIANS_TO_DEGREES3;
+    const Z2 = (D2 / GLOBE_RADIUS - 1) * EARTH_RADIUS;
+    return [lng, lat, Z2];
+  }
+  projectFlat(xyz) {
+    return xyz;
+  }
+  unprojectFlat(xyz) {
+    return xyz;
+  }
+  panByPosition(coords, pixel) {
+    const fromPosition = this.unproject(pixel);
+    return {
+      longitude: coords[0] - fromPosition[0] + this.longitude,
+      latitude: coords[1] - fromPosition[1] + this.latitude
+    };
+  }
+};
+function transformVector2(matrix, vector) {
+  const result = vec4_exports.transformMat4([], vector, matrix);
+  vec4_exports.scale(result, result, 1 / result[3]);
+  return result;
+}
+
+// ../../node_modules/.pnpm/@deck.gl+core@9.2.2/node_modules/@deck.gl/core/dist/controllers/globe-controller.js
+var GlobeState = class extends MapState {
+  // Apply any constraints (mathematical or defined by _viewportProps) to map state
+  applyConstraints(props) {
+    const { maxZoom, minZoom, zoom } = props;
+    props.zoom = clamp(zoom, minZoom, maxZoom);
+    const { longitude, latitude } = props;
+    if (longitude < -180 || longitude > 180) {
+      props.longitude = mod2(longitude + 180, 360) - 180;
+    }
+    props.latitude = clamp(latitude, -MAX_LATITUDE, MAX_LATITUDE);
+    return props;
+  }
+};
+var GlobeController = class extends Controller {
+  constructor() {
+    super(...arguments);
+    this.ControllerState = GlobeState;
+    this.transition = {
+      transitionDuration: 300,
+      transitionInterpolator: new LinearInterpolator(["longitude", "latitude", "zoom"])
+    };
+    this.dragMode = "pan";
+  }
+  setProps(props) {
+    super.setProps(props);
+    this.dragRotate = false;
+    this.touchRotate = false;
+  }
+};
+
+// ../../node_modules/.pnpm/@deck.gl+core@9.2.2/node_modules/@deck.gl/core/dist/views/globe-view.js
+var GlobeView = class extends View {
+  constructor(props = {}) {
+    super(props);
+  }
+  getViewportType(viewState) {
+    return viewState.zoom > 12 ? web_mercator_viewport_default : GlobeViewport;
+  }
+  get ControllerType() {
+    return GlobeController;
+  }
+};
+GlobeView.displayName = "GlobeView";
+var globe_view_default = GlobeView;
 
 // ../../node_modules/.pnpm/@deck.gl+core@9.2.2/node_modules/@deck.gl/core/dist/transitions/fly-to-interpolator.js
 var LINEARLY_INTERPOLATED_PROPS = {
@@ -51555,18 +51856,37 @@ var GeoUtils = class _GeoUtils {
    * @param bounds - 边界框对象
    * @param containerWidth - 容器宽度（默认 1000）
    * @param containerHeight - 容器高度（默认 800）
-   * @param padding - 内边距比例（默认 0.8）
+   * @param padding - 内边距比例（默认 0.9，表示上下左右各留5%边距）
    * @returns 缩放级别
    */
-  static calculateZoomForBounds(bounds, containerWidth = 1e3, containerHeight = 800, padding = 0.8) {
+  static calculateZoomForBounds(bounds, containerWidth = 1e3, containerHeight = 800, padding = 0.85) {
     const lngDiff = Math.abs(bounds.maxLng - bounds.minLng);
     const latDiff = Math.abs(bounds.maxLat - bounds.minLat);
-    const zoomLng = Math.log2(containerWidth * padding * 360 / (256 * lngDiff));
+    if (lngDiff === 0 && latDiff === 0) {
+      return 10;
+    }
     const centerLat = (bounds.minLat + bounds.maxLat) / 2;
-    const latScale = 1 / Math.cos(centerLat * Math.PI / 180);
-    const zoomLat = Math.log2(containerHeight * padding * 180 / (256 * latDiff * latScale));
-    const zoom = Math.min(zoomLng, zoomLat);
-    return Math.max(0, Math.min(12, zoom));
+    let zoomLng = 0;
+    if (lngDiff > 0) {
+      const worldPixels = containerWidth * padding * 360 / lngDiff;
+      zoomLng = Math.log2(worldPixels / 256);
+    }
+    let zoomLat = 0;
+    if (latDiff > 0) {
+      const latRad = Math.max(-85 * Math.PI / 180, Math.min(85 * Math.PI / 180, centerLat * Math.PI / 180));
+      const cosLat = Math.cos(latRad);
+      const worldPixels = containerHeight * padding * 360 * cosLat / latDiff;
+      zoomLat = Math.log2(worldPixels / 256);
+    }
+    let zoom = 0;
+    if (lngDiff === 0) {
+      zoom = zoomLat;
+    } else if (latDiff === 0) {
+      zoom = zoomLng;
+    } else {
+      zoom = Math.min(zoomLng, zoomLat);
+    }
+    return Math.max(0, Math.min(12, zoom * 0.9));
   }
   /**
    * 获取 GeoJSON 的中心点和缩放级别
@@ -51712,14 +52032,14 @@ var DEFAULT_GEO_LAYER_PROPS = {
   /** 要素边框的宽度，单位为像素 */
   getLineWidth: () => 1
 };
-var GeoLayer = class {
+var _GeoLayer = class _GeoLayer {
   /**
    * 创建一个空数据的 GeoJsonLayer
    */
   static create() {
     return new geojson_layer_default({
       ...DEFAULT_GEO_LAYER_PROPS,
-      id: "geojson-layer",
+      id: "geojson-layer" /* GEOJSON_LAYER */,
       data: []
     });
   }
@@ -51730,22 +52050,22 @@ var GeoLayer = class {
    * @returns 配置好的 GeoJsonLayer 实例
    */
   static createWithData(geojsonData, events) {
-    let hoveredFeatureName = null;
     let lastClickTime = 0;
     const DOUBLE_CLICK_THRESHOLD = 300;
     return new geojson_layer_default({
       ...DEFAULT_GEO_LAYER_PROPS,
-      id: "geojson-layer",
+      id: "geojson-layer" /* GEOJSON_LAYER */,
       data: geojsonData,
       getFillColor: (feature) => {
         var _a2;
-        if (isDef(hoveredFeatureName) && hoveredFeatureName === ((_a2 = feature.properties) == null ? void 0 : _a2.name)) {
-          return [255, 255, 255, 255];
+        if (isDef(_GeoLayer.hoveredFeatureName) && _GeoLayer.hoveredFeatureName === ((_a2 = feature.properties) == null ? void 0 : _a2.name)) {
+          return DEFAULT_GEO_HIGHLIGHT_COLOR;
         }
         return DEFAULT_GEO_FILL_COLOR;
       },
       updateTriggers: {
-        getFillColor: hoveredFeatureName
+        getFillColor: _GeoLayer.hoveredFeatureName,
+        onHover: _GeoLayer.hoveredFeatureName
       },
       onClick: (info) => {
         var _a2, _b;
@@ -51766,16 +52086,13 @@ var GeoLayer = class {
         return true;
       },
       onHover: (info) => {
-        var _a2, _b, _c, _d;
+        var _a2, _b, _c;
         const hover = info;
-        if (hoveredFeatureName !== ((_b = (_a2 = hover == null ? void 0 : hover.object) == null ? void 0 : _a2.properties) == null ? void 0 : _b.name)) {
+        const newHoveredName = (_c = (_b = (_a2 = hover == null ? void 0 : hover.object) == null ? void 0 : _a2.properties) == null ? void 0 : _b.name) != null ? _c : null;
+        if (_GeoLayer.hoveredFeatureName !== newHoveredName) {
+          _GeoLayer.setHoveredFeatureName(newHoveredName);
         }
-        if (hover == null ? void 0 : hover.object) {
-          hoveredFeatureName = (_d = (_c = hover.object.properties) == null ? void 0 : _c.name) != null ? _d : null;
-        } else {
-          hoveredFeatureName = null;
-        }
-        return true;
+        return newHoveredName ? true : false;
       }
     });
   }
@@ -51783,11 +52100,24 @@ var GeoLayer = class {
    * 根据地理数据计算适合的视图状态
    * @param geojsonData - GeoJSON 数据
    * @param containerSize - 容器尺寸
-   * @param mode - 地图模式（2D/3D）
+   * @param mode - 地图模式（2D/2.5D/3D）
+   * @param center - 可选的中心点配置 { lat, lng }，如果提供则优先使用
    * @returns 计算后的视图状态
    */
-  static calculateViewState(geojsonData, containerSize, mode = "2d") {
-    var _a2, _b, _c, _d, _e2, _f, _g, _h, _i, _j;
+  static calculateViewState(geojsonData, containerSize, mode = "2d", center) {
+    var _a2, _b, _c, _d, _e2, _f, _g, _h, _i, _j, _k;
+    if (center) {
+      const result2 = GeoUtils.getCenterAndZoom(geojsonData, {
+        containerWidth: containerSize.width,
+        containerHeight: containerSize.height
+      });
+      return {
+        longitude: center.lng,
+        latitude: center.lat,
+        zoom: (_a2 = result2 == null ? void 0 : result2.zoom) != null ? _a2 : 1,
+        pitch: mode === "2.5d" || mode === "3d" ? 45 : 0
+      };
+    }
     const curLevel = MapStateManager.curLevel;
     if (curLevel === "world" /* WORLD */) {
       const result2 = GeoUtils.getCenterAndZoom(geojsonData, {
@@ -51795,10 +52125,10 @@ var GeoLayer = class {
         containerHeight: containerSize.height
       });
       return {
-        longitude: (_b = (_a2 = result2 == null ? void 0 : result2.center) == null ? void 0 : _a2[0]) != null ? _b : 0,
-        latitude: (_d = (_c = result2 == null ? void 0 : result2.center) == null ? void 0 : _c[1]) != null ? _d : 0,
-        zoom: (_e2 = result2 == null ? void 0 : result2.zoom) != null ? _e2 : 0,
-        pitch: mode === "3d" ? 45 : 0
+        longitude: (_c = (_b = result2 == null ? void 0 : result2.center) == null ? void 0 : _b[0]) != null ? _c : 0,
+        latitude: (_e2 = (_d = result2 == null ? void 0 : result2.center) == null ? void 0 : _d[1]) != null ? _e2 : 0,
+        zoom: (_f = result2 == null ? void 0 : result2.zoom) != null ? _f : 0,
+        pitch: mode === "2.5d" || mode === "3d" ? 45 : 0
       };
     }
     const result = GeoUtils.getCenterAndZoom(geojsonData, {
@@ -51810,14 +52140,14 @@ var GeoLayer = class {
         longitude: 0,
         latitude: 0,
         zoom: 1,
-        pitch: mode === "3d" ? 45 : 0
+        pitch: mode === "2.5d" || mode === "3d" ? 45 : 0
       };
     }
     return {
-      longitude: (_g = (_f = result.center) == null ? void 0 : _f[0]) != null ? _g : 0,
-      latitude: (_i = (_h = result.center) == null ? void 0 : _h[1]) != null ? _i : 0,
-      zoom: (_j = result.zoom) != null ? _j : 1,
-      pitch: mode === "3d" ? 45 : 0
+      longitude: (_h = (_g = result.center) == null ? void 0 : _g[0]) != null ? _h : 0,
+      latitude: (_j = (_i = result.center) == null ? void 0 : _i[1]) != null ? _j : 0,
+      zoom: (_k = result.zoom) != null ? _k : 1,
+      pitch: mode === "2.5d" || mode === "3d" ? 45 : 0
     };
   }
   /**
@@ -51839,9 +52169,28 @@ var GeoLayer = class {
    * @returns 图层 ID
    */
   static getLayerId() {
-    return "geojson-layer";
+    return "geojson-layer" /* GEOJSON_LAYER */;
+  }
+  /**
+   * 设置当前悬停的要素名称
+   * @param name - 要素名称，为 null 时清除悬停状态
+   */
+  static setHoveredFeatureName(name2) {
+    _GeoLayer.hoveredFeatureName = name2;
+  }
+  /**
+   * 获取当前悬停的要素名称
+   * @returns 当前悬停的要素名称，如果没有则为 null
+   */
+  static getHoveredFeatureName() {
+    return _GeoLayer.hoveredFeatureName;
   }
 };
+/**
+ * 当前悬停的要素名称
+ */
+_GeoLayer.hoveredFeatureName = null;
+var GeoLayer = _GeoLayer;
 
 // src/deckgl/layers/iconAtlas.ts
 var IconAtlas = class _IconAtlas {
@@ -51941,7 +52290,7 @@ var TextLayer2 = class _TextLayer {
   static createLayer(textData) {
     const color = hexToRgba(POINT_DEFAULT_STYLE.color);
     return new text_layer_default({
-      id: "label-layer",
+      id: "label-layer" /* LABEL_LAYER */,
       data: textData,
       characterSet: "auto",
       fontSettings: {
@@ -51978,7 +52327,7 @@ var TextLayer2 = class _TextLayer {
    * @returns 图层ID
    */
   static getLayerId() {
-    return "label-layer";
+    return "label-layer" /* LABEL_LAYER */;
   }
 };
 
@@ -52022,7 +52371,7 @@ var IconLayer2 = class _IconLayer {
     }
     const iconAtlasResult = await IconAtlas.buildIconAtlas(registeredIcons);
     const iconLayer = new icon_layer_default({
-      id: "point-layer",
+      id: "point-layer" /* POINT_LAYER */,
       data: iconData,
       iconAtlas: iconAtlasResult.iconAtlas,
       iconMapping: iconAtlasResult.iconMapping,
@@ -52056,7 +52405,7 @@ var IconLayer2 = class _IconLayer {
    * @returns 图层ID
    */
   static getLayerId() {
-    return "point-layer";
+    return "point-layer" /* POINT_LAYER */;
   }
   /**
    * 处理点对象点击事件
@@ -52327,7 +52676,7 @@ var _Line2DManager = class _Line2DManager {
       fullData.push({ path: buddyPath, color, width: 0.3 });
     });
     return new path_layer_default({
-      id: "line-layer",
+      id: "line-layer" /* LINE_LAYER */,
       data: fullData,
       pickable: false,
       widthScale: 1,
@@ -52401,7 +52750,7 @@ var _Line2DManager = class _Line2DManager {
       generateDots(line.endCoordinate, line.startCoordinate);
     }
     return new scatterplot_layer_default({
-      id: "line-trail-layer",
+      id: "line-trail-layer" /* LINE_TRAIL_LAYER */,
       data: dots,
       pickable: false,
       radiusUnits: "pixels",
@@ -52434,7 +52783,7 @@ var _Line2DManager = class _Line2DManager {
    * @returns 图层 ID 数组
    */
   static getLayerIdsToRemove() {
-    return ["line-layer", "line-trail-layer"];
+    return ["line-layer" /* LINE_LAYER */, "line-trail-layer" /* LINE_TRAIL_LAYER */];
   }
 };
 /** 曲率计算器实例（用于 2D 模式） */
@@ -52580,7 +52929,7 @@ var _Line3DManager = class _Line3DManager {
     const mergedConfig = { ..._Line3DManager.DEFAULT_CONFIG, ...config2 };
     const routes = generateFlightRoutes(lines, currentTime, config2);
     const baseLayer = new arc_trips_layer_default({
-      id: "arc-base-layer",
+      id: "arc-base-layer" /* ARC_BASE_LAYER */,
       data: routes,
       getSourcePosition: (d2) => d2.sourcePosition,
       getTargetPosition: (d2) => d2.targetPosition,
@@ -52606,7 +52955,7 @@ var _Line3DManager = class _Line3DManager {
       widthMinPixels: 1
     });
     const trailLayer = new arc_trips_layer_default({
-      id: "arc-trail-layer",
+      id: "arc-trail-layer" /* ARC_TRAIL_LAYER */,
       data: routes,
       getSourcePosition: (d2) => d2.sourcePosition,
       getTargetPosition: (d2) => d2.targetPosition,
@@ -52642,7 +52991,7 @@ var _Line3DManager = class _Line3DManager {
    * @returns 图层 ID 数组
    */
   static getLayerIdsToRemove() {
-    return ["arc-base-layer", "arc-trail-layer"];
+    return ["arc-base-layer" /* ARC_BASE_LAYER */, "arc-trail-layer" /* ARC_TRAIL_LAYER */];
   }
 };
 /** 默认动画配置 */
@@ -52673,17 +53022,129 @@ _Line3DManager.DEFAULT_CONFIG = {
 };
 var Line3DManager = _Line3DManager;
 
-// src/deckgl/main.ts
-var _DeckglMap = class _DeckglMap {
-  //===== 生命周期管理 =====
+// src/deckgl/animationManager.ts
+var ArcAnimationManager = class {
+  /**
+   * 构造函数
+   * @param animationSpeed - 动画速度（每毫秒的时间单位）
+   * @param updateCallback - 时间更新回调函数（可选）
+   */
+  constructor(animationSpeed, updateCallback) {
+    //===== 动画时间管理 =====
+    /** 当前动画时间（单位：秒的逻辑刻度） */
+    this.currentTime = 0;
+    /** RAF 动画 ID */
+    this.rafId = null;
+    /** 动画开始时间 */
+    this.animationStartTime = 0;
+    /** 动画是否正在运行 */
+    this.isAnimating = false;
+    /** 时间循环周期 */
+    this.timeLoop = 6 * 60 * 60;
+    /** 时间更新回调 */
+    this.updateCallback = null;
+    //===== 私有方法 =====
+    /**
+     * RAF 动画循环
+     */
+    this.animate = () => {
+      if (!this.isAnimating) {
+        return;
+      }
+      const currentTime = Date.now();
+      const deltaTime = currentTime - this.animationStartTime;
+      const newTime = deltaTime * this.animationSpeed % this.timeLoop;
+      this.setCurrentTime(newTime);
+      if (this.updateCallback) {
+        this.updateCallback(this.currentTime);
+      }
+      this.rafId = requestAnimationFrame(this.animate);
+    };
+    this.animationSpeed = animationSpeed;
+    this.updateCallback = updateCallback != null ? updateCallback : null;
+  }
+  //===== 时间管理方法 =====
+  /**
+   * 获取当前动画时间
+   */
+  getCurrentTime() {
+    return this.currentTime;
+  }
+  /**
+   * 设置当前动画时间
+   */
+  setCurrentTime(time) {
+    this.currentTime = time;
+  }
+  /**
+   * 重置动画时间
+   */
+  resetTime() {
+    this.currentTime = 0;
+    this.animationStartTime = Date.now();
+  }
+  //===== 动画控制方法 =====
+  /**
+   * 启动动画定时器（使用 requestAnimationFrame）
+   */
+  start() {
+    if (this.isAnimating) {
+      this.stop();
+    }
+    this.isAnimating = true;
+    this.animationStartTime = Date.now();
+    this.animate();
+  }
+  /**
+   * 停止动画
+   */
+  stop() {
+    this.isAnimating = false;
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
+  }
+  /**
+   * 获取动画是否正在运行
+   */
+  getIsAnimating() {
+    return this.isAnimating;
+  }
+  /**
+   * 更新动画速度
+   * @param speed - 新的动画速度（每毫秒的时间单位）
+   */
+  setAnimationSpeed(speed) {
+    this.animationSpeed = speed;
+  }
+  /**
+   * 设置更新回调
+   * @param callback - 时间更新回调函数
+   */
+  setUpdateCallback(callback) {
+    this.updateCallback = callback;
+  }
+  /**
+   * 销毁资源
+   */
+  destroy() {
+    this.stop();
+    this.updateCallback = null;
+  }
+};
+
+// src/deckgl/BaseDeckglMap.ts
+var BaseDeckglMap = class {
   /**
    * 构造函数
    * @param container - 容器元素
-   * @param mode - 地图模式（2D/3D）
+   * @param mode - 地图模式（2D/2.5D/3D）
    * @param callback - 初始化完成回调函数
    * @param events - 事件处理器配置（可选）
+   * @param center - 可选的中心点配置 { lat, lng }
    */
-  constructor(container, mode, callback, events) {
+  constructor(container, mode, callback, events, center) {
     //===== 实例标识和核心组件 =====
     /** 实例唯一标识 */
     this.instanceId = "deckgl-instance";
@@ -52703,45 +53164,23 @@ var _DeckglMap = class _DeckglMap {
       selectedPointId: null,
       hoveredPointId: null
     };
-    /** 2D/3D 模式 */
-    this.mode = "2d";
     /** 第一次加载时计算的最小缩放比例 */
     this.initialMinZoom = null;
+    /** 是否已经初始化完成（用于判断是否使用初始 center） */
+    this._hasInitialized = false;
     //===== 点击事件控制 =====
     /** 单击延迟计时器 */
     this.clickTimer = null;
     /** 点击延迟时间（毫秒） */
     this.CLICK_DELAY = 250;
-    //===== 动画控制 =====
-    /** 当前动画时间（单位：秒的逻辑刻度） */
-    this.currentTime = 0;
-    //===== 动画控制 =====
-    // ==================== 时间管理方法 ====================
-    /** RAF 动画 ID */
-    this.rafId = null;
-    /** 动画开始时间 */
-    this.animationStartTime = 0;
-    /** 动画是否正在运行 */
-    this.isAnimating = false;
-    /**
-     * RAF 动画循环
-     */
-    this.animate = () => {
-      if (!this.isAnimating) {
-        return;
-      }
-      const currentTime = Date.now();
-      const deltaTime = currentTime - this.animationStartTime;
-      const animationSpeed = this.mode === "2d" ? 12 : 0.1;
-      const timeLoop = 6 * 60 * 60;
-      const newTime = deltaTime * animationSpeed % timeLoop;
-      this.setCurrentTime(newTime);
-      this.updateArcAnimation();
-      this.rafId = requestAnimationFrame(this.animate);
-    };
     this.mode = mode;
     this.events = events;
     this.container = container;
+    this.configuredCenter = center;
+    const animationSpeed = this.getAnimationSpeed();
+    this.animationManager = new ArcAnimationManager(animationSpeed, (currentTime) => {
+      this.updateArcAnimation(currentTime);
+    });
     void this.initializeMap(container, callback);
   }
   /**
@@ -52751,7 +53190,23 @@ var _DeckglMap = class _DeckglMap {
    */
   async initializeMap(container, callback) {
     const canvas2 = this.createCanvas(container);
+    await this.initializeModeSpecificResources();
     await this.initDeck(canvas2, callback);
+    this.registerEvents();
+  }
+  /**
+   * 初始化模式特定的资源（由子类实现）
+   */
+  async initializeModeSpecificResources() {
+  }
+  /**
+   * 注册事件监听
+   */
+  registerEvents() {
+    var _a2;
+    (_a2 = this.container) == null ? void 0 : _a2.addEventListener("mouseleave", () => {
+      GeoLayer.setHoveredFeatureName(null);
+    });
   }
   /**
    * 初始化 Deck 实例与图标图集
@@ -52780,7 +53235,7 @@ var _DeckglMap = class _DeckglMap {
     );
     this.initializeDefaultLayers();
     callback();
-    this.startArcAnimation();
+    this.animationManager.start();
   }
   /**
    * 初始化默认图层
@@ -52792,9 +53247,6 @@ var _DeckglMap = class _DeckglMap {
         void this.setGEOData(geoData);
       }
     }
-  }
-  get lineLayerManager() {
-    return this.mode === "2d" ? Line2DManager : Line3DManager;
   }
   /**
    * 图层更新回调方法
@@ -52816,7 +53268,7 @@ var _DeckglMap = class _DeckglMap {
       clearTimeout(this.clickTimer);
       this.clickTimer = null;
     }
-    this.stopArcAnimation();
+    this.animationManager.destroy();
     if (this.deckInstance) {
       this.deckInstance.finalize();
       this.deckInstance = null;
@@ -52838,58 +53290,6 @@ var _DeckglMap = class _DeckglMap {
     canvas2.setAttribute("height", "100%");
     container.appendChild(canvas2);
     return canvas2;
-  }
-  /**
-   * 创建并初始化 Deck 实例
-   * @param container - Canvas 容器
-   * @param initialViewState - 初始视图状态
-   * @param props - 附加属性
-   */
-  async createDeckInstance(container, initialViewState, props) {
-    var _a2, _b, _c;
-    if (this.deckInstance) {
-      throw new Error(`Deck instance already exists for ${this.instanceId}`);
-    }
-    const mode = (_a2 = props == null ? void 0 : props.mode) != null ? _a2 : "2d";
-    const mapView = new map_view_default({
-      repeat: MapStateManager.curLevel === "world" /* WORLD */,
-      controller: {
-        scrollZoom: true,
-        dragPan: true,
-        dragRotate: true,
-        doubleClickZoom: false,
-        // 禁用双击放大
-        touchZoom: true,
-        touchRotate: true,
-        keyboard: true
-      }
-    });
-    this.deckInstance = new deck_default({
-      canvas: container,
-      width: (_b = container.parentElement) == null ? void 0 : _b.clientWidth,
-      height: (_c = container.parentElement) == null ? void 0 : _c.clientHeight,
-      initialViewState: {
-        ..._DeckglMap.DEFAULT_VIEW_STATE,
-        ...mode === "3d" ? { pitch: 45 } : {},
-        ...initialViewState
-      },
-      views: mapView,
-      ...props,
-      onViewStateChange: (params) => {
-        var _a3;
-        const { viewState } = params;
-        const constrainedLatitude = Math.max(-66.5, Math.min(66.5, viewState.latitude));
-        const minZoom = (_a3 = this.initialMinZoom) != null ? _a3 : 0;
-        const constrainedZoom = Math.max(minZoom, viewState.zoom);
-        const nextViewState = {
-          ...viewState,
-          latitude: constrainedLatitude,
-          zoom: constrainedZoom
-        };
-        return nextViewState;
-      },
-      layers: []
-    });
   }
   /**
    * 获取当前 Deck 实例
@@ -52964,23 +53364,6 @@ var _DeckglMap = class _DeckglMap {
     }
   }
   /**
-   * 以固定顺序返回所有图层实例
-   * @returns 图层数组
-   */
-  getLayers() {
-    const layerIds = [
-      GeoLayer.getLayerId(),
-      IconLayer2.getLayerId(),
-      "line-layer",
-      "line-trail-layer",
-      "arc-base-layer",
-      "arc-trail-layer",
-      TextLayer2.getLayerId()
-    ];
-    const layers = layerIds.map((id) => this.layerMap.get(id));
-    return layers;
-  }
-  /**
    * 将当前图层刷新到 Deck 实例
    */
   updateLayer() {
@@ -53017,29 +53400,6 @@ var _DeckglMap = class _DeckglMap {
     }
   }
   /**
-   * 地图双击处理（获取区域信息）
-   * @param info - 双击信息
-   * @param event - 事件对象
-   */
-  async handleDoubleClickMapView(info, event) {
-    var _a2, _b, _c, _d;
-    if (this.clickTimer) {
-      clearTimeout(this.clickTimer);
-      this.clickTimer = null;
-    }
-    const pick2 = info;
-    if (event == null ? void 0 : event.srcEvent) {
-      event.srcEvent.stopPropagation();
-      event.srcEvent.preventDefault();
-    }
-    if ((pick2 == null ? void 0 : pick2.object) && ((_a2 = pick2.layer) == null ? void 0 : _a2.id) === GeoLayer.getLayerId()) {
-      const regionName = (_c = (_b = pick2.object.properties) == null ? void 0 : _b.name) != null ? _c : "";
-      if ((_d = this.events) == null ? void 0 : _d.onAreaDoubleClick) {
-        this.events.onAreaDoubleClick(regionName);
-      }
-    }
-  }
-  /**
    * 点对象点击处理
    * @param info - 点击信息
    */
@@ -53061,48 +53421,33 @@ var _DeckglMap = class _DeckglMap {
       this.layerUpdateCallback
     );
   }
-  //===== 数据设置与更新 =====
-  /**
-   * 设置国家/省份 GeoJSON 数据并注册基础底图图层
-   * @param geojsonData - GeoJSON 数据
-   */
-  async setGEOData(geojsonData) {
-    const geojsonLayer = GeoLayer.createWithData(geojsonData, this.events);
-    this.addLayer(GeoLayer.getLayerId(), geojsonLayer);
-    this.updateLayer();
-    this.fitBoundsToGeoData(geojsonData);
-  }
   /**
    * 根据地理数据调整视图，使其居中并适应缩放
    * @param geojsonData - GeoJSON 数据
+   * @param useInitialCenter - 是否使用初始 center 配置（仅在初始化时使用）
    */
-  fitBoundsToGeoData(geojsonData) {
-    var _a2, _b, _c, _d, _e2;
+  fitBoundsToGeoData(geojsonData, useInitialCenter = false) {
+    var _a2, _b, _c, _d;
     const canvasElement = this.container;
     const containerWidth = (_b = (_a2 = canvasElement == null ? void 0 : canvasElement.parentElement) == null ? void 0 : _a2.clientWidth) != null ? _b : 1e3;
     const containerHeight = (_d = (_c = canvasElement == null ? void 0 : canvasElement.parentElement) == null ? void 0 : _c.clientHeight) != null ? _d : 800;
     const viewState = GeoLayer.calculateViewState(
       geojsonData,
       { width: containerWidth, height: containerHeight },
-      this.mode
+      this.mode,
+      useInitialCenter ? this.configuredCenter : void 0
     );
-    (_e2 = this.initialMinZoom) != null ? _e2 : this.initialMinZoom = this.calculateInitialMinZoom(containerWidth, containerHeight);
-    this.updateViewState([viewState.longitude, viewState.latitude], viewState.zoom);
-  }
-  /**
-   * 计算初始最小缩放比例
-   * 基于容器尺寸计算能够显示整个世界地图的最小缩放级别
-   * @param containerWidth - 容器宽度
-   * @param containerHeight - 容器高度
-   * @returns 最小缩放级别
-   */
-  calculateInitialMinZoom(containerWidth, containerHeight) {
-    const worldLngRange = 360;
-    const worldLatRange = 180;
-    const zoomLng = Math.log2(containerWidth * 0.8 * worldLngRange / (256 * worldLngRange));
-    const zoomLat = Math.log2(containerHeight * 0.8 * worldLatRange / (256 * worldLatRange));
-    const minZoom = Math.min(zoomLng, zoomLat);
-    return Math.max(0, Math.min(2, minZoom));
+    if (this.initialMinZoom === null) {
+      const worldLngRange = 360;
+      const worldLatRange = 180;
+      const zoomLng = Math.log2(containerWidth * 0.8 * worldLngRange / (256 * worldLngRange));
+      const zoomLat = Math.log2(containerHeight * 0.8 * worldLatRange / (256 * worldLatRange));
+      const minZoom = Math.min(zoomLng, zoomLat);
+      this.initialMinZoom = Math.max(0, Math.min(2, minZoom));
+      this.updateViewState([viewState.longitude, viewState.latitude], this.initialMinZoom);
+    } else {
+      this.updateViewState([viewState.longitude, viewState.latitude], viewState.zoom);
+    }
   }
   /**
    * 更新视图状态
@@ -53115,7 +53460,7 @@ var _DeckglMap = class _DeckglMap {
       longitude: center[0],
       latitude: center[1],
       zoom,
-      pitch: this.mode === "3d" ? 45 : 0,
+      pitch: this.getPitch(),
       transitionDuration: 500,
       // 500ms 动画过渡
       transitionInterpolator: new FlyToInterpolator()
@@ -53143,71 +53488,701 @@ var _DeckglMap = class _DeckglMap {
   setLines(lines) {
     this.lines = lines;
   }
-  /**
-   * 获取当前动画时间
-   */
-  getCurrentTime() {
-    return this.currentTime;
-  }
-  /**
-   * 设置当前动画时间
-   */
-  setCurrentTime(time) {
-    this.currentTime = time;
-  }
-  /**
-   * 重置动画时间
-   */
-  resetTime() {
-    this.currentTime = 0;
-  }
-  /**
-   * 启动动画定时器（使用 requestAnimationFrame）
-   */
-  startArcAnimation() {
-    if (this.isAnimating) {
-      this.stopArcAnimation();
-    }
-    this.isAnimating = true;
-    this.animationStartTime = Date.now();
-    this.animate();
-  }
-  /**
-   * 停止动画
-   */
-  stopArcAnimation() {
-    this.isAnimating = false;
-    if (this.rafId !== null) {
-      cancelAnimationFrame(this.rafId);
-      this.rafId = null;
-    }
-  }
-  /**
-   * 更新动画
-   */
-  updateArcAnimation() {
-    const currentTime = this.getCurrentTime();
-    if (this.mode === "2d") {
-      const layers = Line2DManager.createLayers(this.lines, {}, currentTime);
-      this.updateLayerById("line-layer", layers[0]);
-      this.updateLayerById("line-trail-layer", layers[1]);
-    } else {
-      const [baseLayer, trailLayer] = Line3DManager.createLayers(this.lines, {}, currentTime);
-      this.updateLayerById("arc-base-layer", baseLayer);
-      this.updateLayerById("arc-trail-layer", trailLayer);
-    }
-    this.updateLayer();
-  }
 };
 //===== 静态常量 =====
 /** 默认视图状态 */
-_DeckglMap.DEFAULT_VIEW_STATE = {
+BaseDeckglMap.DEFAULT_VIEW_STATE = {
   longitude: 0,
   latitude: 0,
   zoom: 1,
   pitch: 0
 };
-var DeckglMap = _DeckglMap;
+
+// src/deckgl/DeckglMapFlat.ts
+var DeckglMapFlat = class extends BaseDeckglMap {
+  /**
+   * 创建并初始化 Deck 实例（2D/2.5D 模式共享）
+   */
+  async createDeckInstance(container, initialViewState, props) {
+    var _a2, _b, _c;
+    if (this.deckInstance) {
+      throw new Error(`Deck instance already exists for ${this.instanceId}`);
+    }
+    const mode = (_a2 = props == null ? void 0 : props.mode) != null ? _a2 : "2d";
+    const view = new map_view_default({
+      repeat: MapStateManager.curLevel === "world" /* WORLD */,
+      controller: {
+        scrollZoom: true,
+        dragPan: true,
+        dragRotate: true,
+        doubleClickZoom: false,
+        // 禁用双击放大
+        touchZoom: true,
+        touchRotate: true,
+        keyboard: true
+      }
+    });
+    const effects = [];
+    this.deckInstance = new deck_default({
+      canvas: container,
+      width: (_b = container.parentElement) == null ? void 0 : _b.clientWidth,
+      height: (_c = container.parentElement) == null ? void 0 : _c.clientHeight,
+      initialViewState: {
+        ...BaseDeckglMap.DEFAULT_VIEW_STATE,
+        ...mode === "2.5d" ? { pitch: 45 } : {},
+        ...initialViewState
+      },
+      views: view,
+      effects,
+      ...props,
+      // @ts-ignore - 类型定义不完整，需要支持不同的 ViewState 类型
+      onViewStateChange: (params) => {
+        var _a3;
+        const { viewState } = params;
+        const constrainedLatitude = Math.max(-66.5, Math.min(66.5, viewState.latitude));
+        const minZoom = (_a3 = this.initialMinZoom) != null ? _a3 : 0;
+        const constrainedZoom = Math.max(minZoom, viewState.zoom);
+        const nextViewState = {
+          ...viewState,
+          latitude: constrainedLatitude,
+          zoom: constrainedZoom
+        };
+        return nextViewState;
+      },
+      layers: []
+    });
+  }
+  /**
+   * 以固定顺序返回所有图层实例（2D/2.5D 模式共享，无 earth-sphere）
+   */
+  getLayers() {
+    const layerIds = [
+      GeoLayer.getLayerId(),
+      IconLayer2.getLayerId(),
+      "line-layer" /* LINE_LAYER */,
+      "line-trail-layer" /* LINE_TRAIL_LAYER */,
+      "arc-base-layer" /* ARC_BASE_LAYER */,
+      "arc-trail-layer" /* ARC_TRAIL_LAYER */,
+      TextLayer2.getLayerId()
+    ];
+    const layers = layerIds.map((id) => this.layerMap.get(id));
+    return layers;
+  }
+  /**
+   * 地图双击处理（2D/2.5D 模式支持下钻功能）
+   */
+  async handleDoubleClickMapView(info, event) {
+    var _a2, _b, _c, _d;
+    if (this.clickTimer) {
+      clearTimeout(this.clickTimer);
+      this.clickTimer = null;
+    }
+    const pick2 = info;
+    if (event == null ? void 0 : event.srcEvent) {
+      event.srcEvent.stopPropagation();
+      event.srcEvent.preventDefault();
+    }
+    if ((pick2 == null ? void 0 : pick2.object) && ((_a2 = pick2.layer) == null ? void 0 : _a2.id) === GeoLayer.getLayerId()) {
+      const regionName = (_c = (_b = pick2.object.properties) == null ? void 0 : _b.name) != null ? _c : "";
+      if ((_d = this.events) == null ? void 0 : _d.onAreaDoubleClick) {
+        this.events.onAreaDoubleClick(regionName);
+      }
+    }
+  }
+  /**
+   * 设置国家/省份 GeoJSON 数据并注册基础底图图层（2D/2.5D 模式共享）
+   */
+  async setGEOData(geojsonData) {
+    const geojsonLayer = GeoLayer.createWithData(geojsonData, this.events);
+    this.addLayer(GeoLayer.getLayerId(), geojsonLayer);
+    this.updateLayer();
+    await new Promise((resolve2) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const isInitialSetup = !this._hasInitialized;
+          this.fitBoundsToGeoData(geojsonData, isInitialSetup);
+          this._hasInitialized = true;
+          resolve2();
+        });
+      });
+    });
+  }
+};
+
+// src/deckgl/DeckglMap2D.ts
+var DeckglMap2D = class extends DeckglMapFlat {
+  /**
+   * 获取动画速度（2D 模式）
+   */
+  getAnimationSpeed() {
+    return 12;
+  }
+  /**
+   * 获取俯仰角（2D 模式）
+   */
+  getPitch() {
+    return 0;
+  }
+  /**
+   * 更新动画图层（2D 模式）
+   * @param currentTime - 当前动画时间
+   */
+  updateArcAnimation(currentTime) {
+    const layers = Line2DManager.createLayers(this.lines, {}, currentTime);
+    this.updateLayerById("line-layer" /* LINE_LAYER */, layers[0]);
+    this.updateLayerById("line-trail-layer" /* LINE_TRAIL_LAYER */, layers[1]);
+    this.updateLayer();
+  }
+  /**
+   * 创建并初始化 Deck 实例（2D 模式特定）
+   */
+  async createDeckInstance(container, initialViewState, props) {
+    await super.createDeckInstance(
+      container,
+      {
+        ...initialViewState,
+        pitch: 0
+        // 2D 模式 pitch 为 0
+      },
+      props
+    );
+  }
+};
+
+// src/deckgl/DeckglMap2_5D.ts
+var DeckglMap2_5D = class extends DeckglMapFlat {
+  /**
+   * 获取动画速度（2.5D 模式）
+   */
+  getAnimationSpeed() {
+    return 0.1;
+  }
+  /**
+   * 获取俯仰角（2.5D 模式）
+   */
+  getPitch() {
+    return 45;
+  }
+  /**
+   * 更新动画图层（2.5D 模式）
+   * @param currentTime - 当前动画时间
+   */
+  updateArcAnimation(currentTime) {
+    const [baseLayer, trailLayer] = Line3DManager.createLayers(this.lines, {}, currentTime);
+    this.updateLayerById("arc-base-layer" /* ARC_BASE_LAYER */, baseLayer);
+    this.updateLayerById("arc-trail-layer" /* ARC_TRAIL_LAYER */, trailLayer);
+    this.updateLayer();
+  }
+  /**
+   * 创建并初始化 Deck 实例（2.5D 模式特定）
+   */
+  async createDeckInstance(container, initialViewState, props) {
+    await super.createDeckInstance(
+      container,
+      {
+        ...initialViewState,
+        pitch: 45
+        // 2.5D 模式 pitch 为 45
+      },
+      props
+    );
+  }
+};
+
+// src/deckgl/DeckglMap3D.ts
+import { SimpleMeshLayer } from "@deck.gl/mesh-layers";
+
+// src/deckgl/utils/sphereGeometry.ts
+function createSphereGeometry(radius, nlat = 18, nlong = 36) {
+  if (typeof radius !== "number" || isNaN(radius) || radius <= 0) {
+    throw new Error(`Invalid radius: ${radius}. Must be a positive number.`);
+  }
+  if (typeof nlat !== "number" || isNaN(nlat) || nlat < 1 || !Number.isInteger(nlat)) {
+    throw new Error(`Invalid nlat: ${nlat}. Must be a positive integer.`);
+  }
+  if (typeof nlong !== "number" || isNaN(nlong) || nlong < 1 || !Number.isInteger(nlong)) {
+    throw new Error(`Invalid nlong: ${nlong}. Must be a positive integer.`);
+  }
+  const positions = [];
+  const normals = [];
+  const texCoords = [];
+  const indices = [];
+  for (let lat = 0; lat <= nlat; lat++) {
+    const theta = lat * Math.PI / nlat;
+    const sinTheta = Math.sin(theta);
+    const cosTheta = Math.cos(theta);
+    for (let lon = 0; lon <= nlong; lon++) {
+      const phi = lon * 2 * Math.PI / nlong;
+      const sinPhi = Math.sin(phi);
+      const cosPhi = Math.cos(phi);
+      const x2 = cosPhi * sinTheta;
+      const y2 = cosTheta;
+      const z2 = sinPhi * sinTheta;
+      positions.push(radius * x2, radius * y2, radius * z2);
+      normals.push(x2, y2, z2);
+      texCoords.push(lon / nlong, lat / nlat);
+    }
+  }
+  for (let lat = 0; lat < nlat; lat++) {
+    for (let lon = 0; lon < nlong; lon++) {
+      const first = lat * (nlong + 1) + lon;
+      const second = first + nlong + 1;
+      indices.push(first, second, first + 1);
+      indices.push(second, second + 1, first + 1);
+    }
+  }
+  return {
+    attributes: {
+      positions: {
+        value: new Float32Array(positions),
+        size: 3
+      },
+      normals: {
+        value: new Float32Array(normals),
+        size: 3
+      },
+      texCoords: {
+        value: new Float32Array(texCoords),
+        size: 2
+      }
+    },
+    indices: new Uint16Array(indices)
+  };
+}
+var EARTH_RADIUS_METERS = 63e5;
+
+// src/deckgl/DeckglMap3D.ts
+var INITIAL_VIEW_STATE = {
+  longitude: 0,
+  latitude: 20,
+  zoom: 1.5
+};
+var ROTATION_SPEED_DEG_PER_SEC = 20;
+var DeckglMap3D = class extends BaseDeckglMap {
+  constructor() {
+    super(...arguments);
+    /** 地球球体几何体 */
+    this.sphereGeometry = null;
+    /** 当前视图状态 */
+    this.currentViewState = { ...INITIAL_VIEW_STATE };
+    /** 上次更新时间戳 */
+    this.lastTime = typeof window !== "undefined" && window.performance ? window.performance.now() : Date.now();
+    /** 鼠标是否悬停在球体上 */
+    this.isMouseOver = false;
+    /** 悬停开始定时器（用于延迟停止自转） */
+    this.hoverStartTimeout = null;
+    /** 悬停结束定时器（用于延迟恢复自转） */
+    this.hoverEndTimeout = null;
+    /** 动画帧 ID */
+    this.animationFrameId = null;
+  }
+  /**
+   * 初始化模式特定的资源（3D Globe 模式）
+   */
+  async initializeModeSpecificResources() {
+    var _a2;
+    try {
+      if (typeof EARTH_RADIUS_METERS !== "number" || isNaN(EARTH_RADIUS_METERS) || EARTH_RADIUS_METERS <= 0) {
+        throw new Error(`Invalid EARTH_RADIUS_METERS: ${EARTH_RADIUS_METERS}`);
+      }
+      const geometry = createSphereGeometry(EARTH_RADIUS_METERS, 18, 36);
+      if (!geometry) {
+        throw new Error("createSphereGeometry returned null or undefined");
+      }
+      if (!((_a2 = geometry == null ? void 0 : geometry.attributes) == null ? void 0 : _a2.positions) || !geometry.indices) {
+        throw new Error("createSphereGeometry returned incomplete geometry structure");
+      }
+      this.sphereGeometry = geometry;
+    } catch (error) {
+      console.error("Failed to create sphere geometry:", error);
+      throw new Error(`Failed to initialize sphere geometry: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+  /**
+   * 获取动画速度
+   * @returns 根据模式返回对应的动画速度
+   */
+  getAnimationSpeed() {
+    return this.mode === "2d" ? 12 : 0.1;
+  }
+  /**
+   * 创建并初始化 Deck 实例（3D Globe 模式）
+   * @param container - 画布容器元素
+   * @param initialViewState - 初始视图状态
+   * @param props - 额外的 Deck 属性
+   */
+  async createDeckInstance(container, initialViewState, props) {
+    var _a2, _b;
+    if (this.deckInstance) {
+      throw new Error(`Deck instance already exists for ${this.instanceId}`);
+    }
+    if (!this.sphereGeometry) {
+      try {
+        const geometry = createSphereGeometry(EARTH_RADIUS_METERS, 18, 36);
+        if (!geometry) {
+          throw new Error("createSphereGeometry returned null or undefined");
+        }
+        this.sphereGeometry = geometry;
+      } catch (error) {
+        console.error("Failed to create sphere geometry in createDeckInstance:", error);
+        throw new Error(`Failed to create sphere geometry: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+    this.currentViewState = {
+      ...INITIAL_VIEW_STATE,
+      ...initialViewState
+    };
+    this.lastTime = typeof window !== "undefined" && window.performance ? window.performance.now() : Date.now();
+    const view = globe_view_default ? new globe_view_default({
+      controller: {
+        dragPan: true,
+        dragRotate: false,
+        scrollZoom: true,
+        doubleClickZoom: false,
+        touchZoom: true,
+        keyboard: false
+      }
+    }) : null;
+    if (!view) {
+      throw new Error("GlobeView is not available");
+    }
+    const ambientLight = new AmbientLight({
+      color: [255, 255, 255],
+      intensity: 1
+    });
+    const sunLight = SunLight ? new SunLight({
+      color: [255, 255, 255],
+      intensity: 0,
+      timestamp: Date.now()
+    }) : null;
+    const lightingEffectProps = { ambientLight };
+    if (sunLight) {
+      lightingEffectProps.sunLight = sunLight;
+    }
+    const lightingEffect = new LightingEffect(
+      lightingEffectProps
+    );
+    this.deckInstance = new deck_default({
+      canvas: container,
+      width: (_a2 = container.parentElement) == null ? void 0 : _a2.clientWidth,
+      height: (_b = container.parentElement) == null ? void 0 : _b.clientHeight,
+      initialViewState: this.currentViewState,
+      // @ts-ignore - view 可能是 GlobeView，类型不完整
+      views: view,
+      controller: {
+        dragPan: true,
+        dragRotate: false,
+        scrollZoom: true,
+        doubleClickZoom: false,
+        touchZoom: true,
+        keyboard: false
+      },
+      effects: [lightingEffect],
+      layers: [],
+      ...props,
+      // @ts-ignore - 类型定义不完整，需要支持不同的 ViewState 类型
+      onViewStateChange: (params) => {
+        const { viewState } = params;
+        this.currentViewState = viewState;
+        return viewState;
+      },
+      onHover: (info) => {
+        this.handleHover(info);
+      },
+      onLoad: () => {
+      }
+    });
+    const earthSphereLayer = new SimpleMeshLayer({
+      id: "earth-sphere",
+      data: [0],
+      mesh: this.sphereGeometry,
+      coordinateSystem: COORDINATE_SYSTEM.CARTESIAN,
+      getPosition: [0, 0, 0],
+      getColor: [180, 210, 240],
+      material: false,
+      pickable: true
+    });
+    this.addLayer("earth-sphere", earthSphereLayer);
+    this.updateLayer();
+    this.startRotationAnimation();
+  }
+  /**
+   * 处理鼠标悬停事件
+   * @param info - 悬停信息
+   */
+  handleHover(info) {
+    var _a2;
+    const hoverInfo = info;
+    const hoveringSphere = ((_a2 = hoverInfo.layer) == null ? void 0 : _a2.id) === "earth-sphere";
+    if (hoveringSphere) {
+      if (!this.isMouseOver) {
+        if (this.hoverEndTimeout) {
+          clearTimeout(this.hoverEndTimeout);
+          this.hoverEndTimeout = null;
+        }
+        if (this.hoverStartTimeout) {
+          clearTimeout(this.hoverStartTimeout);
+        }
+        this.hoverStartTimeout = setTimeout(() => {
+          this.isMouseOver = true;
+          this.updateController(true);
+          this.lastTime = typeof window !== "undefined" && window.performance ? window.performance.now() : Date.now();
+          this.hoverStartTimeout = null;
+        }, 600);
+      }
+    } else {
+      if (this.hoverStartTimeout) {
+        clearTimeout(this.hoverStartTimeout);
+        this.hoverStartTimeout = null;
+      }
+      if (this.isMouseOver) {
+        if (this.hoverEndTimeout) {
+          clearTimeout(this.hoverEndTimeout);
+        }
+        this.hoverEndTimeout = setTimeout(() => {
+          this.isMouseOver = false;
+          this.updateController(false);
+          this.lastTime = typeof window !== "undefined" && window.performance ? window.performance.now() : Date.now();
+          this.hoverEndTimeout = null;
+        }, 150);
+      }
+    }
+  }
+  /**
+   * 更新控制器配置
+   * @param enabled - 是否启用交互控制
+   */
+  updateController(enabled) {
+    var _a2;
+    if (!this.deckInstance) {
+      return;
+    }
+    (_a2 = this.deckInstance) == null ? void 0 : _a2.setProps({
+      controller: {
+        dragPan: enabled,
+        dragRotate: false,
+        scrollZoom: enabled ? {
+          speed: 0.01,
+          smooth: false
+        } : false,
+        doubleClickZoom: false,
+        touchZoom: enabled,
+        keyboard: false
+      }
+    });
+  }
+  /**
+   * 启动地球自转动画
+   */
+  startRotationAnimation() {
+    const animateRotation = () => {
+      this.animationFrameId = requestAnimationFrame(animateRotation);
+      if (this.isMouseOver) {
+        this.lastTime = typeof window !== "undefined" && window.performance ? window.performance.now() : Date.now();
+        return;
+      }
+      const currentTime = typeof window !== "undefined" && window.performance ? window.performance.now() : Date.now();
+      const deltaTime = Math.min((currentTime - this.lastTime) / 1e3, 0.1);
+      this.lastTime = currentTime;
+      if (deltaTime > 0) {
+        this.currentViewState.longitude += ROTATION_SPEED_DEG_PER_SEC * deltaTime;
+        if (this.currentViewState.longitude > 180) {
+          this.currentViewState.longitude -= 360;
+        } else if (this.currentViewState.longitude < -180) {
+          this.currentViewState.longitude += 360;
+        }
+        if (this.deckInstance) {
+          this.deckInstance.setProps({
+            viewState: { ...this.currentViewState }
+          });
+        }
+      }
+    };
+    animateRotation();
+  }
+  /**
+   * 停止地球自转动画
+   */
+  stopRotationAnimation() {
+    if (this.animationFrameId !== null) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+    if (this.hoverStartTimeout) {
+      clearTimeout(this.hoverStartTimeout);
+      this.hoverStartTimeout = null;
+    }
+    if (this.hoverEndTimeout) {
+      clearTimeout(this.hoverEndTimeout);
+      this.hoverEndTimeout = null;
+    }
+  }
+  /**
+   * 以固定顺序返回所有图层实例（3D 模式，earth-sphere 在最底层）
+   * @returns 图层实例数组
+   */
+  getLayers() {
+    const layerIds = [
+      "earth-sphere",
+      GeoLayer.getLayerId(),
+      IconLayer2.getLayerId(),
+      "line-layer" /* LINE_LAYER */,
+      "line-trail-layer" /* LINE_TRAIL_LAYER */,
+      "arc-base-layer" /* ARC_BASE_LAYER */,
+      "arc-trail-layer" /* ARC_TRAIL_LAYER */,
+      TextLayer2.getLayerId()
+    ];
+    const layers = layerIds.map((id) => this.layerMap.get(id));
+    return layers;
+  }
+  /**
+   * 地图双击处理（3D 模式禁用下钻功能）
+   * @param info - 点击信息
+   * @param event - 手势事件
+   */
+  async handleDoubleClickMapView(info, event) {
+    if (event == null ? void 0 : event.srcEvent) {
+      event.srcEvent.stopPropagation();
+      event.srcEvent.preventDefault();
+    }
+    return;
+  }
+  /**
+   * 设置国家/省份 GeoJSON 数据并注册基础底图图层（3D 模式）
+   * @param geojsonData - GeoJSON 数据
+   */
+  async setGEOData(geojsonData) {
+    const geojsonLayer = GeoLayer.createWithData(geojsonData, void 0);
+    this.addLayer(GeoLayer.getLayerId(), geojsonLayer);
+    this.updateLayer();
+    await new Promise((resolve2) => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          var _a2, _b, _c, _d;
+          const canvasElement = this.container;
+          const containerWidth = (_b = (_a2 = canvasElement == null ? void 0 : canvasElement.parentElement) == null ? void 0 : _a2.clientWidth) != null ? _b : 1e3;
+          const containerHeight = (_d = (_c = canvasElement == null ? void 0 : canvasElement.parentElement) == null ? void 0 : _c.clientHeight) != null ? _d : 800;
+          const minDimension = Math.min(containerWidth, containerHeight);
+          const targetDiameter = minDimension * 1.2;
+          const zoom = Math.max(0, Math.min(2.5, Math.log2(targetDiameter / 256)));
+          const newViewState = {
+            longitude: 0,
+            latitude: 20,
+            zoom,
+            pitch: 0
+          };
+          this.currentViewState = newViewState;
+          if (this.currentDeckInstance) {
+            this.currentDeckInstance.setProps({
+              viewState: newViewState
+            });
+          }
+          this._hasInitialized = true;
+          resolve2();
+        });
+      });
+    });
+  }
+  /**
+   * 获取俯仰角（3D Globe 模式固定 pitch 为 0）
+   * @returns 俯仰角度
+   */
+  getPitch() {
+    return 0;
+  }
+  /**
+   * 更新动画图层（根据模式决定使用 2D 或 3D 图层）
+   * @param currentTime - 当前动画时间
+   */
+  updateArcAnimation(currentTime) {
+    if (this.mode === "2d") {
+      const layers = Line2DManager.createLayers(this.lines, {}, currentTime);
+      this.updateLayerById("line-layer" /* LINE_LAYER */, layers[0]);
+      this.updateLayerById("line-trail-layer" /* LINE_TRAIL_LAYER */, layers[1]);
+    } else {
+      const [baseLayer, trailLayer] = Line3DManager.createLayers(this.lines, {}, currentTime);
+      this.updateLayerById("arc-base-layer" /* ARC_BASE_LAYER */, baseLayer);
+      this.updateLayerById("arc-trail-layer" /* ARC_TRAIL_LAYER */, trailLayer);
+    }
+    this.updateLayer();
+  }
+  /**
+   * 销毁内部资源
+   */
+  destroy() {
+    this.stopRotationAnimation();
+    super.destroy();
+  }
+};
+
+// src/deckgl/main.ts
+var DeckglMap = class {
+  /**
+   * 构造函数
+   * @param container - 容器元素
+   * @param mode - 地图模式（2D/2.5D/3D）
+   * @param callback - 初始化完成回调函数
+   * @param events - 事件处理器配置（可选）
+   * @param center - 可选的中心点配置 { lat, lng }
+   */
+  constructor(container, mode, callback, events, center) {
+    this.container = container;
+    this.mode = mode;
+    this.callback = callback;
+    this.events = events;
+    this.center = center;
+    if (this.mode === "3d") {
+      this.instance = new DeckglMap3D(this.container, this.mode, this.callback, this.events, this.center);
+    } else if (this.mode === "2.5d") {
+      this.instance = new DeckglMap2_5D(this.container, this.mode, this.callback, this.events, this.center);
+    } else {
+      this.instance = new DeckglMap2D(this.container, this.mode, this.callback, this.events, this.center);
+    }
+  }
+  /**
+   * 销毁内部资源
+   */
+  destroy() {
+    this.instance.destroy();
+  }
+  /**
+   * 设置国家/省份 GeoJSON 数据并注册基础底图图层
+   * @param geojsonData - GeoJSON 数据
+   */
+  async setGEOData(geojsonData) {
+    const shouldBe3D = this.mode === "3d";
+    const isCurrently3D = this.instance instanceof DeckglMap3D;
+    const shouldBe2_5D = this.mode === "2.5d";
+    const isCurrently2_5D = this.instance instanceof DeckglMap2_5D;
+    const shouldBe2D = this.mode === "2d";
+    const isCurrently2D = this.instance instanceof DeckglMap2D;
+    if (shouldBe3D && !isCurrently3D || shouldBe2_5D && !isCurrently2_5D || shouldBe2D && !isCurrently2D) {
+      this.instance.destroy();
+      if (this.mode === "3d") {
+        this.instance = new DeckglMap3D(this.container, this.mode, this.callback, this.events, this.center);
+      } else if (this.mode === "2.5d") {
+        this.instance = new DeckglMap2_5D(this.container, this.mode, this.callback, this.events, this.center);
+      } else {
+        this.instance = new DeckglMap2D(this.container, this.mode, this.callback, this.events, this.center);
+      }
+    }
+    await this.instance.setGEOData(geojsonData);
+  }
+  /**
+   * 设置点数据
+   * @param points - 点数据数组
+   */
+  async setPoints(points) {
+    await this.instance.setPoints(points);
+  }
+  /**
+   * 设置折线数据
+   * @param lines - 折线数据数组
+   */
+  setLines(lines) {
+    this.instance.setLines(lines);
+  }
+};
 
 // src/deckgl/index.ts
 var deckgl_default = DeckglMap;
@@ -53222,10 +54197,6 @@ import { GeoComponent as GeoComponent2, TooltipComponent, TitleComponent } from 
 import * as echarts from "echarts/core";
 
 // src/utils/echartGeoUtils.ts
-function getZoomLevelFromWorldWidth(worldWidth) {
-  const zoomLevel = Math.log2(worldWidth / 256);
-  return zoomLevel;
-}
 var EchartGeoUtils = class _EchartGeoUtils {
   /**
    * 获取 GeoJSON 中的所有坐标数据
@@ -53272,35 +54243,119 @@ var EchartGeoUtils = class _EchartGeoUtils {
     return result;
   }
   /**
-   * 通过坐标列表计算地图的中心点和缩放比例
-   * @param coordinateList 扁平化后的坐标列表
+   * 从 GeoJSON 获取边界信息
+   * @param geoJson GeoJSON 数据
+   * @returns 边界信息，如果无法计算则返回 null
+   */
+  static getBoundsFromGeoJSON(geoJson) {
+    var _a2;
+    if (!(geoJson == null ? void 0 : geoJson.type) || geoJson.type !== "FeatureCollection" || !((_a2 = geoJson.features) == null ? void 0 : _a2.length)) {
+      return null;
+    }
+    const coordinateList = this.getAllCoordinates(geoJson);
+    if (coordinateList.length === 0) {
+      return null;
+    }
+    const flattenedCoords = _EchartGeoUtils.flattenCoordinate(coordinateList);
+    if (flattenedCoords.length === 0) {
+      return null;
+    }
+    const lngList = flattenedCoords.map((item) => item[0]);
+    const latList = flattenedCoords.map((item) => item[1]);
+    const left = Math.min(...lngList);
+    const right = Math.max(...lngList);
+    const bottom = Math.min(...latList);
+    const top = Math.max(...latList);
+    return {
+      left,
+      right,
+      top,
+      bottom,
+      width: right - left,
+      height: top - bottom
+    };
+  }
+  /**
+   * 计算地图的中心点和缩放比例
+   * - 对于世界地图：根据边界计算能够铺满整个可视区域的缩放比例
+   * - 对于其他地图：zoom 置为 1，地图中心不需要处理
+   *
+   * 新的计算算法：
+   * ECharts geo 组件的 zoom 参数是相对于基准大小的缩放倍数。
+   * 在 zoom=1 时，ECharts 会根据 layoutSize (90%) 自动计算地图大小。
+   *
+   * 算法思路：
+   * 1. 计算在 zoom=1 时，地图边界对应的像素尺寸
+   * 2. 根据可用容器大小和地图像素尺寸的比值计算 zoom
+   *
+   * @param geoJson GeoJSON 数据
+   * @param containerWidth 容器宽度（像素）
+   * @param containerHeight 容器高度（像素）
+   * @param center 可选的中心点配置 { lat, lng }，如果提供则优先使用
    * @returns 中心点和缩放比例
    */
   static getCenterAndZoom(geoJson, {
     containerWidth,
     containerHeight
-  }) {
-    const coordinateList = this.getAllCoordinates(geoJson);
-    if (coordinateList.length === 0) {
+  }, center) {
+    const isWorldMap = MapStateManager.curLevel === "world" /* WORLD */;
+    const mapBounds = _EchartGeoUtils.getBoundsFromGeoJSON(geoJson);
+    if (center) {
+      let zoom2 = 1;
+      if (isWorldMap && mapBounds) {
+        const layoutSizeRatio2 = 0.9;
+        const padding2 = 0.95;
+        const availableWidth2 = containerWidth * layoutSizeRatio2 * padding2;
+        const availableHeight2 = containerHeight * layoutSizeRatio2 * padding2;
+        const baseZoomCoefficient2 = 0.5;
+        const geoAspectRatio2 = mapBounds.width / mapBounds.height;
+        const containerAspectRatio2 = availableWidth2 / availableHeight2;
+        if (geoAspectRatio2 > containerAspectRatio2) {
+          const pixelsAtZoom1 = containerWidth * layoutSizeRatio2 * baseZoomCoefficient2 * (mapBounds.width / 360);
+          zoom2 = availableWidth2 / pixelsAtZoom1;
+        } else {
+          const pixelsAtZoom1 = containerHeight * layoutSizeRatio2 * baseZoomCoefficient2 * (mapBounds.height / 180);
+          zoom2 = availableHeight2 / pixelsAtZoom1;
+        }
+      }
+      return {
+        center: [center.lng, center.lat],
+        zoom: zoom2
+      };
+    }
+    if (!isWorldMap) {
       return {
         center: null,
         zoom: 1
       };
     }
-    const lngList = _EchartGeoUtils.flattenCoordinate(coordinateList).map((item) => item[0]);
-    const latList = _EchartGeoUtils.flattenCoordinate(coordinateList).map((item) => item[1]);
-    const minLng = Math.min(...lngList);
-    const maxLng = Math.max(...lngList);
-    const minLat = Math.min(...latList);
-    const maxLat = Math.max(...latList);
-    const lngDelta = Math.abs(maxLng - minLng) || 1;
-    const latDelta = Math.abs(maxLat - minLat) || 1;
-    const ratio = getZoomLevelFromWorldWidth(containerWidth);
-    const latScale = containerHeight / (latDelta * ratio);
-    const lngScale = containerWidth / (lngDelta * ratio);
-    const zoom = Math.min(lngScale, latScale);
+    if (!mapBounds) {
+      return {
+        center: null,
+        zoom: 1
+      };
+    }
+    const layoutSizeRatio = 0.9;
+    const padding = 0.95;
+    const availableWidth = containerWidth * layoutSizeRatio * padding;
+    const availableHeight = containerHeight * layoutSizeRatio * padding;
+    const baseZoomCoefficient = 0.5;
+    const geoAspectRatio = mapBounds.width / mapBounds.height;
+    const containerAspectRatio = availableWidth / availableHeight;
+    let zoom;
+    if (geoAspectRatio > containerAspectRatio) {
+      const pixelsAtZoom1 = containerWidth * layoutSizeRatio * baseZoomCoefficient * (mapBounds.width / 360);
+      zoom = availableWidth / pixelsAtZoom1;
+    } else {
+      const pixelsAtZoom1 = containerHeight * layoutSizeRatio * baseZoomCoefficient * (mapBounds.height / 180);
+      zoom = availableHeight / pixelsAtZoom1;
+    }
+    const centerPoint = [
+      (mapBounds.left + mapBounds.right) / 2,
+      (mapBounds.top + mapBounds.bottom) / 2
+    ];
     return {
-      center: [(minLng + maxLng) / 2, (minLat + maxLat) / 2],
+      center: centerPoint,
       zoom
     };
   }
@@ -53331,37 +54386,45 @@ var _GeoComponent = class _GeoComponent {
         return "default";
     }
   }
-  static calculateScaleAndCenter(container) {
-    var _a2;
-    const center = null;
-    let scale5 = 1;
+  /**
+   * 计算缩放比例和中心点
+   * - 对于世界地图：根据边界计算能够铺满整个可视区域的缩放比例
+   * - 对于其他地图：zoom 置为 1，地图中心不需要处理
+   * @param container - 容器元素，用于获取可视区域大小
+   * @param center - 可选的中心点配置 { lat, lng }，如果提供则优先使用
+   * @returns 包含缩放比例和中心点的对象
+   */
+  static calculateScaleAndCenter(container, center) {
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
     const geoJson = MapStateManager.geoData;
-    const result = (_a2 = EchartGeoUtils.getCenterAndZoom(geoJson, { containerWidth, containerHeight })) != null ? _a2 : { center, zoom: scale5 };
-    scale5 = result.zoom;
-    return { scale: scale5, center: result.center };
+    const result = EchartGeoUtils.getCenterAndZoom(geoJson, { containerWidth, containerHeight }, center);
+    return {
+      scale: result.zoom,
+      center: result.center
+    };
   }
   /**
    * 更新地理组件选项
+   * 根据当前可视区域大小和 GeoJSON 数据，重新计算缩放比例和中心点，以适配当前可视区域
    * @param chartInstance - ECharts 实例
-   * @param centralCountry - 中心国家代码
+   * @param container - 容器元素，用于获取可视区域大小
+   * @param center - 可选的中心点配置 { lat, lng }，如果提供则优先使用
    */
-  static updateGeoOption(chartInstance, container) {
+  static updateGeoOption(chartInstance, container, center) {
     if (!chartInstance) return;
-    const { scale: scale5, center } = _GeoComponent.calculateScaleAndCenter(container);
+    const { scale: scale5, center: calculatedCenter } = _GeoComponent.calculateScaleAndCenter(container, center);
     const options = chartInstance.getOption();
     const geo = options.geo;
     if (geo && geo.length > 0) {
       geo[0].map = _GeoComponent.generateMapName();
-      geo[0].center = center != null ? center : geo[0].center;
+      geo[0].center = calculatedCenter != null ? calculatedCenter : geo[0].center;
       geo[0].zoom = scale5;
       geo[0].itemStyle = {
         ...geo[0].itemStyle
       };
       options.geo = geo;
       chartInstance.setOption(options, true);
-      chartInstance.resize();
     }
   }
   /**
@@ -53443,7 +54506,7 @@ _GeoComponent.defaultGeoOption = {
     max: 10
   },
   layoutCenter: ["50%", "50%"],
-  layoutSize: "80%",
+  layoutSize: "90%",
   zlevel: 0,
   itemStyle: {
     areaColor: "#094777",
@@ -53998,6 +55061,8 @@ var EchartsMap = class {
     this.boundaryLoading = false;
     /** 状态管理器取消订阅函数 */
     this.unsubscribeState = null;
+    /** 标志位：是否正在通过 setGEOData 手动更新，用于避免监听器重复更新 */
+    this._updatingFromSetGEOData = false;
     /**
      * 双击事件处理器（用于地图层级切换）
      * @param params - 事件参数，包含组件类型和区域信息
@@ -54058,11 +55123,14 @@ var EchartsMap = class {
     };
     /**
      * 调整地图大小
+     * 当窗口大小变化时，重新计算缩放比例以适应新的容器大小
      * @public
      */
     this.resizeMap = () => {
-      var _a2;
-      (_a2 = this.chartInstance) == null ? void 0 : _a2.resize();
+      if (this.chartInstance) {
+        this.chartInstance.resize();
+        this.updateGeoOption();
+      }
     };
     /**
      * 地图系列数据更新方法（防抖，300ms 延迟）
@@ -54083,6 +55151,9 @@ var EchartsMap = class {
       this.container = container;
     }
     this.config = options;
+    if (this.config.center) {
+      this.configuredCenter = this.config.center;
+    }
     void this.initChart(geoJson).catch((error) => {
       console.error(error);
     });
@@ -54117,8 +55188,9 @@ var EchartsMap = class {
         }
       ]
     };
-    const zoom = GeoComponent.calculateScaleAndCenter(this.container).scale;
-    geoOption.zoom = zoom;
+    const { scale: scale5, center } = GeoComponent.calculateScaleAndCenter(this.container, this.configuredCenter);
+    geoOption.zoom = scale5;
+    geoOption.center = center != null ? center : geoOption.center;
     baseOption.geo = geoOption;
     (_a2 = this.chartInstance) == null ? void 0 : _a2.setOption(baseOption, true);
     instance.on("dblclick", this.dbClickHandler);
@@ -54131,8 +55203,15 @@ var EchartsMap = class {
   registerEvents() {
     window.addEventListener("resize", this.resizeMap);
     this.unsubscribeState = MapStateManager.onPropertyChange("geoData", () => {
+      if (this._updatingFromSetGEOData) {
+        return;
+      }
       if (this.chartInstance) {
-        this.redrawMap();
+        const geoData = MapStateManager.geoData;
+        if ((geoData == null ? void 0 : geoData.type) === "FeatureCollection") {
+          GeoComponent.registerMap(geoData);
+        }
+        this.updateGeoOption();
       }
     });
   }
@@ -54145,23 +55224,37 @@ var EchartsMap = class {
     if (!this.chartInstance) return;
     this.chartInstance.setOption(option);
   }
-  updateGeoOption() {
-    GeoComponent.updateGeoOption(this.chartInstance, this.container);
+  updateGeoOption(center) {
+    GeoComponent.updateGeoOption(this.chartInstance, this.container, center);
   }
   /**
    * 设置地理数据并更新地图显示
    * @param boundary - 边界地理数据
    * @public
    */
-  setGEOData(boundary) {
-    const geojson = MapStateManager.geoData;
-    GeoComponent.registerMap(geojson);
-    this.updateGeoOption();
-    if ((boundary == null ? void 0 : boundary.type) !== "FeatureCollection" || !Array.isArray(boundary == null ? void 0 : boundary.features)) {
+  async setGEOData(boundary) {
+    this._updatingFromSetGEOData = true;
+    try {
+      const geojson = MapStateManager.geoData;
+      GeoComponent.registerMap(geojson);
+      await new Promise((resolve2) => {
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            this.updateGeoOption();
+            setTimeout(() => {
+              resolve2();
+            }, 0);
+          });
+        });
+      });
+      if ((boundary == null ? void 0 : boundary.type) !== "FeatureCollection" || !Array.isArray(boundary == null ? void 0 : boundary.features)) {
+        this.boundaryLoading = false;
+        return;
+      }
       this.boundaryLoading = false;
-      return;
+    } finally {
+      this._updatingFromSetGEOData = false;
     }
-    this.boundaryLoading = false;
   }
   /**
    * 等待边界数据加载完成
@@ -54455,7 +55548,8 @@ var OrchMap = class {
               (_b2 = (_a3 = this.config.events) == null ? void 0 : _a3.onAreaDoubleClick) == null ? void 0 : _b2.call(_a3, region);
               void await this.entryNextLevel(region);
             }
-          }
+          },
+          this.config.center
         );
         break;
     }
@@ -54517,7 +55611,7 @@ var OrchMap = class {
       return;
     }
     await this.getGeoData(params);
-    void this.instance.setGEOData(MapStateManager.geoData);
+    await this.instance.setGEOData(MapStateManager.geoData);
     this.updatePointsAndLinesForCurrentLevel();
   }
   /**
@@ -54559,7 +55653,7 @@ var OrchMap = class {
       return;
     }
     await this.getGeoData(params);
-    void this.instance.setGEOData(MapStateManager.geoData);
+    await this.instance.setGEOData(MapStateManager.geoData);
     this.updatePointsAndLinesForCurrentLevel();
   }
   /**
@@ -54656,13 +55750,100 @@ var OrchMap = class {
     return this._initPromise;
   }
   /**
+   * 设置渲染器类型
+   * @description 动态切换地图渲染器类型（ECharts ↔ DeckGL）
+   * @param {MapRendererType} renderType - 新的渲染器类型
+   * @returns {Promise<void>} 切换操作的 Promise
+   * @example
+   * // 切换到 DeckGL 渲染器
+   * await mapInstance.setRenderType(MapRendererType.DECKGL);
+   *
+   * // 切换到 ECharts 渲染器
+   * await mapInstance.setRenderType(MapRendererType.ECHARTS);
+   */
+  async setRenderType(renderType) {
+    if (this.config.renderType === renderType) {
+      return;
+    }
+    await this.waitForInitialization();
+    if (this.instance) {
+      this.instance.destroy();
+    }
+    this.config.renderType = renderType;
+    this._initialized = false;
+    this._initPromise = this.initMap().then(() => {
+      this._initialized = true;
+      this._initCallbacks.forEach((callback) => callback());
+      this._initCallbacks = [];
+    });
+    await this._initPromise;
+    this.updatePointsAndLinesForCurrentLevel();
+  }
+  /**
+   * 设置渲染模式
+   * @description 动态切换地图渲染模式（2D/2.5D/3D）
+   * 注意：模式切换仅在 DeckGL 渲染器下有效，ECharts 渲染器不支持模式切换
+   * - 2D: 平面图
+   * - 2.5D: 倾斜45度
+   * - 3D: Globe 模式
+   * @param {"2d" | "2.5d" | "3d"} mode - 新的渲染模式
+   * @returns {Promise<void>} 切换操作的 Promise
+   * @example
+   * // 切换到 3D Globe 模式（仅在 DeckGL 下有效）
+   * await mapInstance.setMode("3d");
+   *
+   * // 切换到 2.5D 倾斜模式
+   * await mapInstance.setMode("2.5d");
+   *
+   * // 切换到 2D 平面模式
+   * await mapInstance.setMode("2d");
+   */
+  async setMode(mode) {
+    if (this.config.mode === mode) {
+      return;
+    }
+    await this.waitForInitialization();
+    if (this.config.renderType === "echarts" /* ECHARTS */) {
+      console.warn("Mode switching is only supported for DeckGL renderer. ECharts renderer does not support 2D/3D mode switching.");
+      this.config.mode = mode;
+      return;
+    }
+    if (this.config.renderType === "deckgl" /* DECKGL */) {
+      if (this.instance) {
+        this.instance.destroy();
+      }
+      this.config.mode = mode;
+      await new Promise((resolve2) => {
+        this.instance = new deckgl_default(
+          this.config.container,
+          mode,
+          () => {
+            console.log("DeckGL mode switched");
+            resolve2();
+          },
+          {
+            ...this.config.events,
+            onAreaDoubleClick: async (region) => {
+              var _a2, _b;
+              (_b = (_a2 = this.config.events) == null ? void 0 : _a2.onAreaDoubleClick) == null ? void 0 : _b.call(_a2, region);
+              void await this.entryNextLevel(region);
+            }
+          },
+          this.config.center
+        );
+      });
+      await this.instance.setGEOData(MapStateManager.geoData);
+      this.updatePointsAndLinesForCurrentLevel();
+    }
+  }
+  /**
    * 根据环境自动选择最佳渲染器
    * @param {Partial<MapRendererConfig>} [config] - 渲染器配置
    * @returns {MapRendererType} 推荐的渲染器类型
    */
   static getRecommendedType(config2) {
     var _a2;
-    if ((config2 == null ? void 0 : config2.mode) === "3d") {
+    if ((config2 == null ? void 0 : config2.mode) === "3d" || (config2 == null ? void 0 : config2.mode) === "2.5d") {
       return "deckgl" /* DECKGL */;
     }
     const canvas2 = document.createElement("canvas");
