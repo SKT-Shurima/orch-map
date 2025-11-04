@@ -14,7 +14,12 @@ export interface DbClickEvent {
  */
 export interface MapRendererEvents {
   /** 点击点事件 */
-  onPointClick?: (point: string ) => void
+  onPointClick?: (point: string, event: {
+    position: {
+      x: number
+      y: number
+    }
+  }) => void
   /** 悬停点事件 */
   onPointHover?: (point: string | null) => void
   /** 悬停区域事件 */

@@ -392,7 +392,16 @@ export abstract class BaseDeckglMap {
       return;
     }
 
-    if (!IconLayer.isPointLayerClick(info)) {
+    if (IconLayer.isPointLayerClick(info)) {
+      // 延迟处理点位点击，给双击事件留出时间
+      if (this.clickTimer) {
+        clearTimeout(this.clickTimer);
+      }
+      this.clickTimer = setTimeout(async () => {
+        // 处理点位点击
+        await this.handleClickPoint(info, event);
+      }, this.CLICK_DELAY);
+    } else {
       // 延迟处理单击，给双击事件留出时间
       if (this.clickTimer) {
         clearTimeout(this.clickTimer);
@@ -418,13 +427,33 @@ export abstract class BaseDeckglMap {
   /**
    * 点对象点击处理
    * @param info - 点击信息
+   * @param event - 事件对象
    */
-  protected async handleClickPoint(info: unknown) {
+  protected async handleClickPoint(info: unknown, event?: MjolnirGestureEvent) {
+    const pick = info as { object?: { id?: string | null } } | null;
+    const clickedId: string | null = pick?.object?.id ?? null;
+
+    // 更新点状态
     this.pointState = await IconLayer.handleClickPoint(
       info,
       { ...this.pointState, points: this.points },
       this.layerUpdateCallback,
     );
+
+    // 触发 onPointClick 事件
+    if (clickedId && this.events?.onPointClick && this.container) {
+      // 获取点击位置相对于容器的坐标
+      const nativeEvent = event?.srcEvent as MouseEvent | undefined;
+      if (nativeEvent) {
+        const rect = this.container.getBoundingClientRect();
+        const x = nativeEvent.clientX - rect.left;
+        const y = nativeEvent.clientY - rect.top;
+
+        this.events.onPointClick(clickedId, {
+          position: { x, y },
+        });
+      }
+    }
   }
 
   /**

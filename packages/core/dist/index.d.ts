@@ -50,7 +50,12 @@ type AnyObj = Record<string, any>;
  */
 interface MapRendererEvents {
     /** 点击点事件 */
-    onPointClick?: (point: string) => void;
+    onPointClick?: (point: string, event: {
+        position: {
+            x: number;
+            y: number;
+        };
+    }) => void;
     /** 悬停点事件 */
     onPointHover?: (point: string | null) => void;
     /** 悬停区域事件 */
@@ -367,6 +372,12 @@ declare class EchartsMap<T = unknown> implements IMapRenderer {
      * @private
      */
     private dbClickHandler;
+    /**
+     * 点击事件处理器（用于点位点击）
+     * @param params - 事件参数，包含组件类型和点位信息
+     * @private
+     */
+    private clickHandler;
     /**
      * 等待边界数据加载完成
      * @param timeout - 超时时间（毫秒），默认 5000ms

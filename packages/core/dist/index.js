@@ -53385,7 +53385,14 @@ var BaseDeckglMap = class {
     if (nativeEvent && "detail" in nativeEvent && nativeEvent.detail === 2) {
       return;
     }
-    if (!IconLayer2.isPointLayerClick(info)) {
+    if (IconLayer2.isPointLayerClick(info)) {
+      if (this.clickTimer) {
+        clearTimeout(this.clickTimer);
+      }
+      this.clickTimer = setTimeout(async () => {
+        await this.handleClickPoint(info, event);
+      }, this.CLICK_DELAY);
+    } else {
       if (this.clickTimer) {
         clearTimeout(this.clickTimer);
       }
@@ -53402,13 +53409,28 @@ var BaseDeckglMap = class {
   /**
    * 点对象点击处理
    * @param info - 点击信息
+   * @param event - 事件对象
    */
-  async handleClickPoint(info) {
+  async handleClickPoint(info, event) {
+    var _a2, _b, _c;
+    const pick2 = info;
+    const clickedId = (_b = (_a2 = pick2 == null ? void 0 : pick2.object) == null ? void 0 : _a2.id) != null ? _b : null;
     this.pointState = await IconLayer2.handleClickPoint(
       info,
       { ...this.pointState, points: this.points },
       this.layerUpdateCallback
     );
+    if (clickedId && ((_c = this.events) == null ? void 0 : _c.onPointClick) && this.container) {
+      const nativeEvent = event == null ? void 0 : event.srcEvent;
+      if (nativeEvent) {
+        const rect = this.container.getBoundingClientRect();
+        const x2 = nativeEvent.clientX - rect.left;
+        const y2 = nativeEvent.clientY - rect.top;
+        this.events.onPointClick(clickedId, {
+          position: { x: x2, y: y2 }
+        });
+      }
+    }
   }
   /**
    * 点对象悬停处理
@@ -55079,6 +55101,26 @@ var EchartsMap = class {
       }
     };
     /**
+     * 点击事件处理器（用于点位点击）
+     * @param params - 事件参数，包含组件类型和点位信息
+     * @private
+     */
+    this.clickHandler = (params) => {
+      var _a2, _b;
+      if (!((_a2 = params == null ? void 0 : params.event) == null ? void 0 : _a2.event) || !params.componentType) {
+        return;
+      }
+      if (params.componentType === "series" && ScatterComponent.isScatterType(params.componentSubType) && typeof params.id === "string" && ((_b = this.config.events) == null ? void 0 : _b.onPointClick)) {
+        const event = params.event.event;
+        const rect = this.container.getBoundingClientRect();
+        const x2 = event.clientX - rect.left;
+        const y2 = event.clientY - rect.top;
+        this.config.events.onPointClick(params.id, {
+          position: { x: x2, y: y2 }
+        });
+      }
+    };
+    /**
      * 更新系列数据的具体实现
      * @param series - ECharts 系列配置数组
      * @private
@@ -55195,6 +55237,7 @@ var EchartsMap = class {
     (_a2 = this.chartInstance) == null ? void 0 : _a2.setOption(baseOption, true);
     instance.on("dblclick", this.dbClickHandler);
     instance.on("georoam", this.redrawMap);
+    instance.on("click", this.clickHandler);
   }
   /**
    * 注册事件监听器
@@ -55528,6 +55571,10 @@ var OrchMap = class {
                 var _a3, _b2;
                 (_b2 = (_a3 = this.config.events) == null ? void 0 : _a3.onAreaDoubleClick) == null ? void 0 : _b2.call(_a3, region);
                 void await this.entryNextLevel(region);
+              },
+              onPointClick: (pointId, event) => {
+                var _a3, _b2;
+                (_b2 = (_a3 = this.config.events) == null ? void 0 : _a3.onPointClick) == null ? void 0 : _b2.call(_a3, pointId, event);
               }
             }
           },
@@ -55547,6 +55594,10 @@ var OrchMap = class {
               var _a3, _b2;
               (_b2 = (_a3 = this.config.events) == null ? void 0 : _a3.onAreaDoubleClick) == null ? void 0 : _b2.call(_a3, region);
               void await this.entryNextLevel(region);
+            },
+            onPointClick: (pointId, event) => {
+              var _a3, _b2;
+              (_b2 = (_a3 = this.config.events) == null ? void 0 : _a3.onPointClick) == null ? void 0 : _b2.call(_a3, pointId, event);
             }
           },
           this.config.center
@@ -55827,6 +55878,10 @@ var OrchMap = class {
               var _a2, _b;
               (_b = (_a2 = this.config.events) == null ? void 0 : _a2.onAreaDoubleClick) == null ? void 0 : _b.call(_a2, region);
               void await this.entryNextLevel(region);
+            },
+            onPointClick: (pointId, event) => {
+              var _a2, _b;
+              (_b = (_a2 = this.config.events) == null ? void 0 : _a2.onPointClick) == null ? void 0 : _b.call(_a2, pointId, event);
             }
           },
           this.config.center

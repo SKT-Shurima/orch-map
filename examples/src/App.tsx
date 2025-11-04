@@ -30,7 +30,7 @@ export default defineComponent({
         mapInstance = new OrchMap({
           renderType: MapRendererType.DECKGL,
           mapVersion: "standard",
-          mode: "3d",
+          mode: "2.5d",
           container: geoContainer.value,
           curLevel: MapLevel.WORLD,
           center: { lat: 37.7749, lng: -122.4194 }, // 美国旧金山坐标

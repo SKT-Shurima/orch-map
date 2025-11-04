@@ -99,6 +99,9 @@ export default class OrchMap {
               void await this.entryNextLevel(region) ;
 
             },
+            onPointClick: (pointId: string, event: { position: { x: number; y: number } }) => {
+              this.config.events?.onPointClick?.(pointId, event);
+            },
           },
         },
         MapStateManager.geoData);
@@ -116,6 +119,9 @@ export default class OrchMap {
             onAreaDoubleClick: async (region: string) => {
               this.config.events?.onAreaDoubleClick?.(region);
               void await this.entryNextLevel(region);
+            },
+            onPointClick: (pointId: string, event: { position: { x: number; y: number } }) => {
+              this.config.events?.onPointClick?.(pointId, event);
             },
           },
           this.config.center,
@@ -496,6 +502,9 @@ export default class OrchMap {
             onAreaDoubleClick: async (region: string) => {
               this.config.events?.onAreaDoubleClick?.(region);
               void await this.entryNextLevel(region);
+            },
+            onPointClick: (pointId: string, event: { position: { x: number; y: number } }) => {
+              this.config.events?.onPointClick?.(pointId, event);
             },
           },
           this.config.center,

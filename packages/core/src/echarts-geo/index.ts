@@ -162,6 +162,7 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
 
     instance.on("dblclick", this.dbClickHandler);
     instance.on("georoam", this.redrawMap);
+    instance.on("click", this.clickHandler);
   }
 
   /**
@@ -263,6 +264,36 @@ export default class EchartsMap<T = unknown> implements IMapRenderer {
 
     if (params.componentType === "geo") {
       this.config.events?.onAreaDoubleClick?.(params.name || "");
+    }
+  };
+
+  /**
+   * 点击事件处理器（用于点位点击）
+   * @param params - 事件参数，包含组件类型和点位信息
+   * @private
+   */
+  private clickHandler = (params: ECElementEvent) => {
+    if (!params?.event?.event || !params.componentType) {
+      return;
+    }
+
+    // 检查是否为点位点击
+    if (
+      params.componentType === "series" &&
+      ScatterComponent.isScatterType(params.componentSubType) &&
+      typeof params.id === "string" &&
+      this.config.events?.onPointClick
+    ) {
+      // 获取点击位置相对于容器的坐标
+      const event = params.event.event as MouseEvent;
+      const rect = this.container.getBoundingClientRect();
+      const x = event.clientX - rect.left;
+      const y = event.clientY - rect.top;
+
+      // 触发 onPointClick 事件
+      this.config.events.onPointClick(params.id, {
+        position: { x, y },
+      });
     }
   };
 
